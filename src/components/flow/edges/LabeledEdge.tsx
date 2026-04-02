@@ -24,7 +24,10 @@ function LabeledEdge({
   label,
   selected,
   markerEnd,
+  data,
 }: EdgeProps) {
+  const isHighlighted = (data as { highlighted?: boolean } | undefined)?.highlighted === true;
+
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
@@ -34,7 +37,7 @@ function LabeledEdge({
     targetPosition,
   });
 
-  const strokeColor = selected
+  const strokeColor = isHighlighted || selected
     ? 'var(--erc-color-accent-hover)'
     : 'var(--erc-color-border)';
 
@@ -45,7 +48,7 @@ function LabeledEdge({
         path={edgePath}
         style={{
           stroke: strokeColor,
-          strokeWidth: selected ? 2 : 1.5,
+          strokeWidth: isHighlighted ? 2.5 : selected ? 2 : 1.5,
           fill: 'none',
           transition: 'stroke 0.15s, stroke-width 0.15s',
         }}

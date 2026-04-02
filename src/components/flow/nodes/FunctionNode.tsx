@@ -38,8 +38,9 @@ const FN_TYPE_STYLES: Record<
  * monospace subtitle if provided.
  */
 function FunctionNode({ data, selected }: NodeProps) {
-  const { label, fnType, signature } = data as FunctionNodeData;
+  const { label, fnType, signature, highlighted } = data as FunctionNodeData & { highlighted?: boolean };
   const fnStyle = FN_TYPE_STYLES[fnType] ?? FN_TYPE_STYLES.read;
+  const isHighlighted = highlighted === true;
 
   return (
     <div
@@ -47,14 +48,16 @@ function FunctionNode({ data, selected }: NodeProps) {
       style={{
         minWidth: 180,
         background: 'var(--erc-color-node-bg)',
-        border: `1.5px solid ${selected ? fnStyle.color : 'var(--erc-color-node-border)'}`,
+        border: `1.5px solid ${isHighlighted ? fnStyle.color : selected ? fnStyle.color : 'var(--erc-color-node-border)'}`,
         borderRadius: '0.5rem',
-        boxShadow: selected
-          ? `0 0 0 2px ${fnStyle.color}`
-          : '0 2px 8px rgba(0,0,0,0.35)',
+        boxShadow: isHighlighted
+          ? `0 0 12px 2px ${fnStyle.color}, 0 0 0 2px ${fnStyle.color}`
+          : selected
+            ? `0 0 0 2px ${fnStyle.color}`
+            : '0 2px 8px rgba(0,0,0,0.35)',
         fontFamily: 'var(--erc-font-body)',
         overflow: 'hidden',
-        transition: 'border-color 0.15s, box-shadow 0.15s',
+        transition: 'border-color 0.2s, box-shadow 0.2s',
       }}
     >
       {/* Coloured top accent bar */}

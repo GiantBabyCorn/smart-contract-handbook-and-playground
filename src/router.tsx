@@ -6,6 +6,8 @@ import SkeletonBlock from './components/common/SkeletonBlock';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const DetailPage = lazy(() => import('./pages/DetailPage'));
+const FlowComparisonPage = lazy(() => import('./pages/FlowComparisonPage'));
+const SimulationLayoutComparisonPage = lazy(() => import('./pages/SimulationLayoutComparisonPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 export const router = createBrowserRouter([
@@ -17,6 +19,22 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<SkeletonBlock type="home" />}>
             <HomePage />
+          </Suspense>
+        ),
+      },
+      {
+        path: '/flow-comparison',
+        element: (
+          <Suspense fallback={<SkeletonBlock type="detail" />}>
+            <FlowComparisonPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: '/simulation-layout-comparison',
+        element: (
+          <Suspense fallback={<SkeletonBlock type="detail" />}>
+            <SimulationLayoutComparisonPage />
           </Suspense>
         ),
       },
