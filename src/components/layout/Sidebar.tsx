@@ -38,16 +38,12 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
     >
       {/* ── Logo / brand header ─────────────────────────────────── */}
       <div className="shrink-0 flex items-center gap-2.5 px-4 py-4 border-b border-[var(--erc-color-border)]">
-        <div
-          className="w-7 h-7 rounded-lg bg-[var(--erc-color-accent)] flex items-center justify-center shrink-0"
+        <img
+          src="/logo.svg"
+          alt=""
+          className="w-7 h-auto shrink-0"
           aria-hidden="true"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2" />
-            <line x1="12" y1="22" x2="12" y2="15.5" />
-            <polyline points="22 8.5 12 15.5 2 8.5" />
-          </svg>
-        </div>
+        />
         <Link
           to="/"
           onClick={onNavigate}
