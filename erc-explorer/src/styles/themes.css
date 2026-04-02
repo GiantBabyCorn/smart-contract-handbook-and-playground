@@ -1,0 +1,120 @@
+/* =============================================================================
+   ERC Explorer — Theme Variables
+   Dark theme is the default (:root). Light theme is opt-in via [data-theme='light'].
+   All custom properties are namespaced with --erc- to prevent collisions.
+   ============================================================================= */
+
+:root {
+  /* ---------------------------------------------------------------------------
+     Background colours
+     --------------------------------------------------------------------------- */
+  --erc-color-bg-primary: #0a0e17;
+  --erc-color-bg-secondary: #111827;
+  --erc-color-bg-tertiary: #1e293b;
+
+  /* ---------------------------------------------------------------------------
+     Text colours
+     --------------------------------------------------------------------------- */
+  --erc-color-text-primary: #f1f5f9;
+  --erc-color-text-secondary: #94a3b8;
+  --erc-color-text-muted: #64748b;
+
+  /* ---------------------------------------------------------------------------
+     Accent
+     --------------------------------------------------------------------------- */
+  --erc-color-accent: #6366f1;
+  --erc-color-accent-hover: #818cf8;
+
+  /* ---------------------------------------------------------------------------
+     Borders
+     --------------------------------------------------------------------------- */
+  --erc-color-border: #1e293b;
+
+  /* ---------------------------------------------------------------------------
+     Sidebar
+     --------------------------------------------------------------------------- */
+  --erc-color-sidebar-bg: #0f1420;
+
+  /* ---------------------------------------------------------------------------
+     React Flow node chrome
+     --------------------------------------------------------------------------- */
+  --erc-color-node-bg: #1a1f2e;
+  --erc-color-node-border: #334155;
+  --erc-color-edge-animated: #6366f1;
+
+  /* ---------------------------------------------------------------------------
+     Status / feedback colours
+     --------------------------------------------------------------------------- */
+  --erc-color-success: #22c55e;
+  --erc-color-warning: #f59e0b;
+  --erc-color-error: #ef4444;
+
+  /* ---------------------------------------------------------------------------
+     Semantic layer — ABI function types
+     --------------------------------------------------------------------------- */
+  --erc-color-fn-read: var(--erc-color-success);
+  --erc-color-fn-write: var(--erc-color-warning);
+  --erc-color-fn-event: #a855f7;
+
+  /* ---------------------------------------------------------------------------
+     Semantic layer — Simulation states
+     --------------------------------------------------------------------------- */
+  --erc-color-sim-active: var(--erc-color-accent);
+  --erc-color-sim-completed: var(--erc-color-success);
+  --erc-color-sim-pending: var(--erc-color-text-muted);
+
+  /* ---------------------------------------------------------------------------
+     Semantic layer — ERC category badges
+     --------------------------------------------------------------------------- */
+  --erc-color-category-token: #22c55e;
+  --erc-color-category-nft: #f59e0b;
+  --erc-color-category-proxy: #a855f7;
+  --erc-color-category-defi: #3b82f6;
+  --erc-color-category-account: #ec4899;
+
+  /* ---------------------------------------------------------------------------
+     Typography
+     --------------------------------------------------------------------------- */
+  --erc-font-display: 'Outfit', sans-serif;
+  --erc-font-body: 'Inter', sans-serif;
+  --erc-font-mono: 'JetBrains Mono', monospace;
+}
+
+/* =============================================================================
+   Light theme overrides
+   ============================================================================= */
+
+[data-theme='light'] {
+  /* Backgrounds */
+  --erc-color-bg-primary: #ffffff;
+  --erc-color-bg-secondary: #f8fafc;
+  --erc-color-bg-tertiary: #f1f5f9;
+
+  /* Text */
+  --erc-color-text-primary: #0f172a;
+  --erc-color-text-secondary: #475569;
+  --erc-color-text-muted: #94a3b8;
+
+  /* Accent — slightly deeper for WCAG contrast on white */
+  --erc-color-accent: #4f46e5;
+  --erc-color-accent-hover: #6366f1;
+
+  /* Borders */
+  --erc-color-border: #e2e8f0;
+
+  /* Sidebar */
+  --erc-color-sidebar-bg: #f8fafc;
+
+  /* React Flow node chrome */
+  --erc-color-node-bg: #ffffff;
+  --erc-color-node-border: #e2e8f0;
+  --erc-color-edge-animated: #4f46e5;
+
+  /* Status — adjusted for light background legibility */
+  --erc-color-success: #16a34a;
+  --erc-color-warning: #d97706;
+  --erc-color-error: #dc2626;
+
+  /* Semantic — only override values that diverge from the re-mapped primitives */
+  --erc-color-fn-event: #7c3aed;
+}

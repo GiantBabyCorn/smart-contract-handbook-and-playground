@@ -1,0 +1,1 @@
+# ADR 001: SVG over Canvas for Flow Visualization

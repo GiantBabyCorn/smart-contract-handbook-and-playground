@@ -1,0 +1,49 @@
+{
+  "sidebar": {
+    "search": "搜尋標準與協議...",
+    "noResults": "找不到結果",
+    "categories": {
+      "token": "代幣標準",
+      "nft": "NFT 標準",
+      "proxy": "代理模式",
+      "defi": "DeFi 協議",
+      "account": "帳戶抽象",
+      "utility": "實用標準",
+      "identity": "身份與認證",
+      "oracle": "預言機標準",
+      "governance": "治理",
+      "crossChain": "跨鏈",
+      "rwa": "真實世界資產"
+    }
+  },
+  "nav": {
+    "home": "首頁",
+    "backToHome": "返回首頁"
+  },
+  "theme": {
+    "switchToLight": "切換至淺色主題",
+    "switchToDark": "切換至深色主題"
+  },
+  "language": {
+    "label": "語言"
+  },
+  "footer": {
+    "poweredBy": "由 ERC Explorer 提供支援"
+  },
+  "error": {
+    "title": "發生錯誤",
+    "description": "發生意外錯誤，請嘗試重新載入頁面。",
+    "reload": "重新載入",
+    "goHome": "返回首頁"
+  },
+  "notFound": {
+    "title": "找不到頁面",
+    "description": "您所存取的頁面不存在或已被移動。",
+    "goHome": "返回首頁"
+  },
+  "loading": "載入中...",
+  "a11y": {
+    "flowDiagram": "說明合約元件之間互動的流程圖",
+    "simulationPanel": "用於逐步執行的互動式模擬面板"
+  }
+}

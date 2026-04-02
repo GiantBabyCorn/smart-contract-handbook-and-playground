@@ -1,0 +1,1 @@
+"""Check bundle size thresholds."""

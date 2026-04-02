@@ -1,0 +1,28 @@
+{
+  "controls": {
+    "play": "Reproducir",
+    "pause": "Pausar",
+    "reset": "Reiniciar",
+    "stepForward": "Paso adelante",
+    "stepBack": "Paso atrás",
+    "speed": "Velocidad",
+    "speed.slow": "Lento",
+    "speed.normal": "Normal",
+    "speed.fast": "Rápido"
+  },
+  "panel": {
+    "title": "Simulación",
+    "scenario": "Escenario",
+    "parameters": "Parámetros",
+    "steps": "Pasos",
+    "step": "Paso {{current}} de {{total}}",
+    "results": "Resultados",
+    "noScenario": "Seleccione un escenario para comenzar"
+  },
+  "status": {
+    "idle": "Inactivo",
+    "running": "En ejecución",
+    "completed": "Completado",
+    "error": "Error"
+  }
+}

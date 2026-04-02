@@ -1,0 +1,149 @@
+/* =============================================================================
+   ERC Explorer — React Flow Theme Overrides
+   All colours reference --erc- CSS variables so they update automatically
+   when the user toggles between dark and light themes.
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   Canvas background
+   --------------------------------------------------------------------------- */
+
+.react-flow__background {
+  background-color: var(--erc-color-bg-primary);
+}
+
+/* ---------------------------------------------------------------------------
+   Nodes
+   --------------------------------------------------------------------------- */
+
+.react-flow__node {
+  background-color: var(--erc-color-node-bg);
+  border: 1px solid var(--erc-color-node-border);
+  border-radius: 0.5rem;
+  color: var(--erc-color-text-primary);
+  font-family: var(--erc-font-body);
+  font-size: 0.875rem;
+}
+
+.react-flow__node.selected,
+.react-flow__node:focus {
+  border-color: var(--erc-color-accent);
+  box-shadow: 0 0 0 2px var(--erc-color-accent);
+  outline: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Edges
+   --------------------------------------------------------------------------- */
+
+.react-flow__edge-path {
+  stroke: var(--erc-color-border);
+  stroke-width: 1.5;
+}
+
+.react-flow__edge.selected .react-flow__edge-path,
+.react-flow__edge:focus .react-flow__edge-path {
+  stroke: var(--erc-color-accent);
+}
+
+.react-flow__edge.animated .react-flow__edge-path {
+  stroke: var(--erc-color-edge-animated);
+}
+
+/* Connection line rendered while dragging */
+.react-flow__connection-path {
+  stroke: var(--erc-color-accent);
+  stroke-dasharray: 5 5;
+}
+
+/* ---------------------------------------------------------------------------
+   Handles (connection ports on nodes)
+   --------------------------------------------------------------------------- */
+
+.react-flow__handle {
+  background-color: var(--erc-color-accent);
+  border: 2px solid var(--erc-color-node-bg);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.react-flow__handle:hover {
+  background-color: var(--erc-color-accent-hover);
+}
+
+/* ---------------------------------------------------------------------------
+   Controls panel
+   --------------------------------------------------------------------------- */
+
+.react-flow__controls {
+  border: 1px solid var(--erc-color-border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.react-flow__controls button {
+  background-color: var(--erc-color-bg-secondary);
+  color: var(--erc-color-text-primary);
+  border-color: var(--erc-color-border);
+  border-bottom-width: 1px;
+}
+
+.react-flow__controls button:last-child {
+  border-bottom: none;
+}
+
+.react-flow__controls button:hover {
+  background-color: var(--erc-color-bg-tertiary);
+}
+
+.react-flow__controls button svg {
+  fill: var(--erc-color-text-secondary);
+}
+
+/* ---------------------------------------------------------------------------
+   Minimap
+   --------------------------------------------------------------------------- */
+
+.react-flow__minimap {
+  background-color: var(--erc-color-bg-secondary);
+  border: 1px solid var(--erc-color-border);
+  border-radius: 0.5rem;
+}
+
+.react-flow__minimap-mask {
+  fill: var(--erc-color-bg-tertiary);
+  fill-opacity: 0.6;
+}
+
+/* ---------------------------------------------------------------------------
+   Generic floating panel (attribution, custom panels)
+   --------------------------------------------------------------------------- */
+
+.react-flow__panel {
+  background-color: var(--erc-color-bg-secondary);
+  border: 1px solid var(--erc-color-border);
+  border-radius: 0.5rem;
+  color: var(--erc-color-text-secondary);
+}
+
+/* Hide the React Flow attribution in production builds (keep in dev for courtesy) */
+.react-flow__attribution {
+  background-color: transparent;
+  color: var(--erc-color-text-muted);
+  font-size: 0.625rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Node resizer (if used)
+   --------------------------------------------------------------------------- */
+
+.react-flow__resize-control.handle {
+  background-color: var(--erc-color-accent);
+  border-color: var(--erc-color-node-bg);
+}
+
+.react-flow__resize-control.line {
+  border-color: var(--erc-color-accent);
+}

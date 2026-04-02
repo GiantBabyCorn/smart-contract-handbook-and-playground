@@ -1,0 +1,49 @@
+{
+  "sidebar": {
+    "search": "標準とプロトコルを検索...",
+    "noResults": "結果が見つかりません",
+    "categories": {
+      "token": "トークン標準",
+      "nft": "NFT標準",
+      "proxy": "プロキシパターン",
+      "defi": "DeFiプロトコル",
+      "account": "アカウント抽象化",
+      "utility": "ユーティリティ標準",
+      "identity": "アイデンティティと認証",
+      "oracle": "オラクル標準",
+      "governance": "ガバナンス",
+      "crossChain": "クロスチェーン",
+      "rwa": "現実世界資産"
+    }
+  },
+  "nav": {
+    "home": "ホーム",
+    "backToHome": "ホームに戻る"
+  },
+  "theme": {
+    "switchToLight": "ライトテーマに切り替え",
+    "switchToDark": "ダークテーマに切り替え"
+  },
+  "language": {
+    "label": "言語"
+  },
+  "footer": {
+    "poweredBy": "ERC Explorer を使用"
+  },
+  "error": {
+    "title": "エラーが発生しました",
+    "description": "予期しないエラーが発生しました。ページを再読み込みしてください。",
+    "reload": "ページを再読み込み",
+    "goHome": "ホームに戻る"
+  },
+  "notFound": {
+    "title": "ページが見つかりません",
+    "description": "お探しのページは存在しないか、移動されました。",
+    "goHome": "ホームに戻る"
+  },
+  "loading": "読み込み中...",
+  "a11y": {
+    "flowDiagram": "コントラクトコンポーネント間のインタラクションを示すフロー図",
+    "simulationPanel": "ステップごとの実行のためのインタラクティブシミュレーションパネル"
+  }
+}

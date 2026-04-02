@@ -1,0 +1,19 @@
+{
+  "title": "ERC Explorer",
+  "subtitle": "以太坊标准与协议的交互式指南",
+  "description": "通过交互式可视化图表、实时模拟和清晰的说明，探索并理解以太坊改进提案（ERC）标准。从同质化代币到跨链协议，ERC Explorer 让开发者和学习者都能轻松掌握链上标准。",
+  "getStarted": "立即开始",
+  "features": {
+    "visualization": "可视化流程图",
+    "visualizationDesc": "通过清晰的交互式流程图，直观理解复杂的合约交互，深入了解每个标准的底层运作方式。",
+    "simulation": "实时模拟",
+    "simulationDesc": "在沙盒环境中逐步执行真实的交易和函数调用，实时观察状态变化和事件触发。",
+    "multilingual": "多语言支持",
+    "multilingualDesc": "支持英语、简体中文、繁体中文、日语、韩语和西班牙语，让全球开发者都能轻松访问以太坊标准。"
+  },
+  "stats": {
+    "standards": "22 个 ERC 标准",
+    "protocols": "13 个协议",
+    "simulations": "交互式模拟"
+  }
+}

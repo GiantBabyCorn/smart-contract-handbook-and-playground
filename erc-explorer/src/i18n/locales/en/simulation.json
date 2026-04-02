@@ -1,0 +1,28 @@
+{
+  "controls": {
+    "play": "Play",
+    "pause": "Pause",
+    "reset": "Reset",
+    "stepForward": "Step Forward",
+    "stepBack": "Step Back",
+    "speed": "Speed",
+    "speed.slow": "Slow",
+    "speed.normal": "Normal",
+    "speed.fast": "Fast"
+  },
+  "panel": {
+    "title": "Simulation",
+    "scenario": "Scenario",
+    "parameters": "Parameters",
+    "steps": "Steps",
+    "step": "Step {{current}} of {{total}}",
+    "results": "Results",
+    "noScenario": "Select a scenario to begin"
+  },
+  "status": {
+    "idle": "Idle",
+    "running": "Running",
+    "completed": "Completed",
+    "error": "Error"
+  }
+}

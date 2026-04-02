@@ -1,0 +1,19 @@
+{
+  "title": "ERC Explorer",
+  "subtitle": "Interactive guide to Ethereum standards & protocols",
+  "description": "Explore and understand Ethereum Request for Comments (ERC) standards through interactive visualizations, live simulations, and clear explanations. From fungible tokens to cross-chain protocols, ERC Explorer makes on-chain standards approachable for developers and learners alike.",
+  "getStarted": "Get Started",
+  "features": {
+    "visualization": "Visual Flow Diagrams",
+    "visualizationDesc": "Understand complex contract interactions through clear, interactive flow diagrams that illustrate how each standard works under the hood.",
+    "simulation": "Live Simulations",
+    "simulationDesc": "Step through real transactions and function calls in a sandboxed environment. Observe state changes and events as they happen.",
+    "multilingual": "Multilingual Support",
+    "multilingualDesc": "Available in English, Simplified Chinese, Traditional Chinese, Japanese, Korean, and Spanish — making Ethereum standards accessible worldwide."
+  },
+  "stats": {
+    "standards": "22 ERC Standards",
+    "protocols": "13 Protocols",
+    "simulations": "Interactive Simulations"
+  }
+}
