@@ -53,6 +53,8 @@ interface FlowCanvasInnerProps {
   layoutEdges: Edge[];
   isLayouting: boolean;
   description: string;
+  highlightedNodes?: string[];
+  highlightedEdges?: string[];
 }
 
 function FlowCanvasInner({
@@ -60,6 +62,8 @@ function FlowCanvasInner({
   layoutEdges,
   isLayouting,
   description,
+  highlightedNodes = [],
+  highlightedEdges = [],
 }: FlowCanvasInnerProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>(layoutNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(layoutEdges);
@@ -76,6 +80,28 @@ function FlowCanvasInner({
       });
     }
   }, [isLayouting, layoutNodes, layoutEdges, setNodes, setEdges, fitView]);
+
+  // Apply simulation highlights to nodes and edges
+  useEffect(() => {
+    setNodes((nds) =>
+      nds.map((n) => ({
+        ...n,
+        data: {
+          ...n.data,
+          highlighted: highlightedNodes.includes(n.id),
+        },
+      })),
+    );
+    setEdges((eds) =>
+      eds.map((e) => ({
+        ...e,
+        data: {
+          ...e.data,
+          highlighted: highlightedEdges.includes(e.id),
+        },
+      })),
+    );
+  }, [highlightedNodes, highlightedEdges, setNodes, setEdges]);
 
   return (
     <div
@@ -195,6 +221,10 @@ export interface FlowCanvasProps {
   elkLayoutOptions?: Record<string, string>;
   /** Accessible description of what the diagram shows */
   description?: string;
+  /** Node IDs to highlight during simulation */
+  highlightedNodes?: string[];
+  /** Edge IDs to highlight during simulation */
+  highlightedEdges?: string[];
 }
 
 export default function FlowCanvas({
@@ -202,6 +232,8 @@ export default function FlowCanvas({
   flowEdges,
   elkLayoutOptions,
   description = 'Smart contract interaction flow diagram',
+  highlightedNodes,
+  highlightedEdges,
 }: FlowCanvasProps) {
   const { nodes, edges, isLayouting } = useElkLayout(
     flowNodes,
@@ -216,6 +248,8 @@ export default function FlowCanvas({
         layoutEdges={edges}
         isLayouting={isLayouting}
         description={description}
+        highlightedNodes={highlightedNodes}
+        highlightedEdges={highlightedEdges}
       />
     </ReactFlowProvider>
   );

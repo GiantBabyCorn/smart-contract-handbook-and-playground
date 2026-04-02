@@ -157,8 +157,11 @@ export default function SimulationPanel({
 
   const activeScenario = scenarios.find((s) => s.id === activeScenarioId) ?? null;
   const totalSteps = activeScenario?.steps.length ?? 0;
-  const currentStepData = activeScenario?.steps[currentStep] ?? null;
-  const progressPct = totalSteps > 0 ? ((currentStep + 1) / totalSteps) * 100 : 0;
+  // currentStep can be -1 when scenario is loaded but not yet started
+  const displayStep = Math.max(0, currentStep);
+  const hasStarted = currentStep >= 0;
+  const currentStepData = hasStarted ? (activeScenario?.steps[displayStep] ?? null) : null;
+  const progressPct = hasStarted && totalSteps > 0 ? ((displayStep + 1) / totalSteps) * 100 : 0;
 
   const handleParamChange = useCallback(
     (id: string, val: string) => {
@@ -261,7 +264,9 @@ export default function SimulationPanel({
               {/* Progress info */}
               <div className="flex items-center justify-between gap-2">
                 <span className="text-[11px] text-[var(--erc-color-text-secondary)]">
-                  {t('panel.step', { current: currentStep + 1, total: totalSteps })}
+                  {hasStarted
+                    ? t('panel.step', { current: displayStep + 1, total: totalSteps })
+                    : t('panel.step', { current: 0, total: totalSteps })}
                 </span>
                 {currentStepData && (
                   <span
@@ -276,10 +281,10 @@ export default function SimulationPanel({
               {/* Progress bar */}
               <div
                 role="progressbar"
-                aria-valuenow={currentStep + 1}
-                aria-valuemin={1}
+                aria-valuenow={hasStarted ? displayStep + 1 : 0}
+                aria-valuemin={0}
                 aria-valuemax={totalSteps}
-                aria-label={`Simulation progress: step ${currentStep + 1} of ${totalSteps}`}
+                aria-label={`Simulation progress: step ${hasStarted ? displayStep + 1 : 0} of ${totalSteps}`}
                 className="h-1 rounded-full bg-[var(--erc-color-border)] overflow-hidden"
               >
                 <div
@@ -296,10 +301,11 @@ export default function SimulationPanel({
                       key={i}
                       className="w-1.5 h-1.5 rounded-full transition-colors duration-200"
                       style={{
-                        background:
-                          i < currentStep
+                        background: !hasStarted
+                          ? 'var(--erc-color-sim-pending)'
+                          : i < displayStep
                             ? 'var(--erc-color-sim-completed)'
-                            : i === currentStep
+                            : i === displayStep
                               ? 'var(--erc-color-sim-active)'
                               : 'var(--erc-color-sim-pending)',
                       }}
@@ -310,7 +316,7 @@ export default function SimulationPanel({
 
               {/* Buttons row */}
               <div className="flex items-center gap-1.5">
-                <ControlButton onClick={onStepBack} disabled={currentStep === 0 || isPlaying} ariaLabel={t('controls.stepBack')}>
+                <ControlButton onClick={onStepBack} disabled={!hasStarted || displayStep === 0 || isPlaying} ariaLabel={t('controls.stepBack')}>
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                     <path d="M9 2L4 6l5 4V2z" fill="currentColor" />
                     <line x1="2" y1="2" x2="2" y2="10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -332,7 +338,7 @@ export default function SimulationPanel({
                   </ControlButton>
                 )}
 
-                <ControlButton onClick={onStepForward} disabled={currentStep >= totalSteps - 1 || isPlaying} ariaLabel={t('controls.stepForward')}>
+                <ControlButton onClick={onStepForward} disabled={(!hasStarted && totalSteps === 0) || (hasStarted && displayStep >= totalSteps - 1) || isPlaying} ariaLabel={t('controls.stepForward')}>
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                     <path d="M3 2l5 4-5 4V2z" fill="currentColor" />
                     <line x1="10" y1="2" x2="10" y2="10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -357,7 +363,7 @@ export default function SimulationPanel({
                 style={{
                   background: isPlaying
                     ? 'var(--erc-color-sim-active)'
-                    : currentStep >= totalSteps - 1 && totalSteps > 0
+                    : hasStarted && displayStep >= totalSteps - 1 && totalSteps > 0
                       ? 'var(--erc-color-sim-completed)'
                       : 'var(--erc-color-sim-pending)',
                 }}
@@ -366,7 +372,7 @@ export default function SimulationPanel({
               <span className="text-[11px] text-[var(--erc-color-text-muted)]">
                 {isPlaying
                   ? t('status.running')
-                  : currentStep >= totalSteps - 1 && totalSteps > 0
+                  : hasStarted && displayStep >= totalSteps - 1 && totalSteps > 0
                     ? t('status.completed')
                     : t('status.idle')}
               </span>

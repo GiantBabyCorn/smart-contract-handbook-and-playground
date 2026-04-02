@@ -16,7 +16,8 @@ interface TokenFlowNodeData {
  * arrow reinforces the directional "flow" metaphor.
  */
 function TokenFlowNode({ data, selected }: NodeProps) {
-  const { label, symbol, amount } = data as TokenFlowNodeData;
+  const { label, symbol, amount, highlighted } = data as TokenFlowNodeData & { highlighted?: boolean };
+  const isHighlighted = highlighted === true;
 
   return (
     <div
@@ -25,15 +26,17 @@ function TokenFlowNode({ data, selected }: NodeProps) {
         minWidth: 160,
         background: 'var(--erc-color-node-bg)',
         border: `1.5px solid ${
-          selected ? 'var(--erc-color-category-token)' : 'var(--erc-color-node-border)'
+          isHighlighted ? 'var(--erc-color-category-token)' : selected ? 'var(--erc-color-category-token)' : 'var(--erc-color-node-border)'
         }`,
         borderRadius: '0.5rem',
-        boxShadow: selected
-          ? '0 0 0 2px var(--erc-color-category-token)'
-          : '0 2px 8px rgba(0,0,0,0.35)',
+        boxShadow: isHighlighted
+          ? '0 0 12px 2px var(--erc-color-category-token), 0 0 0 2px var(--erc-color-category-token)'
+          : selected
+            ? '0 0 0 2px var(--erc-color-category-token)'
+            : '0 2px 8px rgba(0,0,0,0.35)',
         fontFamily: 'var(--erc-font-body)',
         overflow: 'hidden',
-        transition: 'border-color 0.15s, box-shadow 0.15s',
+        transition: 'border-color 0.2s, box-shadow 0.2s',
       }}
     >
       {/* Coloured left border stripe to hint at flow direction */}

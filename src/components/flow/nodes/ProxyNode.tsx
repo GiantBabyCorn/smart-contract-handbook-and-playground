@@ -15,7 +15,8 @@ interface ProxyNodeData {
  * to visually communicate the delegation / indirection pattern.
  */
 function ProxyNode({ data, selected }: NodeProps) {
-  const { label, implementation } = data as ProxyNodeData;
+  const { label, implementation, highlighted } = data as ProxyNodeData & { highlighted?: boolean };
+  const isHighlighted = highlighted === true;
 
   const shortImpl =
     implementation && implementation.length > 12
@@ -30,15 +31,17 @@ function ProxyNode({ data, selected }: NodeProps) {
         background: 'var(--erc-color-node-bg)',
         // Dashed border is the primary visual signal for delegation
         border: `1.5px dashed ${
-          selected ? 'var(--erc-color-category-proxy)' : 'var(--erc-color-node-border)'
+          isHighlighted ? 'var(--erc-color-category-proxy)' : selected ? 'var(--erc-color-category-proxy)' : 'var(--erc-color-node-border)'
         }`,
         borderRadius: '0.5rem',
-        boxShadow: selected
-          ? '0 0 0 2px var(--erc-color-category-proxy)'
-          : '0 2px 8px rgba(0,0,0,0.35)',
+        boxShadow: isHighlighted
+          ? '0 0 12px 2px var(--erc-color-category-proxy), 0 0 0 2px var(--erc-color-category-proxy)'
+          : selected
+            ? '0 0 0 2px var(--erc-color-category-proxy)'
+            : '0 2px 8px rgba(0,0,0,0.35)',
         fontFamily: 'var(--erc-font-body)',
         overflow: 'hidden',
-        transition: 'border-color 0.15s, box-shadow 0.15s',
+        transition: 'border-color 0.2s, box-shadow 0.2s',
       }}
     >
       {/* Header */}

@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/utils/cn';
 import type { ERCMeta } from '@/data/types';
 
@@ -23,11 +24,15 @@ const CATEGORY_BADGE_COLORS: Record<string, string> = {
 };
 
 export default function SidebarMenuItem({ item, onNavigate }: SidebarMenuItemProps) {
+  const { t } = useTranslation(item.slug);
+  const shortDesc = t('short', { defaultValue: '' });
+
   return (
     <NavLink
       to={`/${item.slug}`}
       onClick={onNavigate}
-      aria-label={item.name}
+      aria-label={`${item.name}${shortDesc ? ` — ${shortDesc}` : ''}`}
+      title={shortDesc || item.name}
       className={({ isActive }) =>
         cn(
           'group flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-left',
@@ -43,16 +48,23 @@ export default function SidebarMenuItem({ item, onNavigate }: SidebarMenuItemPro
       <span
         aria-hidden="true"
         className={cn(
-          'shrink-0 w-1.5 h-1.5 rounded-full mt-px',
+          'shrink-0 w-1.5 h-1.5 rounded-full mt-1',
           item.entryType === 'standard'
             ? 'bg-[var(--erc-color-accent)]'
             : 'bg-[var(--erc-color-category-defi)]',
         )}
       />
 
-      {/* Name */}
-      <span className="flex-1 text-sm font-medium leading-snug truncate">
-        {item.name}
+      {/* Name + short description */}
+      <span className="flex-1 min-w-0 flex flex-col">
+        <span className="text-sm font-medium leading-snug truncate">
+          {item.name}
+        </span>
+        {shortDesc && (
+          <span className="text-[11px] leading-tight text-[var(--erc-color-text-muted)] truncate">
+            {shortDesc}
+          </span>
+        )}
       </span>
 
       {/* Optional badge for entryType */}

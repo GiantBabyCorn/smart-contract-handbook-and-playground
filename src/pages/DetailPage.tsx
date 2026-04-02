@@ -10,6 +10,7 @@ import ExternalLink from '@/components/common/ExternalLink';
 import SkeletonBlock from '@/components/common/SkeletonBlock';
 import { cn } from '@/utils/cn';
 import { useSimulation } from '@/features/simulation/useSimulation';
+import { useLazySection } from '@/hooks/useLazySection';
 import NotFoundPage from './NotFoundPage';
 
 // Lazy-load heavy components
@@ -153,7 +154,21 @@ function FunctionCard({ fn, tFn }: { fn: ContractFunction; tFn: (key: string) =>
 // Section wrapper
 // ---------------------------------------------------------------------------
 
-function Section({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
+function Section({
+  id,
+  title,
+  children,
+  collapsible = false,
+  defaultExpanded = true,
+}: {
+  id?: string;
+  title: string;
+  children: React.ReactNode;
+  collapsible?: boolean;
+  defaultExpanded?: boolean;
+}) {
+  const [expanded, setExpanded] = useState(defaultExpanded);
+
   return (
     <motion.section
       id={id}
@@ -167,16 +182,83 @@ function Section({ id, title, children }: { id?: string; title: string; children
         'overflow-hidden',
       )}
     >
-      <div className="px-5 py-4 border-b border-[var(--erc-color-border)]">
+      <div
+        className={cn(
+          'px-5 py-4 flex items-center justify-between gap-2',
+          (expanded || !collapsible) && 'border-b border-[var(--erc-color-border)]',
+          collapsible && 'cursor-pointer hover:bg-[var(--erc-color-bg-tertiary)] transition-colors select-none',
+        )}
+        onClick={collapsible ? () => setExpanded((v) => !v) : undefined}
+        role={collapsible ? 'button' : undefined}
+        aria-expanded={collapsible ? expanded : undefined}
+        tabIndex={collapsible ? 0 : undefined}
+        onKeyDown={collapsible ? (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setExpanded((v) => !v);
+          }
+        } : undefined}
+      >
         <h2
           id={id ? `${id}-heading` : undefined}
           className="text-base font-semibold text-[var(--erc-color-text-primary)]"
         >
           {title}
         </h2>
+        {collapsible && (
+          <span
+            className={cn(
+              'shrink-0 text-[var(--erc-color-text-muted)] transition-transform duration-200',
+              !expanded && '-rotate-90',
+            )}
+            aria-hidden="true"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </span>
+        )}
       </div>
-      <div className="p-5">{children}</div>
+      {(!collapsible || expanded) && (
+        <motion.div
+          initial={collapsible ? { opacity: 0, height: 0 } : false}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.2 }}
+          className="p-5"
+        >
+          {children}
+        </motion.div>
+      )}
     </motion.section>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Lazy-rendered section — only mounts children when scrolled near viewport
+// ---------------------------------------------------------------------------
+
+function LazySection({
+  children,
+  height = 120,
+}: {
+  children: React.ReactNode;
+  /** Placeholder height in pixels while waiting to enter viewport */
+  height?: number;
+}) {
+  const { ref, isVisible } = useLazySection('300px');
+
+  return (
+    <div ref={ref}>
+      {isVisible ? (
+        children
+      ) : (
+        <div
+          className="rounded-2xl border border-[var(--erc-color-border)] bg-[var(--erc-color-bg-secondary)] animate-pulse"
+          style={{ height }}
+        />
+      )}
+    </div>
   );
 }
 
@@ -318,79 +400,89 @@ function EntryContent({ entry }: { entry: ERCEntry }) {
           {/* Main column */}
           <div className="lg:col-span-2 flex flex-col gap-5">
             {/* Introduction */}
-            <Section id="introduction" title="Introduction">
+            <Section id="introduction" title="Introduction" collapsible defaultExpanded>
               <p className="text-sm text-[var(--erc-color-text-secondary)] leading-relaxed whitespace-pre-line">
                 {tEntry('introduction', { defaultValue: entry.introduction })}
               </p>
             </Section>
 
             {/* Design Purpose */}
-            <Section id="design-purpose" title="Design Purpose">
-              <p className="text-sm text-[var(--erc-color-text-secondary)] leading-relaxed whitespace-pre-line">
-                {tEntry('designPurpose', { defaultValue: entry.designPurpose })}
-              </p>
-            </Section>
+            <LazySection height={100}>
+              <Section id="design-purpose" title="Design Purpose" collapsible defaultExpanded>
+                <p className="text-sm text-[var(--erc-color-text-secondary)] leading-relaxed whitespace-pre-line">
+                  {tEntry('designPurpose', { defaultValue: entry.designPurpose })}
+                </p>
+              </Section>
+            </LazySection>
 
             {/* Common Usage */}
-            <Section id="common-usage" title="Common Usage">
-              <p className="text-sm text-[var(--erc-color-text-secondary)] leading-relaxed whitespace-pre-line">
-                {tEntry('commonUsage', { defaultValue: entry.commonUsage })}
-              </p>
-            </Section>
+            <LazySection height={100}>
+              <Section id="common-usage" title="Common Usage" collapsible defaultExpanded>
+                <p className="text-sm text-[var(--erc-color-text-secondary)] leading-relaxed whitespace-pre-line">
+                  {tEntry('commonUsage', { defaultValue: entry.commonUsage })}
+                </p>
+              </Section>
+            </LazySection>
 
             {/* Flow diagram */}
             {entry.flowNodes.length > 0 && (
-              <motion.section
-                id="flow-diagram"
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
-                aria-labelledby="flow-diagram-heading"
-                className={cn(
-                  'rounded-2xl border border-[var(--erc-color-border)]',
-                  'bg-[var(--erc-color-bg-secondary)]',
-                  'overflow-hidden',
-                )}
-              >
-                <div className="px-5 py-4 border-b border-[var(--erc-color-border)]">
-                  <h2 id="flow-diagram-heading" className="text-base font-semibold text-[var(--erc-color-text-primary)]">
-                    Interaction Flow
-                  </h2>
-                  <p className="text-xs text-[var(--erc-color-text-muted)] mt-0.5">
-                    {tCommon('a11y.flowDiagram')}
-                  </p>
-                </div>
-                <div className="h-[400px] sm:h-[500px]" aria-label={tCommon('a11y.flowDiagram')}>
-                  <Suspense
-                    fallback={
-                      <div className="flex h-full items-center justify-center">
-                        <div className="animate-spin w-8 h-8 border-2 border-[var(--erc-color-border)] border-t-[var(--erc-color-accent)] rounded-full" aria-label="Loading flow diagram" />
-                      </div>
-                    }
-                  >
-                    <FlowCanvas
-                      flowNodes={entry.flowNodes}
-                      flowEdges={entry.flowEdges}
-                      elkLayoutOptions={entry.elkLayoutOptions}
-                    />
-                  </Suspense>
-                </div>
-              </motion.section>
+              <LazySection height={500}>
+                <motion.section
+                  id="flow-diagram"
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.1 }}
+                  aria-labelledby="flow-diagram-heading"
+                  className={cn(
+                    'rounded-2xl border border-[var(--erc-color-border)]',
+                    'bg-[var(--erc-color-bg-secondary)]',
+                    'overflow-hidden',
+                  )}
+                >
+                  <div className="px-5 py-4 border-b border-[var(--erc-color-border)]">
+                    <h2 id="flow-diagram-heading" className="text-base font-semibold text-[var(--erc-color-text-primary)]">
+                      Interaction Flow
+                    </h2>
+                    <p className="text-xs text-[var(--erc-color-text-muted)] mt-0.5">
+                      {tCommon('a11y.flowDiagram')}
+                    </p>
+                  </div>
+                  <div className="h-[400px] sm:h-[500px]" aria-label={tCommon('a11y.flowDiagram')}>
+                    <Suspense
+                      fallback={
+                        <div className="flex h-full items-center justify-center">
+                          <div className="animate-spin w-8 h-8 border-2 border-[var(--erc-color-border)] border-t-[var(--erc-color-accent)] rounded-full" aria-label="Loading flow diagram" />
+                        </div>
+                      }
+                    >
+                      <FlowCanvas
+                        flowNodes={entry.flowNodes}
+                        flowEdges={entry.flowEdges}
+                        elkLayoutOptions={entry.elkLayoutOptions}
+                        highlightedNodes={sim.highlightedNodes}
+                        highlightedEdges={sim.highlightedEdges}
+                      />
+                    </Suspense>
+                  </div>
+                </motion.section>
+              </LazySection>
             )}
 
             {/* Functions list */}
             {entry.functions.length > 0 && (
-              <Section id="functions" title={`Functions & Events (${entry.functions.length})`}>
-                <div className="flex flex-col gap-2">
-                  {entry.functions.map((fn) => (
-                    <FunctionCard
-                      key={fn.signature}
-                      fn={fn}
-                      tFn={(key) => tEntry(key, { defaultValue: key })}
-                    />
-                  ))}
-                </div>
-              </Section>
+              <LazySection height={200}>
+                <Section id="functions" title={`Functions & Events (${entry.functions.length})`}>
+                  <div className="flex flex-col gap-2">
+                    {entry.functions.map((fn) => (
+                      <FunctionCard
+                        key={fn.signature}
+                        fn={fn}
+                        tFn={(key) => tEntry(key, { defaultValue: key })}
+                      />
+                    ))}
+                  </div>
+                </Section>
+              </LazySection>
             )}
           </div>
 
@@ -428,7 +520,7 @@ function EntryContent({ entry }: { entry: ERCEntry }) {
                   <SimulationPanel
                     scenarios={entry.simulations}
                     activeScenarioId={sim.scenario?.id ?? null}
-                    currentStep={Math.max(0, sim.currentStepIndex)}
+                    currentStep={sim.currentStepIndex}
                     isPlaying={sim.isPlaying}
                     paramValues={sim.params}
                     onScenarioChange={(id) => {

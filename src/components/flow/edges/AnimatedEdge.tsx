@@ -41,8 +41,11 @@ function AnimatedEdge({
   targetPosition,
   selected,
   markerEnd,
+  data,
 }: EdgeProps) {
   ensureKeyframes();
+
+  const isHighlighted = (data as { highlighted?: boolean } | undefined)?.highlighted === true;
 
   const [edgePath] = getSmoothStepPath({
     sourceX,
@@ -54,7 +57,7 @@ function AnimatedEdge({
     borderRadius: 8,
   });
 
-  const color = selected
+  const color = isHighlighted || selected
     ? 'var(--erc-color-accent-hover)'
     : 'var(--erc-color-edge-animated)';
 
@@ -79,7 +82,7 @@ function AnimatedEdge({
         d={edgePath}
         fill="none"
         stroke={color}
-        strokeWidth={selected ? 2.5 : 2}
+        strokeWidth={isHighlighted ? 3 : selected ? 2.5 : 2}
         strokeDasharray="8 8"
         strokeLinecap="round"
         style={{

@@ -16,7 +16,8 @@ interface UserNodeData {
  * inline SVG person icon. Optionally shows a truncated address and ETH balance.
  */
 function UserNode({ data, selected }: NodeProps) {
-  const { label, address, balance } = data as UserNodeData;
+  const { label, address, balance, highlighted } = data as UserNodeData & { highlighted?: boolean };
+  const isHighlighted = highlighted === true;
 
   // Shorten 0x address for display: 0x1234…abcd
   const shortAddress =
@@ -31,15 +32,17 @@ function UserNode({ data, selected }: NodeProps) {
         minWidth: 150,
         background: 'var(--erc-color-node-bg)',
         border: `1.5px solid ${
-          selected ? 'var(--erc-color-category-account)' : 'var(--erc-color-node-border)'
+          isHighlighted ? 'var(--erc-color-category-account)' : selected ? 'var(--erc-color-category-account)' : 'var(--erc-color-node-border)'
         }`,
         borderRadius: '0.75rem',
-        boxShadow: selected
-          ? '0 0 0 2px var(--erc-color-category-account)'
-          : '0 2px 8px rgba(0,0,0,0.35)',
+        boxShadow: isHighlighted
+          ? '0 0 12px 2px var(--erc-color-category-account), 0 0 0 2px var(--erc-color-category-account)'
+          : selected
+            ? '0 0 0 2px var(--erc-color-category-account)'
+            : '0 2px 8px rgba(0,0,0,0.35)',
         fontFamily: 'var(--erc-font-body)',
         overflow: 'hidden',
-        transition: 'border-color 0.15s, box-shadow 0.15s',
+        transition: 'border-color 0.2s, box-shadow 0.2s',
       }}
     >
       {/* Body */}
