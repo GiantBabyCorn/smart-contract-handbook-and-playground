@@ -1,0 +1,83 @@
+{
+  "short": "Fungible Token Standard",
+  "introduction": "ERC-20 is the foundational token standard on Ethereum, defining a common interface for fungible tokens. It was proposed by Fabian Vogelsteller in November 2015 and has become the most widely adopted token standard in the ecosystem. Every ERC-20 token is identical and interchangeable, much like how one dollar bill is equivalent to any other dollar bill. The standard specifies six core functions and two events that enable tokens to be transferred, approved for spending by third parties, and queried for balances.",
+  "designPurpose": "ERC-20 was designed to create a unified interface that allows any fungible token to be handled by wallets, exchanges, and other smart contracts in a consistent way. Before ERC-20, each token contract had its own custom API, making integration painful and error-prone. By standardizing the interface, ERC-20 enabled the explosion of the token ecosystem and DeFi applications that rely on composable token interactions.",
+  "commonUsage": "ERC-20 tokens are used for cryptocurrencies, stablecoins (USDC, DAI, USDT), governance tokens, utility tokens, and wrapped assets. They serve as the building blocks for decentralized exchanges, lending protocols, yield farming, and virtually every DeFi application. The standard is also commonly extended with features like minting, burning, and permit-based approvals (ERC-2612).",
+
+  "fn.totalSupply.desc": "Returns the total number of tokens in existence. This value represents all tokens that have been minted minus any that have been burned.",
+  "fn.totalSupply.returns.supply": "The total supply of the token, expressed in the smallest unit (e.g., wei for 18-decimal tokens).",
+
+  "fn.balanceOf.desc": "Returns the token balance of a specific account. This queries the internal _balances mapping to retrieve how many tokens the given address holds.",
+  "fn.balanceOf.params.account": "The address to query the balance of.",
+  "fn.balanceOf.returns.balance": "The number of tokens held by the account, in the smallest unit.",
+
+  "fn.transfer.desc": "Moves tokens from the caller's account to the recipient. The caller must have a sufficient balance. Emits a Transfer event on success.",
+  "fn.transfer.params.to": "The address of the recipient who will receive the tokens.",
+  "fn.transfer.params.amount": "The number of tokens to transfer, in the smallest unit.",
+  "fn.transfer.returns.success": "Returns true if the transfer succeeded, reverts otherwise.",
+
+  "fn.approve.desc": "Sets the allowance that a spender is permitted to transfer from the caller's account. Replaces any existing allowance. Emits an Approval event.",
+  "fn.approve.params.spender": "The address authorized to spend tokens on behalf of the caller.",
+  "fn.approve.params.amount": "The maximum number of tokens the spender is allowed to transfer.",
+  "fn.approve.returns.success": "Returns true if the approval succeeded.",
+
+  "fn.allowance.desc": "Returns the remaining number of tokens that the spender is allowed to transfer on behalf of the owner. This value decreases when transferFrom is called.",
+  "fn.allowance.params.owner": "The address that owns the tokens.",
+  "fn.allowance.params.spender": "The address authorized to spend the owner's tokens.",
+  "fn.allowance.returns.remaining": "The remaining allowance for the spender.",
+
+  "fn.transferFrom.desc": "Moves tokens from one account to another using the allowance mechanism. The caller must have been approved by the 'from' address for at least the transfer amount. Decrements the allowance accordingly.",
+  "fn.transferFrom.params.from": "The address to transfer tokens from.",
+  "fn.transferFrom.params.to": "The address to transfer tokens to.",
+  "fn.transferFrom.params.amount": "The number of tokens to transfer.",
+  "fn.transferFrom.returns.success": "Returns true if the transfer succeeded.",
+
+  "fn.Transfer.desc": "Emitted when tokens are moved from one account to another, including zero-value transfers. Also emitted on minting (from = address(0)) and burning (to = address(0)).",
+  "fn.Transfer.params.from": "The address tokens are transferred from.",
+  "fn.Transfer.params.to": "The address tokens are transferred to.",
+  "fn.Transfer.params.value": "The number of tokens transferred.",
+
+  "fn.Approval.desc": "Emitted when the allowance of a spender for an owner is set by a call to approve. The value is the new allowance.",
+  "fn.Approval.params.owner": "The address that approved the spending.",
+  "fn.Approval.params.spender": "The address that is approved to spend.",
+  "fn.Approval.params.value": "The new allowance amount.",
+
+  "node.user": "Token Holder",
+  "node.contract": "ERC-20 Contract",
+  "node.recipient": "Recipient",
+  "node.spender": "Approved Spender",
+  "node.storageBalances": "Token Storage",
+  "node.tokenFlow": "Token Transfer",
+
+  "edge.callTransfer": "Call transfer()",
+  "edge.updateBalance": "Update balances",
+  "edge.tokensMove": "Tokens moved",
+  "edge.callApprove": "Call approve()",
+  "edge.allowanceGranted": "Allowance granted",
+  "edge.callTransferFrom": "Call transferFrom()",
+  "edge.emitTransfer": "Emit Transfer event",
+
+  "sim.basicTransfer.name": "Basic Token Transfer",
+  "sim.basicTransfer.desc": "Transfer ERC-20 tokens directly from one address to another using the transfer() function.",
+  "sim.basicTransfer.param.sender": "Sender address",
+  "sim.basicTransfer.param.recipient": "Recipient address",
+  "sim.basicTransfer.param.amount": "Amount (in wei)",
+  "sim.basicTransfer.step.call": "The sender calls transfer(to, amount) on the ERC-20 contract, initiating a direct token transfer.",
+  "sim.basicTransfer.step.call.mobile": "Sender calls transfer()",
+  "sim.basicTransfer.step.validate": "The contract validates the sender has sufficient balance, then updates the _balances mapping: decrements sender and increments recipient.",
+  "sim.basicTransfer.step.validate.mobile": "Validate & update balances",
+  "sim.basicTransfer.step.tokenflow": "Tokens are moved from the sender's balance to the recipient's balance. The recipient now holds the transferred amount.",
+  "sim.basicTransfer.step.tokenflow.mobile": "Tokens delivered",
+  "sim.basicTransfer.step.event": "The contract emits a Transfer(from, to, value) event, allowing off-chain services to track the transfer.",
+  "sim.basicTransfer.step.event.mobile": "Emit Transfer event",
+
+  "sim.approveAndTransfer.name": "Approve & TransferFrom",
+  "sim.approveAndTransfer.desc": "Demonstrate the two-step approve + transferFrom pattern used by DEXes and DeFi protocols to spend tokens on behalf of a user.",
+  "sim.approveAndTransfer.param.owner": "Token owner",
+  "sim.approveAndTransfer.param.spender": "Approved spender",
+  "sim.approveAndTransfer.param.allowanceAmount": "Allowance amount (in wei)",
+  "sim.approveAndTransfer.step.approve": "The token owner calls approve(spender, amount) to authorize the spender to transfer up to the specified amount.",
+  "sim.approveAndTransfer.step.storageAllowance": "The contract stores the allowance in the _allowances mapping: _allowances[owner][spender] = amount.",
+  "sim.approveAndTransfer.step.grant": "The spender is now authorized. They can call transferFrom at any time to move tokens from the owner's balance.",
+  "sim.approveAndTransfer.step.transferFrom": "The spender calls transferFrom(owner, recipient, amount). The contract checks the allowance, deducts the amount, and moves tokens to the recipient."
+}

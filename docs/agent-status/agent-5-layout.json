@@ -1,0 +1,26 @@
+{
+  "agent": "agent-5-layout",
+  "status": "completed",
+  "timestamp": "2026-04-02T01:00:00Z",
+  "outputFiles": [
+    "src/layouts/MainLayout.tsx",
+    "src/pages/Home.tsx",
+    "src/pages/ErcDetail.tsx",
+    "src/pages/ProtocolDetail.tsx",
+    "src/pages/Simulator.tsx",
+    "src/pages/NotFound.tsx",
+    "src/router.tsx",
+    "src/App.tsx",
+    "src/main.tsx",
+    "src/utils/navigation.ts",
+    "src/utils/url.ts"
+  ],
+  "pendingFiles": [],
+  "validationResults": {
+    "tscCompile": true,
+    "validateRegistry": true,
+    "lintI18nKeys": true
+  },
+  "knownIssues": [],
+  "notes": ""
+}

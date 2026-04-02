@@ -1,0 +1,1 @@
+# ADR 002: Web Worker over WebAssembly

@@ -1,0 +1,70 @@
+{
+  "short": "Diamond Standard (Multi-Facet Proxy)",
+  "introduction": "ERC-2535, known as the Diamond Standard, defines a multi-facet proxy architecture where a single proxy contract can delegate calls to multiple implementation contracts (called facets) based on function selectors. Unlike traditional proxies that point to a single implementation, a Diamond maps each function selector to a different facet address. This enables contracts to exceed the 24KB size limit and provides granular upgradeability at the function level.",
+  "designPurpose": "ERC-2535 was designed to solve several limitations of single-implementation proxies. It eliminates the 24KB contract size limit by splitting logic across multiple facets, enables adding or replacing individual functions without redeploying the entire implementation, and provides a standardized introspection mechanism (DiamondLoupe) for discovering which facets and functions a Diamond supports. It also allows sharing facets across multiple Diamonds.",
+  "commonUsage": "ERC-2535 is used by complex protocols that need modular, upgradeable architectures such as Aavegotchi, Beanstalk, and various DeFi systems. It is particularly useful when a project needs to frequently add new features, has logic that exceeds the contract size limit, or wants to share common functionality across multiple proxy contracts. The standard includes DiamondCut for upgrades and DiamondLoupe for introspection.",
+
+  "fn.diamondCut.desc": "Adds, replaces, or removes functions from the Diamond by updating the selector-to-facet mapping. Can optionally execute an initialization function call after the cut.",
+  "fn.diamondCut.params.diamondCut": "Array of FacetCut structs, each containing a facet address, action (Add/Replace/Remove), and array of function selectors.",
+  "fn.diamondCut.params.init": "Address of the contract to delegatecall for initialization after the cut. Use address(0) for no initialization.",
+  "fn.diamondCut.params.calldata": "Encoded function call to execute on the init address after applying the diamond cut.",
+
+  "fn.facets.desc": "Returns all facet addresses and their associated function selectors. Part of the DiamondLoupe interface for introspection.",
+  "fn.facets.returns.facets": "Array of Facet structs, each containing a facet address and its registered function selectors.",
+
+  "fn.facetFunctionSelectors.desc": "Returns all function selectors registered for a specific facet address.",
+  "fn.facetFunctionSelectors.params.facet": "The facet address to query selectors for.",
+  "fn.facetFunctionSelectors.returns.selectors": "Array of bytes4 function selectors associated with the facet.",
+
+  "fn.facetAddresses.desc": "Returns all facet addresses that have at least one registered function selector.",
+  "fn.facetAddresses.returns.addresses": "Array of all active facet addresses.",
+
+  "fn.facetAddress.desc": "Returns the facet address that handles a specific function selector.",
+  "fn.facetAddress.params.selector": "The 4-byte function selector to look up.",
+  "fn.facetAddress.returns.facet": "The address of the facet that implements the given function selector.",
+
+  "fn.DiamondCut.desc": "Emitted when a diamondCut operation modifies the Diamond's function selectors and facet mappings.",
+  "fn.DiamondCut.params.diamondCut": "Array of FacetCut structs describing the changes made.",
+  "fn.DiamondCut.params.init": "The initialization contract address used after the cut.",
+  "fn.DiamondCut.params.calldata": "The calldata passed to the init contract.",
+
+  "node.user": "User / Caller",
+  "node.diamondProxy": "Diamond Proxy",
+  "node.facetA": "Facet A (Token)",
+  "node.facetB": "Facet B (Staking)",
+  "node.facetC": "Facet C (Governance)",
+  "node.diamondStorage": "Diamond Storage",
+  "node.diamondCutFacet": "DiamondCut Facet",
+
+  "edge.callWithSelector": "Call with function selector",
+  "edge.lookupSelector": "Lookup selector → facet",
+  "edge.delegateToFacetA": "delegatecall to Facet A",
+  "edge.delegateToFacetB": "delegatecall to Facet B",
+  "edge.delegateToFacetC": "delegatecall to Facet C",
+  "edge.callDiamondCut": "Call diamondCut()",
+  "edge.updateMappings": "Update selector mappings",
+
+  "sim.functionCallRouting.name": "Function Call Routing",
+  "sim.functionCallRouting.desc": "Observe how the Diamond proxy routes function calls to different facets based on the function selector.",
+  "sim.functionCallRouting.param.caller": "Caller address",
+  "sim.functionCallRouting.param.selector": "Function selector",
+  "sim.functionCallRouting.step.call": "The user calls the Diamond proxy with a specific function selector (e.g., transfer()). The proxy's fallback function is triggered.",
+  "sim.functionCallRouting.step.call.mobile": "Call Diamond with selector",
+  "sim.functionCallRouting.step.lookup": "The Diamond looks up the function selector in its selectorToFacet mapping in Diamond Storage to find which facet handles this function.",
+  "sim.functionCallRouting.step.lookup.mobile": "Lookup facet for selector",
+  "sim.functionCallRouting.step.delegate": "The Diamond performs a delegatecall to the resolved facet. The facet code executes using the Diamond's storage context.",
+  "sim.functionCallRouting.step.delegate.mobile": "delegatecall to facet",
+
+  "sim.diamondCutAddFacet.name": "Diamond Cut: Add Facet",
+  "sim.diamondCutAddFacet.desc": "Add a new facet to the Diamond, registering new function selectors and optionally running an initialization function.",
+  "sim.diamondCutAddFacet.param.admin": "Admin / Owner",
+  "sim.diamondCutAddFacet.param.newFacet": "New facet address",
+  "sim.diamondCutAddFacet.step.prepareCut": "The admin prepares a diamondCut call with the new facet address, action type 'Add', and the array of function selectors to register.",
+  "sim.diamondCutAddFacet.step.prepareCut.mobile": "Prepare diamond cut",
+  "sim.diamondCutAddFacet.step.validateFacet": "The Diamond validates the facet has code, selectors are not already registered, and updates the selectorToFacet mapping and facetAddresses array.",
+  "sim.diamondCutAddFacet.step.validateFacet.mobile": "Validate & register facet",
+  "sim.diamondCutAddFacet.step.initCall": "If an init address is provided, the Diamond performs a delegatecall to execute the initialization function on the new facet.",
+  "sim.diamondCutAddFacet.step.initCall.mobile": "Run init function",
+  "sim.diamondCutAddFacet.step.emitEvent": "A DiamondCut event is emitted recording all changes. The new facet's functions are now accessible through the Diamond proxy.",
+  "sim.diamondCutAddFacet.step.emitEvent.mobile": "Emit DiamondCut event"
+}

@@ -1,0 +1,49 @@
+{
+  "sidebar": {
+    "search": "Search standards & protocols...",
+    "noResults": "No results found",
+    "categories": {
+      "token": "Token Standards",
+      "nft": "NFT Standards",
+      "proxy": "Proxy Patterns",
+      "defi": "DeFi Protocols",
+      "account": "Account Abstraction",
+      "utility": "Utility Standards",
+      "identity": "Identity & Auth",
+      "oracle": "Oracle Standards",
+      "governance": "Governance",
+      "crossChain": "Cross-Chain",
+      "rwa": "Real-World Assets"
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "backToHome": "Back to Home"
+  },
+  "theme": {
+    "switchToLight": "Switch to light theme",
+    "switchToDark": "Switch to dark theme"
+  },
+  "language": {
+    "label": "Language"
+  },
+  "footer": {
+    "poweredBy": "Powered by Smart Contract Handbook"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Please try reloading the page.",
+    "reload": "Reload Page",
+    "goHome": "Go to Home"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "There is nothing here, but an adorable baby corn.",
+    "goHome": "Go to Home"
+  },
+  "loading": "Loading...",
+  "a11y": {
+    "flowDiagram": "Flow diagram illustrating the interaction between contract components",
+    "simulationPanel": "Interactive simulation panel for step-by-step execution"
+  }
+}

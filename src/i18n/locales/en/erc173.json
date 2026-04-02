@@ -1,0 +1,39 @@
+{
+  "short": "Contract Ownership Standard",
+  "introduction": "ERC-173 is a simple standard interface for contract ownership. It defines a minimal API consisting of an owner() query function and a transferOwnership() function that allows the current owner to hand control to a new address. The standard also specifies an OwnershipTransferred event that must be emitted on each ownership change. This standard is the foundation for OpenZeppelin's widely-used Ownable contract.",
+  "designPurpose": "ERC-173 was designed to standardize how contracts expose and transfer ownership. Before this standard, different projects implemented ownership in incompatible ways, making it difficult for tools and interfaces to detect who controls a contract. By defining a common interface, ERC-173 enables block explorers, governance dashboards, and other tools to reliably identify contract owners.",
+  "commonUsage": "ERC-173 is used in virtually any contract that needs an admin or owner role, such as upgradeable proxies, token contracts with minting privileges, and protocol governance. It is commonly paired with access control modifiers that restrict sensitive functions to the owner address. The standard is often extended with features like two-step ownership transfer and renounce ownership.",
+
+  "fn.owner.desc": "Returns the address of the current contract owner. This is a view function that reads from storage.",
+  "fn.owner.returns.owner": "The address of the current owner of the contract.",
+
+  "fn.transferOwnership.desc": "Transfers ownership of the contract to a new address. Can only be called by the current owner. Emits an OwnershipTransferred event.",
+  "fn.transferOwnership.params.newOwner": "The address of the new owner. Setting to address(0) effectively renounces ownership.",
+
+  "fn.OwnershipTransferred.desc": "Emitted when ownership of the contract is transferred from one address to another.",
+  "fn.OwnershipTransferred.params.previousOwner": "The address of the previous owner.",
+  "fn.OwnershipTransferred.params.newOwner": "The address of the new owner.",
+
+  "node.owner": "Current Owner",
+  "node.newOwner": "New Owner",
+  "node.contract": "ERC-173 Contract",
+  "node.storage": "Ownership Storage",
+
+  "edge.callTransfer": "Call transferOwnership()",
+  "edge.updateOwner": "Update _owner",
+  "edge.ownershipGranted": "Ownership granted",
+  "edge.emitEvent": "Emit event",
+
+  "sim.transferOwnership.name": "Transfer Ownership",
+  "sim.transferOwnership.desc": "Transfer the ownership of a contract from the current owner to a new address.",
+  "sim.transferOwnership.param.currentOwner": "Current owner address",
+  "sim.transferOwnership.param.newOwner": "New owner address",
+  "sim.transferOwnership.step.call": "The current owner calls transferOwnership(newOwner) on the contract to initiate the ownership transfer.",
+  "sim.transferOwnership.step.call.mobile": "Call transferOwnership()",
+  "sim.transferOwnership.step.validate": "The contract verifies that msg.sender equals the current _owner stored in state. If not, the transaction reverts.",
+  "sim.transferOwnership.step.validate.mobile": "Validate caller is owner",
+  "sim.transferOwnership.step.updateStorage": "The contract updates the _owner storage slot from the previous owner to the new owner address.",
+  "sim.transferOwnership.step.updateStorage.mobile": "Update owner in storage",
+  "sim.transferOwnership.step.event": "The contract emits an OwnershipTransferred event and the new owner now has full control over the contract.",
+  "sim.transferOwnership.step.event.mobile": "Emit OwnershipTransferred"
+}

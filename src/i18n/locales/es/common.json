@@ -1,0 +1,49 @@
+{
+  "sidebar": {
+    "search": "Buscar estándares y protocolos...",
+    "noResults": "No se encontraron resultados",
+    "categories": {
+      "token": "Estándares de Tokens",
+      "nft": "Estándares NFT",
+      "proxy": "Patrones Proxy",
+      "defi": "Protocolos DeFi",
+      "account": "Abstracción de Cuentas",
+      "utility": "Estándares de Utilidad",
+      "identity": "Identidad y Autenticación",
+      "oracle": "Estándares de Oráculos",
+      "governance": "Gobernanza",
+      "crossChain": "Cadenas Cruzadas",
+      "rwa": "Activos del Mundo Real"
+    }
+  },
+  "nav": {
+    "home": "Inicio",
+    "backToHome": "Volver al Inicio"
+  },
+  "theme": {
+    "switchToLight": "Cambiar al tema claro",
+    "switchToDark": "Cambiar al tema oscuro"
+  },
+  "language": {
+    "label": "Idioma"
+  },
+  "footer": {
+    "poweredBy": "Impulsado por Smart Contract Handbook"
+  },
+  "error": {
+    "title": "Algo salió mal",
+    "description": "Ocurrió un error inesperado. Por favor, intente recargar la página.",
+    "reload": "Recargar página",
+    "goHome": "Ir al inicio"
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "description": "No hay nada aquí, solo un adorable maíz bebé.",
+    "goHome": "Ir al inicio"
+  },
+  "loading": "Cargando...",
+  "a11y": {
+    "flowDiagram": "Diagrama de flujo que ilustra la interacción entre los componentes del contrato",
+    "simulationPanel": "Panel de simulación interactivo para ejecución paso a paso"
+  }
+}

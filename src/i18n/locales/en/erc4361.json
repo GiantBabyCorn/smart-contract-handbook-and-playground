@@ -1,0 +1,48 @@
+{
+  "short": "Sign-In with Ethereum (SIWE)",
+  "introduction": "ERC-4361, known as Sign-In with Ethereum (SIWE), defines a standard message format and workflow for authenticating Ethereum accounts with off-chain services. Instead of relying on centralized identity providers, users sign a structured message with their wallet to prove ownership of an Ethereum address. The message includes the domain, address, nonce, chain ID, and expiration time. This enables self-custodial authentication where users control their identity.",
+  "designPurpose": "ERC-4361 was designed to provide a decentralized alternative to social login (Google, Facebook, etc.) for Web3 applications. It gives users sovereignty over their digital identity by using their existing Ethereum wallet as an authentication credential. The standard message format prevents phishing attacks through domain binding, replay attacks through nonces, and session management through expiration timestamps.",
+  "commonUsage": "SIWE is used by dApps, DAOs, and Web3 platforms for user authentication. It enables wallet-based login to dashboards, governance platforms, token-gated content, and decentralized social media. Libraries like siwe.js and Sign-In with Ethereum SDKs make integration straightforward. It is commonly combined with ERC-1271 for smart contract wallet authentication.",
+
+  "fn.constructMessage.desc": "Constructs the human-readable SIWE message from the structured message fields. The resulting string follows the ERC-4361 format with domain, address, statement, URI, nonce, and timestamps.",
+  "fn.constructMessage.params.message": "The structured SIWE message containing domain, address, statement, URI, version, chain ID, nonce, and timestamps.",
+  "fn.constructMessage.returns.messageString": "The formatted human-readable message string ready for signing.",
+
+  "fn.signMessage.desc": "Signs the SIWE message hash using the wallet's private key, producing an ECDSA signature that proves address ownership.",
+  "fn.signMessage.params.messageHash": "The keccak256 hash of the SIWE message to sign.",
+  "fn.signMessage.returns.signature": "The ECDSA signature (v, r, s) proving ownership of the signing address.",
+
+  "fn.verifySignature.desc": "Verifies a SIWE signature by recovering the signer address and comparing it to the claimed address in the message.",
+  "fn.verifySignature.params.message": "The original SIWE message string.",
+  "fn.verifySignature.params.signature": "The signature bytes to verify.",
+  "fn.verifySignature.returns.signer": "The recovered signer address.",
+
+  "node.userWallet": "User Wallet",
+  "node.dappFrontend": "DApp Frontend",
+  "node.dappServer": "DApp Server",
+  "node.siweMessage": "SIWE Message",
+  "node.signature": "ECDSA Signature",
+  "node.session": "Authenticated Session",
+
+  "edge.requestSign": "Request signature",
+  "edge.constructMessage": "Construct SIWE message",
+  "edge.signMessage": "Sign message",
+  "edge.submitSignature": "Submit signature",
+  "edge.createSession": "Create session",
+  "edge.verifyNonce": "Verify nonce & message",
+
+  "sim.siweAuth.name": "Sign-In with Ethereum Flow",
+  "sim.siweAuth.desc": "Authenticate a user with a dApp using the Sign-In with Ethereum (SIWE) standard.",
+  "sim.siweAuth.param.userAddress": "User wallet address",
+  "sim.siweAuth.param.domain": "Application domain",
+  "sim.siweAuth.step.request": "The dApp frontend constructs a SIWE message with the domain, a random nonce, the current timestamp, and the user's address.",
+  "sim.siweAuth.step.request.mobile": "Construct SIWE message",
+  "sim.siweAuth.step.prompt": "The dApp presents the SIWE message to the user's wallet for signing. The message is human-readable so the user can verify the domain and intent.",
+  "sim.siweAuth.step.prompt.mobile": "Display message in wallet",
+  "sim.siweAuth.step.sign": "The user reviews and signs the SIWE message with their wallet, producing a 65-byte ECDSA signature without any on-chain transaction.",
+  "sim.siweAuth.step.sign.mobile": "Sign SIWE message",
+  "sim.siweAuth.step.verify": "The dApp server receives the signature, recovers the signer address using ecrecover, verifies the nonce has not been used, and confirms the domain matches.",
+  "sim.siweAuth.step.verify.mobile": "Verify signature & nonce",
+  "sim.siweAuth.step.session": "The server creates an authenticated session tied to the user's Ethereum address. The user is now signed in without a centralized identity provider.",
+  "sim.siweAuth.step.session.mobile": "Create authenticated session"
+}

@@ -1,0 +1,70 @@
+{
+  "short": "Liquid staking protocol that issues stETH, a rebasing token representing staked ETH",
+  "introduction": "Lido is the largest liquid staking protocol on Ethereum, allowing users to stake ETH and receive stETH in return. stETH is a rebasing ERC-20 token whose balance automatically increases daily to reflect staking rewards earned on the Beacon Chain. Unlike native Ethereum staking, Lido removes the 32 ETH minimum requirement and lets users maintain liquidity while earning staking yields.",
+  "designPurpose": "Lido was designed to make Ethereum staking accessible to all users regardless of their ETH holdings or technical ability. By pooling deposits and distributing them across professional node operators, Lido democratizes staking while maintaining decentralization. The rebasing stETH token can be used throughout DeFi as collateral, in liquidity pools, or as a yield-bearing base asset.",
+  "commonUsage": "Users submit ETH to Lido to earn staking rewards without running validator infrastructure. The resulting stETH is widely used as collateral on Aave and MakerDAO, paired in Curve pools for trading, and deposited into EigenLayer for restaking. Developers integrate stETH as a yield-bearing primitive in structured products and vaults.",
+
+  "fn.submit.desc": "Submits ETH to the Lido staking pool in exchange for stETH shares. The sent ETH value (msg.value) is deposited and corresponding stETH is minted.",
+  "fn.submit.params.referral": "An optional referral address for tracking integrations. Use the zero address if not applicable.",
+  "fn.submit.returns.shares": "The number of stETH shares minted to the caller.",
+
+  "fn.approve.desc": "Approves a spender to transfer stETH on behalf of the caller, following the standard ERC-20 approve pattern.",
+  "fn.approve.params.spender": "The address authorized to spend stETH.",
+  "fn.approve.params.amount": "The amount of stETH the spender is allowed to transfer.",
+  "fn.approve.returns.success": "Returns true if the approval was successful.",
+
+  "fn.transferShares.desc": "Transfers stETH shares directly, avoiding rounding issues that can occur with the rebasing balance-based transfer. The recipient receives shares that map to a proportional amount of pooled ETH.",
+  "fn.transferShares.params.recipient": "The address to receive the stETH shares.",
+  "fn.transferShares.params.sharesAmount": "The number of shares to transfer.",
+  "fn.transferShares.returns.tokensAmount": "The stETH token amount equivalent of the transferred shares at the current exchange rate.",
+
+  "fn.getSharesByPooledEth.desc": "Converts an stETH token amount to the corresponding number of internal shares, based on the current total pooled ETH.",
+  "fn.getSharesByPooledEth.params.ethAmount": "The stETH token amount to convert.",
+  "fn.getSharesByPooledEth.returns.shares": "The equivalent number of shares.",
+
+  "fn.getPooledEthByShares.desc": "Converts a share amount to the corresponding stETH token amount, based on the current total pooled ETH.",
+  "fn.getPooledEthByShares.params.sharesAmount": "The number of shares to convert.",
+  "fn.getPooledEthByShares.returns.ethAmount": "The stETH token amount equivalent of the given shares.",
+
+  "fn.getTotalPooledEther.desc": "Returns the total amount of ETH controlled by the Lido protocol, including deposited ETH, staking rewards, and any penalties.",
+  "fn.getTotalPooledEther.returns.total": "The total pooled ETH amount in wei.",
+
+  "fn.Transfer.desc": "Emitted when stETH tokens are transferred between addresses, including minting (from zero address) and burning (to zero address).",
+  "fn.Transfer.params.from": "The sender address.",
+  "fn.Transfer.params.to": "The recipient address.",
+  "fn.Transfer.params.value": "The stETH token amount transferred.",
+
+  "fn.TransferShares.desc": "Emitted when stETH shares are transferred between addresses. This event provides the share-based accounting view of transfers.",
+  "fn.TransferShares.params.from": "The sender address.",
+  "fn.TransferShares.params.to": "The recipient address.",
+  "fn.TransferShares.params.sharesValue": "The number of shares transferred.",
+
+  "node.staker": "Staker",
+  "node.lido-contract": "Lido Contract",
+  "node.steth-token": "stETH Token",
+  "node.withdrawal-queue": "Withdrawal Queue",
+  "node.beacon-chain": "Beacon Chain",
+  "node.oracle": "Lido Oracle",
+  "node.node-operators": "Node Operators",
+
+  "edge.submitEth": "submit() + ETH",
+  "edge.mintSteth": "Mint stETH",
+  "edge.depositEth": "Deposit ETH to validators",
+  "edge.assignValidators": "Assign validators",
+  "edge.rebaseReport": "Report rewards (rebase)",
+  "edge.requestWithdrawal": "Request withdrawal",
+  "edge.processWithdrawal": "Process withdrawal",
+
+  "sim.stake-eth-receive-steth.name": "Stake ETH & Receive stETH",
+  "sim.stake-eth-receive-steth.desc": "Simulates the complete staking flow: submitting ETH to Lido, receiving stETH, depositing to the Beacon Chain, and the daily rebase that increases stETH balances.",
+  "sim.stake-eth-receive-steth.param.ethAmount": "ETH Amount (wei)",
+  "sim.stake-eth-receive-steth.param.referral": "Referral Address",
+  "sim.stake-eth-receive-steth.step.submit": "The staker calls submit() with ETH attached. The ETH is buffered in the Lido contract awaiting deposit to the Beacon Chain.",
+  "sim.stake-eth-receive-steth.step.submit.mobile": "Submit ETH to Lido",
+  "sim.stake-eth-receive-steth.step.mintSteth": "Lido mints stETH to the staker proportional to their share of the total pool. The staker now holds a liquid, transferable receipt of their stake.",
+  "sim.stake-eth-receive-steth.step.mintSteth.mobile": "Receive stETH",
+  "sim.stake-eth-receive-steth.step.depositBeacon": "Buffered ETH is deposited to the Beacon Chain in 32 ETH increments via selected node operators who run the validators.",
+  "sim.stake-eth-receive-steth.step.depositBeacon.mobile": "Deposit to Beacon Chain",
+  "sim.stake-eth-receive-steth.step.rebase": "The Lido oracle reports new staking rewards. The total pooled ETH increases, causing all stETH balances to rebase upward automatically.",
+  "sim.stake-eth-receive-steth.step.rebase.mobile": "Daily rebase increases balance"
+}

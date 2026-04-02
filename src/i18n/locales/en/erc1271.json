@@ -1,0 +1,36 @@
+{
+  "short": "Standard Signature Validation for Contracts",
+  "introduction": "ERC-1271 defines a standard way for smart contracts to verify signatures. Since smart contracts do not have private keys, they cannot produce ECDSA signatures like externally owned accounts (EOAs). ERC-1271 introduces a single function, isValidSignature, that allows any contract to implement its own signature validation logic. This enables smart contract wallets, multisigs, and other contract-based accounts to sign messages and authorize actions.",
+  "designPurpose": "ERC-1271 was designed to bridge the gap between EOA-based signature verification and smart contract wallets. Many protocols and dApps require users to sign messages for authentication or authorization, but this only worked for EOAs. By standardizing how contracts validate signatures, ERC-1271 enables smart contract wallets (like Safe/Gnosis) and account abstraction solutions to participate in signature-dependent workflows.",
+  "commonUsage": "ERC-1271 is used by multisig wallets (Safe), smart contract wallets, and account abstraction systems to validate signatures for off-chain authorizations. It enables contract accounts to sign EIP-712 typed data, approve gasless transactions, and authenticate with dApps. Protocols like Permit2, CoW Protocol, and 0x use ERC-1271 to accept signatures from both EOAs and smart contracts.",
+
+  "fn.isValidSignature.desc": "Validates whether a given signature is valid for the provided hash. Returns a magic value (0x1626ba7e) if valid, or any other value if invalid. The implementation defines its own validation logic (e.g., checking multisig threshold).",
+  "fn.isValidSignature.params.hash": "The hash of the data that was signed. Typically an EIP-712 typed data hash.",
+  "fn.isValidSignature.params.signature": "The signature bytes to validate against the hash.",
+  "fn.isValidSignature.returns.magicValue": "Returns 0x1626ba7e if the signature is valid, any other bytes4 value otherwise.",
+
+  "node.verifier": "Verifier / DApp",
+  "node.contract": "ERC-1271 Contract",
+  "node.signer": "Recovered Signer",
+  "node.signatureStorage": "Signature Validation Storage",
+  "node.magicValue": "Magic Value Result",
+
+  "edge.verifyRequest": "Submit verification request",
+  "edge.checkOwners": "Check owner registry",
+  "edge.recoverSigner": "Recover signer via ecrecover",
+  "edge.returnMagic": "Return magic value",
+  "edge.validSignal": "Valid signature confirmed",
+
+  "sim.contractSigVerification.name": "Contract Signature Verification",
+  "sim.contractSigVerification.desc": "Verify a signature against a smart contract wallet using the isValidSignature function.",
+  "sim.contractSigVerification.param.hash": "Message hash",
+  "sim.contractSigVerification.param.signature": "Signature bytes",
+  "sim.contractSigVerification.step.submit": "The verifier (dApp or protocol) calls isValidSignature(hash, signature) on the smart contract wallet to verify a signature.",
+  "sim.contractSigVerification.step.submit.mobile": "Submit signature for verification",
+  "sim.contractSigVerification.step.recover": "The contract uses ecrecover to extract the signer address from the hash and signature.",
+  "sim.contractSigVerification.step.recover.mobile": "Recover signer address",
+  "sim.contractSigVerification.step.checkOwner": "The contract checks if the recovered signer is an authorized owner in its internal registry (e.g., multisig owner list).",
+  "sim.contractSigVerification.step.checkOwner.mobile": "Check if signer is owner",
+  "sim.contractSigVerification.step.return": "The contract returns the magic value 0x1626ba7e to indicate the signature is valid. The verifier can now proceed with the authorized action.",
+  "sim.contractSigVerification.step.return.mobile": "Return valid magic value"
+}

@@ -1,0 +1,28 @@
+{
+  "controls": {
+    "play": "播放",
+    "pause": "暂停",
+    "reset": "重置",
+    "stepForward": "下一步",
+    "stepBack": "上一步",
+    "speed": "速度",
+    "speed.slow": "慢速",
+    "speed.normal": "正常",
+    "speed.fast": "快速"
+  },
+  "panel": {
+    "title": "模拟",
+    "scenario": "场景",
+    "parameters": "参数",
+    "steps": "步骤",
+    "step": "第 {{current}} 步，共 {{total}} 步",
+    "results": "结果",
+    "noScenario": "请选择一个场景以开始"
+  },
+  "status": {
+    "idle": "空闲",
+    "running": "运行中",
+    "completed": "已完成",
+    "error": "错误"
+  }
+}

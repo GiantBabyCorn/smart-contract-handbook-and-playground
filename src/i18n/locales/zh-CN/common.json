@@ -1,0 +1,49 @@
+{
+  "sidebar": {
+    "search": "搜索标准和协议...",
+    "noResults": "未找到结果",
+    "categories": {
+      "token": "代币标准",
+      "nft": "NFT 标准",
+      "proxy": "代理模式",
+      "defi": "DeFi 协议",
+      "account": "账户抽象",
+      "utility": "实用标准",
+      "identity": "身份与认证",
+      "oracle": "预言机标准",
+      "governance": "治理",
+      "crossChain": "跨链",
+      "rwa": "现实世界资产"
+    }
+  },
+  "nav": {
+    "home": "首页",
+    "backToHome": "返回首页"
+  },
+  "theme": {
+    "switchToLight": "切换到浅色主题",
+    "switchToDark": "切换到深色主题"
+  },
+  "language": {
+    "label": "语言"
+  },
+  "footer": {
+    "poweredBy": "由 Smart Contract Handbook 提供支持"
+  },
+  "error": {
+    "title": "出现错误",
+    "description": "发生了意外错误，请尝试重新加载页面。",
+    "reload": "重新加载",
+    "goHome": "返回首页"
+  },
+  "notFound": {
+    "title": "页面未找到",
+    "description": "这里什么都没有，只有一根可爱的小玉米。",
+    "goHome": "返回首页"
+  },
+  "loading": "加载中...",
+  "a11y": {
+    "flowDiagram": "说明合约组件之间交互的流程图",
+    "simulationPanel": "用于逐步执行的交互式模拟面板"
+  }
+}

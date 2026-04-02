@@ -1,0 +1,28 @@
+{
+  "controls": {
+    "play": "재생",
+    "pause": "일시정지",
+    "reset": "초기화",
+    "stepForward": "다음 단계",
+    "stepBack": "이전 단계",
+    "speed": "속도",
+    "speed.slow": "느리게",
+    "speed.normal": "보통",
+    "speed.fast": "빠르게"
+  },
+  "panel": {
+    "title": "시뮬레이션",
+    "scenario": "시나리오",
+    "parameters": "매개변수",
+    "steps": "단계",
+    "step": "{{total}}단계 중 {{current}}단계",
+    "results": "결과",
+    "noScenario": "시작하려면 시나리오를 선택하세요"
+  },
+  "status": {
+    "idle": "대기 중",
+    "running": "실행 중",
+    "completed": "완료됨",
+    "error": "오류"
+  }
+}

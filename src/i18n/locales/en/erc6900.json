@@ -1,0 +1,56 @@
+{
+  "short": "Modular Smart Contract Accounts",
+  "introduction": "ERC-6900 defines a standard for modular smart contract accounts with a plugin-based architecture. Accounts can install and uninstall plugins that extend their functionality with custom validation logic, execution handlers, and hooks. Each plugin declares a manifest describing its permissions and capabilities, and the account enforces these permissions through a structured execution flow. The standard ensures plugins are interoperable across different account implementations.",
+  "designPurpose": "ERC-6900 was designed to create a standardized plugin system for ERC-4337 smart accounts. Without a common module interface, each account provider builds its own incompatible extension system. ERC-6900 defines how plugins interact with accounts through validation, execution, and hook phases, enabling a marketplace of reusable plugins that work across all compliant accounts. The manifest system ensures transparent permission management.",
+  "commonUsage": "ERC-6900 is used by modular account implementations like Alchemy's Modular Account. Plugins can add multisig validation, session keys, spending limits, scheduled transactions, social recovery, and other features. Developers can build plugins once and deploy them across all ERC-6900 compatible accounts, creating a composable account functionality ecosystem.",
+
+  "fn.installPlugin.desc": "Installs a plugin on the modular account. Validates the manifest hash, registers validation and execution hooks, and initializes the plugin with the provided data.",
+  "fn.installPlugin.params.plugin": "The address of the plugin contract to install.",
+  "fn.installPlugin.params.manifestHash": "The keccak256 hash of the plugin's manifest, used to verify the plugin's declared permissions.",
+  "fn.installPlugin.params.pluginInstallData": "Encoded initialization data passed to the plugin's onInstall function.",
+  "fn.installPlugin.params.dependencies": "Array of function references that the plugin depends on from other installed plugins.",
+
+  "fn.uninstallPlugin.desc": "Removes a plugin from the modular account. Deregisters all hooks and selectors, and calls the plugin's onUninstall function.",
+  "fn.uninstallPlugin.params.plugin": "The address of the plugin to uninstall.",
+  "fn.uninstallPlugin.params.config": "Encoded configuration data for the uninstall process.",
+  "fn.uninstallPlugin.params.pluginUninstallData": "Encoded data passed to the plugin's onUninstall function.",
+
+  "fn.executeFromPluginExternal.desc": "Allows a plugin to execute a call to an external contract through the account. The account enforces the plugin's declared permissions.",
+  "fn.executeFromPluginExternal.params.target": "The external contract address to call.",
+  "fn.executeFromPluginExternal.params.value": "The ETH value to send with the call.",
+  "fn.executeFromPluginExternal.params.data": "The encoded calldata for the external call.",
+  "fn.executeFromPluginExternal.returns.result": "The return data from the external call.",
+
+  "fn.getInstalledPlugins.desc": "Returns the list of all currently installed plugin addresses on the account.",
+  "fn.getInstalledPlugins.returns.plugins": "Array of installed plugin contract addresses.",
+
+  "node.accountOwner": "Account Owner",
+  "node.modularAccount": "Modular Account",
+  "node.validationPlugin": "Validation Plugin",
+  "node.executionPlugin": "Execution Plugin",
+  "node.hook": "Hooks (Pre/Post)",
+  "node.permissionManager": "Permission Manager",
+  "node.target": "Target Contract",
+
+  "edge.installPlugin": "Install plugin",
+  "edge.checkManifest": "Check manifest & permissions",
+  "edge.validateUserOp": "Validate UserOp",
+  "edge.runHooks": "Run pre/post hooks",
+  "edge.routeExecution": "Route execution to plugin",
+  "edge.executeFromPlugin": "Execute from plugin",
+  "edge.directExecute": "Direct execute",
+
+  "sim.pluginInstallExec.name": "Plugin Install & Execution",
+  "sim.pluginInstallExec.desc": "Install a plugin on a modular account and observe the validation and execution flow.",
+  "sim.pluginInstallExec.param.accountAddress": "Modular account address",
+  "sim.pluginInstallExec.param.pluginAddress": "Plugin address",
+  "sim.pluginInstallExec.param.targetContract": "Target contract",
+  "sim.pluginInstallExec.step.checkManifest": "The account verifies the plugin's manifest hash and checks that all declared dependencies are met. The permission manager validates the plugin's requested capabilities.",
+  "sim.pluginInstallExec.step.checkManifest.mobile": "Verify manifest & permissions",
+  "sim.pluginInstallExec.step.install": "The plugin is installed: validation selectors, execution selectors, and hooks are registered on the account. The plugin's onInstall function is called.",
+  "sim.pluginInstallExec.step.install.mobile": "Install & register plugin",
+  "sim.pluginInstallExec.step.validateOp": "When a UserOperation arrives, the account routes validation to the installed validation plugin. Pre-validation hooks run first, then the plugin validates the signature.",
+  "sim.pluginInstallExec.step.validateOp.mobile": "Validate via plugin",
+  "sim.pluginInstallExec.step.execute": "The execution plugin handles the operation. Post-execution hooks run to enforce invariants like spending limits.",
+  "sim.pluginInstallExec.step.execute.mobile": "Execute via plugin"
+}

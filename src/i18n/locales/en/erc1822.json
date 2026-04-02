@@ -1,0 +1,41 @@
+{
+  "short": "Universal Upgradeable Proxy Standard (UUPS)",
+  "introduction": "ERC-1822 defines the Universal Upgradeable Proxy Standard (UUPS), a pattern where the upgrade logic resides in the implementation contract rather than the proxy itself. The implementation contract exposes a proxiableUUID function that returns a specific storage slot, and the upgrade functions (upgradeTo, upgradeToAndCall) are part of the implementation. This keeps the proxy contract minimal and gas-efficient while allowing the implementation to control its own upgrade path.",
+  "designPurpose": "ERC-1822 was designed to create a more gas-efficient and secure proxy upgrade pattern. Unlike transparent proxies where the proxy contract manages upgrades, UUPS places the upgrade logic in the implementation. This means the proxy is smaller and cheaper to deploy. It also provides a safety mechanism: the new implementation must also support proxiableUUID, preventing accidental upgrades to incompatible contracts that would brick the proxy.",
+  "commonUsage": "ERC-1822 is used in upgradeable smart contract deployments, particularly with OpenZeppelin's UUPSUpgradeable base contract. It is commonly chosen over transparent proxies for projects that want lower deployment gas costs and prefer implementation-controlled upgrades. Many DeFi protocols, DAOs, and token contracts use UUPS proxies for their upgradeability needs.",
+
+  "fn.proxiableUUID.desc": "Returns the storage slot used by the implementation to store the implementation address. Must return the keccak256 hash of 'PROXIABLE' to verify compatibility with the UUPS pattern.",
+  "fn.proxiableUUID.returns.slot": "The bytes32 storage slot identifier, typically keccak256('PROXIABLE').",
+
+  "fn.upgradeTo.desc": "Upgrades the proxy to point to a new implementation contract. The new implementation must also support proxiableUUID to prevent bricking the proxy.",
+  "fn.upgradeTo.params.newImplementation": "The address of the new implementation contract.",
+
+  "fn.upgradeToAndCall.desc": "Upgrades the proxy to a new implementation and executes an initialization call in a single transaction. Useful for re-initializing state after an upgrade.",
+  "fn.upgradeToAndCall.params.newImplementation": "The address of the new implementation contract.",
+  "fn.upgradeToAndCall.params.data": "Encoded function call to execute on the new implementation after the upgrade.",
+
+  "node.admin": "Admin / Upgrader",
+  "node.proxy": "UUPS Proxy",
+  "node.oldImplementation": "Old Implementation",
+  "node.newImplementation": "New Implementation",
+  "node.storage": "Proxy Storage",
+
+  "edge.callUpgrade": "Call upgradeTo()",
+  "edge.verifyProxiableUUID": "Verify proxiableUUID",
+  "edge.writeSlot": "Write implementation slot",
+  "edge.pointToNew": "Point to new implementation",
+  "edge.emitUpgraded": "Emit Upgraded event",
+
+  "sim.uupsUpgrade.name": "UUPS Proxy Upgrade",
+  "sim.uupsUpgrade.desc": "Upgrade a UUPS proxy to a new implementation contract while verifying compatibility.",
+  "sim.uupsUpgrade.param.admin": "Admin address",
+  "sim.uupsUpgrade.param.newImpl": "New implementation address",
+  "sim.uupsUpgrade.step.callUpgrade": "The admin calls upgradeTo(newImplementation) on the proxy, which delegates to the current implementation's upgrade logic.",
+  "sim.uupsUpgrade.step.callUpgrade.mobile": "Call upgradeTo()",
+  "sim.uupsUpgrade.step.verifyUUID": "The current implementation calls proxiableUUID() on the new implementation to verify it returns the correct storage slot, ensuring upgrade compatibility.",
+  "sim.uupsUpgrade.step.verifyUUID.mobile": "Verify proxiableUUID()",
+  "sim.uupsUpgrade.step.writeSlot": "The implementation address stored at the PROXIABLE_SLOT is updated from the old implementation to the new one.",
+  "sim.uupsUpgrade.step.writeSlot.mobile": "Update implementation slot",
+  "sim.uupsUpgrade.step.pointNew": "The proxy now points to the new implementation. An Upgraded event is emitted. All future calls will be delegated to the new contract.",
+  "sim.uupsUpgrade.step.pointNew.mobile": "Proxy upgraded"
+}

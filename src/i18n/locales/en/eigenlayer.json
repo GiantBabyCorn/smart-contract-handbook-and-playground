@@ -1,0 +1,63 @@
+{
+  "short": "Restaking protocol that extends Ethereum's economic security to additional services (AVSs)",
+  "introduction": "EigenLayer is a restaking protocol built on Ethereum that allows staked ETH and liquid staking tokens (like stETH) to be reused as security for additional decentralized services called Actively Validated Services (AVSs). This enables protocols to bootstrap cryptoeconomic security without launching their own validator sets. EigenLayer introduces a marketplace where stakers opt into providing security for AVSs in exchange for additional rewards.",
+  "designPurpose": "EigenLayer was designed to solve the fragmentation of cryptoeconomic security across Ethereum-based services. Instead of each new protocol requiring its own set of validators and staked capital, EigenLayer allows existing Ethereum stakers to extend their security guarantees to multiple services simultaneously. This pooled security model dramatically lowers the cost of securing new decentralized infrastructure.",
+  "commonUsage": "Restakers deposit liquid staking tokens or native ETH into EigenLayer strategies and delegate to operators who validate AVSs on their behalf. Operators register with AVSs such as data availability layers, bridges, or oracle networks. The protocol is also used by AVS developers who want to leverage Ethereum's security for their own services without bootstrapping a new validator network.",
+
+  "fn.depositIntoStrategy.desc": "Deposits tokens into an EigenLayer strategy contract, receiving shares that represent the restaked position.",
+  "fn.depositIntoStrategy.params.strategy": "The address of the strategy contract to deposit into.",
+  "fn.depositIntoStrategy.params.token": "The address of the token to deposit (e.g., stETH).",
+  "fn.depositIntoStrategy.params.amount": "The amount of tokens to deposit.",
+  "fn.depositIntoStrategy.returns.shares": "The number of strategy shares minted to the depositor.",
+
+  "fn.delegateTo.desc": "Delegates all of the caller's restaked shares to a chosen operator, who validates AVSs on the staker's behalf.",
+  "fn.delegateTo.params.operator": "The address of the operator to delegate to.",
+  "fn.delegateTo.params.approverSignatureAndExpiry": "A signature and expiry from the operator's delegation approver, if required.",
+  "fn.delegateTo.params.approverSalt": "A unique salt to prevent replay of the approver signature.",
+
+  "fn.undelegate.desc": "Undelegates a staker from their current operator and queues withdrawals for all their restaked shares.",
+  "fn.undelegate.params.staker": "The address of the staker to undelegate.",
+  "fn.undelegate.returns.withdrawalRoots": "An array of withdrawal roots that can be used to complete the queued withdrawals after the delay.",
+
+  "fn.completeQueuedWithdrawals.desc": "Completes previously queued withdrawals after the required delay period has elapsed, returning tokens or shares to the staker.",
+  "fn.completeQueuedWithdrawals.params.withdrawals": "An array of withdrawal structs to complete.",
+  "fn.completeQueuedWithdrawals.params.tokens": "A 2D array of token addresses for each withdrawal.",
+  "fn.completeQueuedWithdrawals.params.middlewareTimesIndexes": "Indexes into the middleware times array for slashing verification.",
+  "fn.completeQueuedWithdrawals.params.receiveAsTokens": "An array of booleans indicating whether to receive underlying tokens (true) or re-deposit as shares (false).",
+
+  "fn.getShares.desc": "Returns the strategies and corresponding share amounts for a given staker's deposits.",
+  "fn.getShares.params.staker": "The address of the staker to query.",
+  "fn.getShares.returns.strategies": "An array of strategy contract addresses the staker has deposited into.",
+  "fn.getShares.returns.shares": "An array of share amounts corresponding to each strategy.",
+
+  "node.restaker": "Restaker",
+  "node.strategy-manager": "Strategy Manager",
+  "node.delegation-manager": "Delegation Manager",
+  "node.strategy": "Strategy Contract",
+  "node.operator": "Operator",
+  "node.avs": "Actively Validated Service (AVS)",
+  "node.slasher": "Slasher",
+  "node.withdrawal-queue": "Withdrawal Queue",
+
+  "edge.depositIntoStrategy": "depositIntoStrategy()",
+  "edge.depositTokens": "Deposit tokens",
+  "edge.delegateTo": "delegateTo(operator)",
+  "edge.assignDelegate": "Assign delegation",
+  "edge.registerToAVS": "Register to AVS",
+  "edge.queueWithdrawal": "Queue withdrawal",
+  "edge.slash": "Slash operator",
+  "edge.returnShares": "Return shares",
+
+  "sim.deposit-delegate-operator.name": "Deposit, Delegate & Register",
+  "sim.deposit-delegate-operator.desc": "Simulates the full restaking flow: depositing stETH into a strategy, delegating to an operator, and the operator registering with an AVS.",
+  "sim.deposit-delegate-operator.param.depositAmount": "Deposit Amount (wei)",
+  "sim.deposit-delegate-operator.param.operatorAddress": "Operator Address",
+  "sim.deposit-delegate-operator.step.approve": "The restaker approves the Strategy Manager to spend their stETH tokens.",
+  "sim.deposit-delegate-operator.step.approve.mobile": "Approve stETH",
+  "sim.deposit-delegate-operator.step.deposit": "The restaker calls depositIntoStrategy(), transferring stETH to the strategy contract and receiving shares that represent the restaked position.",
+  "sim.deposit-delegate-operator.step.deposit.mobile": "Deposit into strategy",
+  "sim.deposit-delegate-operator.step.delegate": "The restaker delegates their shares to an operator via the Delegation Manager. The operator now controls the restaked security.",
+  "sim.deposit-delegate-operator.step.delegate.mobile": "Delegate to operator",
+  "sim.deposit-delegate-operator.step.avsRegister": "The operator registers with an AVS, committing the delegated stake to secure the service. The staked capital is now subject to slashing conditions.",
+  "sim.deposit-delegate-operator.step.avsRegister.mobile": "Operator registers with AVS"
+}

@@ -1,0 +1,34 @@
+{
+  "short": "NFT Royalty Standard",
+  "introduction": "ERC-2981 defines a standardized way to retrieve royalty payment information for NFTs. It provides a single function, royaltyInfo, that returns the royalty recipient address and the royalty amount for a given token sale price. The standard is token-standard agnostic and works with both ERC-721 and ERC-1155 tokens. Importantly, ERC-2981 only provides royalty information; it does not enforce royalty payments on-chain.",
+  "designPurpose": "ERC-2981 was designed to give NFT creators a standard way to signal their desired royalty percentage and recipient address. Before this standard, each marketplace had its own proprietary royalty system, leading to fragmentation and missed royalties when tokens were traded on different platforms. By embedding royalty information in the token contract itself, ERC-2981 enables any marketplace to discover and honor the creator's royalty preferences.",
+  "commonUsage": "ERC-2981 is used by NFT collections, digital art platforms, and marketplaces to specify creator royalties. Marketplaces like OpenSea, LooksRare, and Blur query royaltyInfo when facilitating sales to determine how much to pay the creator. The standard supports both per-token and default royalty configurations, allowing different royalty rates for different tokens within the same collection.",
+
+  "fn.royaltyInfo.desc": "Returns the royalty recipient and royalty amount for a given token and sale price. The royalty amount is calculated as salePrice * feeNumerator / feeDenominator (typically 10000 for basis points).",
+  "fn.royaltyInfo.params.tokenId": "The token ID to query royalty information for.",
+  "fn.royaltyInfo.params.salePrice": "The sale price of the token, used to calculate the royalty amount.",
+  "fn.royaltyInfo.returns.receiver": "The address that should receive the royalty payment.",
+  "fn.royaltyInfo.returns.royaltyAmount": "The royalty amount to be paid, denominated in the same unit as salePrice.",
+
+  "node.marketplace": "Marketplace",
+  "node.contract": "ERC-2981 NFT Contract",
+  "node.storage": "Royalty Storage",
+  "node.seller": "Seller",
+  "node.royaltyReceiver": "Royalty Receiver (Creator)",
+
+  "edge.queryRoyalty": "Query royaltyInfo()",
+  "edge.lookupRoyalty": "Lookup royalty config",
+  "edge.saleProceeds": "Sale proceeds (minus royalty)",
+  "edge.royaltyPayment": "Royalty payment",
+
+  "sim.royaltyCalculation.name": "Royalty Calculation on Sale",
+  "sim.royaltyCalculation.desc": "Observe how a marketplace queries royalty information and distributes payments between the seller and creator.",
+  "sim.royaltyCalculation.param.tokenId": "Token ID",
+  "sim.royaltyCalculation.param.salePrice": "Sale price (in wei)",
+  "sim.royaltyCalculation.step.sale": "A sale occurs on the marketplace for a specific NFT. The marketplace needs to determine how to split the payment.",
+  "sim.royaltyCalculation.step.sale.mobile": "NFT sale initiated",
+  "sim.royaltyCalculation.step.query": "The marketplace calls royaltyInfo(tokenId, salePrice) to get the royalty recipient and amount. The contract returns the creator's address and 5% of the sale price.",
+  "sim.royaltyCalculation.step.query.mobile": "Query royalty info",
+  "sim.royaltyCalculation.step.distribute": "The marketplace distributes the funds: 95% goes to the seller and 5% goes to the royalty receiver (creator). This split is calculated from the royaltyInfo response.",
+  "sim.royaltyCalculation.step.distribute.mobile": "Distribute sale proceeds"
+}

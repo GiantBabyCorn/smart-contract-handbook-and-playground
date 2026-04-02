@@ -1,0 +1,84 @@
+{
+  "short": "Semi-Fungible Token (SFT) Standard",
+  "introduction": "ERC-3525 defines the Semi-Fungible Token (SFT) standard, which combines properties of both fungible and non-fungible tokens. Each SFT has a unique token ID (like ERC-721), a slot that groups compatible tokens, and a quantitative value that can be transferred between tokens in the same slot (like ERC-20). This three-dimensional structure (ID, slot, value) enables tokens that are unique yet carry transferable, divisible value within their category.",
+  "designPurpose": "ERC-3525 was designed to represent assets that are neither purely fungible nor purely non-fungible. Financial instruments like bonds, options, and insurance policies are unique (different maturity dates, strike prices) but carry fungible value that can be split and merged. ERC-3525 captures this duality by allowing value to flow between tokens in the same slot while maintaining each token's distinct identity.",
+  "commonUsage": "ERC-3525 is used for structured financial products, tokenized bonds, voucher systems, fractional NFTs, and any asset that needs both unique identity and quantitative value. Solv Protocol uses it for convertible vouchers. It is particularly suited for DeFi instruments like vesting positions, loan tranches, and yield-bearing tokens where each position is unique but carries transferable value.",
+
+  "fn.valueDecimals.desc": "Returns the number of decimal places used for the value property of each token, analogous to ERC-20 decimals.",
+  "fn.valueDecimals.returns.decimals": "The number of decimals for token values.",
+
+  "fn.valueOf.desc": "Returns the value held by a specific token ID. This is the quantitative, transferable component of the semi-fungible token.",
+  "fn.valueOf.params.tokenId": "The unique identifier of the token to query.",
+  "fn.valueOf.returns.value": "The quantitative value stored in the token.",
+
+  "fn.slotOf.desc": "Returns the slot number of a specific token. Tokens can only transfer value to other tokens in the same slot.",
+  "fn.slotOf.params.tokenId": "The unique identifier of the token to query.",
+  "fn.slotOf.returns.slot": "The slot number that categorizes this token.",
+
+  "fn.approve.desc": "Approves an address to transfer up to a specified amount of value from a specific token. This is the value-level approval (distinct from ERC-721 token-level approval).",
+  "fn.approve.params.tokenId": "The token ID to approve value spending from.",
+  "fn.approve.params.to": "The address to approve for value transfer.",
+  "fn.approve.params.value": "The maximum value amount the address can transfer from this token.",
+
+  "fn.allowance.desc": "Returns the remaining value that an operator is allowed to transfer from a specific token.",
+  "fn.allowance.params.tokenId": "The token ID to query the allowance for.",
+  "fn.allowance.params.operator": "The address to check the value allowance of.",
+  "fn.allowance.returns.value": "The remaining value allowance for the operator on this token.",
+
+  "fn.transferValueFrom.desc": "Transfers value from one token to another. Both tokens must be in the same slot. If toTokenId is 0, a new token is minted to the recipient.",
+  "fn.transferValueFrom.params.fromTokenId": "The token ID to transfer value from.",
+  "fn.transferValueFrom.params.toTokenId": "The token ID to transfer value to (0 to mint a new token).",
+  "fn.transferValueFrom.params.value": "The amount of value to transfer.",
+
+  "fn.TransferValue.desc": "Emitted when value is transferred from one token to another within the same slot.",
+  "fn.TransferValue.params.fromTokenId": "The token ID value is transferred from.",
+  "fn.TransferValue.params.toTokenId": "The token ID value is transferred to.",
+  "fn.TransferValue.params.value": "The amount of value transferred.",
+
+  "fn.ApprovalValue.desc": "Emitted when a value allowance is set for an operator on a specific token.",
+  "fn.ApprovalValue.params.tokenId": "The token ID the approval is for.",
+  "fn.ApprovalValue.params.operator": "The address approved to transfer value.",
+  "fn.ApprovalValue.params.value": "The approved value amount.",
+
+  "fn.SlotChanged.desc": "Emitted when a token's slot is changed.",
+  "fn.SlotChanged.params.tokenId": "The token ID whose slot changed.",
+  "fn.SlotChanged.params.oldSlot": "The previous slot number.",
+  "fn.SlotChanged.params.newSlot": "The new slot number.",
+
+  "node.holder": "Token Holder",
+  "node.contract": "ERC-3525 Contract",
+  "node.recipient": "Recipient",
+  "node.storageSlotValue": "Slot & Value Storage",
+  "node.slotValidator": "Slot Validator",
+
+  "edge.callTransferValue": "Call transferValueFrom()",
+  "edge.updateValues": "Update token values",
+  "edge.validateSlot": "Validate same slot",
+  "edge.valueTransferred": "Value transferred",
+  "edge.callApproveValue": "Call approve(value)",
+  "edge.emitTransferValue": "Emit TransferValue",
+  "edge.emitApprovalValue": "Emit ApprovalValue",
+
+  "sim.valueTransfer.name": "Value Transfer Between Tokens",
+  "sim.valueTransfer.desc": "Transfer value from one semi-fungible token to another within the same slot.",
+  "sim.valueTransfer.param.fromTokenId": "Source token ID",
+  "sim.valueTransfer.param.toTokenId": "Destination token ID",
+  "sim.valueTransfer.param.value": "Value to transfer (in wei)",
+  "sim.valueTransfer.step.checkSlot": "Before the transfer, the contract verifies both tokens exist and belong to the same slot. Tokens in different slots cannot exchange value.",
+  "sim.valueTransfer.step.checkSlot.mobile": "Check same slot",
+  "sim.valueTransfer.step.call": "The holder calls transferValueFrom(fromTokenId, toTokenId, value) to initiate the value transfer between tokens.",
+  "sim.valueTransfer.step.call.mobile": "Call transferValueFrom()",
+  "sim.valueTransfer.step.validateAndUpdate": "The contract validates authorization, checks sufficient value in the source token, then decrements the source and increments the destination.",
+  "sim.valueTransfer.step.validateAndUpdate.mobile": "Validate & update values",
+  "sim.valueTransfer.step.recipientUpdated": "The destination token now holds the transferred value. A TransferValue event is emitted recording the value movement.",
+  "sim.valueTransfer.step.recipientUpdated.mobile": "Value delivered",
+
+  "sim.valueApproval.name": "Value Approval",
+  "sim.valueApproval.desc": "Approve an operator to transfer a specific amount of value from a token.",
+  "sim.valueApproval.param.tokenId": "Token ID",
+  "sim.valueApproval.param.operator": "Operator address",
+  "sim.valueApproval.param.approvedValue": "Approved value amount (in wei)",
+  "sim.valueApproval.step.approve": "The token holder calls approve(tokenId, operator, value) to authorize the operator to spend up to the specified value.",
+  "sim.valueApproval.step.storeAllowance": "The contract stores the value allowance in the _valueApprovals mapping for the given token ID and operator address.",
+  "sim.valueApproval.step.event": "An ApprovalValue event is emitted recording the token ID, operator, and approved value amount."
+}

@@ -1,0 +1,97 @@
+{
+  "short": "Tokenized Vault Standard",
+  "introduction": "ERC-4626 is the standard interface for tokenized vaults, which are smart contracts that accept deposits of an underlying ERC-20 token and issue shares representing a proportional claim on the vault's assets. The standard defines a complete deposit/withdraw lifecycle with functions for converting between assets and shares, previewing operations, and checking deposit/withdrawal limits. It extends ERC-20, so vault shares are themselves transferable tokens.",
+  "designPurpose": "ERC-4626 was designed to standardize the yield-bearing vault pattern used across DeFi. Before this standard, every lending protocol, yield aggregator, and staking contract had its own incompatible interface for deposits and withdrawals. This fragmentation made it difficult to build composable DeFi strategies. ERC-4626 provides a unified interface that enables any vault to be integrated into aggregators, routers, and other protocols seamlessly.",
+  "commonUsage": "ERC-4626 is used by yield aggregators (Yearn), lending protocols (Aave, Compound), liquid staking (Lido), and any protocol that manages deposited assets. It enables standardized vault composability: a yield aggregator can deposit into any ERC-4626 vault using the same interface. The standard is also used for receipt tokens, rebasing token wrappers, and structured DeFi products.",
+
+  "fn.asset.desc": "Returns the address of the underlying ERC-20 token that the vault accepts for deposits and returns on withdrawals.",
+  "fn.asset.returns.address": "The address of the underlying asset token contract.",
+
+  "fn.totalAssets.desc": "Returns the total amount of underlying assets managed by the vault, including any yield that has accrued.",
+  "fn.totalAssets.returns.total": "The total underlying assets held and managed by the vault.",
+
+  "fn.convertToShares.desc": "Returns the number of vault shares that would be minted for a given amount of assets, based on the current exchange rate.",
+  "fn.convertToShares.params.assets": "The amount of underlying assets to convert.",
+  "fn.convertToShares.returns.shares": "The equivalent number of vault shares.",
+
+  "fn.convertToAssets.desc": "Returns the amount of underlying assets that a given number of shares is worth, based on the current exchange rate.",
+  "fn.convertToAssets.params.shares": "The number of vault shares to convert.",
+  "fn.convertToAssets.returns.assets": "The equivalent amount of underlying assets.",
+
+  "fn.maxDeposit.desc": "Returns the maximum amount of assets that can be deposited for a given receiver, accounting for any vault-specific limits.",
+  "fn.maxDeposit.params.receiver": "The address that would receive the minted shares.",
+  "fn.maxDeposit.returns.maxAssets": "The maximum depositable asset amount.",
+
+  "fn.previewDeposit.desc": "Simulates a deposit and returns the number of shares that would be minted, inclusive of any fees. Useful for UI previews.",
+  "fn.previewDeposit.params.assets": "The amount of assets to simulate depositing.",
+  "fn.previewDeposit.returns.shares": "The number of shares that would be minted.",
+
+  "fn.deposit.desc": "Deposits underlying assets into the vault and mints shares to the receiver. The caller must have approved the vault to spend their assets.",
+  "fn.deposit.params.assets": "The amount of underlying assets to deposit.",
+  "fn.deposit.params.receiver": "The address that will receive the minted vault shares.",
+  "fn.deposit.returns.shares": "The number of vault shares minted to the receiver.",
+
+  "fn.mint.desc": "Mints an exact number of vault shares by depositing the required amount of underlying assets.",
+  "fn.mint.params.shares": "The exact number of vault shares to mint.",
+  "fn.mint.params.receiver": "The address that will receive the minted shares.",
+  "fn.mint.returns.assets": "The amount of underlying assets deposited.",
+
+  "fn.maxWithdraw.desc": "Returns the maximum amount of underlying assets that can be withdrawn by the owner, accounting for vault limits and available liquidity.",
+  "fn.maxWithdraw.params.owner": "The address that owns the vault shares.",
+  "fn.maxWithdraw.returns.maxAssets": "The maximum withdrawable asset amount.",
+
+  "fn.previewRedeem.desc": "Simulates a redemption and returns the amount of assets that would be returned for a given number of shares.",
+  "fn.previewRedeem.params.shares": "The number of shares to simulate redeeming.",
+  "fn.previewRedeem.returns.assets": "The amount of underlying assets that would be returned.",
+
+  "fn.withdraw.desc": "Withdraws a specific amount of underlying assets by burning the necessary vault shares. Can be called by the owner or an approved spender.",
+  "fn.withdraw.params.assets": "The amount of underlying assets to withdraw.",
+  "fn.withdraw.params.receiver": "The address that will receive the withdrawn assets.",
+  "fn.withdraw.params.owner": "The address that owns the shares to burn.",
+  "fn.withdraw.returns.shares": "The number of vault shares burned.",
+
+  "fn.redeem.desc": "Burns a specific number of vault shares and returns the corresponding amount of underlying assets to the receiver.",
+  "fn.redeem.params.shares": "The number of vault shares to burn.",
+  "fn.redeem.params.receiver": "The address that will receive the underlying assets.",
+  "fn.redeem.params.owner": "The address that owns the shares to burn.",
+  "fn.redeem.returns.assets": "The amount of underlying assets returned.",
+
+  "node.depositor": "Depositor",
+  "node.vault": "ERC-4626 Vault",
+  "node.underlyingAsset": "Underlying Asset (ERC-20)",
+  "node.storageShares": "Share & Asset Storage",
+  "node.shareToken": "Vault Share Token",
+  "node.yieldStrategy": "Yield Strategy",
+
+  "edge.callDeposit": "Call deposit()",
+  "edge.transferAssets": "Transfer underlying assets",
+  "edge.assetsHeld": "Assets held by vault",
+  "edge.mintShares": "Mint vault shares",
+  "edge.sharesIssued": "Shares issued",
+  "edge.deployCapital": "Deploy capital to strategy",
+  "edge.callRedeem": "Call redeem()",
+  "edge.emitDeposit": "Emit Deposit event",
+  "edge.emitWithdraw": "Emit Withdraw event",
+
+  "sim.depositMintShares.name": "Deposit Assets & Mint Shares",
+  "sim.depositMintShares.desc": "Deposit underlying assets into an ERC-4626 vault and receive vault shares representing your proportional claim.",
+  "sim.depositMintShares.param.assets": "Asset amount to deposit (in wei)",
+  "sim.depositMintShares.param.receiver": "Share receiver address",
+  "sim.depositMintShares.step.preview": "The depositor calls previewDeposit to see how many shares they will receive for their asset amount, accounting for any vault fees.",
+  "sim.depositMintShares.step.preview.mobile": "Preview deposit",
+  "sim.depositMintShares.step.transferAssets": "The depositor calls deposit(). The vault transfers the underlying assets from the depositor via transferFrom. The vault now holds the assets.",
+  "sim.depositMintShares.step.transferAssets.mobile": "Transfer assets to vault",
+  "sim.depositMintShares.step.mintShares": "The vault mints shares proportional to the deposited assets and credits them to the receiver. The share/asset exchange rate determines the amount.",
+  "sim.depositMintShares.step.mintShares.mobile": "Mint vault shares",
+  "sim.depositMintShares.step.deploy": "The vault may deploy the deposited assets into a yield strategy to generate returns for shareholders.",
+  "sim.depositMintShares.step.event": "A Deposit event is emitted recording the sender, receiver, asset amount, and shares minted.",
+
+  "sim.redeemShares.name": "Redeem Shares for Assets",
+  "sim.redeemShares.desc": "Burn vault shares to withdraw underlying assets, including any accrued yield.",
+  "sim.redeemShares.param.shares": "Shares to redeem (in wei)",
+  "sim.redeemShares.param.receiver": "Asset receiver address",
+  "sim.redeemShares.step.previewRedeem": "The depositor calls previewRedeem to see how many assets they will receive. If yield has accrued, shares may be worth more than the original deposit.",
+  "sim.redeemShares.step.burnShares": "The depositor calls redeem(). The vault burns the specified shares from the owner's balance and calculates the corresponding asset amount.",
+  "sim.redeemShares.step.returnAssets": "The vault transfers the underlying assets back to the receiver. The amount includes any yield earned while the shares were held.",
+  "sim.redeemShares.step.event": "A Withdraw event is emitted recording the sender, receiver, owner, asset amount, and shares burned."
+}

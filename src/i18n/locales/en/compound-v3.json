@@ -1,0 +1,69 @@
+{
+  "short": "Single-asset lending protocol with isolated markets and efficient liquidation via absorption",
+  "introduction": "Compound V3, also known as Comet, is a streamlined lending protocol that takes a fundamentally different approach from its predecessor. Each Comet deployment manages a single borrowable base asset (such as USDC) with multiple collateral assets, simplifying risk management. The protocol eliminates the need for cTokens, using internal balance accounting instead.",
+  "designPurpose": "Compound V3 was designed to reduce the complexity and attack surface of multi-asset lending pools by focusing each market on one base asset. This single-borrowable-asset architecture improves risk isolation and makes the protocol easier to reason about. The absorption-based liquidation mechanism replaces the legacy close-factor model, enabling more efficient bad debt socialization.",
+  "commonUsage": "Users typically supply collateral assets like WETH or WBTC to borrow USDC at variable rates. Suppliers of the base asset earn interest automatically through the protocol's internal accounting. Compound V3 is also used by protocols seeking a simple, auditable lending primitive for building on top of.",
+
+  "fn.supply.desc": "Supplies an asset to the Comet market. If the asset is the base token, it earns interest. If it is a collateral token, it backs borrowing capacity.",
+  "fn.supply.params.asset": "The address of the token to supply (base token or collateral).",
+  "fn.supply.params.amount": "The amount to supply, in the token's native decimals.",
+
+  "fn.withdraw.desc": "Withdraws a previously supplied asset from the Comet market.",
+  "fn.withdraw.params.asset": "The address of the token to withdraw.",
+  "fn.withdraw.params.amount": "The amount to withdraw, in the token's native decimals.",
+
+  "fn.borrow.desc": "Borrows the base asset from the Comet market. Internally uses the withdraw function with the base token address when the user has no base balance.",
+  "fn.borrow.params.asset": "The address of the base token to borrow (e.g., USDC).",
+  "fn.borrow.params.amount": "The amount of the base token to borrow.",
+
+  "fn.repay.desc": "Repays a borrow of the base asset. Internally uses the supply function to return the base token to the protocol.",
+  "fn.repay.params.asset": "The address of the base token being repaid.",
+  "fn.repay.params.amount": "The amount of the base token to repay.",
+
+  "fn.absorb.desc": "Triggers liquidation by absorbing one or more undercollateralized accounts. The protocol seizes their collateral and socializes any bad debt among base suppliers.",
+  "fn.absorb.params.absorber": "The address initiating the absorption, which may receive a reward.",
+  "fn.absorb.params.accounts": "An array of undercollateralized account addresses to absorb.",
+
+  "fn.buyCollateral.desc": "Purchases seized collateral from the protocol at a discount after an absorption event. This is how liquidated collateral is returned to the market.",
+  "fn.buyCollateral.params.asset": "The address of the collateral token to buy.",
+  "fn.buyCollateral.params.minAmount": "The minimum amount of collateral to receive.",
+  "fn.buyCollateral.params.baseAmount": "The amount of base token to spend purchasing the collateral.",
+  "fn.buyCollateral.params.recipient": "The address that will receive the purchased collateral.",
+
+  "fn.getUtilization.desc": "Returns the current utilization ratio of the market, which determines the interest rate via the interest rate model.",
+  "fn.getUtilization.returns.utilization": "The current utilization as a fraction scaled to 18 decimals (e.g., 0.8e18 = 80%).",
+
+  "fn.getSupplyRate.desc": "Returns the per-second supply rate for a given utilization level.",
+  "fn.getSupplyRate.params.utilization": "The utilization ratio to query, scaled to 18 decimals.",
+  "fn.getSupplyRate.returns.supplyRate": "The per-second supply interest rate, scaled to 18 decimals.",
+
+  "node.supplier": "Base Supplier",
+  "node.borrower": "Borrower",
+  "node.cometContract": "Comet Contract",
+  "node.baseToken": "Base Token (USDC)",
+  "node.collateralToken": "Collateral Token (WETH)",
+  "node.priceFeed": "Chainlink Price Feed",
+  "node.absorber": "Absorber / Liquidator",
+
+  "edge.supplyBase": "supply(USDC)",
+  "edge.baseTokenBalance": "Track base balance",
+  "edge.supplyCollateral": "supply(WETH collateral)",
+  "edge.collateralHeld": "Hold collateral",
+  "edge.assetPrice": "Get asset price",
+  "edge.borrowedUSDC": "Borrow USDC",
+  "edge.absorb": "absorb(accounts)",
+  "edge.absorberReward": "Absorption reward",
+
+  "sim.supplyAndBorrowComet.name": "Supply Collateral & Borrow",
+  "sim.supplyAndBorrowComet.desc": "Simulates supplying WETH collateral and borrowing USDC from the Comet market, demonstrating the single-asset borrow model.",
+  "sim.supplyAndBorrowComet.param.collateralAmount": "Collateral Amount (wei)",
+  "sim.supplyAndBorrowComet.param.borrowAmount": "Borrow Amount (USDC base units)",
+  "sim.supplyAndBorrowComet.step.supplyCollateral": "The borrower supplies WETH as collateral into the Comet contract. The collateral is held separately from the base token pool.",
+  "sim.supplyAndBorrowComet.step.supplyCollateral.mobile": "Supply WETH collateral",
+  "sim.supplyAndBorrowComet.step.checkPrice": "The Comet contract queries the Chainlink price feed to value the collateral and calculate the maximum borrow capacity based on the LTV factor.",
+  "sim.supplyAndBorrowComet.step.checkPrice.mobile": "Check collateral price",
+  "sim.supplyAndBorrowComet.step.borrowBase": "The borrower calls withdraw() with USDC to borrow. The protocol tracks the borrow balance internally and transfers USDC to the borrower.",
+  "sim.supplyAndBorrowComet.step.borrowBase.mobile": "Borrow USDC",
+  "sim.supplyAndBorrowComet.step.utilization": "The market utilization increases, causing the interest rate model to adjust the borrow and supply rates. Base suppliers earn higher yields.",
+  "sim.supplyAndBorrowComet.step.utilization.mobile": "Utilization & rates adjust"
+}

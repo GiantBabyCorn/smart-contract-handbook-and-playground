@@ -1,0 +1,40 @@
+{
+  "short": "EIP-712 Domain Discovery",
+  "introduction": "ERC-5267 provides a standard way for smart contracts to expose their EIP-712 domain separator configuration. It defines a single function, eip712Domain(), that returns all the fields used to construct the domain separator: name, version, chain ID, verifying contract address, salt, and which fields are actually used. This enables dApps and wallets to dynamically discover the correct domain parameters for signing EIP-712 typed data without hardcoding them.",
+  "designPurpose": "ERC-5267 was designed to solve the domain separator discovery problem for EIP-712 signing. Before this standard, dApps had to hardcode domain parameters or use off-chain registries to know how to construct the correct domain separator for a contract. This was error-prone, especially after chain forks or contract migrations. ERC-5267 makes domain information self-describing, allowing wallets to query it directly from the contract.",
+  "commonUsage": "ERC-5267 is used by any contract that implements EIP-712 structured data signing, including ERC-2612 (permit), governance contracts, and order-book DEXes. Wallets like MetaMask can call eip712Domain() to discover the correct signing parameters. OpenZeppelin's EIP712 base contract implements this standard automatically.",
+
+  "fn.eip712Domain.desc": "Returns the EIP-712 domain fields used by this contract. The fields bitmask indicates which of the returned values are actually used in the domain separator computation.",
+  "fn.eip712Domain.returns.fields": "A bitmask indicating which domain fields are used (bit 0 = name, bit 1 = version, bit 2 = chainId, bit 3 = verifyingContract, bit 4 = salt).",
+  "fn.eip712Domain.returns.name": "The human-readable name of the signing domain (e.g., the token name).",
+  "fn.eip712Domain.returns.version": "The current major version of the signing domain (e.g., '1').",
+  "fn.eip712Domain.returns.chainId": "The chain ID the contract is deployed on.",
+  "fn.eip712Domain.returns.verifyingContract": "The address of the contract that will verify the signature.",
+  "fn.eip712Domain.returns.salt": "An optional disambiguating salt for the domain.",
+  "fn.eip712Domain.returns.extensions": "Array of EIP numbers for any extensions to the domain separator logic.",
+
+  "fn.EIP712DomainChanged.desc": "Emitted when the domain parameters change, signaling that cached domain separators should be invalidated. This can happen after a contract upgrade or chain fork.",
+
+  "node.dapp": "DApp / Wallet",
+  "node.contract": "ERC-5267 Contract",
+  "node.domainInfo": "Domain Information",
+  "node.eip712Context": "EIP-712 Domain Separator",
+
+  "edge.discoverDomain": "Call eip712Domain()",
+  "edge.readDomainFields": "Read domain fields",
+  "edge.buildDomainSeparator": "Build DOMAIN_SEPARATOR",
+  "edge.domainReturned": "Domain info returned",
+  "edge.emitChanged": "Emit EIP712DomainChanged",
+
+  "sim.domainDiscovery.name": "EIP-712 Domain Discovery",
+  "sim.domainDiscovery.desc": "Discover a contract's EIP-712 domain configuration by calling the eip712Domain() function.",
+  "sim.domainDiscovery.param.contractAddress": "Contract address to query",
+  "sim.domainDiscovery.step.call": "The dApp or wallet calls eip712Domain() on the target contract to discover its EIP-712 signing parameters.",
+  "sim.domainDiscovery.step.call.mobile": "Call eip712Domain()",
+  "sim.domainDiscovery.step.read": "The contract reads its stored domain fields: name, version, and chain ID. These are typically set during contract initialization.",
+  "sim.domainDiscovery.step.read.mobile": "Read domain fields",
+  "sim.domainDiscovery.step.build": "The contract assembles the full domain separator by hashing the type hash together with the domain fields using keccak256.",
+  "sim.domainDiscovery.step.build.mobile": "Build domain separator",
+  "sim.domainDiscovery.step.return": "The domain information is returned to the dApp. The wallet can now construct correct EIP-712 typed data for signing.",
+  "sim.domainDiscovery.step.return.mobile": "Domain info returned"
+}

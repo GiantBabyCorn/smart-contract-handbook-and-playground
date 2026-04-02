@@ -1,0 +1,45 @@
+{
+  "short": "Proxy Storage Slots Standard",
+  "introduction": "ERC-1967 standardizes the storage slots used by proxy contracts to store the implementation address, admin address, and beacon address. These slots are computed as keccak256 of a well-known string minus 1, which places them at pseudo-random positions that are extremely unlikely to collide with implementation contract storage. The standard enables block explorers and tools to reliably detect proxy contracts and display their implementation addresses.",
+  "designPurpose": "ERC-1967 was designed to solve the storage collision problem in proxy contracts and to make proxy contracts discoverable. Before this standard, different proxy implementations used different storage slots, making it impossible for tools to reliably detect proxies. By standardizing the storage slot locations and associated events, ERC-1967 enables Etherscan and other explorers to identify proxies and link to their implementation source code.",
+  "commonUsage": "ERC-1967 is used by virtually every proxy contract in the Ethereum ecosystem, including OpenZeppelin's TransparentUpgradeableProxy and UUPS proxies. Block explorers like Etherscan read these standardized slots to display implementation contract details. The standard defines three slots: IMPLEMENTATION_SLOT for the logic contract, ADMIN_SLOT for the upgrade admin, and BEACON_SLOT for beacon proxy patterns.",
+
+  "fn.implementation.desc": "Returns the address of the current logic/implementation contract stored at the standardized ERC-1967 implementation slot.",
+  "fn.implementation.returns.impl": "The address of the current implementation contract.",
+
+  "fn.admin.desc": "Returns the address of the proxy admin stored at the standardized ERC-1967 admin slot. The admin typically has permission to upgrade the proxy.",
+  "fn.admin.returns.admin": "The address of the current proxy admin.",
+
+  "fn.Upgraded.desc": "Emitted when the implementation address is changed. Tools and indexers watch for this event to track proxy upgrades.",
+  "fn.Upgraded.params.implementation": "The address of the new implementation contract.",
+
+  "fn.AdminChanged.desc": "Emitted when the proxy admin address is changed.",
+  "fn.AdminChanged.params.previousAdmin": "The address of the previous admin.",
+  "fn.AdminChanged.params.newAdmin": "The address of the new admin.",
+
+  "node.user": "User / Caller",
+  "node.proxy": "ERC-1967 Proxy",
+  "node.implementation": "Implementation Contract",
+  "node.admin": "Proxy Admin",
+  "node.storageSlots": "Standard Storage Slots",
+
+  "edge.callProxy": "Call proxy",
+  "edge.delegatecall": "delegatecall",
+  "edge.readSlot": "Read storage slot",
+  "edge.upgrade": "Upgrade implementation",
+  "edge.emitUpgraded": "Emit Upgraded event",
+  "edge.emitAdminChanged": "Emit AdminChanged event",
+
+  "sim.delegatecallProxy.name": "Proxy Delegatecall Flow",
+  "sim.delegatecallProxy.desc": "Observe how a user's call flows through an ERC-1967 proxy to the implementation contract via delegatecall.",
+  "sim.delegatecallProxy.param.caller": "Caller address",
+  "sim.delegatecallProxy.param.proxyAddress": "Proxy address",
+  "sim.delegatecallProxy.step.callProxy": "The user sends a transaction to the proxy contract address. The proxy's fallback function is triggered.",
+  "sim.delegatecallProxy.step.callProxy.mobile": "Call the proxy",
+  "sim.delegatecallProxy.step.readSlot": "The proxy reads the implementation address from the standardized ERC-1967 storage slot (keccak256('eip1967.proxy.implementation') - 1).",
+  "sim.delegatecallProxy.step.readSlot.mobile": "Read implementation slot",
+  "sim.delegatecallProxy.step.delegatecall": "The proxy performs a delegatecall to the implementation. The code runs in the proxy's context using the proxy's storage and msg.sender.",
+  "sim.delegatecallProxy.step.delegatecall.mobile": "delegatecall to implementation",
+  "sim.delegatecallProxy.step.return": "The implementation executes the function logic and returns the result back through the proxy to the original caller.",
+  "sim.delegatecallProxy.step.return.mobile": "Return result to caller"
+}

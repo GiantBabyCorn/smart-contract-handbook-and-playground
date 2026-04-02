@@ -1,0 +1,96 @@
+{
+  "short": "Non-Fungible Token (NFT) Standard",
+  "introduction": "ERC-721 is the standard interface for non-fungible tokens (NFTs) on Ethereum. Unlike ERC-20 tokens where each unit is identical, every ERC-721 token has a unique tokenId that distinguishes it from all others. The standard was proposed by William Entriken, Dieter Shirley, Jacob Evans, and Nastassia Sachs in January 2018. It defines functions for transferring ownership, querying balances and ownership, and managing approvals for individual tokens and operators.",
+  "designPurpose": "ERC-721 was designed to represent ownership of unique, distinguishable assets on the blockchain. Each token is non-fungible, meaning one token cannot be swapped 1:1 for another. The standard includes a safe transfer mechanism that checks whether the recipient can handle NFTs (via onERC721Received), preventing tokens from being permanently locked in contracts that cannot interact with them.",
+  "commonUsage": "ERC-721 is used for digital art (CryptoPunks, Bored Apes), gaming items, domain names (ENS), real estate deeds, event tickets, and any asset requiring provable uniqueness. NFT marketplaces like OpenSea rely on this standard for listing, transferring, and auctioning tokens. The standard is commonly extended with metadata (ERC-721Metadata) and enumeration capabilities.",
+
+  "fn.balanceOf.desc": "Returns the number of NFTs owned by a given address. The address must not be the zero address.",
+  "fn.balanceOf.params.owner": "The address to query the NFT balance of.",
+  "fn.balanceOf.returns.balance": "The number of NFTs owned by the address.",
+
+  "fn.ownerOf.desc": "Returns the owner of a specific NFT. The token must exist (have been minted and not burned).",
+  "fn.ownerOf.params.tokenId": "The unique identifier of the NFT to query.",
+  "fn.ownerOf.returns.owner": "The address of the current owner of the NFT.",
+
+  "fn.safeTransferFrom.desc": "Safely transfers an NFT from one address to another. If the recipient is a contract, it must implement onERC721Received and return the correct magic value, or the transfer reverts.",
+  "fn.safeTransferFrom.params.from": "The current owner of the NFT.",
+  "fn.safeTransferFrom.params.to": "The address to receive the NFT.",
+  "fn.safeTransferFrom.params.tokenId": "The unique identifier of the NFT to transfer.",
+
+  "fn.transferFrom.desc": "Transfers an NFT from one address to another without the safe receiver check. The caller must be the owner, an approved address, or an authorized operator.",
+  "fn.transferFrom.params.from": "The current owner of the NFT.",
+  "fn.transferFrom.params.to": "The address to receive the NFT.",
+  "fn.transferFrom.params.tokenId": "The unique identifier of the NFT to transfer.",
+
+  "fn.approve.desc": "Approves another address to transfer a specific NFT on behalf of the owner. Only one approved address is allowed per token at a time. Approval is cleared when the token is transferred.",
+  "fn.approve.params.to": "The address to be approved for the given token.",
+  "fn.approve.params.tokenId": "The unique identifier of the NFT to approve.",
+
+  "fn.setApprovalForAll.desc": "Enables or disables an operator to manage all of the caller's NFTs. Operators can transfer any token owned by the caller.",
+  "fn.setApprovalForAll.params.operator": "The address to grant or revoke operator status.",
+  "fn.setApprovalForAll.params.approved": "True to grant operator status, false to revoke it.",
+
+  "fn.getApproved.desc": "Returns the approved address for a specific NFT. Returns the zero address if no address is approved.",
+  "fn.getApproved.params.tokenId": "The unique identifier of the NFT to query.",
+  "fn.getApproved.returns.operator": "The address approved to transfer this NFT, or address(0) if none.",
+
+  "fn.isApprovedForAll.desc": "Returns whether an operator is approved to manage all tokens of a given owner.",
+  "fn.isApprovedForAll.params.owner": "The address that owns the NFTs.",
+  "fn.isApprovedForAll.params.operator": "The address to check for operator approval.",
+  "fn.isApprovedForAll.returns.approved": "True if the operator is approved for all tokens of the owner.",
+
+  "fn.Transfer.desc": "Emitted when an NFT is transferred from one address to another. Also emitted on minting (from = address(0)) and burning (to = address(0)).",
+  "fn.Transfer.params.from": "The address the NFT is transferred from.",
+  "fn.Transfer.params.to": "The address the NFT is transferred to.",
+  "fn.Transfer.params.tokenId": "The unique identifier of the transferred NFT.",
+
+  "fn.Approval.desc": "Emitted when the approved address for an NFT is changed or reaffirmed.",
+  "fn.Approval.params.owner": "The owner of the NFT.",
+  "fn.Approval.params.approved": "The new approved address for the NFT.",
+  "fn.Approval.params.tokenId": "The unique identifier of the NFT.",
+
+  "fn.ApprovalForAll.desc": "Emitted when an owner enables or disables an operator to manage all of their NFTs.",
+  "fn.ApprovalForAll.params.owner": "The owner of the NFTs.",
+  "fn.ApprovalForAll.params.operator": "The operator address whose status changed.",
+  "fn.ApprovalForAll.params.approved": "True if the operator is approved, false if revoked.",
+
+  "node.owner": "NFT Owner",
+  "node.contract": "ERC-721 Contract",
+  "node.recipient": "Recipient",
+  "node.operator": "Approved Operator",
+  "node.storageOwnership": "Ownership Storage",
+  "node.approvalStorage": "Approval Storage",
+  "node.receiver": "ERC721Receiver",
+
+  "edge.callSafeTransfer": "Call safeTransferFrom()",
+  "edge.updateOwnership": "Update ownership",
+  "edge.checkReceiver": "Check onERC721Received",
+  "edge.nftMoves": "NFT transferred",
+  "edge.callApprove": "Call approve()",
+  "edge.storeApproval": "Store approval",
+  "edge.approvalGranted": "Approval granted",
+  "edge.emitTransfer": "Emit Transfer event",
+
+  "sim.nftTransfer.name": "Safe NFT Transfer",
+  "sim.nftTransfer.desc": "Transfer an NFT from one address to another using safeTransferFrom, including the receiver safety check.",
+  "sim.nftTransfer.param.from": "From address",
+  "sim.nftTransfer.param.to": "To address",
+  "sim.nftTransfer.param.tokenId": "Token ID",
+  "sim.nftTransfer.step.call": "The owner calls safeTransferFrom(from, to, tokenId) to initiate the NFT transfer.",
+  "sim.nftTransfer.step.call.mobile": "Call safeTransferFrom()",
+  "sim.nftTransfer.step.validate": "The contract verifies ownership, updates the _owners mapping to the new owner, and adjusts both parties' balances.",
+  "sim.nftTransfer.step.validate.mobile": "Validate & update ownership",
+  "sim.nftTransfer.step.receiverCheck": "If the recipient is a contract, the ERC-721 contract calls onERC721Received() and verifies the returned magic value (0x150b7a02).",
+  "sim.nftTransfer.step.receiverCheck.mobile": "Check receiver callback",
+  "sim.nftTransfer.step.complete": "The transfer is complete. A Transfer event is emitted and the recipient now owns the NFT.",
+  "sim.nftTransfer.step.complete.mobile": "Transfer complete",
+
+  "sim.safeTransferCallback.name": "Safe Transfer with Callback",
+  "sim.safeTransferCallback.desc": "Demonstrates the onERC721Received callback mechanism when transferring an NFT to a smart contract.",
+  "sim.safeTransferCallback.param.tokenId": "Token ID",
+  "sim.safeTransferCallback.param.useContract": "Send to contract",
+  "sim.safeTransferCallback.step.initiate": "The owner initiates a safeTransferFrom to send the NFT to a contract address.",
+  "sim.safeTransferCallback.step.ownershipUpdate": "The ERC-721 contract updates the ownership record in storage, pointing the token to the new contract address.",
+  "sim.safeTransferCallback.step.callback": "The contract calls onERC721Received on the recipient contract. The recipient must return the magic value bytes4(0x150b7a02) to confirm it can handle NFTs.",
+  "sim.safeTransferCallback.step.event": "A Transfer event is emitted confirming the successful transfer to the contract."
+}

@@ -1,0 +1,49 @@
+{
+  "sidebar": {
+    "search": "표준 및 프로토콜 검색...",
+    "noResults": "검색 결과가 없습니다",
+    "categories": {
+      "token": "토큰 표준",
+      "nft": "NFT 표준",
+      "proxy": "프록시 패턴",
+      "defi": "DeFi 프로토콜",
+      "account": "계정 추상화",
+      "utility": "유틸리티 표준",
+      "identity": "신원 및 인증",
+      "oracle": "오라클 표준",
+      "governance": "거버넌스",
+      "crossChain": "크로스체인",
+      "rwa": "실물 자산"
+    }
+  },
+  "nav": {
+    "home": "홈",
+    "backToHome": "홈으로 돌아가기"
+  },
+  "theme": {
+    "switchToLight": "라이트 테마로 전환",
+    "switchToDark": "다크 테마로 전환"
+  },
+  "language": {
+    "label": "언어"
+  },
+  "footer": {
+    "poweredBy": "Smart Contract Handbook 기반"
+  },
+  "error": {
+    "title": "오류가 발생했습니다",
+    "description": "예기치 않은 오류가 발생했습니다. 페이지를 다시 로드해 주세요.",
+    "reload": "페이지 새로고침",
+    "goHome": "홈으로 이동"
+  },
+  "notFound": {
+    "title": "페이지를 찾을 수 없습니다",
+    "description": "여기에는 아무것도 없어요. 귀여운 아기 옥수수만 있을 뿐이에요.",
+    "goHome": "홈으로 이동"
+  },
+  "loading": "로딩 중...",
+  "a11y": {
+    "flowDiagram": "컨트랙트 구성 요소 간의 상호작용을 나타내는 흐름도",
+    "simulationPanel": "단계별 실행을 위한 인터랙티브 시뮬레이션 패널"
+  }
+}

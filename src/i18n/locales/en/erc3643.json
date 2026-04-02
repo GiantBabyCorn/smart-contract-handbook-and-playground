@@ -1,0 +1,54 @@
+{
+  "short": "Security Token Standard (T-REX)",
+  "introduction": "ERC-3643, also known as T-REX (Token for Regulated EXchanges), is a comprehensive standard for security tokens that enforces regulatory compliance on-chain. It extends ERC-20 with identity verification, compliance rules, and administrative controls. Every transfer is validated against an identity registry and compliance module before execution, ensuring that only verified investors can hold and trade the token. The standard is ISO 20022 compatible and designed for real-world regulated securities.",
+  "designPurpose": "ERC-3643 was designed to bring traditional securities onto the blockchain while maintaining full regulatory compliance. Securities regulations require Know Your Customer (KYC) verification, transfer restrictions based on jurisdiction, investor accreditation, and the ability to freeze or pause transfers. ERC-3643 embeds all these controls directly into the token contract, making it impossible to transfer tokens to unverified addresses.",
+  "commonUsage": "ERC-3643 is used for tokenized securities, real estate tokens, equity tokens, and any regulated financial instrument that requires on-chain compliance. It is deployed by companies like Tokeny Solutions for issuing regulated digital securities. The standard supports identity verification via on-chain claim issuers, country-based transfer restrictions, investor limits, and administrative operations like freezing accounts and forced transfers.",
+
+  "fn.transfer.desc": "Transfers security tokens to a recipient, but only after verifying both parties through the identity registry and checking compliance rules. Reverts if compliance checks fail.",
+  "fn.transfer.params.to": "The recipient address. Must be verified in the identity registry.",
+  "fn.transfer.params.amount": "The number of tokens to transfer.",
+  "fn.transfer.returns.success": "Returns true if the compliant transfer succeeded.",
+
+  "fn.isVerified.desc": "Checks whether an investor address is verified in the identity registry. Verification requires valid claims from trusted issuers.",
+  "fn.isVerified.params.investor": "The investor address to check verification status for.",
+  "fn.isVerified.returns.verified": "True if the investor has valid identity claims from trusted issuers.",
+
+  "fn.identityRegistry.desc": "Returns the address of the identity registry contract that manages investor identities and verification status.",
+  "fn.identityRegistry.returns.registry": "The address of the associated identity registry contract.",
+
+  "fn.compliance.desc": "Returns the address of the compliance module contract that enforces transfer rules (e.g., country restrictions, investor limits).",
+  "fn.compliance.returns.complianceModule": "The address of the compliance module contract.",
+
+  "fn.pause.desc": "Pauses all token transfers. Can only be called by an authorized agent. When paused, no transfers can occur until unpaused.",
+
+  "fn.freeze.desc": "Freezes a specific user's tokens, preventing them from sending or receiving transfers. Used for regulatory enforcement actions.",
+  "fn.freeze.params.userAddress": "The address to freeze. This investor will be unable to transfer tokens.",
+
+  "node.investor": "Investor",
+  "node.tokenContract": "T-REX Token Contract",
+  "node.identityRegistry": "Identity Registry",
+  "node.complianceModule": "Compliance Module",
+  "node.trustedIssuer": "Trusted Claim Issuers",
+  "node.claimRegistry": "Claim Registry (ONCHAINID)",
+
+  "edge.transfer": "Call transfer()",
+  "edge.checkIdentity": "Check identity verification",
+  "edge.checkCompliance": "Check compliance rules",
+  "edge.verifyIssuer": "Verify trusted issuer",
+  "edge.fetchClaim": "Fetch identity claims",
+  "edge.approveTransfer": "Compliance approved",
+
+  "sim.compliantTransfer.name": "Compliant Security Token Transfer",
+  "sim.compliantTransfer.desc": "Transfer regulated security tokens with full identity verification and compliance checking.",
+  "sim.compliantTransfer.param.sender": "Sender (investor)",
+  "sim.compliantTransfer.param.recipient": "Recipient (investor)",
+  "sim.compliantTransfer.param.amount": "Amount to transfer",
+  "sim.compliantTransfer.step.initiate": "An investor initiates a transfer of security tokens. The token contract begins the compliance verification process before executing.",
+  "sim.compliantTransfer.step.initiate.mobile": "Initiate transfer",
+  "sim.compliantTransfer.step.identityCheck": "The token contract queries the identity registry to verify both sender and recipient. The registry checks claims from trusted issuers via ONCHAINID.",
+  "sim.compliantTransfer.step.identityCheck.mobile": "Verify identities",
+  "sim.compliantTransfer.step.complianceCheck": "The compliance module checks transfer rules: country restrictions, maximum holder limits, transfer volume limits, and any other regulatory constraints.",
+  "sim.compliantTransfer.step.complianceCheck.mobile": "Check compliance rules",
+  "sim.compliantTransfer.step.settle": "All checks pass. The transfer is executed, updating balances. Both investors remain verified and compliant throughout the process.",
+  "sim.compliantTransfer.step.settle.mobile": "Execute transfer"
+}

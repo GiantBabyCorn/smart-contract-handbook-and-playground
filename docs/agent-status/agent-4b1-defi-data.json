@@ -1,0 +1,22 @@
+{
+  "agent": "agent-4b1-defi-data",
+  "status": "completed",
+  "timestamp": "2026-04-02T01:00:00Z",
+  "outputFiles": [
+    "src/data/protocols/uniswap-v2.ts",
+    "src/data/protocols/uniswap-v3.ts",
+    "src/data/protocols/uniswap-v4.ts",
+    "src/data/protocols/aave-v3.ts",
+    "src/data/protocols/compound-v3.ts",
+    "src/data/protocols/oneinch-aggregator.ts",
+    "src/data/protocols/curve-stableswap.ts"
+  ],
+  "pendingFiles": [],
+  "validationResults": {
+    "tscCompile": true,
+    "validateRegistry": true,
+    "lintI18nKeys": true
+  },
+  "knownIssues": [],
+  "notes": ""
+}

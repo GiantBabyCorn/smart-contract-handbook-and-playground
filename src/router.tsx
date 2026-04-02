@@ -1,0 +1,41 @@
+/* eslint-disable react-refresh/only-export-components */
+import { createBrowserRouter } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import AppShell from './components/layout/AppShell';
+import SkeletonBlock from './components/common/SkeletonBlock';
+
+const HomePage = lazy(() => import('./pages/HomePage'));
+const DetailPage = lazy(() => import('./pages/DetailPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+
+export const router = createBrowserRouter([
+  {
+    element: <AppShell />,
+    children: [
+      {
+        path: '/',
+        element: (
+          <Suspense fallback={<SkeletonBlock type="home" />}>
+            <HomePage />
+          </Suspense>
+        ),
+      },
+      {
+        path: '/:slug',
+        element: (
+          <Suspense fallback={<SkeletonBlock type="detail" />}>
+            <DetailPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: '*',
+        element: (
+          <Suspense fallback={null}>
+            <NotFoundPage />
+          </Suspense>
+        ),
+      },
+    ],
+  },
+]);

@@ -1,0 +1,48 @@
+{
+  "short": "EOA Code Delegation",
+  "introduction": "ERC-7702 introduces a new transaction type that allows externally owned accounts (EOAs) to temporarily delegate their code execution to a smart contract. By signing an authorization tuple, an EOA can set its code to point to a delegation contract, effectively giving the EOA smart contract capabilities within a single transaction. This enables EOAs to use features like batched transactions, gas sponsorship, and custom validation without permanently converting to a smart contract account.",
+  "designPurpose": "ERC-7702 was designed to bridge the gap between EOAs and smart contract accounts at the protocol level. While ERC-4337 provides account abstraction through a higher-level system, ERC-7702 operates at the transaction level, allowing any EOA to temporarily behave like a smart contract. This enables a smooth migration path where existing EOAs can gradually adopt smart account features without changing their address or permanently altering their account type.",
+  "commonUsage": "ERC-7702 is used to give EOAs smart account superpowers: batched transactions (approve + swap in one tx), gas sponsorship by third parties, and custom signature schemes. It is particularly useful during the transition period as the ecosystem moves from EOAs to smart accounts. Wallet providers use it to offer enhanced UX features to existing EOA users without requiring account migration.",
+
+  "fn.authorize.desc": "Creates a signed authorization tuple that delegates the EOA's code execution to a specified contract. The authorization includes the chain ID, delegation address, and nonce.",
+  "fn.authorize.params.delegation": "The address of the smart contract to delegate code execution to.",
+  "fn.authorize.returns.authorization": "The signed authorization tuple containing chainId, address, nonce, and ECDSA signature.",
+
+  "fn.execute.desc": "Executes a call through the delegation contract on behalf of the EOA. The EOA's code now points to the delegation contract, which processes the call.",
+  "fn.execute.params.to": "The target address to call.",
+  "fn.execute.params.value": "The ETH value to send with the call.",
+  "fn.execute.params.data": "The encoded calldata to execute.",
+  "fn.execute.returns.result": "The return data from the executed call.",
+
+  "fn.executeBatch.desc": "Executes multiple calls in a single transaction through the delegation contract. Enables atomic batched operations from an EOA.",
+  "fn.executeBatch.params.calls": "Array of Call structs, each containing a target address, value, and calldata.",
+  "fn.executeBatch.returns.results": "Array of return data from each executed call.",
+
+  "node.eoa": "EOA (User Wallet)",
+  "node.authorizationTuple": "Authorization Tuple",
+  "node.validator": "Signature Validator",
+  "node.delegationContract": "Delegation Contract",
+  "node.target": "Target Contract",
+  "node.storage": "EOA Code Storage",
+
+  "edge.signAuthorization": "Sign authorization tuple",
+  "edge.verifySignature": "Verify signature",
+  "edge.setCode": "Set EOA code pointer",
+  "edge.storeDelegation": "Store delegation",
+  "edge.callExecute": "Call execute()",
+  "edge.execute": "Execute on target",
+
+  "sim.eoaDelegation.name": "EOA Code Delegation",
+  "sim.eoaDelegation.desc": "Delegate an EOA's code to a smart contract implementation, enabling smart account features.",
+  "sim.eoaDelegation.param.eoaAddress": "EOA address",
+  "sim.eoaDelegation.param.delegationImpl": "Delegation implementation",
+  "sim.eoaDelegation.param.targetContract": "Target contract",
+  "sim.eoaDelegation.step.signAuth": "The EOA signs an authorization tuple containing the chain ID, delegation contract address, and current nonce. This authorizes the code delegation.",
+  "sim.eoaDelegation.step.signAuth.mobile": "Sign authorization",
+  "sim.eoaDelegation.step.verify": "The authorization signature is verified to ensure it was signed by the EOA owner and the nonce is valid.",
+  "sim.eoaDelegation.step.verify.mobile": "Verify signature",
+  "sim.eoaDelegation.step.setCode": "The EOA's code is set to a delegation designator (0xEF0100...) that points to the smart contract implementation. The EOA now behaves like a smart contract.",
+  "sim.eoaDelegation.step.setCode.mobile": "Set EOA code pointer",
+  "sim.eoaDelegation.step.execute": "The EOA can now execute calls through the delegation contract, enabling batched transactions, gas sponsorship, and other smart account features.",
+  "sim.eoaDelegation.step.execute.mobile": "Execute via delegation"
+}

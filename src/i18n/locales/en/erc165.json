@@ -1,0 +1,30 @@
+{
+  "short": "Standard Interface Detection",
+  "introduction": "ERC-165 defines a standard method to detect which interfaces a smart contract supports. It introduces a single function, supportsInterface, that takes a 4-byte interface identifier and returns a boolean. This allows contracts and dApps to query whether a target contract implements a specific interface before attempting to interact with it. The standard itself must return true for the ERC-165 interface ID (0x01ffc9a7) and false for 0xffffffff.",
+  "designPurpose": "ERC-165 was designed to solve the problem of interface discovery on Ethereum. Without it, callers had no reliable way to determine whether a contract supports a particular set of functions, leading to failed calls and wasted gas. By providing a standardized detection mechanism, ERC-165 enables safer contract interactions and is a prerequisite for many other standards like ERC-721 and ERC-1155.",
+  "commonUsage": "ERC-165 is used extensively by NFT marketplaces, token contracts, and protocol routers to verify that a target contract implements the expected interface. For example, a marketplace can check if a contract supports ERC-721 before attempting to transfer an NFT. It is also used by proxy patterns and modular smart accounts to advertise supported capabilities.",
+
+  "fn.supportsInterface.desc": "Returns true if the contract implements the interface defined by the given 4-byte identifier. The interface ID is calculated as the XOR of all function selectors in the interface.",
+  "fn.supportsInterface.params.interfaceId": "The 4-byte interface identifier to query, as defined in ERC-165. Computed as the XOR of all function selectors in the interface.",
+  "fn.supportsInterface.returns.supported": "True if the contract implements the queried interface, false otherwise.",
+
+  "node.caller": "Caller / DApp",
+  "node.contract": "ERC-165 Contract",
+  "node.interfaceRegistry": "Interface Registry",
+  "node.result": "Query Result",
+
+  "edge.query": "Query interface",
+  "edge.lookupRegistry": "Lookup registry",
+  "edge.returnBool": "Return result",
+  "edge.response": "Bool response",
+
+  "sim.interfaceQuery.name": "Interface Detection Query",
+  "sim.interfaceQuery.desc": "Query a contract to check whether it supports a specific interface using the supportsInterface function.",
+  "sim.interfaceQuery.param.interfaceId": "Interface ID to query",
+  "sim.interfaceQuery.step.call": "The caller invokes supportsInterface(interfaceId) on the target contract to check if a specific interface is supported.",
+  "sim.interfaceQuery.step.call.mobile": "Call supportsInterface()",
+  "sim.interfaceQuery.step.lookup": "The contract looks up the interface ID in its internal registry mapping. Each supported interface is pre-registered during construction.",
+  "sim.interfaceQuery.step.lookup.mobile": "Lookup interface registry",
+  "sim.interfaceQuery.step.return": "The contract returns a boolean result. The caller can now safely proceed if the interface is supported, or handle the unsupported case gracefully.",
+  "sim.interfaceQuery.step.return.mobile": "Return true/false"
+}

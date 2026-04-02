@@ -1,0 +1,301 @@
+import type { StandardEntry } from '../types';
+
+export const entry: StandardEntry = {
+  // ─── ERCMeta ───
+  slug: 'erc2612',
+  name: 'ERC-2612',
+  shortDescription: 'erc2612.short',
+  category: 'token',
+  entryType: 'standard',
+  eipNumber: 2612,
+  officialUrl: 'https://eips.ethereum.org/EIPS/eip-2612',
+  relatedSlugs: ['erc20', 'erc5267', 'uniswap-v3', 'oneinch-aggregator'],
+  sortOrder: 500,
+
+  // ─── ERCContent ───
+  introduction: 'erc2612.introduction',
+  designPurpose: 'erc2612.designPurpose',
+  commonUsage: 'erc2612.commonUsage',
+
+  functions: [
+    {
+      name: 'permit',
+      signature: 'permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)',
+      type: 'write',
+      params: [
+        { name: 'owner', type: 'address', description: 'erc2612.fn.permit.params.owner' },
+        { name: 'spender', type: 'address', description: 'erc2612.fn.permit.params.spender' },
+        { name: 'value', type: 'uint256', description: 'erc2612.fn.permit.params.value' },
+        { name: 'deadline', type: 'uint256', description: 'erc2612.fn.permit.params.deadline' },
+        { name: 'v', type: 'uint8', description: 'erc2612.fn.permit.params.v' },
+        { name: 'r', type: 'bytes32', description: 'erc2612.fn.permit.params.r' },
+        { name: 's', type: 'bytes32', description: 'erc2612.fn.permit.params.s' },
+      ],
+      description: 'erc2612.fn.permit.desc',
+      defaultSimValues: {
+        owner: '0xOwner',
+        spender: '0xRouter',
+        value: '1000000000000000000000',
+        deadline: '9999999999',
+        v: '27',
+        r: '0xabc...',
+        s: '0xdef...',
+      },
+    },
+    {
+      name: 'nonces',
+      signature: 'nonces(address owner) → uint256',
+      type: 'read',
+      params: [{ name: 'owner', type: 'address', description: 'erc2612.fn.nonces.params.owner' }],
+      returns: [{ name: 'nonce', type: 'uint256', description: 'erc2612.fn.nonces.returns.nonce' }],
+      description: 'erc2612.fn.nonces.desc',
+      defaultSimValues: { owner: '0xOwner' },
+    },
+    {
+      name: 'DOMAIN_SEPARATOR',
+      signature: 'DOMAIN_SEPARATOR() → bytes32',
+      type: 'read',
+      params: [],
+      returns: [{ name: 'domainSeparator', type: 'bytes32', description: 'erc2612.fn.DOMAIN_SEPARATOR.returns.separator' }],
+      description: 'erc2612.fn.DOMAIN_SEPARATOR.desc',
+      defaultSimValues: {},
+    },
+  ],
+
+  // ─── ERCFlow ───
+  flowNodes: [
+    {
+      id: 'owner',
+      type: 'user',
+      label: 'erc2612.node.owner',
+      data: { address: '0xOwner', balance: '1000 TOKEN' },
+      layoutHint: 'source',
+    },
+    {
+      id: 'relayer',
+      type: 'user',
+      label: 'erc2612.node.relayer',
+      data: { address: '0xRelayer' },
+      layoutHint: 'source',
+    },
+    {
+      id: 'erc2612-contract',
+      type: 'contract',
+      label: 'erc2612.node.contract',
+      data: { functions: ['permit', 'nonces', 'DOMAIN_SEPARATOR', 'transfer', 'transferFrom', 'approve'] },
+      layoutHint: 'center',
+    },
+    {
+      id: 'spender',
+      type: 'contract',
+      label: 'erc2612.node.spender',
+      data: { functions: ['swapTokens', 'depositWithPermit'] },
+      layoutHint: 'sink',
+    },
+    {
+      id: 'storage',
+      type: 'storage',
+      label: 'erc2612.node.storage',
+      data: {
+        slots: [
+          { key: '_nonces', label: 'mapping(address => uint256)' },
+          { key: '_allowances', label: 'mapping(address => mapping(address => uint256))' },
+          { key: 'DOMAIN_SEPARATOR', label: 'bytes32 (immutable)' },
+        ],
+      },
+      layoutHint: 'storage',
+    },
+    {
+      id: 'off-chain-sig',
+      type: 'user',
+      label: 'erc2612.node.offChainSignature',
+      data: { address: '(EIP-712 TypedData)' },
+      layoutHint: 'source',
+    },
+    {
+      id: 'fn-permit',
+      type: 'function',
+      label: 'permit()',
+      data: { fnType: 'write', signature: 'permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)' },
+    },
+    {
+      id: 'sig-recovery',
+      type: 'contract',
+      label: 'erc2612.node.sigRecovery',
+      data: { functions: ['ecrecover'] },
+      layoutHint: 'center',
+    },
+    {
+      id: 'event-approval',
+      type: 'function',
+      label: 'Approval event',
+      data: { fnType: 'event', signature: 'Approval(address indexed owner, address indexed spender, uint256 value)' },
+    },
+  ],
+
+  flowEdges: [
+    {
+      id: 'e-owner-sign',
+      source: 'owner',
+      target: 'off-chain-sig',
+      type: 'labeled',
+      label: 'erc2612.edge.signOffChain',
+    },
+    {
+      id: 'e-owner-relayer',
+      source: 'owner',
+      target: 'relayer',
+      type: 'labeled',
+      label: 'erc2612.edge.sendSigToRelayer',
+    },
+    {
+      id: 'e-relayer-permit',
+      source: 'relayer',
+      target: 'fn-permit',
+      type: 'animated',
+      label: 'erc2612.edge.submitPermit',
+    },
+    {
+      id: 'e-permit-contract',
+      source: 'fn-permit',
+      target: 'erc2612-contract',
+      type: 'animated',
+    },
+    {
+      id: 'e-contract-sigrecover',
+      source: 'erc2612-contract',
+      target: 'sig-recovery',
+      type: 'labeled',
+      label: 'erc2612.edge.verifySignature',
+    },
+    {
+      id: 'e-contract-storage',
+      source: 'erc2612-contract',
+      target: 'storage',
+      type: 'labeled',
+      label: 'erc2612.edge.updateAllowance',
+    },
+    {
+      id: 'e-contract-spender',
+      source: 'erc2612-contract',
+      target: 'spender',
+      type: 'labeled',
+      label: 'erc2612.edge.allowanceGranted',
+    },
+    {
+      id: 'e-contract-event',
+      source: 'erc2612-contract',
+      target: 'event-approval',
+      type: 'labeled',
+      label: 'erc2612.edge.emitApproval',
+    },
+    {
+      id: 'e-spender-contract',
+      source: 'spender',
+      target: 'erc2612-contract',
+      type: 'animated',
+      label: 'erc2612.edge.callTransferFrom',
+    },
+  ],
+
+  elkLayoutOptions: {
+    'elk.algorithm': 'layered',
+    'elk.direction': 'RIGHT',
+    'elk.layered.spacing.nodeNodeBetweenLayers': '80',
+    'elk.spacing.nodeNode': '40',
+  },
+
+  // ─── ERCSimulation ───
+  simulations: [
+    {
+      id: 'gasless-permit-flow',
+      name: 'erc2612.sim.gaslessPermit.name',
+      description: 'erc2612.sim.gaslessPermit.desc',
+      params: [
+        {
+          id: 'owner',
+          label: 'erc2612.sim.gaslessPermit.param.owner',
+          type: 'address',
+          defaultValue: '0xAlice',
+        },
+        {
+          id: 'spender',
+          label: 'erc2612.sim.gaslessPermit.param.spender',
+          type: 'address',
+          defaultValue: '0xUniswapRouter',
+        },
+        {
+          id: 'amount',
+          label: 'erc2612.sim.gaslessPermit.param.amount',
+          type: 'uint256',
+          defaultValue: '1000000000000000000000',
+        },
+        {
+          id: 'deadline',
+          label: 'erc2612.sim.gaslessPermit.param.deadline',
+          type: 'uint256',
+          defaultValue: '9999999999',
+        },
+      ],
+      steps: [
+        {
+          id: 'step-sign',
+          description: 'erc2612.sim.gaslessPermit.step.sign',
+          mobileDescription: 'erc2612.sim.gaslessPermit.step.sign.mobile',
+          highlightNodes: ['owner', 'off-chain-sig'],
+          highlightEdges: ['e-owner-sign'],
+          valueChanges: {
+            'off-chain-sig.message': 'EIP-712 TypedData { owner, spender, value, nonce, deadline }',
+            'off-chain-sig.signature': '(v, r, s) produced',
+          },
+          durationMs: 1200,
+        },
+        {
+          id: 'step-relay',
+          description: 'erc2612.sim.gaslessPermit.step.relay',
+          mobileDescription: 'erc2612.sim.gaslessPermit.step.relay.mobile',
+          highlightNodes: ['owner', 'relayer'],
+          highlightEdges: ['e-owner-relayer'],
+          durationMs: 800,
+        },
+        {
+          id: 'step-submit',
+          description: 'erc2612.sim.gaslessPermit.step.submit',
+          mobileDescription: 'erc2612.sim.gaslessPermit.step.submit.mobile',
+          highlightNodes: ['relayer', 'fn-permit', 'erc2612-contract'],
+          highlightEdges: ['e-relayer-permit', 'e-permit-contract'],
+          durationMs: 1000,
+        },
+        {
+          id: 'step-ecrecover',
+          description: 'erc2612.sim.gaslessPermit.step.ecrecover',
+          mobileDescription: 'erc2612.sim.gaslessPermit.step.ecrecover.mobile',
+          highlightNodes: ['erc2612-contract', 'sig-recovery'],
+          highlightEdges: ['e-contract-sigrecover'],
+          valueChanges: { 'sig-recovery.recovered': '0xAlice ✓' },
+          durationMs: 1100,
+        },
+        {
+          id: 'step-approve',
+          description: 'erc2612.sim.gaslessPermit.step.approve',
+          mobileDescription: 'erc2612.sim.gaslessPermit.step.approve.mobile',
+          highlightNodes: ['erc2612-contract', 'storage', 'spender', 'event-approval'],
+          highlightEdges: ['e-contract-storage', 'e-contract-spender', 'e-contract-event'],
+          valueChanges: {
+            'storage._nonces[0xAlice]': '0 → 1',
+            'storage._allowances[0xAlice][0xUniswapRouter]': '0 → 1000e18',
+          },
+          durationMs: 1200,
+        },
+        {
+          id: 'step-use',
+          description: 'erc2612.sim.gaslessPermit.step.use',
+          highlightNodes: ['spender', 'erc2612-contract'],
+          highlightEdges: ['e-spender-contract'],
+          valueChanges: { 'storage._allowances[0xAlice][0xUniswapRouter]': '1000e18 → 0 (spent)' },
+          durationMs: 1000,
+        },
+      ],
+    },
+  ],
+};

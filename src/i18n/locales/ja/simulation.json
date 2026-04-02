@@ -1,0 +1,28 @@
+{
+  "controls": {
+    "play": "再生",
+    "pause": "一時停止",
+    "reset": "リセット",
+    "stepForward": "次のステップ",
+    "stepBack": "前のステップ",
+    "speed": "速度",
+    "speed.slow": "遅い",
+    "speed.normal": "通常",
+    "speed.fast": "速い"
+  },
+  "panel": {
+    "title": "シミュレーション",
+    "scenario": "シナリオ",
+    "parameters": "パラメーター",
+    "steps": "ステップ",
+    "step": "{{total}} ステップ中 {{current}} ステップ目",
+    "results": "結果",
+    "noScenario": "シナリオを選択して開始してください"
+  },
+  "status": {
+    "idle": "待機中",
+    "running": "実行中",
+    "completed": "完了",
+    "error": "エラー"
+  }
+}

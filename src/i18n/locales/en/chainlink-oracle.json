@@ -1,0 +1,59 @@
+{
+  "short": "Decentralized oracle network providing tamper-proof price feeds for smart contracts",
+  "introduction": "Chainlink is the most widely adopted decentralized oracle network, providing reliable off-chain data to on-chain smart contracts. Its price feed aggregators deliver tamper-proof asset prices used by the majority of DeFi protocols for critical operations like lending liquidations, derivatives settlement, and stablecoin pegging. The network uses a decentralized set of oracle nodes that independently fetch, validate, and aggregate data.",
+  "designPurpose": "Chainlink was designed to solve the oracle problem -- the fundamental challenge of bringing real-world data onto a blockchain in a trustless manner. By using a decentralized network of independent node operators who stake LINK tokens, Chainlink ensures that no single entity can manipulate price data. The aggregator contract takes the median of multiple node submissions, providing robust resistance to outliers and manipulation.",
+  "commonUsage": "DeFi lending protocols like Aave and Compound use Chainlink price feeds to determine collateral values and trigger liquidations. DEXs and derivatives platforms use them for settlement prices and mark-to-market calculations. Stablecoin protocols rely on Chainlink oracles to maintain their pegs and manage risk parameters.",
+
+  "fn.latestRoundData.desc": "Returns the most recent price data from the aggregator, including the price, round ID, and timestamps. This is the primary function used by DeFi protocols to fetch current asset prices.",
+  "fn.latestRoundData.returns.roundId": "The unique identifier for the current aggregation round.",
+  "fn.latestRoundData.returns.answer": "The aggregated price answer, scaled by the feed's decimals (typically 8 for USD pairs).",
+  "fn.latestRoundData.returns.startedAt": "The Unix timestamp when the round was started.",
+  "fn.latestRoundData.returns.updatedAt": "The Unix timestamp when the answer was last updated. Used to check for stale data.",
+  "fn.latestRoundData.returns.answeredInRound": "The round ID in which the answer was computed. Should match roundId for fresh data.",
+
+  "fn.getRoundData.desc": "Returns price data for a specific historical round. Useful for verifying past prices or building time-weighted averages.",
+  "fn.getRoundData.params.roundId": "The round ID to query historical data for.",
+  "fn.getRoundData.returns.roundId": "The round ID of the queried data.",
+  "fn.getRoundData.returns.answer": "The price answer for the queried round.",
+  "fn.getRoundData.returns.startedAt": "The Unix timestamp when the queried round started.",
+  "fn.getRoundData.returns.updatedAt": "The Unix timestamp when the queried round was last updated.",
+  "fn.getRoundData.returns.answeredInRound": "The round in which the answer was computed.",
+
+  "fn.decimals.desc": "Returns the number of decimals in the price feed's answer. Most USD-denominated feeds use 8 decimals.",
+  "fn.decimals.returns.decimals": "The number of decimals (e.g., 8 for USD price feeds).",
+
+  "fn.description.desc": "Returns a human-readable description of the price feed, such as 'ETH / USD'.",
+  "fn.description.returns.description": "The price feed description string.",
+
+  "fn.AnswerUpdated.desc": "Emitted when the aggregator receives a new answer from the oracle network. Used by off-chain systems to monitor price updates in real time.",
+  "fn.AnswerUpdated.params.current": "The new aggregated price answer.",
+  "fn.AnswerUpdated.params.roundId": "The round ID for this answer update.",
+  "fn.AnswerUpdated.params.updatedAt": "The Unix timestamp of the update.",
+
+  "node.consumer-contract": "Consumer Contract (DeFi Protocol)",
+  "node.aggregator-proxy": "Aggregator Proxy",
+  "node.aggregator": "Offchain Aggregator",
+  "node.oracle-nodes": "Oracle Node Network (DON)",
+  "node.off-chain-data": "Off-Chain Data Sources",
+  "node.round-storage": "Round Data Storage",
+
+  "edge.requestPrice": "latestRoundData()",
+  "edge.delegate": "Delegate to aggregator",
+  "edge.readRound": "Read round data",
+  "edge.fetchData": "Fetch market data",
+  "edge.submitAnswer": "Submit oracle answer",
+  "edge.returnPrice": "Return price data",
+  "edge.priceData": "Price to consumer",
+
+  "sim.price-feed-request.name": "Price Feed Request",
+  "sim.price-feed-request.desc": "Simulates the complete lifecycle of a Chainlink price update: off-chain data aggregation by oracle nodes, on-chain submission, and a consumer contract reading the price.",
+  "sim.price-feed-request.param.consumerAddress": "Consumer Contract Address",
+  "sim.price-feed-request.step.offChainFetch": "Oracle nodes in the Decentralized Oracle Network (DON) independently fetch the ETH/USD price from multiple off-chain data sources.",
+  "sim.price-feed-request.step.offChainFetch.mobile": "Nodes fetch off-chain prices",
+  "sim.price-feed-request.step.submit": "The oracle nodes submit their individual answers to the aggregator contract, which computes the median value and stores it as the latest round data.",
+  "sim.price-feed-request.step.submit.mobile": "Submit aggregated answer",
+  "sim.price-feed-request.step.consumerCall": "A DeFi protocol's consumer contract calls latestRoundData() on the aggregator proxy to fetch the current ETH/USD price.",
+  "sim.price-feed-request.step.consumerCall.mobile": "Consumer calls latestRoundData()",
+  "sim.price-feed-request.step.proxyDelegate": "The proxy delegates the call to the current aggregator implementation, which reads the latest round from storage and returns the price data to the consumer.",
+  "sim.price-feed-request.step.proxyDelegate.mobile": "Proxy returns price data"
+}

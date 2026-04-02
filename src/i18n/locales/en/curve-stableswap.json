@@ -1,0 +1,68 @@
+{
+  "short": "Optimized AMM for stablecoin and pegged-asset swaps with minimal slippage",
+  "introduction": "Curve StableSwap is an automated market maker specifically designed for trading assets that should maintain a similar value, such as stablecoins or wrapped tokens. It uses a hybrid invariant that combines constant-sum and constant-product formulas, achieving significantly lower slippage than traditional AMMs for pegged assets. Curve is one of the deepest liquidity sources in DeFi for stablecoin trading.",
+  "designPurpose": "Curve was designed to solve the capital inefficiency of constant-product AMMs like Uniswap when trading similarly-priced assets. The StableSwap invariant, controlled by an amplification parameter A, creates a nearly flat price curve around the peg, enabling large trades with minimal price impact. This design makes Curve the preferred venue for stablecoin swaps across DeFi.",
+  "commonUsage": "Traders use Curve to swap between stablecoins (DAI, USDC, USDT) with minimal slippage and fees. Liquidity providers deposit stablecoins to earn trading fees and CRV token rewards through the gauge system. Curve is also heavily used by aggregators like 1inch to route stablecoin trades for the best execution.",
+
+  "fn.exchange.desc": "Swaps one token for another within the pool using the StableSwap invariant. A fee is deducted and distributed to liquidity providers.",
+  "fn.exchange.params.i": "The index of the input token in the pool.",
+  "fn.exchange.params.j": "The index of the output token in the pool.",
+  "fn.exchange.params.dx": "The amount of the input token to swap.",
+  "fn.exchange.params.min_dy": "The minimum amount of the output token to receive. Reverts if not met (slippage protection).",
+  "fn.exchange.returns.dy": "The actual amount of the output token received.",
+
+  "fn.add_liquidity.desc": "Deposits tokens into the pool in exchange for LP tokens. Tokens can be added in any ratio, though imbalanced deposits incur a small fee.",
+  "fn.add_liquidity.params.amounts": "An array of token amounts to deposit, one per pool token.",
+  "fn.add_liquidity.params.min_mint_amount": "The minimum number of LP tokens to mint. Reverts if not met.",
+  "fn.add_liquidity.returns.lpAmount": "The amount of LP tokens minted to the depositor.",
+
+  "fn.remove_liquidity.desc": "Burns LP tokens and withdraws all underlying tokens proportionally based on current pool balances.",
+  "fn.remove_liquidity.params._amount": "The amount of LP tokens to burn.",
+  "fn.remove_liquidity.params.min_amounts": "Minimum amounts of each underlying token to receive.",
+  "fn.remove_liquidity.returns.amounts": "The actual amounts of each underlying token withdrawn.",
+
+  "fn.remove_liquidity_one_coin.desc": "Burns LP tokens and withdraws a single underlying token. The withdrawal amount accounts for fees and the StableSwap invariant.",
+  "fn.remove_liquidity_one_coin.params._token_amount": "The amount of LP tokens to burn.",
+  "fn.remove_liquidity_one_coin.params.i": "The index of the token to withdraw.",
+  "fn.remove_liquidity_one_coin.params._min_amount": "The minimum amount of the token to receive.",
+  "fn.remove_liquidity_one_coin.returns.coinAmount": "The actual amount of the token withdrawn.",
+
+  "fn.get_dy.desc": "Calculates the expected output amount for a given swap without executing it. Useful for quoting prices off-chain.",
+  "fn.get_dy.params.i": "The index of the input token.",
+  "fn.get_dy.params.j": "The index of the output token.",
+  "fn.get_dy.params.dx": "The input amount to simulate.",
+  "fn.get_dy.returns.dy": "The expected output amount after fees.",
+
+  "fn.get_virtual_price.desc": "Returns the virtual price of the LP token, representing the value of one LP token in terms of the underlying assets. Used to detect pool growth over time.",
+  "fn.get_virtual_price.returns.price": "The virtual price scaled to 18 decimals.",
+
+  "node.trader": "Trader",
+  "node.stableswapPool": "StableSwap Pool",
+  "node.tokenA": "Token A (DAI)",
+  "node.tokenB": "Token B (USDC)",
+  "node.lpToken": "LP Token (3CRV)",
+  "node.gauge": "Liquidity Gauge",
+  "node.crvRewards": "CRV Rewards",
+
+  "edge.exchange": "exchange(i, j, dx)",
+  "edge.tokenIn": "Token in",
+  "edge.tokenOut": "Token out",
+  "edge.mintLP": "Mint LP tokens",
+  "edge.stakeLP": "Stake LP in gauge",
+  "edge.crvEmissions": "CRV emissions",
+  "edge.claimCRV": "Claim CRV rewards",
+
+  "sim.stablecoinSwap.name": "Stablecoin Swap",
+  "sim.stablecoinSwap.desc": "Simulates a swap of DAI to USDC through the 3Pool, demonstrating the StableSwap invariant's near-zero slippage for pegged assets.",
+  "sim.stablecoinSwap.param.dx": "Swap Amount (wei)",
+  "sim.stablecoinSwap.param.tokenIn": "Input Token",
+  "sim.stablecoinSwap.param.tokenOut": "Output Token",
+  "sim.stablecoinSwap.step.queryGetDy": "The trader queries get_dy() to preview the expected output. The StableSwap invariant produces near-1:1 pricing for balanced pools.",
+  "sim.stablecoinSwap.step.queryGetDy.mobile": "Query expected output",
+  "sim.stablecoinSwap.step.transferTokenIn": "The input DAI is transferred from the trader to the pool, increasing the pool's DAI reserve.",
+  "sim.stablecoinSwap.step.transferTokenIn.mobile": "Transfer DAI to pool",
+  "sim.stablecoinSwap.step.stableswapInvariant": "The pool recalculates using the StableSwap invariant with the amplification factor A, determining the output amount along the near-linear price curve.",
+  "sim.stablecoinSwap.step.stableswapInvariant.mobile": "Calculate via invariant",
+  "sim.stablecoinSwap.step.receiveTokenOut": "The pool transfers USDC to the trader. A small fee (typically 0.04%) is deducted and retained by the pool for LP holders.",
+  "sim.stablecoinSwap.step.receiveTokenOut.mobile": "Receive USDC output"
+}

@@ -1,0 +1,395 @@
+import type { ProtocolEntry } from '../types';
+
+export const entry: ProtocolEntry = {
+  // ─── ERCMeta ───
+  slug: 'oz-governor',
+  name: 'OZ Governor',
+  shortDescription: 'oz-governor.short',
+  category: 'governance',
+  entryType: 'protocol',
+  officialUrl: 'https://docs.openzeppelin.com/contracts/governance',
+  relatedSlugs: ['safe-multisig', 'erc20'],
+  sortOrder: 3500,
+
+  // ─── ERCContent ───
+  introduction: 'oz-governor.introduction',
+  designPurpose: 'oz-governor.designPurpose',
+  commonUsage: 'oz-governor.commonUsage',
+
+  functions: [
+    {
+      name: 'propose',
+      signature: 'propose(address[] targets, uint256[] values, bytes[] calldatas, string description) → uint256 proposalId',
+      type: 'write',
+      params: [
+        { name: 'targets', type: 'address[]', description: 'oz-governor.fn.propose.params.targets' },
+        { name: 'values', type: 'uint256[]', description: 'oz-governor.fn.propose.params.values' },
+        { name: 'calldatas', type: 'bytes[]', description: 'oz-governor.fn.propose.params.calldatas' },
+        { name: 'description', type: 'string', description: 'oz-governor.fn.propose.params.description' },
+      ],
+      returns: [{ name: 'proposalId', type: 'uint256', description: 'oz-governor.fn.propose.returns.proposalId' }],
+      description: 'oz-governor.fn.propose.desc',
+      defaultSimValues: { description: 'Transfer 100 tokens to community fund' },
+    },
+    {
+      name: 'castVote',
+      signature: 'castVote(uint256 proposalId, uint8 support) → uint256 weight',
+      type: 'write',
+      params: [
+        { name: 'proposalId', type: 'uint256', description: 'oz-governor.fn.castVote.params.proposalId' },
+        { name: 'support', type: 'uint8', description: 'oz-governor.fn.castVote.params.support' },
+      ],
+      returns: [{ name: 'weight', type: 'uint256', description: 'oz-governor.fn.castVote.returns.weight' }],
+      description: 'oz-governor.fn.castVote.desc',
+      defaultSimValues: { proposalId: '1', support: '1' },
+    },
+    {
+      name: 'castVoteWithReason',
+      signature: 'castVoteWithReason(uint256 proposalId, uint8 support, string reason) → uint256 weight',
+      type: 'write',
+      params: [
+        { name: 'proposalId', type: 'uint256', description: 'oz-governor.fn.castVoteWithReason.params.proposalId' },
+        { name: 'support', type: 'uint8', description: 'oz-governor.fn.castVoteWithReason.params.support' },
+        { name: 'reason', type: 'string', description: 'oz-governor.fn.castVoteWithReason.params.reason' },
+      ],
+      returns: [{ name: 'weight', type: 'uint256', description: 'oz-governor.fn.castVoteWithReason.returns.weight' }],
+      description: 'oz-governor.fn.castVoteWithReason.desc',
+      defaultSimValues: { support: '1', reason: 'I support this proposal' },
+    },
+    {
+      name: 'queue',
+      signature: 'queue(address[] targets, uint256[] values, bytes[] calldatas, bytes32 descriptionHash) → uint256 proposalId',
+      type: 'write',
+      params: [
+        { name: 'targets', type: 'address[]', description: 'oz-governor.fn.queue.params.targets' },
+        { name: 'values', type: 'uint256[]', description: 'oz-governor.fn.queue.params.values' },
+        { name: 'calldatas', type: 'bytes[]', description: 'oz-governor.fn.queue.params.calldatas' },
+        { name: 'descriptionHash', type: 'bytes32', description: 'oz-governor.fn.queue.params.descriptionHash' },
+      ],
+      returns: [{ name: 'proposalId', type: 'uint256', description: 'oz-governor.fn.queue.returns.proposalId' }],
+      description: 'oz-governor.fn.queue.desc',
+      defaultSimValues: {},
+    },
+    {
+      name: 'execute',
+      signature: 'execute(address[] targets, uint256[] values, bytes[] calldatas, bytes32 descriptionHash) → uint256 proposalId',
+      type: 'write',
+      params: [
+        { name: 'targets', type: 'address[]', description: 'oz-governor.fn.execute.params.targets' },
+        { name: 'values', type: 'uint256[]', description: 'oz-governor.fn.execute.params.values' },
+        { name: 'calldatas', type: 'bytes[]', description: 'oz-governor.fn.execute.params.calldatas' },
+        { name: 'descriptionHash', type: 'bytes32', description: 'oz-governor.fn.execute.params.descriptionHash' },
+      ],
+      returns: [{ name: 'proposalId', type: 'uint256', description: 'oz-governor.fn.execute.returns.proposalId' }],
+      description: 'oz-governor.fn.execute.desc',
+      defaultSimValues: {},
+    },
+    {
+      name: 'cancel',
+      signature: 'cancel(address[] targets, uint256[] values, bytes[] calldatas, bytes32 descriptionHash) → uint256 proposalId',
+      type: 'write',
+      params: [
+        { name: 'targets', type: 'address[]', description: 'oz-governor.fn.cancel.params.targets' },
+        { name: 'values', type: 'uint256[]', description: 'oz-governor.fn.cancel.params.values' },
+        { name: 'calldatas', type: 'bytes[]', description: 'oz-governor.fn.cancel.params.calldatas' },
+        { name: 'descriptionHash', type: 'bytes32', description: 'oz-governor.fn.cancel.params.descriptionHash' },
+      ],
+      returns: [{ name: 'proposalId', type: 'uint256', description: 'oz-governor.fn.cancel.returns.proposalId' }],
+      description: 'oz-governor.fn.cancel.desc',
+      defaultSimValues: {},
+    },
+    {
+      name: 'state',
+      signature: 'state(uint256 proposalId) → uint8',
+      type: 'read',
+      params: [
+        { name: 'proposalId', type: 'uint256', description: 'oz-governor.fn.state.params.proposalId' },
+      ],
+      returns: [{ name: 'state', type: 'uint8', description: 'oz-governor.fn.state.returns.state' }],
+      description: 'oz-governor.fn.state.desc',
+      defaultSimValues: { proposalId: '1' },
+    },
+    {
+      name: 'getVotes',
+      signature: 'getVotes(address account, uint256 blockNumber) → uint256',
+      type: 'read',
+      params: [
+        { name: 'account', type: 'address', description: 'oz-governor.fn.getVotes.params.account' },
+        { name: 'blockNumber', type: 'uint256', description: 'oz-governor.fn.getVotes.params.blockNumber' },
+      ],
+      returns: [{ name: 'votes', type: 'uint256', description: 'oz-governor.fn.getVotes.returns.votes' }],
+      description: 'oz-governor.fn.getVotes.desc',
+      defaultSimValues: { account: '0xVoterAddress', blockNumber: '19000000' },
+    },
+    {
+      name: 'proposalThreshold',
+      signature: 'proposalThreshold() → uint256',
+      type: 'read',
+      params: [],
+      returns: [{ name: 'threshold', type: 'uint256', description: 'oz-governor.fn.proposalThreshold.returns.threshold' }],
+      description: 'oz-governor.fn.proposalThreshold.desc',
+      defaultSimValues: {},
+    },
+    {
+      name: 'ProposalCreated',
+      signature: 'ProposalCreated(uint256 proposalId, address proposer, address[] targets, uint256[] values, string[] signatures, bytes[] calldatas, uint256 voteStart, uint256 voteEnd, string description)',
+      type: 'event',
+      params: [
+        { name: 'proposalId', type: 'uint256', description: 'oz-governor.fn.ProposalCreated.params.proposalId' },
+        { name: 'proposer', type: 'address', description: 'oz-governor.fn.ProposalCreated.params.proposer' },
+        { name: 'voteStart', type: 'uint256', description: 'oz-governor.fn.ProposalCreated.params.voteStart' },
+        { name: 'voteEnd', type: 'uint256', description: 'oz-governor.fn.ProposalCreated.params.voteEnd' },
+        { name: 'description', type: 'string', description: 'oz-governor.fn.ProposalCreated.params.description' },
+      ],
+      description: 'oz-governor.fn.ProposalCreated.desc',
+    },
+    {
+      name: 'VoteCast',
+      signature: 'VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 weight, string reason)',
+      type: 'event',
+      params: [
+        { name: 'voter', type: 'address', description: 'oz-governor.fn.VoteCast.params.voter' },
+        { name: 'proposalId', type: 'uint256', description: 'oz-governor.fn.VoteCast.params.proposalId' },
+        { name: 'support', type: 'uint8', description: 'oz-governor.fn.VoteCast.params.support' },
+        { name: 'weight', type: 'uint256', description: 'oz-governor.fn.VoteCast.params.weight' },
+        { name: 'reason', type: 'string', description: 'oz-governor.fn.VoteCast.params.reason' },
+      ],
+      description: 'oz-governor.fn.VoteCast.desc',
+    },
+  ],
+
+  // ─── ERCFlow ───
+  flowNodes: [
+    {
+      id: 'proposer',
+      type: 'user',
+      label: 'oz-governor.node.proposer',
+      data: { address: '0xProposer', balance: '1000 GOV tokens' },
+      layoutHint: 'source',
+    },
+    {
+      id: 'governor-contract',
+      type: 'contract',
+      label: 'oz-governor.node.governor-contract',
+      data: { functions: ['propose', 'castVote', 'queue', 'execute', 'state'] },
+      layoutHint: 'center',
+    },
+    {
+      id: 'timelock',
+      type: 'contract',
+      label: 'oz-governor.node.timelock',
+      data: { functions: ['schedule', 'execute', 'cancel'] },
+    },
+    {
+      id: 'token-contract',
+      type: 'contract',
+      label: 'oz-governor.node.token-contract',
+      data: { functions: ['getPastVotes', 'delegate', 'balanceOf'] },
+    },
+    {
+      id: 'voter-a',
+      type: 'user',
+      label: 'oz-governor.node.voter-a',
+      data: { address: '0xVoterA', balance: '500 GOV tokens' },
+    },
+    {
+      id: 'voter-b',
+      type: 'user',
+      label: 'oz-governor.node.voter-b',
+      data: { address: '0xVoterB', balance: '300 GOV tokens' },
+    },
+    {
+      id: 'target-contract',
+      type: 'contract',
+      label: 'oz-governor.node.target-contract',
+      data: { functions: ['transfer', 'setParam'] },
+      layoutHint: 'sink',
+    },
+  ],
+
+  flowEdges: [
+    {
+      id: 'e-proposer-governor',
+      source: 'proposer',
+      target: 'governor-contract',
+      type: 'animated',
+      label: 'oz-governor.edge.propose',
+    },
+    {
+      id: 'e-governor-token',
+      source: 'governor-contract',
+      target: 'token-contract',
+      type: 'labeled',
+      label: 'oz-governor.edge.getVotingPower',
+    },
+    {
+      id: 'e-voterA-governor',
+      source: 'voter-a',
+      target: 'governor-contract',
+      type: 'animated',
+      label: 'oz-governor.edge.castVote',
+    },
+    {
+      id: 'e-voterB-governor',
+      source: 'voter-b',
+      target: 'governor-contract',
+      type: 'animated',
+      label: 'oz-governor.edge.castVote',
+    },
+    {
+      id: 'e-governor-timelock',
+      source: 'governor-contract',
+      target: 'timelock',
+      type: 'animated',
+      label: 'oz-governor.edge.queueProposal',
+    },
+    {
+      id: 'e-timelock-target',
+      source: 'timelock',
+      target: 'target-contract',
+      type: 'animated',
+      label: 'oz-governor.edge.execute',
+    },
+    {
+      id: 'e-proposer-token',
+      source: 'proposer',
+      target: 'token-contract',
+      type: 'labeled',
+      label: 'oz-governor.edge.checkThreshold',
+    },
+  ],
+
+  elkLayoutOptions: {
+    'elk.algorithm': 'layered',
+    'elk.direction': 'RIGHT',
+    'elk.layered.spacing.nodeNodeBetweenLayers': '80',
+    'elk.spacing.nodeNode': '40',
+  },
+
+  // ─── ERCSimulation ───
+  simulations: [
+    {
+      id: 'full-governance-lifecycle',
+      name: 'oz-governor.sim.full-governance-lifecycle.name',
+      description: 'oz-governor.sim.full-governance-lifecycle.desc',
+      params: [
+        {
+          id: 'proposalDescription',
+          label: 'oz-governor.sim.full-governance-lifecycle.param.proposalDescription',
+          type: 'address',
+          defaultValue: '0xProposerAddress',
+        },
+        {
+          id: 'targetAddress',
+          label: 'oz-governor.sim.full-governance-lifecycle.param.targetAddress',
+          type: 'address',
+          defaultValue: '0xTargetContract',
+        },
+      ],
+      steps: [
+        {
+          id: 'step-propose',
+          description: 'oz-governor.sim.full-governance-lifecycle.step.propose',
+          mobileDescription: 'oz-governor.sim.full-governance-lifecycle.step.propose.mobile',
+          highlightNodes: ['proposer', 'governor-contract', 'token-contract'],
+          highlightEdges: ['e-proposer-governor', 'e-proposer-token', 'e-governor-token'],
+          valueChanges: {
+            'governor-contract.proposalId': '0 → 1',
+            'governor-contract.state': 'Pending',
+          },
+          durationMs: 1200,
+        },
+        {
+          id: 'step-vote',
+          description: 'oz-governor.sim.full-governance-lifecycle.step.vote',
+          mobileDescription: 'oz-governor.sim.full-governance-lifecycle.step.vote.mobile',
+          highlightNodes: ['voter-a', 'voter-b', 'governor-contract'],
+          highlightEdges: ['e-voterA-governor', 'e-voterB-governor'],
+          valueChanges: {
+            'governor-contract.forVotes': '0 → 800 GOV',
+            'governor-contract.againstVotes': '0',
+            'governor-contract.state': 'Active → Succeeded',
+          },
+          durationMs: 2000,
+        },
+        {
+          id: 'step-queue',
+          description: 'oz-governor.sim.full-governance-lifecycle.step.queue',
+          mobileDescription: 'oz-governor.sim.full-governance-lifecycle.step.queue.mobile',
+          highlightNodes: ['governor-contract', 'timelock'],
+          highlightEdges: ['e-governor-timelock'],
+          valueChanges: {
+            'governor-contract.state': 'Succeeded → Queued',
+            'timelock.eta': 'block.timestamp + timelockDelay',
+          },
+          durationMs: 1200,
+        },
+        {
+          id: 'step-execute',
+          description: 'oz-governor.sim.full-governance-lifecycle.step.execute',
+          mobileDescription: 'oz-governor.sim.full-governance-lifecycle.step.execute.mobile',
+          highlightNodes: ['timelock', 'target-contract'],
+          highlightEdges: ['e-timelock-target'],
+          valueChanges: {
+            'governor-contract.state': 'Queued → Executed',
+            'target-contract.state': 'updated by proposal calldata',
+          },
+          durationMs: 1500,
+        },
+      ],
+    },
+    {
+      id: 'proposal-execution',
+      name: 'oz-governor.sim.proposal-execution.name',
+      description: 'oz-governor.sim.proposal-execution.desc',
+      params: [
+        {
+          id: 'proposalId',
+          label: 'oz-governor.sim.proposal-execution.param.proposalId',
+          type: 'uint256',
+          defaultValue: '1',
+        },
+      ],
+      steps: [
+        {
+          id: 'step-check-state',
+          description: 'oz-governor.sim.proposal-execution.step.checkState',
+          mobileDescription: 'oz-governor.sim.proposal-execution.step.checkState.mobile',
+          highlightNodes: ['governor-contract'],
+          highlightEdges: [],
+          valueChanges: { 'governor-contract.state': 'Queued (timelock delay elapsed)' },
+          durationMs: 1000,
+        },
+        {
+          id: 'step-call-execute',
+          description: 'oz-governor.sim.proposal-execution.step.callExecute',
+          mobileDescription: 'oz-governor.sim.proposal-execution.step.callExecute.mobile',
+          highlightNodes: ['proposer', 'governor-contract', 'timelock'],
+          highlightEdges: ['e-proposer-governor', 'e-governor-timelock'],
+          valueChanges: { 'timelock.pendingOperation': 'operation dequeued' },
+          durationMs: 1200,
+        },
+        {
+          id: 'step-dispatch',
+          description: 'oz-governor.sim.proposal-execution.step.dispatch',
+          mobileDescription: 'oz-governor.sim.proposal-execution.step.dispatch.mobile',
+          highlightNodes: ['timelock', 'target-contract'],
+          highlightEdges: ['e-timelock-target'],
+          valueChanges: {
+            'target-contract.state': 'function executed',
+            'governor-contract.state': 'Executed',
+          },
+          durationMs: 1500,
+        },
+      ],
+    },
+  ],
+
+  contracts: [
+    {
+      chain: 'Ethereum',
+      address: '0x0000000000000000000000000000000000000000',
+      label: 'OZ Governor (implementation)',
+    },
+  ],
+};

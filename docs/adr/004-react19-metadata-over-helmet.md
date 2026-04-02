@@ -1,0 +1,1 @@
+# ADR 004: React 19 Metadata over Helmet

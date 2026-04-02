@@ -1,0 +1,22 @@
+{
+  "agent": "agent-7-simulation",
+  "status": "completed",
+  "timestamp": "2026-04-02T01:00:00Z",
+  "outputFiles": [
+    "src/features/simulation/simulation.worker.ts",
+    "src/features/simulation/SimulationEngine.ts",
+    "src/hooks/useSimulation.ts",
+    "src/stores/useSimulationStore.ts",
+    "src/features/simulation/search/searchIndex.ts",
+    "src/features/simulation/search/searchEngine.ts",
+    "src/placeholders/walletPlaceholders.ts"
+  ],
+  "pendingFiles": [],
+  "validationResults": {
+    "tscCompile": true,
+    "validateRegistry": true,
+    "lintI18nKeys": true
+  },
+  "knownIssues": [],
+  "notes": ""
+}

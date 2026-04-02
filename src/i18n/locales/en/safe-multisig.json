@@ -1,0 +1,87 @@
+{
+  "short": "Multi-signature smart contract wallet requiring M-of-N owner approvals for transaction execution",
+  "introduction": "Safe (formerly Gnosis Safe) is the most widely used multi-signature wallet in the Ethereum ecosystem, securing billions of dollars in assets. It requires a configurable threshold of owner signatures before any transaction can be executed, providing robust protection against single points of failure. Safe supports modules, guards, and fallback handlers for extensibility, making it a programmable account abstraction primitive.",
+  "designPurpose": "Safe was designed to eliminate the risk of single private key compromise by requiring multiple parties to approve every transaction. The modular architecture allows extensions such as spending limits, social recovery, and automated transaction modules without modifying the core contract. Its proxy-based deployment pattern minimizes gas costs while maintaining a battle-tested singleton implementation.",
+  "commonUsage": "DAOs and teams use Safe to manage treasury funds with multi-signature approval requirements. Protocols use Safe wallets to control admin keys for contract upgrades and parameter changes. Individuals use Safe for personal security with hardware wallet signers and social recovery modules.",
+
+  "fn.execTransaction.desc": "Executes a transaction after collecting the required number of owner signatures. Validates signatures, runs guard checks, executes the call, and optionally refunds gas costs.",
+  "fn.execTransaction.params.to": "The destination address of the transaction.",
+  "fn.execTransaction.params.value": "The ETH value to send with the transaction.",
+  "fn.execTransaction.params.data": "The calldata payload for the transaction.",
+  "fn.execTransaction.params.operation": "The operation type: 0 for Call, 1 for DelegateCall.",
+  "fn.execTransaction.params.safeTxGas": "The gas limit for the internal safe transaction execution.",
+  "fn.execTransaction.params.baseGas": "The gas costs for data and transaction overhead for gas refund calculation.",
+  "fn.execTransaction.params.gasPrice": "The gas price used for the refund calculation. Set to 0 to disable refund.",
+  "fn.execTransaction.params.gasToken": "The token used for gas refund (address(0) for ETH).",
+  "fn.execTransaction.params.refundReceiver": "The address to receive the gas refund. Use address(0) for tx.origin.",
+  "fn.execTransaction.params.signatures": "The packed signature bytes from the required number of owners.",
+  "fn.execTransaction.returns.success": "Whether the internal transaction execution succeeded.",
+
+  "fn.approveHash.desc": "Pre-approves a transaction hash on-chain, allowing it to be counted as a signature in execTransaction without an ECDSA signature.",
+  "fn.approveHash.params.hashToApprove": "The Safe transaction hash to approve.",
+
+  "fn.addOwnerWithThreshold.desc": "Adds a new owner to the Safe and updates the required signature threshold. Can only be called by the Safe itself via execTransaction.",
+  "fn.addOwnerWithThreshold.params.owner": "The address of the new owner to add.",
+  "fn.addOwnerWithThreshold.params.threshold": "The new signature threshold after adding the owner.",
+
+  "fn.removeOwner.desc": "Removes an owner from the Safe's linked list of owners and updates the threshold. Can only be called by the Safe itself.",
+  "fn.removeOwner.params.prevOwner": "The owner that points to the owner being removed in the linked list.",
+  "fn.removeOwner.params.owner": "The address of the owner to remove.",
+  "fn.removeOwner.params.threshold": "The new signature threshold after removing the owner.",
+
+  "fn.changeThreshold.desc": "Changes the required number of owner confirmations to execute a transaction. Can only be called by the Safe itself.",
+  "fn.changeThreshold.params.threshold": "The new signature threshold. Must be at least 1 and at most the number of owners.",
+
+  "fn.getOwners.desc": "Returns the complete list of current Safe owners.",
+  "fn.getOwners.returns.owners": "An array of owner addresses.",
+
+  "fn.getThreshold.desc": "Returns the current number of required confirmations to execute a transaction.",
+  "fn.getThreshold.returns.threshold": "The current signature threshold.",
+
+  "fn.isOwner.desc": "Checks whether a given address is a registered owner of the Safe.",
+  "fn.isOwner.params.owner": "The address to check ownership for.",
+  "fn.isOwner.returns.isOwner": "True if the address is an owner, false otherwise.",
+
+  "fn.nonce.desc": "Returns the current transaction nonce of the Safe. Each executed transaction increments this value to prevent replay.",
+  "fn.nonce.returns.nonce": "The current nonce value.",
+
+  "node.owner-a": "Owner A",
+  "node.owner-b": "Owner B",
+  "node.owner-c": "Owner C",
+  "node.safe-contract": "Safe Contract",
+  "node.guard": "Transaction Guard",
+  "node.module": "Module",
+  "node.fallback-handler": "Fallback Handler",
+  "node.target-contract": "Target Contract",
+
+  "edge.signTx": "Sign transaction",
+  "edge.approveHash": "approveHash()",
+  "edge.checkGuard": "checkTransaction()",
+  "edge.execCall": "Execute call",
+  "edge.moduleExec": "execTransactionFromModule()",
+  "edge.fallback": "Fallback / ERC-1271",
+
+  "sim.submit-confirm-multisig.name": "Submit & Confirm Multisig TX",
+  "sim.submit-confirm-multisig.desc": "Simulates a 2-of-3 multisig transaction: one owner proposes, another confirms, and the transaction is executed after guard validation.",
+  "sim.submit-confirm-multisig.param.targetAddress": "Target Contract Address",
+  "sim.submit-confirm-multisig.param.threshold": "Required Confirmations",
+  "sim.submit-confirm-multisig.step.propose": "Owner A proposes a new transaction by signing the Safe transaction hash off-chain and submitting it to the Safe service.",
+  "sim.submit-confirm-multisig.step.propose.mobile": "Owner A proposes TX",
+  "sim.submit-confirm-multisig.step.confirm": "Owner B reviews and signs the same transaction hash, reaching the 2-of-3 threshold required for execution.",
+  "sim.submit-confirm-multisig.step.confirm.mobile": "Owner B confirms",
+  "sim.submit-confirm-multisig.step.guardCheck": "The transaction guard's checkTransaction() function validates the transaction parameters before execution proceeds.",
+  "sim.submit-confirm-multisig.step.guardCheck.mobile": "Guard validates TX",
+  "sim.submit-confirm-multisig.step.execute": "The Safe contract verifies all signatures and executes the call to the target contract. The nonce is incremented to prevent replay.",
+  "sim.submit-confirm-multisig.step.execute.mobile": "Execute transaction",
+
+  "sim.add-new-owner.name": "Add New Owner",
+  "sim.add-new-owner.desc": "Simulates adding a new owner to the Safe and updating the signature threshold, requiring existing owner approvals.",
+  "sim.add-new-owner.param.newOwner": "New Owner Address",
+  "sim.add-new-owner.param.newThreshold": "New Threshold",
+  "sim.add-new-owner.step.proposeAdd": "Owner A proposes an addOwnerWithThreshold() transaction to add a new signer and increase the threshold to 3.",
+  "sim.add-new-owner.step.proposeAdd.mobile": "Propose add owner",
+  "sim.add-new-owner.step.collectSigs": "Owner B and Owner C sign the transaction, providing enough confirmations to meet the current threshold.",
+  "sim.add-new-owner.step.collectSigs.mobile": "Collect signatures",
+  "sim.add-new-owner.step.addOwner": "The Safe executes addOwnerWithThreshold(), adding the new owner to the linked list and updating the threshold from 2 to 3.",
+  "sim.add-new-owner.step.addOwner.mobile": "Add owner & update threshold"
+}

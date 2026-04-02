@@ -1,0 +1,19 @@
+{
+  "title": "Smart Contract Handbook",
+  "subtitle": "Guía interactiva de estándares de Ethereum y protocolos DeFi",
+  "description": "Explore y comprenda los estándares de Ethereum y protocolos DeFi a través de visualizaciones interactivas, simulaciones en vivo y explicaciones claras. Desde tokens fungibles hasta protocolos de cadenas cruzadas, Smart Contract Handbook hace que los estándares en cadena sean accesibles tanto para desarrolladores como para estudiantes.",
+  "getStarted": "Comenzar",
+  "features": {
+    "visualization": "Diagramas de Flujo Visuales",
+    "visualizationDesc": "Comprenda interacciones contractuales complejas a través de diagramas de flujo claros e interactivos que ilustran cómo funciona cada estándar bajo el capó.",
+    "simulation": "Simulaciones en Vivo",
+    "simulationDesc": "Recorra transacciones reales y llamadas a funciones en un entorno aislado. Observe los cambios de estado y los eventos a medida que ocurren.",
+    "multilingual": "Soporte Multilingüe",
+    "multilingualDesc": "Disponible en inglés, chino simplificado, chino tradicional, japonés, coreano y español, haciendo los estándares de Ethereum accesibles en todo el mundo."
+  },
+  "stats": {
+    "standards": "22 Estándares ERC",
+    "protocols": "13 Protocolos",
+    "simulations": "Simulaciones Interactivas"
+  }
+}
