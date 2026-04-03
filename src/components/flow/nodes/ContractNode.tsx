@@ -14,8 +14,9 @@ interface ContractNodeData {
  * prominently and lists its function names (if provided) as a compact list.
  */
 function ContractNode({ data, selected }: NodeProps) {
-  const { label, functions } = data as ContractNodeData;
+  const { label, functions, highlighted } = data as ContractNodeData & { highlighted?: boolean };
   const fnList = Array.isArray(functions) ? (functions as string[]) : [];
+  const isHighlighted = highlighted === true;
 
   return (
     <div
@@ -23,14 +24,16 @@ function ContractNode({ data, selected }: NodeProps) {
       style={{
         minWidth: 200,
         background: 'var(--erc-color-node-bg)',
-        border: `1.5px solid ${selected ? 'var(--erc-color-accent)' : 'var(--erc-color-node-border)'}`,
+        border: `1.5px solid ${isHighlighted ? 'var(--erc-color-accent)' : selected ? 'var(--erc-color-accent)' : 'var(--erc-color-node-border)'}`,
         borderRadius: '0.5rem',
-        boxShadow: selected
-          ? '0 0 0 2px var(--erc-color-accent)'
-          : '0 2px 8px rgba(0,0,0,0.4)',
+        boxShadow: isHighlighted
+          ? '0 0 12px 2px var(--erc-color-accent), 0 0 0 2px var(--erc-color-accent)'
+          : selected
+            ? '0 0 0 2px var(--erc-color-accent)'
+            : '0 2px 8px rgba(0,0,0,0.4)',
         fontFamily: 'var(--erc-font-body)',
         overflow: 'hidden',
-        transition: 'border-color 0.15s, box-shadow 0.15s',
+        transition: 'border-color 0.2s, box-shadow 0.2s',
       }}
     >
       {/* Header */}

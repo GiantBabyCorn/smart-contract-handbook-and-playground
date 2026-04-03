@@ -1,4 +1,4 @@
-import { useEffect, useState, Suspense, lazy } from 'react';
+import { useEffect, useState, useCallback, useRef, Suspense, lazy } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
@@ -10,6 +10,7 @@ import ExternalLink from '@/components/common/ExternalLink';
 import SkeletonBlock from '@/components/common/SkeletonBlock';
 import { cn } from '@/utils/cn';
 import { useSimulation } from '@/features/simulation/useSimulation';
+import { useLazySection } from '@/hooks/useLazySection';
 import NotFoundPage from './NotFoundPage';
 
 // Lazy-load heavy components
@@ -153,7 +154,21 @@ function FunctionCard({ fn, tFn }: { fn: ContractFunction; tFn: (key: string) =>
 // Section wrapper
 // ---------------------------------------------------------------------------
 
-function Section({ id, title, children }: { id?: string; title: string; children: React.ReactNode }) {
+function Section({
+  id,
+  title,
+  children,
+  collapsible = false,
+  defaultExpanded = true,
+}: {
+  id?: string;
+  title: string;
+  children: React.ReactNode;
+  collapsible?: boolean;
+  defaultExpanded?: boolean;
+}) {
+  const [expanded, setExpanded] = useState(defaultExpanded);
+
   return (
     <motion.section
       id={id}
@@ -167,16 +182,83 @@ function Section({ id, title, children }: { id?: string; title: string; children
         'overflow-hidden',
       )}
     >
-      <div className="px-5 py-4 border-b border-[var(--erc-color-border)]">
+      <div
+        className={cn(
+          'px-5 py-4 flex items-center justify-between gap-2',
+          (expanded || !collapsible) && 'border-b border-[var(--erc-color-border)]',
+          collapsible && 'cursor-pointer hover:bg-[var(--erc-color-bg-tertiary)] transition-colors select-none',
+        )}
+        onClick={collapsible ? () => setExpanded((v) => !v) : undefined}
+        role={collapsible ? 'button' : undefined}
+        aria-expanded={collapsible ? expanded : undefined}
+        tabIndex={collapsible ? 0 : undefined}
+        onKeyDown={collapsible ? (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setExpanded((v) => !v);
+          }
+        } : undefined}
+      >
         <h2
           id={id ? `${id}-heading` : undefined}
           className="text-base font-semibold text-[var(--erc-color-text-primary)]"
         >
           {title}
         </h2>
+        {collapsible && (
+          <span
+            className={cn(
+              'shrink-0 text-[var(--erc-color-text-muted)] transition-transform duration-200',
+              !expanded && '-rotate-90',
+            )}
+            aria-hidden="true"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </span>
+        )}
       </div>
-      <div className="p-5">{children}</div>
+      {(!collapsible || expanded) && (
+        <motion.div
+          initial={collapsible ? { opacity: 0, height: 0 } : false}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.2 }}
+          className="p-5"
+        >
+          {children}
+        </motion.div>
+      )}
     </motion.section>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Lazy-rendered section — only mounts children when scrolled near viewport
+// ---------------------------------------------------------------------------
+
+function LazySection({
+  children,
+  height = 120,
+}: {
+  children: React.ReactNode;
+  /** Placeholder height in pixels while waiting to enter viewport */
+  height?: number;
+}) {
+  const { ref, isVisible } = useLazySection('300px');
+
+  return (
+    <div ref={ref}>
+      {isVisible ? (
+        children
+      ) : (
+        <div
+          className="rounded-2xl border border-[var(--erc-color-border)] bg-[var(--erc-color-bg-secondary)] animate-pulse"
+          style={{ height }}
+        />
+      )}
+    </div>
   );
 }
 
@@ -229,6 +311,316 @@ function RelatedEntries({ slugs }: { slugs: string[] }) {
         ))}
       </ul>
     </Section>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Simulation panel props helper
+// ---------------------------------------------------------------------------
+
+function simPanelProps(entry: ERCEntry, sim: ReturnType<typeof useSimulation>) {
+  return {
+    scenarios: entry.simulations,
+    activeScenarioId: sim.scenario?.id ?? null,
+    currentStep: sim.currentStepIndex,
+    isPlaying: sim.isPlaying,
+    paramValues: sim.params,
+    onScenarioChange: (id: string) => {
+      const s = entry.simulations.find((s) => s.id === id);
+      if (s) sim.loadScenario(s);
+    },
+    onParamChange: sim.setParam,
+    onPlay: sim.play,
+    onPause: sim.pause,
+    onStepForward: sim.stepForward,
+    onStepBack: sim.stepBack,
+    onReset: sim.reset,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Flow diagram — Resizable + Fullscreen
+// ---------------------------------------------------------------------------
+
+function FlowDiagramSection({
+  entry,
+  sim,
+  tCommon,
+}: {
+  entry: ERCEntry;
+  sim: ReturnType<typeof useSimulation>;
+  tCommon: (key: string) => string;
+}) {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [height, setHeight] = useState(620);
+  const dragging = useRef(false);
+  const startY = useRef(0);
+  const startH = useRef(0);
+
+  const onMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      dragging.current = true;
+      startY.current = e.clientY;
+      startH.current = height;
+      e.preventDefault();
+    },
+    [height],
+  );
+
+  useEffect(() => {
+    const onMouseMove = (e: MouseEvent) => {
+      if (!dragging.current) return;
+      const delta = e.clientY - startY.current;
+      setHeight(Math.max(250, Math.min(900, startH.current + delta)));
+    };
+    const onMouseUp = () => {
+      dragging.current = false;
+    };
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+  }, []);
+
+  const flowCanvas = (
+    <Suspense
+      fallback={
+        <div className="flex h-full items-center justify-center">
+          <div className="animate-spin w-8 h-8 border-2 border-[var(--erc-color-border)] border-t-[var(--erc-color-accent)] rounded-full" aria-label="Loading flow diagram" />
+        </div>
+      }
+    >
+      <FlowCanvas
+        flowNodes={entry.flowNodes}
+        flowEdges={entry.flowEdges}
+        elkLayoutOptions={entry.elkLayoutOptions}
+        highlightedNodes={sim.highlightedNodes}
+        highlightedEdges={sim.highlightedEdges}
+      />
+    </Suspense>
+  );
+
+  return (
+    <>
+      <motion.section
+        id="flow-diagram"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+        aria-labelledby="flow-diagram-heading"
+        className={cn(
+          'rounded-2xl border border-[var(--erc-color-border)]',
+          'bg-[var(--erc-color-bg-secondary)]',
+          'overflow-hidden',
+        )}
+      >
+        <div className="px-5 py-4 border-b border-[var(--erc-color-border)] flex items-center justify-between gap-2">
+          <div>
+            <h2 id="flow-diagram-heading" className="text-base font-semibold text-[var(--erc-color-text-primary)]">
+              Interaction Flow
+            </h2>
+            <p className="text-xs text-[var(--erc-color-text-muted)] mt-0.5">
+              {tCommon('a11y.flowDiagram')}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsFullscreen(true)}
+            className="px-3 py-1.5 text-xs font-medium rounded-lg bg-[var(--erc-color-accent)] text-white hover:opacity-90 transition-opacity shrink-0"
+            aria-label="Open flow diagram in fullscreen"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline mr-1 -mt-0.5" aria-hidden="true">
+              <polyline points="15 3 21 3 21 9" />
+              <polyline points="9 21 3 21 3 15" />
+              <line x1="21" y1="3" x2="14" y2="10" />
+              <line x1="3" y1="21" x2="10" y2="14" />
+            </svg>
+            Fullscreen
+          </button>
+        </div>
+        {/* Resizable canvas container */}
+        <div style={{ height }} aria-label={tCommon('a11y.flowDiagram')}>
+          {flowCanvas}
+        </div>
+        {/* Resize handle */}
+        <div
+          onMouseDown={onMouseDown}
+          className="h-2.5 cursor-ns-resize bg-[var(--erc-color-bg-tertiary)] border-t border-[var(--erc-color-border)] flex items-center justify-center hover:bg-[var(--erc-color-accent)]/10 transition-colors"
+          aria-label="Drag to resize flow diagram"
+          role="separator"
+        >
+          <div className="w-8 h-0.5 rounded-full bg-[var(--erc-color-text-muted)] opacity-40" />
+        </div>
+      </motion.section>
+
+      {/* Fullscreen overlay */}
+      {isFullscreen && (
+        <div className="fixed inset-0 z-50 bg-[var(--erc-color-bg-primary)] flex flex-col">
+          <div className="flex items-center justify-between px-5 py-3 border-b border-[var(--erc-color-border)] bg-[var(--erc-color-bg-secondary)] shrink-0">
+            <h2 className="text-base font-semibold text-[var(--erc-color-text-primary)]">
+              {entry.name} — Interaction Flow
+            </h2>
+            <button
+              type="button"
+              onClick={() => setIsFullscreen(false)}
+              className="px-4 py-1.5 text-sm font-medium rounded-lg bg-[var(--erc-color-accent)] text-white hover:opacity-90 transition-opacity"
+            >
+              Exit Fullscreen
+            </button>
+          </div>
+          <div className="flex-1">
+            {flowCanvas}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Simulation — Right drawer (all screen sizes)
+// ---------------------------------------------------------------------------
+
+const SIM_TOOLTIP_KEY = 'sim-tooltip-dismissed';
+
+function SimulationDrawer({
+  entry,
+  sim,
+  tCommon,
+}: {
+  entry: ERCEntry;
+  sim: ReturnType<typeof useSimulation>;
+  tCommon: (key: string) => string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(() => {
+    try {
+      return !localStorage.getItem(SIM_TOOLTIP_KEY);
+    } catch {
+      return false;
+    }
+  });
+
+  const dismissTooltip = useCallback(() => {
+    setShowTooltip(false);
+    try {
+      localStorage.setItem(SIM_TOOLTIP_KEY, '1');
+    } catch { /* ignore */ }
+  }, []);
+
+  const handleToggle = useCallback(() => {
+    dismissTooltip();
+    setOpen((v) => !v);
+  }, [dismissTooltip]);
+
+  return (
+    <>
+      {/* Toggle button — fixed at bottom-right */}
+      <div className="fixed bottom-4 right-4 z-[60] flex flex-col items-end gap-2">
+        {/* First-time tooltip bubble */}
+        {showTooltip && !open && (
+          <motion.div
+            initial={{ opacity: 0, y: 8, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.4, delay: 1.2 }}
+            className={cn(
+              'relative px-3.5 py-2.5 rounded-xl shadow-lg max-w-[220px]',
+              'bg-[var(--erc-color-bg-secondary)] border border-[var(--erc-color-accent)]/40',
+              'text-xs text-[var(--erc-color-text-secondary)] leading-snug',
+            )}
+          >
+            <button
+              type="button"
+              onClick={dismissTooltip}
+              className="absolute top-1 right-1.5 text-[var(--erc-color-text-muted)] hover:text-[var(--erc-color-text-primary)] transition-colors"
+              aria-label="Dismiss tooltip"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+            <span className="pr-3">
+              Try the <strong className="text-[var(--erc-color-accent)]">Simulation</strong> to see how data flows through the contract!
+            </span>
+            {/* Arrow pointing down towards button */}
+            <div className="absolute -bottom-1.5 right-6 w-3 h-3 rotate-45 bg-[var(--erc-color-bg-secondary)] border-r border-b border-[var(--erc-color-accent)]/40" />
+          </motion.div>
+        )}
+        <button
+          type="button"
+          onClick={handleToggle}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2.5 rounded-full shadow-lg',
+            'bg-[var(--erc-color-accent)] text-white text-sm font-medium',
+            'hover:opacity-90 transition-opacity',
+            showTooltip && !open && 'animate-pulse',
+          )}
+          aria-label={open ? 'Close simulation panel' : 'Open simulation panel'}
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.25" />
+            <path d="M5.5 4.5l4 2.5-4 2.5V4.5z" fill="currentColor" />
+          </svg>
+          {open ? 'Close' : 'Simulation'}
+        </button>
+      </div>
+
+      {/* Backdrop */}
+      {open && (
+        <div
+          className="fixed inset-0 z-[55] bg-black/40 transition-opacity"
+          onClick={() => setOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Drawer sliding in from the right */}
+      <div
+        className={cn(
+          'fixed top-0 bottom-0 right-0 z-[60] w-[360px] max-w-[85vw]',
+          'border-l border-[var(--erc-color-border)]',
+          'bg-[var(--erc-color-bg-secondary)]',
+          'transition-transform duration-300 ease-in-out overflow-auto',
+          open ? 'translate-x-0' : 'translate-x-full',
+        )}
+      >
+        <div className="px-4 py-3.5 border-b border-[var(--erc-color-border)] flex items-center justify-between gap-2 sticky top-0 bg-[var(--erc-color-bg-secondary)] z-10">
+          <div>
+            <h2 className="text-sm font-semibold text-[var(--erc-color-text-primary)]">
+              Simulation
+            </h2>
+            <p className="text-xs text-[var(--erc-color-text-muted)] mt-0.5">
+              {tCommon('a11y.simulationPanel')}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="p-1 text-[var(--erc-color-text-secondary)] hover:text-[var(--erc-color-text-primary)] transition-colors"
+            aria-label="Close simulation drawer"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <Suspense
+          fallback={
+            <div className="p-4 flex flex-col gap-3">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="h-10 rounded-lg bg-[var(--erc-color-bg-tertiary)] animate-pulse" />
+              ))}
+            </div>
+          }
+        >
+          <SimulationPanel {...simPanelProps(entry, sim)} />
+        </Suspense>
+      </div>
+    </>
   );
 }
 
@@ -301,6 +693,40 @@ function EntryContent({ entry }: { entry: ERCEntry }) {
             {description}
           </p>
 
+          {/* Quick info — inline metadata */}
+          <dl className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--erc-color-text-muted)]">
+            <div className="flex items-center gap-1.5">
+              <dt>Type:</dt>
+              <dd className="font-medium text-[var(--erc-color-text-secondary)] capitalize">{entry.entryType}</dd>
+            </div>
+            <span aria-hidden="true" className="text-[var(--erc-color-border)]">·</span>
+            <div className="flex items-center gap-1.5">
+              <dt>Category:</dt>
+              <dd className="font-medium text-[var(--erc-color-text-secondary)] capitalize">{entry.category}</dd>
+            </div>
+            {entry.entryType === 'standard' && (entry as { eipNumber?: number }).eipNumber && (
+              <>
+                <span aria-hidden="true" className="text-[var(--erc-color-border)]">·</span>
+                <div className="flex items-center gap-1.5">
+                  <dt>EIP:</dt>
+                  <dd className="font-medium text-[var(--erc-color-text-secondary)]">
+                    {(entry as { eipNumber: number }).eipNumber}
+                  </dd>
+                </div>
+              </>
+            )}
+            <span aria-hidden="true" className="text-[var(--erc-color-border)]">·</span>
+            <div className="flex items-center gap-1.5">
+              <dt>Functions:</dt>
+              <dd className="font-medium text-[var(--erc-color-text-secondary)]">{entry.functions.length}</dd>
+            </div>
+            <span aria-hidden="true" className="text-[var(--erc-color-border)]">·</span>
+            <div className="flex items-center gap-1.5">
+              <dt>Simulations:</dt>
+              <dd className="font-medium text-[var(--erc-color-text-secondary)]">{entry.simulations.length}</dd>
+            </div>
+          </dl>
+
           {/* Action links */}
           <div className="flex flex-wrap items-center gap-3 mt-1">
             <ExternalLink
@@ -313,73 +739,47 @@ function EntryContent({ entry }: { entry: ERCEntry }) {
           </div>
         </motion.header>
 
-        {/* ── Two-column layout ───────────────────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          {/* Main column */}
-          <div className="lg:col-span-2 flex flex-col gap-5">
-            {/* Introduction */}
-            <Section id="introduction" title="Introduction">
-              <p className="text-sm text-[var(--erc-color-text-secondary)] leading-relaxed whitespace-pre-line">
-                {tEntry('introduction', { defaultValue: entry.introduction })}
-              </p>
-            </Section>
+        {/* ── Full-width content ─────────────────────────────── */}
+        <div className="flex flex-col gap-5">
+          {/* Introduction */}
+          <Section id="introduction" title="Introduction" collapsible defaultExpanded>
+            <p className="text-sm text-[var(--erc-color-text-secondary)] leading-relaxed whitespace-pre-line">
+              {tEntry('introduction', { defaultValue: entry.introduction })}
+            </p>
+          </Section>
 
-            {/* Design Purpose */}
-            <Section id="design-purpose" title="Design Purpose">
+          {/* Design Purpose */}
+          <LazySection height={100}>
+            <Section id="design-purpose" title="Design Purpose" collapsible defaultExpanded>
               <p className="text-sm text-[var(--erc-color-text-secondary)] leading-relaxed whitespace-pre-line">
                 {tEntry('designPurpose', { defaultValue: entry.designPurpose })}
               </p>
             </Section>
+          </LazySection>
 
-            {/* Common Usage */}
-            <Section id="common-usage" title="Common Usage">
+          {/* Common Usage */}
+          <LazySection height={100}>
+            <Section id="common-usage" title="Common Usage" collapsible defaultExpanded>
               <p className="text-sm text-[var(--erc-color-text-secondary)] leading-relaxed whitespace-pre-line">
                 {tEntry('commonUsage', { defaultValue: entry.commonUsage })}
               </p>
             </Section>
+          </LazySection>
 
-            {/* Flow diagram */}
-            {entry.flowNodes.length > 0 && (
-              <motion.section
-                id="flow-diagram"
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
-                aria-labelledby="flow-diagram-heading"
-                className={cn(
-                  'rounded-2xl border border-[var(--erc-color-border)]',
-                  'bg-[var(--erc-color-bg-secondary)]',
-                  'overflow-hidden',
-                )}
-              >
-                <div className="px-5 py-4 border-b border-[var(--erc-color-border)]">
-                  <h2 id="flow-diagram-heading" className="text-base font-semibold text-[var(--erc-color-text-primary)]">
-                    Interaction Flow
-                  </h2>
-                  <p className="text-xs text-[var(--erc-color-text-muted)] mt-0.5">
-                    {tCommon('a11y.flowDiagram')}
-                  </p>
-                </div>
-                <div className="h-[400px] sm:h-[500px]" aria-label={tCommon('a11y.flowDiagram')}>
-                  <Suspense
-                    fallback={
-                      <div className="flex h-full items-center justify-center">
-                        <div className="animate-spin w-8 h-8 border-2 border-[var(--erc-color-border)] border-t-[var(--erc-color-accent)] rounded-full" aria-label="Loading flow diagram" />
-                      </div>
-                    }
-                  >
-                    <FlowCanvas
-                      flowNodes={entry.flowNodes}
-                      flowEdges={entry.flowEdges}
-                      elkLayoutOptions={entry.elkLayoutOptions}
-                    />
-                  </Suspense>
-                </div>
-              </motion.section>
-            )}
+          {/* Flow diagram — Resizable + Fullscreen */}
+          {entry.flowNodes.length > 0 && (
+            <LazySection height={620}>
+              <FlowDiagramSection
+                entry={entry}
+                sim={sim}
+                tCommon={tCommon}
+              />
+            </LazySection>
+          )}
 
-            {/* Functions list */}
-            {entry.functions.length > 0 && (
+          {/* Functions list */}
+          {entry.functions.length > 0 && (
+            <LazySection height={200}>
               <Section id="functions" title={`Functions & Events (${entry.functions.length})`}>
                 <div className="flex flex-col gap-2">
                   {entry.functions.map((fn) => (
@@ -391,109 +791,21 @@ function EntryContent({ entry }: { entry: ERCEntry }) {
                   ))}
                 </div>
               </Section>
-            )}
-          </div>
+            </LazySection>
+          )}
 
-          {/* Right sidebar column */}
-          <div className="flex flex-col gap-4">
-            {/* Simulation panel */}
-            {entry.simulations.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, x: 16 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: 0.15 }}
-                className={cn(
-                  'rounded-2xl border border-[var(--erc-color-border)]',
-                  'bg-[var(--erc-color-bg-secondary)]',
-                  'overflow-hidden',
-                )}
-              >
-                <div className="px-4 py-3.5 border-b border-[var(--erc-color-border)]">
-                  <h2 className="text-sm font-semibold text-[var(--erc-color-text-primary)]">
-                    Simulation
-                  </h2>
-                  <p className="text-xs text-[var(--erc-color-text-muted)] mt-0.5">
-                    {tCommon('a11y.simulationPanel')}
-                  </p>
-                </div>
-                <Suspense
-                  fallback={
-                    <div className="p-4 flex flex-col gap-3">
-                      {[0, 1, 2].map((i) => (
-                        <div key={i} className="h-10 rounded-lg bg-[var(--erc-color-bg-tertiary)] animate-pulse" />
-                      ))}
-                    </div>
-                  }
-                >
-                  <SimulationPanel
-                    scenarios={entry.simulations}
-                    activeScenarioId={sim.scenario?.id ?? null}
-                    currentStep={Math.max(0, sim.currentStepIndex)}
-                    isPlaying={sim.isPlaying}
-                    paramValues={sim.params}
-                    onScenarioChange={(id) => {
-                      const s = entry.simulations.find((s) => s.id === id);
-                      if (s) sim.loadScenario(s);
-                    }}
-                    onParamChange={sim.setParam}
-                    onPlay={sim.play}
-                    onPause={sim.pause}
-                    onStepForward={sim.stepForward}
-                    onStepBack={sim.stepBack}
-                    onReset={sim.reset}
-                  />
-                </Suspense>
-              </motion.div>
-            )}
-
-            {/* Quick info card */}
-            <motion.div
-              initial={{ opacity: 0, x: 16 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-              className={cn(
-                'rounded-2xl border border-[var(--erc-color-border)]',
-                'bg-[var(--erc-color-bg-secondary)] p-4',
-                'flex flex-col gap-3',
-              )}
-            >
-              <h2 className="text-sm font-semibold text-[var(--erc-color-text-primary)]">
-                Quick Info
-              </h2>
-              <dl className="flex flex-col gap-2 text-sm">
-                <div className="flex justify-between gap-2">
-                  <dt className="text-[var(--erc-color-text-muted)]">Type</dt>
-                  <dd className="font-medium text-[var(--erc-color-text-secondary)] capitalize">{entry.entryType}</dd>
-                </div>
-                <div className="flex justify-between gap-2">
-                  <dt className="text-[var(--erc-color-text-muted)]">Category</dt>
-                  <dd className="font-medium text-[var(--erc-color-text-secondary)] capitalize">{entry.category}</dd>
-                </div>
-                {entry.entryType === 'standard' && (entry as { eipNumber?: number }).eipNumber && (
-                  <div className="flex justify-between gap-2">
-                    <dt className="text-[var(--erc-color-text-muted)]">EIP Number</dt>
-                    <dd className="font-medium text-[var(--erc-color-text-secondary)]">
-                      {(entry as { eipNumber: number }).eipNumber}
-                    </dd>
-                  </div>
-                )}
-                <div className="flex justify-between gap-2">
-                  <dt className="text-[var(--erc-color-text-muted)]">Functions</dt>
-                  <dd className="font-medium text-[var(--erc-color-text-secondary)]">{entry.functions.length}</dd>
-                </div>
-                <div className="flex justify-between gap-2">
-                  <dt className="text-[var(--erc-color-text-muted)]">Simulations</dt>
-                  <dd className="font-medium text-[var(--erc-color-text-secondary)]">{entry.simulations.length}</dd>
-                </div>
-              </dl>
-            </motion.div>
-
-            {/* Related entries */}
-            {entry.relatedSlugs.length > 0 && (
+          {/* Related entries — always at the bottom */}
+          {entry.relatedSlugs.length > 0 && (
+            <LazySection height={80}>
               <RelatedEntries slugs={entry.relatedSlugs} />
-            )}
-          </div>
+            </LazySection>
+          )}
         </div>
+
+        {/* ── Simulation — Slide-out drawer (all screens) ──── */}
+        {entry.simulations.length > 0 && (
+          <SimulationDrawer entry={entry} sim={sim} tCommon={tCommon} />
+        )}
       </div>
     </>
   );

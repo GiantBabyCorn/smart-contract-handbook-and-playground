@@ -20,7 +20,8 @@ interface StorageNodeData {
  * data structure immediately readable at a glance.
  */
 function StorageNode({ data, selected }: NodeProps) {
-  const { label, slots } = data as StorageNodeData;
+  const { label, slots, highlighted } = data as StorageNodeData & { highlighted?: boolean };
+  const isHighlighted = highlighted === true;
   const slotList: StorageSlot[] = Array.isArray(slots) ? slots : [];
 
   return (
@@ -29,14 +30,16 @@ function StorageNode({ data, selected }: NodeProps) {
       style={{
         minWidth: 190,
         background: 'var(--erc-color-node-bg)',
-        border: `1.5px solid ${selected ? 'var(--erc-color-category-defi)' : 'var(--erc-color-node-border)'}`,
+        border: `1.5px solid ${isHighlighted ? 'var(--erc-color-category-defi)' : selected ? 'var(--erc-color-category-defi)' : 'var(--erc-color-node-border)'}`,
         borderRadius: '0.5rem',
-        boxShadow: selected
-          ? '0 0 0 2px var(--erc-color-category-defi)'
-          : '0 2px 8px rgba(0,0,0,0.35)',
+        boxShadow: isHighlighted
+          ? '0 0 12px 2px var(--erc-color-category-defi), 0 0 0 2px var(--erc-color-category-defi)'
+          : selected
+            ? '0 0 0 2px var(--erc-color-category-defi)'
+            : '0 2px 8px rgba(0,0,0,0.35)',
         fontFamily: 'var(--erc-font-body)',
         overflow: 'hidden',
-        transition: 'border-color 0.15s, box-shadow 0.15s',
+        transition: 'border-color 0.2s, box-shadow 0.2s',
       }}
     >
       {/* Header */}

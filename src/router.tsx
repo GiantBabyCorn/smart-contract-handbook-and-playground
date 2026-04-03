@@ -20,7 +20,7 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
       },
-      {
+{
         path: '/:slug',
         element: (
           <Suspense fallback={<SkeletonBlock type="detail" />}>

@@ -63,11 +63,12 @@ function FundFlowEdge({
     borderRadius: 10,
   });
 
-  const fundData = (data ?? {}) as FundFlowData;
+  const fundData = (data ?? {}) as FundFlowData & { highlighted?: boolean };
   // Prefer explicit data.amount over the generic edge label
   const displayAmount = fundData.amount ?? (typeof label === 'string' ? label : undefined);
+  const isHighlighted = fundData.highlighted === true;
 
-  const baseColor = selected ? 'var(--erc-color-success)' : 'var(--erc-color-category-token)';
+  const baseColor = isHighlighted || selected ? 'var(--erc-color-success)' : 'var(--erc-color-category-token)';
 
   return (
     <>
