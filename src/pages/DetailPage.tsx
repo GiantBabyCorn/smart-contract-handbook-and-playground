@@ -518,7 +518,7 @@ function SimulationDrawer({
   return (
     <>
       {/* Toggle button — fixed at bottom-right */}
-      <div className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2">
+      <div className="fixed bottom-4 right-4 z-[60] flex flex-col items-end gap-2">
         {/* First-time tooltip bubble */}
         {showTooltip && !open && (
           <motion.div
@@ -571,7 +571,7 @@ function SimulationDrawer({
       {/* Backdrop */}
       {open && (
         <div
-          className="fixed inset-0 z-40 bg-black/40 transition-opacity"
+          className="fixed inset-0 z-[55] bg-black/40 transition-opacity"
           onClick={() => setOpen(false)}
           aria-hidden="true"
         />
@@ -580,7 +580,7 @@ function SimulationDrawer({
       {/* Drawer sliding in from the right */}
       <div
         className={cn(
-          'fixed top-0 bottom-0 right-0 z-50 w-[360px] max-w-[85vw]',
+          'fixed top-0 bottom-0 right-0 z-[60] w-[360px] max-w-[85vw]',
           'border-l border-[var(--erc-color-border)]',
           'bg-[var(--erc-color-bg-secondary)]',
           'transition-transform duration-300 ease-in-out overflow-auto',
