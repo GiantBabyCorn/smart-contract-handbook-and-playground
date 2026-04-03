@@ -1,0 +1,56 @@
+{
+  "short": "Cuentas de Contratos Inteligentes Modulares",
+  "introduction": "ERC-6900 define un estándar para cuentas de contratos inteligentes modulares con una arquitectura basada en plugins. Las cuentas pueden instalar y desinstalar plugins que extienden su funcionalidad con lógica de validación personalizada, manejadores de ejecución y hooks. Cada plugin declara un manifiesto que describe sus permisos y capacidades, y la cuenta aplica estos permisos a través de un flujo de ejecución estructurado. El estándar asegura que los plugins sean interoperables entre diferentes implementaciones de cuentas.",
+  "designPurpose": "ERC-6900 fue diseñado para crear un sistema de plugins estandarizado para cuentas inteligentes ERC-4337. Sin una interfaz de módulos común, cada proveedor de cuentas construye su propio sistema de extensiones incompatible. ERC-6900 define cómo los plugins interactúan con las cuentas a través de fases de validación, ejecución y hooks, habilitando un mercado de plugins reutilizables que funcionan en todas las cuentas compatibles. El sistema de manifiestos asegura una gestión de permisos transparente.",
+  "commonUsage": "ERC-6900 es utilizado por implementaciones de cuentas modulares como Modular Account de Alchemy. Los plugins pueden agregar validación multisig, claves de sesión, límites de gasto, transacciones programadas, recuperación social y otras funciones. Los desarrolladores pueden construir plugins una vez y desplegarlos en todas las cuentas compatibles con ERC-6900, creando un ecosistema componible de funcionalidades de cuentas.",
+
+  "fn.installPlugin.desc": "Instala un plugin en la cuenta modular. Valida el hash del manifiesto, registra los hooks de validación y ejecución, e inicializa el plugin con los datos proporcionados.",
+  "fn.installPlugin.params.plugin": "La dirección del contrato del plugin a instalar.",
+  "fn.installPlugin.params.manifestHash": "El hash keccak256 del manifiesto del plugin, utilizado para verificar los permisos declarados del plugin.",
+  "fn.installPlugin.params.pluginInstallData": "Datos de inicialización codificados que se pasan a la función onInstall del plugin.",
+  "fn.installPlugin.params.dependencies": "Array de referencias de funciones de las que depende el plugin de otros plugins instalados.",
+
+  "fn.uninstallPlugin.desc": "Elimina un plugin de la cuenta modular. Desregistra todos los hooks y selectores, y llama a la función onUninstall del plugin.",
+  "fn.uninstallPlugin.params.plugin": "La dirección del plugin a desinstalar.",
+  "fn.uninstallPlugin.params.config": "Datos de configuración codificados para el proceso de desinstalación.",
+  "fn.uninstallPlugin.params.pluginUninstallData": "Datos codificados que se pasan a la función onUninstall del plugin.",
+
+  "fn.executeFromPluginExternal.desc": "Permite que un plugin ejecute una llamada a un contrato externo a través de la cuenta. La cuenta aplica los permisos declarados del plugin.",
+  "fn.executeFromPluginExternal.params.target": "La dirección del contrato externo a llamar.",
+  "fn.executeFromPluginExternal.params.value": "El valor en ETH a enviar con la llamada.",
+  "fn.executeFromPluginExternal.params.data": "Los calldata codificados para la llamada externa.",
+  "fn.executeFromPluginExternal.returns.result": "Los datos de retorno de la llamada externa.",
+
+  "fn.getInstalledPlugins.desc": "Devuelve la lista de todas las direcciones de plugins actualmente instalados en la cuenta.",
+  "fn.getInstalledPlugins.returns.plugins": "Array de direcciones de contratos de plugins instalados.",
+
+  "node.accountOwner": "Propietario de la Cuenta",
+  "node.modularAccount": "Cuenta Modular",
+  "node.validationPlugin": "Plugin de Validación",
+  "node.executionPlugin": "Plugin de Ejecución",
+  "node.hook": "Hooks (Pre/Post)",
+  "node.permissionManager": "Gestor de Permisos",
+  "node.target": "Contrato de Destino",
+
+  "edge.installPlugin": "Instalar plugin",
+  "edge.checkManifest": "Verificar manifiesto y permisos",
+  "edge.validateUserOp": "Validar UserOp",
+  "edge.runHooks": "Ejecutar hooks pre/post",
+  "edge.routeExecution": "Enrutar ejecución al plugin",
+  "edge.executeFromPlugin": "Ejecutar desde plugin",
+  "edge.directExecute": "Ejecución directa",
+
+  "sim.pluginInstallExec.name": "Instalación y Ejecución de Plugin",
+  "sim.pluginInstallExec.desc": "Instalar un plugin en una cuenta modular y observar el flujo de validación y ejecución.",
+  "sim.pluginInstallExec.param.accountAddress": "Dirección de cuenta modular",
+  "sim.pluginInstallExec.param.pluginAddress": "Dirección del plugin",
+  "sim.pluginInstallExec.param.targetContract": "Contrato de destino",
+  "sim.pluginInstallExec.step.checkManifest": "La cuenta verifica el hash del manifiesto del plugin y comprueba que todas las dependencias declaradas se cumplen. El gestor de permisos valida las capacidades solicitadas por el plugin.",
+  "sim.pluginInstallExec.step.checkManifest.mobile": "Verificar manifiesto y permisos",
+  "sim.pluginInstallExec.step.install": "El plugin se instala: los selectores de validación, selectores de ejecución y hooks se registran en la cuenta. Se llama a la función onInstall del plugin.",
+  "sim.pluginInstallExec.step.install.mobile": "Instalar y registrar plugin",
+  "sim.pluginInstallExec.step.validateOp": "Cuando llega una UserOperation, la cuenta enruta la validación al plugin de validación instalado. Los hooks de pre-validación se ejecutan primero, luego el plugin valida la firma.",
+  "sim.pluginInstallExec.step.validateOp.mobile": "Validar mediante plugin",
+  "sim.pluginInstallExec.step.execute": "El plugin de ejecución maneja la operación. Los hooks de post-ejecución se ejecutan para aplicar invariantes como límites de gasto.",
+  "sim.pluginInstallExec.step.execute.mobile": "Ejecutar mediante plugin"
+}

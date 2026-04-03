@@ -1,0 +1,48 @@
+{
+  "short": "Inicio de Sesión con Ethereum (SIWE)",
+  "introduction": "ERC-4361, conocido como Sign-In with Ethereum (SIWE), define un formato de mensaje estándar y un flujo de trabajo para autenticar cuentas de Ethereum con servicios fuera de la cadena. En lugar de depender de proveedores de identidad centralizados, los usuarios firman un mensaje estructurado con su billetera para demostrar la propiedad de una dirección de Ethereum. El mensaje incluye el dominio, la dirección, el nonce, el ID de cadena y el tiempo de expiración. Esto permite una autenticación autocustodiada donde los usuarios controlan su identidad.",
+  "designPurpose": "ERC-4361 fue diseñado para proporcionar una alternativa descentralizada al inicio de sesión social (Google, Facebook, etc.) para aplicaciones Web3. Otorga a los usuarios soberanía sobre su identidad digital utilizando su billetera de Ethereum existente como credencial de autenticación. El formato de mensaje estándar previene ataques de phishing mediante la vinculación de dominio, ataques de repetición mediante nonces y gestión de sesiones mediante marcas de tiempo de expiración.",
+  "commonUsage": "SIWE es utilizado por dApps, DAOs y plataformas Web3 para la autenticación de usuarios. Permite el inicio de sesión basado en billetera para paneles de control, plataformas de gobernanza, contenido con acceso restringido por tokens y redes sociales descentralizadas. Bibliotecas como siwe.js y los SDKs de Sign-In with Ethereum facilitan la integración. Comúnmente se combina con ERC-1271 para la autenticación de billeteras de contratos inteligentes.",
+
+  "fn.constructMessage.desc": "Construye el mensaje SIWE legible para humanos a partir de los campos del mensaje estructurado. La cadena resultante sigue el formato ERC-4361 con dominio, dirección, declaración, URI, nonce y marcas de tiempo.",
+  "fn.constructMessage.params.message": "El mensaje SIWE estructurado que contiene dominio, dirección, declaración, URI, versión, ID de cadena, nonce y marcas de tiempo.",
+  "fn.constructMessage.returns.messageString": "La cadena de mensaje formateada y legible lista para firmar.",
+
+  "fn.signMessage.desc": "Firma el hash del mensaje SIWE usando la clave privada de la billetera, produciendo una firma ECDSA que demuestra la propiedad de la dirección.",
+  "fn.signMessage.params.messageHash": "El hash keccak256 del mensaje SIWE a firmar.",
+  "fn.signMessage.returns.signature": "La firma ECDSA (v, r, s) que demuestra la propiedad de la dirección firmante.",
+
+  "fn.verifySignature.desc": "Verifica una firma SIWE recuperando la dirección del firmante y comparándola con la dirección declarada en el mensaje.",
+  "fn.verifySignature.params.message": "La cadena del mensaje SIWE original.",
+  "fn.verifySignature.params.signature": "Los bytes de la firma a verificar.",
+  "fn.verifySignature.returns.signer": "La dirección del firmante recuperada.",
+
+  "node.userWallet": "Billetera del Usuario",
+  "node.dappFrontend": "Frontend de la DApp",
+  "node.dappServer": "Servidor de la DApp",
+  "node.siweMessage": "Mensaje SIWE",
+  "node.signature": "Firma ECDSA",
+  "node.session": "Sesión Autenticada",
+
+  "edge.requestSign": "Solicitar firma",
+  "edge.constructMessage": "Construir mensaje SIWE",
+  "edge.signMessage": "Firmar mensaje",
+  "edge.submitSignature": "Enviar firma",
+  "edge.createSession": "Crear sesión",
+  "edge.verifyNonce": "Verificar nonce y mensaje",
+
+  "sim.siweAuth.name": "Flujo de Inicio de Sesión con Ethereum",
+  "sim.siweAuth.desc": "Autenticar a un usuario con una dApp utilizando el estándar Sign-In with Ethereum (SIWE).",
+  "sim.siweAuth.param.userAddress": "Dirección de billetera del usuario",
+  "sim.siweAuth.param.domain": "Dominio de la aplicación",
+  "sim.siweAuth.step.request": "El frontend de la dApp construye un mensaje SIWE con el dominio, un nonce aleatorio, la marca de tiempo actual y la dirección del usuario.",
+  "sim.siweAuth.step.request.mobile": "Construir mensaje SIWE",
+  "sim.siweAuth.step.prompt": "La dApp presenta el mensaje SIWE a la billetera del usuario para que lo firme. El mensaje es legible para que el usuario pueda verificar el dominio y la intención.",
+  "sim.siweAuth.step.prompt.mobile": "Mostrar mensaje en la billetera",
+  "sim.siweAuth.step.sign": "El usuario revisa y firma el mensaje SIWE con su billetera, produciendo una firma ECDSA de 65 bytes sin ninguna transacción en la cadena.",
+  "sim.siweAuth.step.sign.mobile": "Firmar mensaje SIWE",
+  "sim.siweAuth.step.verify": "El servidor de la dApp recibe la firma, recupera la dirección del firmante usando ecrecover, verifica que el nonce no haya sido utilizado y confirma que el dominio coincide.",
+  "sim.siweAuth.step.verify.mobile": "Verificar firma y nonce",
+  "sim.siweAuth.step.session": "El servidor crea una sesión autenticada vinculada a la dirección de Ethereum del usuario. El usuario ahora ha iniciado sesión sin un proveedor de identidad centralizado.",
+  "sim.siweAuth.step.session.mobile": "Crear sesión autenticada"
+}

@@ -1,0 +1,63 @@
+{
+  "short": "Ethereumの経済的セキュリティを追加サービス（AVS）に拡張するリステーキングプロトコル",
+  "introduction": "EigenLayerはEthereum上に構築されたリステーキングプロトコルで、ステークされたETHやリキッドステーキングトークン（stETHなど）をActively Validated Services（AVS）と呼ばれる追加の分散型サービスのセキュリティとして再利用できるようにします。これにより、プロトコルは独自のバリデーターセットを立ち上げることなく暗号経済的セキュリティを確保できます。EigenLayerは、ステーカーが追加報酬と引き換えにAVSへのセキュリティ提供にオプトインするマーケットプレイスを導入しています。",
+  "designPurpose": "EigenLayerは、Ethereumベースのサービス間で暗号経済的セキュリティが断片化する問題を解決するために設計されました。各新規プロトコルが独自のバリデーターセットとステーク資本を必要とする代わりに、EigenLayerは既存のEthereumステーカーが複数のサービスに同時にセキュリティ保証を拡張できるようにします。このプールされたセキュリティモデルにより、新しい分散型インフラの保護コストが大幅に削減されます。",
+  "commonUsage": "リステーカーはリキッドステーキングトークンまたはネイティブETHをEigenLayerのストラテジーに預け入れ、代わりにAVSを検証するオペレーターに委任します。オペレーターはデータアベイラビリティレイヤー、ブリッジ、オラクルネットワークなどのAVSに登録します。このプロトコルは、新しいバリデーターネットワークを構築せずにEthereumのセキュリティを活用したいAVS開発者にも利用されています。",
+
+  "fn.depositIntoStrategy.desc": "EigenLayerのストラテジーコントラクトにトークンを預け入れ、リステーキングポジションを表すシェアを受け取ります。",
+  "fn.depositIntoStrategy.params.strategy": "預け入れ先のストラテジーコントラクトのアドレス。",
+  "fn.depositIntoStrategy.params.token": "預け入れるトークンのアドレス（例：stETH）。",
+  "fn.depositIntoStrategy.params.amount": "預け入れるトークンの数量。",
+  "fn.depositIntoStrategy.returns.shares": "預け入れ者に発行されるストラテジーシェアの数量。",
+
+  "fn.delegateTo.desc": "呼び出し元のすべてのリステーキングシェアを選択したオペレーターに委任し、オペレーターがステーカーに代わってAVSを検証します。",
+  "fn.delegateTo.params.operator": "委任先のオペレーターのアドレス。",
+  "fn.delegateTo.params.approverSignatureAndExpiry": "オペレーターの委任承認者からの署名と有効期限（必要な場合）。",
+  "fn.delegateTo.params.approverSalt": "承認者署名のリプレイを防止するための一意なsalt。",
+
+  "fn.undelegate.desc": "ステーカーを現在のオペレーターから委任解除し、すべてのリステーキングシェアの引き出しをキューに入れます。",
+  "fn.undelegate.params.staker": "委任解除するステーカーのアドレス。",
+  "fn.undelegate.returns.withdrawalRoots": "遅延期間後にキューに入れた引き出しを完了するために使用できる引き出しルートの配列。",
+
+  "fn.completeQueuedWithdrawals.desc": "必要な遅延期間が経過した後、以前にキューに入れた引き出しを完了し、トークンまたはシェアをステーカーに返却します。",
+  "fn.completeQueuedWithdrawals.params.withdrawals": "完了する引き出し構造体の配列。",
+  "fn.completeQueuedWithdrawals.params.tokens": "各引き出しに対するトークンアドレスの2次元配列。",
+  "fn.completeQueuedWithdrawals.params.middlewareTimesIndexes": "スラッシング検証用のミドルウェアタイム配列へのインデックス。",
+  "fn.completeQueuedWithdrawals.params.receiveAsTokens": "基礎トークンとして受け取る（true）かシェアとして再預け入れする（false）かを示すブール値の配列。",
+
+  "fn.getShares.desc": "指定されたステーカーの預け入れに対するストラテジーと対応するシェア量を返します。",
+  "fn.getShares.params.staker": "照会するステーカーのアドレス。",
+  "fn.getShares.returns.strategies": "ステーカーが預け入れたストラテジーコントラクトアドレスの配列。",
+  "fn.getShares.returns.shares": "各ストラテジーに対応するシェア量の配列。",
+
+  "node.restaker": "リステーカー",
+  "node.strategy-manager": "ストラテジーマネージャー",
+  "node.delegation-manager": "デリゲーションマネージャー",
+  "node.strategy": "ストラテジーコントラクト",
+  "node.operator": "オペレーター",
+  "node.avs": "Actively Validated Service（AVS）",
+  "node.slasher": "スラッシャー",
+  "node.withdrawal-queue": "引き出しキュー",
+
+  "edge.depositIntoStrategy": "depositIntoStrategy()",
+  "edge.depositTokens": "トークンを預け入れ",
+  "edge.delegateTo": "delegateTo(operator)",
+  "edge.assignDelegate": "委任を割り当て",
+  "edge.registerToAVS": "AVSに登録",
+  "edge.queueWithdrawal": "引き出しをキューに追加",
+  "edge.slash": "オペレーターをスラッシュ",
+  "edge.returnShares": "シェアを返却",
+
+  "sim.deposit-delegate-operator.name": "預け入れ、委任、登録",
+  "sim.deposit-delegate-operator.desc": "リステーキングの完全なフローをシミュレートします：stETHをストラテジーに預け入れ、オペレーターに委任し、オペレーターがAVSに登録します。",
+  "sim.deposit-delegate-operator.param.depositAmount": "預け入れ額（wei）",
+  "sim.deposit-delegate-operator.param.operatorAddress": "オペレーターアドレス",
+  "sim.deposit-delegate-operator.step.approve": "リステーカーがストラテジーマネージャーにstETHトークンの使用を承認します。",
+  "sim.deposit-delegate-operator.step.approve.mobile": "stETHを承認",
+  "sim.deposit-delegate-operator.step.deposit": "リステーカーがdepositIntoStrategy()を呼び出し、stETHをストラテジーコントラクトに転送してリステーキングポジションを表すシェアを受け取ります。",
+  "sim.deposit-delegate-operator.step.deposit.mobile": "ストラテジーに預け入れ",
+  "sim.deposit-delegate-operator.step.delegate": "リステーカーがデリゲーションマネージャーを通じてシェアをオペレーターに委任します。オペレーターがリステーキングされたセキュリティを管理するようになります。",
+  "sim.deposit-delegate-operator.step.delegate.mobile": "オペレーターに委任",
+  "sim.deposit-delegate-operator.step.avsRegister": "オペレーターがAVSに登録し、委任されたステークをサービスの保護にコミットします。ステークされた資本はスラッシング条件の対象となります。",
+  "sim.deposit-delegate-operator.step.avsRegister.mobile": "オペレーターがAVSに登録"
+}

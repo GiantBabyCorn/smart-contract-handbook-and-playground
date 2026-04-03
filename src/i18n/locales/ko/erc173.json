@@ -1,0 +1,39 @@
+{
+  "short": "컨트랙트 소유권 표준",
+  "introduction": "ERC-173은 컨트랙트 소유권을 위한 간단한 표준 인터페이스입니다. owner() 조회 함수와 현재 소유자가 새 주소로 제어권을 이전할 수 있는 transferOwnership() 함수로 구성된 최소한의 API를 정의합니다. 또한 소유권이 변경될 때마다 발생해야 하는 OwnershipTransferred 이벤트를 명시합니다. 이 표준은 OpenZeppelin의 널리 사용되는 Ownable 컨트랙트의 기반입니다.",
+  "designPurpose": "ERC-173은 컨트랙트가 소유권을 노출하고 이전하는 방식을 표준화하기 위해 설계되었습니다. 이 표준이 등장하기 전에는 프로젝트마다 호환되지 않는 방식으로 소유권을 구현하여, 도구와 인터페이스가 컨트랙트를 누가 제어하는지 감지하기 어려웠습니다. 공통 인터페이스를 정의함으로써, ERC-173은 블록 탐색기, 거버넌스 대시보드, 기타 도구가 컨트랙트 소유자를 안정적으로 식별할 수 있게 합니다.",
+  "commonUsage": "ERC-173은 업그레이드 가능한 프록시, 발행 권한이 있는 토큰 컨트랙트, 프로토콜 거버넌스 등 관리자 또는 소유자 역할이 필요한 거의 모든 컨트랙트에서 사용됩니다. 일반적으로 민감한 함수를 소유자 주소로 제한하는 접근 제어 한정자와 함께 사용됩니다. 2단계 소유권 이전 및 소유권 포기와 같은 기능으로 확장되기도 합니다.",
+
+  "fn.owner.desc": "현재 컨트랙트 소유자의 주소를 반환합니다. 스토리지에서 읽는 view 함수입니다.",
+  "fn.owner.returns.owner": "컨트랙트의 현재 소유자 주소입니다.",
+
+  "fn.transferOwnership.desc": "컨트랙트의 소유권을 새 주소로 이전합니다. 현재 소유자만 호출할 수 있습니다. OwnershipTransferred 이벤트를 발생시킵니다.",
+  "fn.transferOwnership.params.newOwner": "새 소유자의 주소입니다. address(0)으로 설정하면 사실상 소유권을 포기합니다.",
+
+  "fn.OwnershipTransferred.desc": "컨트랙트의 소유권이 한 주소에서 다른 주소로 이전될 때 발생합니다.",
+  "fn.OwnershipTransferred.params.previousOwner": "이전 소유자의 주소입니다.",
+  "fn.OwnershipTransferred.params.newOwner": "새 소유자의 주소입니다.",
+
+  "node.owner": "현재 소유자",
+  "node.newOwner": "새 소유자",
+  "node.contract": "ERC-173 컨트랙트",
+  "node.storage": "소유권 저장소",
+
+  "edge.callTransfer": "transferOwnership() 호출",
+  "edge.updateOwner": "_owner 업데이트",
+  "edge.ownershipGranted": "소유권 부여됨",
+  "edge.emitEvent": "이벤트 발생",
+
+  "sim.transferOwnership.name": "소유권 이전",
+  "sim.transferOwnership.desc": "컨트랙트의 소유권을 현재 소유자에서 새 주소로 이전합니다.",
+  "sim.transferOwnership.param.currentOwner": "현재 소유자 주소",
+  "sim.transferOwnership.param.newOwner": "새 소유자 주소",
+  "sim.transferOwnership.step.call": "현재 소유자가 컨트랙트에 transferOwnership(newOwner)를 호출하여 소유권 이전을 시작합니다.",
+  "sim.transferOwnership.step.call.mobile": "transferOwnership() 호출",
+  "sim.transferOwnership.step.validate": "컨트랙트가 msg.sender가 상태에 저장된 현재 _owner와 일치하는지 확인합니다. 일치하지 않으면 트랜잭션이 되돌려집니다.",
+  "sim.transferOwnership.step.validate.mobile": "호출자가 소유자인지 검증",
+  "sim.transferOwnership.step.updateStorage": "컨트랙트가 _owner 스토리지 슬롯을 이전 소유자에서 새 소유자 주소로 업데이트합니다.",
+  "sim.transferOwnership.step.updateStorage.mobile": "스토리지의 소유자 업데이트",
+  "sim.transferOwnership.step.event": "컨트랙트가 OwnershipTransferred 이벤트를 발생시키고 새 소유자가 컨트랙트에 대한 완전한 제어권을 갖게 됩니다.",
+  "sim.transferOwnership.step.event.mobile": "OwnershipTransferred 발생"
+}

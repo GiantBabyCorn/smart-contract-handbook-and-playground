@@ -1,0 +1,96 @@
+{
+  "short": "非同质化代币（NFT）标准",
+  "introduction": "ERC-721 是以太坊上非同质化代币（NFT）的标准接口。与每个单位都相同的 ERC-20 代币不同，每个 ERC-721 代币都有一个唯一的 tokenId 将其与所有其他代币区分开来。该标准由 William Entriken、Dieter Shirley、Jacob Evans 和 Nastassia Sachs 于 2018 年 1 月提出。它定义了转移所有权、查询余额和所有权以及管理单个代币和操作者授权的函数。",
+  "designPurpose": "ERC-721 旨在表示区块链上唯一、可区分资产的所有权。每个代币都是非同质化的，意味着一个代币不能与另一个代币 1:1 互换。该标准包含安全转移机制，检查接收者是否能处理 NFT（通过 onERC721Received），防止代币被永久锁定在无法与其交互的合约中。",
+  "commonUsage": "ERC-721 用于数字艺术（CryptoPunks、Bored Apes）、游戏道具、域名（ENS）、房产契约、活动门票以及任何需要可证明唯一性的资产。像 OpenSea 这样的 NFT 市场依赖该标准来上架、转移和拍卖代币。该标准通常会扩展元数据（ERC-721Metadata）和枚举功能。",
+
+  "fn.balanceOf.desc": "返回给定地址拥有的 NFT 数量。该地址不能是零地址。",
+  "fn.balanceOf.params.owner": "要查询 NFT 余额的地址。",
+  "fn.balanceOf.returns.balance": "该地址拥有的 NFT 数量。",
+
+  "fn.ownerOf.desc": "返回特定 NFT 的所有者。该代币必须存在（已铸造且未被销毁）。",
+  "fn.ownerOf.params.tokenId": "要查询的 NFT 的唯一标识符。",
+  "fn.ownerOf.returns.owner": "该 NFT 当前所有者的地址。",
+
+  "fn.safeTransferFrom.desc": "安全地将 NFT 从一个地址转移到另一个地址。如果接收者是合约，它必须实现 onERC721Received 并返回正确的魔术值，否则转移将回滚。",
+  "fn.safeTransferFrom.params.from": "NFT 的当前所有者。",
+  "fn.safeTransferFrom.params.to": "接收 NFT 的地址。",
+  "fn.safeTransferFrom.params.tokenId": "要转移的 NFT 的唯一标识符。",
+
+  "fn.transferFrom.desc": "将 NFT 从一个地址转移到另一个地址，不进行安全接收者检查。调用者必须是所有者、被授权地址或授权操作者。",
+  "fn.transferFrom.params.from": "NFT 的当前所有者。",
+  "fn.transferFrom.params.to": "接收 NFT 的地址。",
+  "fn.transferFrom.params.tokenId": "要转移的 NFT 的唯一标识符。",
+
+  "fn.approve.desc": "授权另一个地址代表所有者转移特定的 NFT。每个代币同一时间只允许一个被授权地址。当代币被转移时授权会被清除。",
+  "fn.approve.params.to": "要为给定代币授权的地址。",
+  "fn.approve.params.tokenId": "要授权的 NFT 的唯一标识符。",
+
+  "fn.setApprovalForAll.desc": "启用或禁用操作者管理调用者所有 NFT 的权限。操作者可以转移调用者拥有的任何代币。",
+  "fn.setApprovalForAll.params.operator": "要授予或撤销操作者状态的地址。",
+  "fn.setApprovalForAll.params.approved": "true 为授予操作者状态，false 为撤销。",
+
+  "fn.getApproved.desc": "返回特定 NFT 的被授权地址。如果没有地址被授权则返回零地址。",
+  "fn.getApproved.params.tokenId": "要查询的 NFT 的唯一标识符。",
+  "fn.getApproved.returns.operator": "被授权转移该 NFT 的地址，如果没有则为 address(0)。",
+
+  "fn.isApprovedForAll.desc": "返回操作者是否被授权管理给定所有者的所有代币。",
+  "fn.isApprovedForAll.params.owner": "拥有 NFT 的地址。",
+  "fn.isApprovedForAll.params.operator": "要检查操作者授权的地址。",
+  "fn.isApprovedForAll.returns.approved": "如果操作者被授权管理所有者的所有代币则返回 true。",
+
+  "fn.Transfer.desc": "当 NFT 从一个地址转移到另一个地址时触发。铸造时（from = address(0)）和销毁时（to = address(0)）也会触发。",
+  "fn.Transfer.params.from": "NFT 转出的地址。",
+  "fn.Transfer.params.to": "NFT 转入的地址。",
+  "fn.Transfer.params.tokenId": "被转移的 NFT 的唯一标识符。",
+
+  "fn.Approval.desc": "当 NFT 的被授权地址被更改或重新确认时触发。",
+  "fn.Approval.params.owner": "NFT 的所有者。",
+  "fn.Approval.params.approved": "NFT 新的被授权地址。",
+  "fn.Approval.params.tokenId": "NFT 的唯一标识符。",
+
+  "fn.ApprovalForAll.desc": "当所有者启用或禁用操作者管理其所有 NFT 时触发。",
+  "fn.ApprovalForAll.params.owner": "NFT 的所有者。",
+  "fn.ApprovalForAll.params.operator": "状态发生变更的操作者地址。",
+  "fn.ApprovalForAll.params.approved": "如果操作者被授权为 true，如果被撤销为 false。",
+
+  "node.owner": "NFT 所有者",
+  "node.contract": "ERC-721 合约",
+  "node.recipient": "接收者",
+  "node.operator": "授权操作者",
+  "node.storageOwnership": "所有权存储",
+  "node.approvalStorage": "授权存储",
+  "node.receiver": "ERC721Receiver",
+
+  "edge.callSafeTransfer": "调用 safeTransferFrom()",
+  "edge.updateOwnership": "更新所有权",
+  "edge.checkReceiver": "检查 onERC721Received",
+  "edge.nftMoves": "NFT 已转移",
+  "edge.callApprove": "调用 approve()",
+  "edge.storeApproval": "存储授权",
+  "edge.approvalGranted": "授权已批准",
+  "edge.emitTransfer": "触发 Transfer 事件",
+
+  "sim.nftTransfer.name": "安全 NFT 转移",
+  "sim.nftTransfer.desc": "使用 safeTransferFrom 将 NFT 从一个地址转移到另一个地址，包括接收者安全检查。",
+  "sim.nftTransfer.param.from": "发送者地址",
+  "sim.nftTransfer.param.to": "接收者地址",
+  "sim.nftTransfer.param.tokenId": "代币 ID",
+  "sim.nftTransfer.step.call": "所有者调用 safeTransferFrom(from, to, tokenId) 发起 NFT 转移。",
+  "sim.nftTransfer.step.call.mobile": "调用 safeTransferFrom()",
+  "sim.nftTransfer.step.validate": "合约验证所有权，将 _owners 映射更新为新所有者，并调整双方的余额。",
+  "sim.nftTransfer.step.validate.mobile": "验证并更新所有权",
+  "sim.nftTransfer.step.receiverCheck": "如果接收者是合约，ERC-721 合约会调用 onERC721Received() 并验证返回的魔术值（0x150b7a02）。",
+  "sim.nftTransfer.step.receiverCheck.mobile": "检查接收者回调",
+  "sim.nftTransfer.step.complete": "转移完成。触发 Transfer 事件，接收者现在拥有该 NFT。",
+  "sim.nftTransfer.step.complete.mobile": "转移完成",
+
+  "sim.safeTransferCallback.name": "安全转移与回调",
+  "sim.safeTransferCallback.desc": "演示将 NFT 转移到智能合约时的 onERC721Received 回调机制。",
+  "sim.safeTransferCallback.param.tokenId": "代币 ID",
+  "sim.safeTransferCallback.param.useContract": "发送到合约",
+  "sim.safeTransferCallback.step.initiate": "所有者发起 safeTransferFrom 将 NFT 发送到合约地址。",
+  "sim.safeTransferCallback.step.ownershipUpdate": "ERC-721 合约更新存储中的所有权记录，将代币指向新的合约地址。",
+  "sim.safeTransferCallback.step.callback": "合约在接收合约上调用 onERC721Received。接收者必须返回魔术值 bytes4(0x150b7a02) 以确认它能处理 NFT。",
+  "sim.safeTransferCallback.step.event": "触发 Transfer 事件，确认成功转移到合约。"
+}

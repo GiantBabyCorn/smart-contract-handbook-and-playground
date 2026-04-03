@@ -1,0 +1,48 @@
+{
+  "short": "EOA 代码委托",
+  "introduction": "ERC-7702 引入了一种新的交易类型，允许外部拥有账户 (EOA) 临时将其代码执行委托给智能合约。通过签署授权元组，EOA 可以将其代码指向委托合约，在单个交易中有效地赋予 EOA 智能合约能力。这使 EOA 能够使用批量交易、Gas 赞助和自定义验证等功能，而无需永久转换为智能合约账户。",
+  "designPurpose": "ERC-7702 旨在从协议层面弥合 EOA 和智能合约账户之间的差距。虽然 ERC-4337 通过更高层级的系统提供账户抽象，但 ERC-7702 在交易层面运作，允许任何 EOA 临时像智能合约一样运行。这提供了一条平滑的迁移路径，使现有的 EOA 可以逐步采用智能账户功能，而无需更改地址或永久修改账户类型。",
+  "commonUsage": "ERC-7702 用于赋予 EOA 智能账户超能力：批量交易（在一笔交易中完成 approve + swap）、第三方 Gas 赞助以及自定义签名方案。在生态系统从 EOA 向智能账户过渡期间，它特别有用。钱包提供商使用它为现有 EOA 用户提供增强的用户体验功能，而无需账户迁移。",
+
+  "fn.authorize.desc": "创建签名的授权元组，将 EOA 的代码执行委托给指定合约。授权包含链 ID、委托地址和 nonce。",
+  "fn.authorize.params.delegation": "要委托代码执行的智能合约地址。",
+  "fn.authorize.returns.authorization": "签名的授权元组，包含 chainId、address、nonce 和 ECDSA 签名。",
+
+  "fn.execute.desc": "通过委托合约代表 EOA 执行调用。EOA 的代码现在指向委托合约，由其处理调用。",
+  "fn.execute.params.to": "目标调用地址。",
+  "fn.execute.params.value": "随调用发送的 ETH 值。",
+  "fn.execute.params.data": "要执行的编码调用数据。",
+  "fn.execute.returns.result": "执行调用后的返回数据。",
+
+  "fn.executeBatch.desc": "通过委托合约在单个交易中执行多个调用。使 EOA 能够进行原子批量操作。",
+  "fn.executeBatch.params.calls": "Call 结构体数组，每个包含目标地址、值和调用数据。",
+  "fn.executeBatch.returns.results": "每个执行调用的返回数据数组。",
+
+  "node.eoa": "EOA（用户钱包）",
+  "node.authorizationTuple": "授权元组",
+  "node.validator": "签名验证器",
+  "node.delegationContract": "委托合约",
+  "node.target": "目标合约",
+  "node.storage": "EOA 代码存储",
+
+  "edge.signAuthorization": "签署授权元组",
+  "edge.verifySignature": "验证签名",
+  "edge.setCode": "设置 EOA 代码指针",
+  "edge.storeDelegation": "存储委托",
+  "edge.callExecute": "调用 execute()",
+  "edge.execute": "在目标上执行",
+
+  "sim.eoaDelegation.name": "EOA 代码委托",
+  "sim.eoaDelegation.desc": "将 EOA 的代码委托给智能合约实现，启用智能账户功能。",
+  "sim.eoaDelegation.param.eoaAddress": "EOA 地址",
+  "sim.eoaDelegation.param.delegationImpl": "委托实现",
+  "sim.eoaDelegation.param.targetContract": "目标合约",
+  "sim.eoaDelegation.step.signAuth": "EOA 签署包含链 ID、委托合约地址和当前 nonce 的授权元组。这授权了代码委托。",
+  "sim.eoaDelegation.step.signAuth.mobile": "签署授权",
+  "sim.eoaDelegation.step.verify": "验证授权签名以确保它是由 EOA 所有者签署的，且 nonce 有效。",
+  "sim.eoaDelegation.step.verify.mobile": "验证签名",
+  "sim.eoaDelegation.step.setCode": "EOA 的代码被设置为指向智能合约实现的委托指示符 (0xEF0100...)。EOA 现在表现得像一个智能合约。",
+  "sim.eoaDelegation.step.setCode.mobile": "设置 EOA 代码指针",
+  "sim.eoaDelegation.step.execute": "EOA 现在可以通过委托合约执行调用，启用批量交易、Gas 赞助和其他智能账户功能。",
+  "sim.eoaDelegation.step.execute.mobile": "通过委托执行"
+}

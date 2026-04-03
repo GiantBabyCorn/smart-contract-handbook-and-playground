@@ -1,0 +1,34 @@
+{
+  "short": "NFT 版税标准",
+  "introduction": "ERC-2981 定义了一种标准化的方式来检索 NFT 的版税支付信息。它提供了一个函数 royaltyInfo，返回给定代币销售价格的版税接收地址和版税金额。该标准与代币标准无关，同时适用于 ERC-721 和 ERC-1155 代币。重要的是，ERC-2981 仅提供版税信息；它不会在链上强制执行版税支付。",
+  "designPurpose": "ERC-2981 旨在为 NFT 创作者提供一种标准方式来声明其期望的版税百分比和接收地址。在此标准之前，每个市场都有自己的专有版税系统，导致碎片化以及代币在不同平台交易时版税被遗漏。通过将版税信息嵌入代币合约本身，ERC-2981 使任何市场都能发现并尊重创作者的版税偏好。",
+  "commonUsage": "ERC-2981 被 NFT 收藏品、数字艺术平台和市场用于指定创作者版税。OpenSea、LooksRare 和 Blur 等市场在促成销售时查询 royaltyInfo 来确定应向创作者支付多少。该标准支持按代币和默认版税配置，允许同一收藏品中不同代币有不同的版税费率。",
+
+  "fn.royaltyInfo.desc": "返回给定代币和销售价格的版税接收者和版税金额。版税金额计算为 salePrice * feeNumerator / feeDenominator（通常为 10000，即基点）。",
+  "fn.royaltyInfo.params.tokenId": "要查询版税信息的代币 ID。",
+  "fn.royaltyInfo.params.salePrice": "代币的销售价格，用于计算版税金额。",
+  "fn.royaltyInfo.returns.receiver": "应接收版税支付的地址。",
+  "fn.royaltyInfo.returns.royaltyAmount": "应支付的版税金额，与 salePrice 使用相同的计价单位。",
+
+  "node.marketplace": "市场",
+  "node.contract": "ERC-2981 NFT 合约",
+  "node.storage": "版税存储",
+  "node.seller": "卖家",
+  "node.royaltyReceiver": "版税接收者（创作者）",
+
+  "edge.queryRoyalty": "查询 royaltyInfo()",
+  "edge.lookupRoyalty": "查找版税配置",
+  "edge.saleProceeds": "销售收入（扣除版税）",
+  "edge.royaltyPayment": "版税支付",
+
+  "sim.royaltyCalculation.name": "销售时的版税计算",
+  "sim.royaltyCalculation.desc": "观察市场如何查询版税信息并在卖家和创作者之间分配付款。",
+  "sim.royaltyCalculation.param.tokenId": "代币 ID",
+  "sim.royaltyCalculation.param.salePrice": "销售价格（以 wei 为单位）",
+  "sim.royaltyCalculation.step.sale": "市场上发生了特定 NFT 的销售。市场需要确定如何分配付款。",
+  "sim.royaltyCalculation.step.sale.mobile": "NFT 销售已发起",
+  "sim.royaltyCalculation.step.query": "市场调用 royaltyInfo(tokenId, salePrice) 以获取版税接收者和金额。合约返回创作者的地址和销售价格的 5%。",
+  "sim.royaltyCalculation.step.query.mobile": "查询版税信息",
+  "sim.royaltyCalculation.step.distribute": "市场分配资金：95% 给卖家，5% 给版税接收者（创作者）。此分配比例根据 royaltyInfo 的响应计算。",
+  "sim.royaltyCalculation.step.distribute.mobile": "分配销售收入"
+}

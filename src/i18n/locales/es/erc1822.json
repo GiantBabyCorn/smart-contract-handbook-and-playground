@@ -1,0 +1,41 @@
+{
+  "short": "Estándar de Proxy Actualizable Universal (UUPS)",
+  "introduction": "ERC-1822 define el Estándar de Proxy Actualizable Universal (UUPS), un patrón donde la lógica de actualización reside en el contrato de implementación en lugar del proxy en sí. El contrato de implementación expone una función proxiableUUID que devuelve un slot de almacenamiento específico, y las funciones de actualización (upgradeTo, upgradeToAndCall) son parte de la implementación. Esto mantiene el contrato proxy mínimo y eficiente en gas, mientras permite que la implementación controle su propia ruta de actualización.",
+  "designPurpose": "ERC-1822 fue diseñado para crear un patrón de actualización de proxy más eficiente en gas y seguro. A diferencia de los proxies transparentes donde el contrato proxy gestiona las actualizaciones, UUPS coloca la lógica de actualización en la implementación. Esto significa que el proxy es más pequeño y más económico de desplegar. También proporciona un mecanismo de seguridad: la nueva implementación también debe soportar proxiableUUID, previniendo actualizaciones accidentales a contratos incompatibles que bloquearían el proxy.",
+  "commonUsage": "ERC-1822 se utiliza en despliegues de contratos inteligentes actualizables, particularmente con el contrato base UUPSUpgradeable de OpenZeppelin. Comúnmente se elige sobre los proxies transparentes para proyectos que desean menores costos de gas en el despliegue y prefieren actualizaciones controladas por la implementación. Muchos protocolos DeFi, DAOs y contratos de tokens utilizan proxies UUPS para sus necesidades de actualización.",
+
+  "fn.proxiableUUID.desc": "Devuelve el slot de almacenamiento utilizado por la implementación para almacenar la dirección de implementación. Debe devolver el hash keccak256 de 'PROXIABLE' para verificar la compatibilidad con el patrón UUPS.",
+  "fn.proxiableUUID.returns.slot": "El identificador de slot de almacenamiento bytes32, típicamente keccak256('PROXIABLE').",
+
+  "fn.upgradeTo.desc": "Actualiza el proxy para apuntar a un nuevo contrato de implementación. La nueva implementación también debe soportar proxiableUUID para prevenir el bloqueo del proxy.",
+  "fn.upgradeTo.params.newImplementation": "La dirección del nuevo contrato de implementación.",
+
+  "fn.upgradeToAndCall.desc": "Actualiza el proxy a una nueva implementación y ejecuta una llamada de inicialización en una sola transacción. Útil para reinicializar el estado después de una actualización.",
+  "fn.upgradeToAndCall.params.newImplementation": "La dirección del nuevo contrato de implementación.",
+  "fn.upgradeToAndCall.params.data": "Llamada de función codificada para ejecutar en la nueva implementación después de la actualización.",
+
+  "node.admin": "Administrador / Actualizador",
+  "node.proxy": "Proxy UUPS",
+  "node.oldImplementation": "Implementación Anterior",
+  "node.newImplementation": "Nueva Implementación",
+  "node.storage": "Almacenamiento del Proxy",
+
+  "edge.callUpgrade": "Llamar upgradeTo()",
+  "edge.verifyProxiableUUID": "Verificar proxiableUUID",
+  "edge.writeSlot": "Escribir slot de implementación",
+  "edge.pointToNew": "Apuntar a nueva implementación",
+  "edge.emitUpgraded": "Emitir evento Upgraded",
+
+  "sim.uupsUpgrade.name": "Actualización de Proxy UUPS",
+  "sim.uupsUpgrade.desc": "Actualizar un proxy UUPS a un nuevo contrato de implementación verificando la compatibilidad.",
+  "sim.uupsUpgrade.param.admin": "Dirección del administrador",
+  "sim.uupsUpgrade.param.newImpl": "Dirección de nueva implementación",
+  "sim.uupsUpgrade.step.callUpgrade": "El administrador llama a upgradeTo(newImplementation) en el proxy, que delega a la lógica de actualización de la implementación actual.",
+  "sim.uupsUpgrade.step.callUpgrade.mobile": "Llamar upgradeTo()",
+  "sim.uupsUpgrade.step.verifyUUID": "La implementación actual llama a proxiableUUID() en la nueva implementación para verificar que devuelve el slot de almacenamiento correcto, asegurando la compatibilidad de la actualización.",
+  "sim.uupsUpgrade.step.verifyUUID.mobile": "Verificar proxiableUUID()",
+  "sim.uupsUpgrade.step.writeSlot": "La dirección de implementación almacenada en el PROXIABLE_SLOT se actualiza de la implementación anterior a la nueva.",
+  "sim.uupsUpgrade.step.writeSlot.mobile": "Actualizar slot de implementación",
+  "sim.uupsUpgrade.step.pointNew": "El proxy ahora apunta a la nueva implementación. Se emite un evento Upgraded. Todas las llamadas futuras serán delegadas al nuevo contrato.",
+  "sim.uupsUpgrade.step.pointNew.mobile": "Proxy actualizado"
+}

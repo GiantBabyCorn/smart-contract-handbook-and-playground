@@ -1,0 +1,34 @@
+{
+  "short": "NFT 로열티 표준",
+  "introduction": "ERC-2981은 NFT의 로열티 지급 정보를 조회하는 표준화된 방법을 정의합니다. 주어진 토큰 판매 가격에 대해 로열티 수령인 주소와 로열티 금액을 반환하는 단일 함수 royaltyInfo를 제공합니다. 이 표준은 토큰 표준에 구애받지 않으며 ERC-721과 ERC-1155 토큰 모두에서 작동합니다. 중요한 점은, ERC-2981은 로열티 정보만 제공할 뿐 온체인에서 로열티 지급을 강제하지는 않습니다.",
+  "designPurpose": "ERC-2981은 NFT 창작자에게 원하는 로열티 비율과 수령인 주소를 알리는 표준 방법을 제공하기 위해 설계되었습니다. 이 표준이 등장하기 전에는 각 마켓플레이스가 자체적인 독점 로열티 시스템을 사용하여, 토큰이 다른 플랫폼에서 거래될 때 파편화와 로열티 누락이 발생했습니다. 토큰 컨트랙트 자체에 로열티 정보를 내장함으로써, ERC-2981은 어떤 마켓플레이스든 창작자의 로열티 설정을 확인하고 존중할 수 있게 합니다.",
+  "commonUsage": "ERC-2981은 NFT 컬렉션, 디지털 아트 플랫폼, 마켓플레이스에서 창작자 로열티를 지정하는 데 사용됩니다. OpenSea, LooksRare, Blur 같은 마켓플레이스는 판매를 중개할 때 royaltyInfo를 조회하여 창작자에게 지급할 금액을 결정합니다. 이 표준은 토큰별 및 기본 로열티 구성을 모두 지원하여, 같은 컬렉션 내 서로 다른 토큰에 대해 다른 로열티 비율을 설정할 수 있습니다.",
+
+  "fn.royaltyInfo.desc": "주어진 토큰과 판매 가격에 대한 로열티 수령인과 로열티 금액을 반환합니다. 로열티 금액은 salePrice * feeNumerator / feeDenominator(일반적으로 베이시스 포인트의 경우 10000)로 계산됩니다.",
+  "fn.royaltyInfo.params.tokenId": "로열티 정보를 조회할 토큰 ID입니다.",
+  "fn.royaltyInfo.params.salePrice": "토큰의 판매 가격으로, 로열티 금액을 계산하는 데 사용됩니다.",
+  "fn.royaltyInfo.returns.receiver": "로열티 지급을 받아야 하는 주소입니다.",
+  "fn.royaltyInfo.returns.royaltyAmount": "지급할 로열티 금액으로, salePrice와 동일한 단위로 표시됩니다.",
+
+  "node.marketplace": "마켓플레이스",
+  "node.contract": "ERC-2981 NFT 컨트랙트",
+  "node.storage": "로열티 저장소",
+  "node.seller": "판매자",
+  "node.royaltyReceiver": "로열티 수령인 (창작자)",
+
+  "edge.queryRoyalty": "royaltyInfo() 조회",
+  "edge.lookupRoyalty": "로열티 설정 조회",
+  "edge.saleProceeds": "판매 수익 (로열티 차감)",
+  "edge.royaltyPayment": "로열티 지급",
+
+  "sim.royaltyCalculation.name": "판매 시 로열티 계산",
+  "sim.royaltyCalculation.desc": "마켓플레이스가 로열티 정보를 조회하고 판매자와 창작자 간에 대금을 분배하는 과정을 관찰합니다.",
+  "sim.royaltyCalculation.param.tokenId": "토큰 ID",
+  "sim.royaltyCalculation.param.salePrice": "판매 가격 (wei 단위)",
+  "sim.royaltyCalculation.step.sale": "마켓플레이스에서 특정 NFT의 판매가 발생합니다. 마켓플레이스는 대금을 어떻게 분배할지 결정해야 합니다.",
+  "sim.royaltyCalculation.step.sale.mobile": "NFT 판매 시작",
+  "sim.royaltyCalculation.step.query": "마켓플레이스가 royaltyInfo(tokenId, salePrice)를 호출하여 로열티 수령인과 금액을 조회합니다. 컨트랙트는 창작자의 주소와 판매 가격의 5%를 반환합니다.",
+  "sim.royaltyCalculation.step.query.mobile": "로열티 정보 조회",
+  "sim.royaltyCalculation.step.distribute": "마켓플레이스가 대금을 분배합니다: 95%는 판매자에게, 5%는 로열티 수령인(창작자)에게 전달됩니다. 이 분배 비율은 royaltyInfo 응답에서 계산됩니다.",
+  "sim.royaltyCalculation.step.distribute.mobile": "판매 수익 분배"
+}

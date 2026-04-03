@@ -1,0 +1,30 @@
+{
+  "short": "標準インターフェース検出",
+  "introduction": "ERC-165は、スマートコントラクトがどのインターフェースをサポートしているかを検出する標準的な方法を定義しています。4バイトのインターフェース識別子を受け取りブーリアンを返す単一の関数supportsInterfaceを導入しています。これにより、コントラクトやdAppは、対象のコントラクトと対話する前に、特定のインターフェースを実装しているかどうかを問い合わせることができます。この標準自体はERC-165インターフェースID（0x01ffc9a7）に対してtrueを返し、0xffffffffに対してfalseを返す必要があります。",
+  "designPurpose": "ERC-165は、Ethereum上のインターフェース検出の問題を解決するために設計されました。これがなければ、呼び出し元はコントラクトが特定の関数セットをサポートしているかどうかを確実に判断する方法がなく、呼び出しの失敗やガスの浪費につながっていました。標準化された検出メカニズムを提供することで、ERC-165はより安全なコントラクト間の対話を可能にし、ERC-721やERC-1155など多くの他の標準の前提条件となっています。",
+  "commonUsage": "ERC-165は、NFTマーケットプレイス、トークンコントラクト、およびプロトコルルーターが対象のコントラクトが期待されるインターフェースを実装しているかを検証するために広く使用されています。例えば、マーケットプレイスはNFTの転送を試みる前に、コントラクトがERC-721をサポートしているか確認できます。また、プロキシパターンやモジュラースマートアカウントがサポートする機能を公開するためにも使用されています。",
+
+  "fn.supportsInterface.desc": "コントラクトが指定された4バイトの識別子で定義されたインターフェースを実装している場合にtrueを返します。インターフェースIDは、インターフェース内のすべての関数セレクタのXORとして計算されます。",
+  "fn.supportsInterface.params.interfaceId": "ERC-165で定義された、問い合わせる4バイトのインターフェース識別子。インターフェース内のすべての関数セレクタのXORとして計算されます。",
+  "fn.supportsInterface.returns.supported": "コントラクトが問い合わせたインターフェースを実装している場合はtrue、それ以外はfalse。",
+
+  "node.caller": "呼び出し元 / DApp",
+  "node.contract": "ERC-165コントラクト",
+  "node.interfaceRegistry": "インターフェースレジストリ",
+  "node.result": "問い合わせ結果",
+
+  "edge.query": "インターフェースを問い合わせ",
+  "edge.lookupRegistry": "レジストリを検索",
+  "edge.returnBool": "結果を返す",
+  "edge.response": "ブーリアン応答",
+
+  "sim.interfaceQuery.name": "インターフェース検出クエリ",
+  "sim.interfaceQuery.desc": "supportsInterface関数を使用して、コントラクトが特定のインターフェースをサポートしているかどうかを問い合わせます。",
+  "sim.interfaceQuery.param.interfaceId": "問い合わせるインターフェースID",
+  "sim.interfaceQuery.step.call": "呼び出し元が対象コントラクトに対してsupportsInterface(interfaceId)を呼び出し、特定のインターフェースがサポートされているか確認します。",
+  "sim.interfaceQuery.step.call.mobile": "supportsInterface()を呼び出し",
+  "sim.interfaceQuery.step.lookup": "コントラクトが内部レジストリマッピングでインターフェースIDを検索します。サポートされる各インターフェースはコンストラクション時に事前登録されています。",
+  "sim.interfaceQuery.step.lookup.mobile": "インターフェースレジストリを検索",
+  "sim.interfaceQuery.step.return": "コントラクトがブーリアン結果を返します。呼び出し元は、インターフェースがサポートされている場合は安全に処理を続行し、サポートされていない場合は適切に対処できます。",
+  "sim.interfaceQuery.step.return.mobile": "true/falseを返す"
+}

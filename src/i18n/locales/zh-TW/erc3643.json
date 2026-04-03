@@ -1,0 +1,54 @@
+{
+  "short": "證券型代幣標準 (T-REX)",
+  "introduction": "ERC-3643，又稱為 T-REX（Token for Regulated EXchanges），是一個全面的證券型代幣標準，在鏈上強制執行法規遵循。它擴展了 ERC-20，加入身份驗證、合規規則和管理控制。每次轉帳在執行前都會根據身份註冊表和合規模組進行驗證，確保只有經過驗證的投資者才能持有和交易代幣。該標準與 ISO 20022 相容，專為現實世界的受監管證券而設計。",
+  "designPurpose": "ERC-3643 旨在將傳統證券帶上區塊鏈，同時維持完整的法規遵循。證券法規要求了解你的客戶 (KYC) 驗證、基於司法管轄區的轉帳限制、投資者資格認證，以及凍結或暫停轉帳的能力。ERC-3643 將所有這些控制直接嵌入代幣合約中，使得無法將代幣轉帳到未驗證的地址。",
+  "commonUsage": "ERC-3643 用於代幣化證券、不動產代幣、股權代幣以及任何需要鏈上合規的受監管金融工具。它由 Tokeny Solutions 等公司部署，用於發行受監管的數位證券。該標準支援透過鏈上聲明發行者進行身份驗證、基於國家的轉帳限制、投資者限額，以及凍結帳戶和強制轉帳等管理操作。",
+
+  "fn.transfer.desc": "將證券型代幣轉帳給收款人，但僅在透過身份註冊表驗證雙方並檢查合規規則後執行。如果合規檢查失敗則回退。",
+  "fn.transfer.params.to": "收款人地址。必須在身份註冊表中經過驗證。",
+  "fn.transfer.params.amount": "要轉帳的代幣數量。",
+  "fn.transfer.returns.success": "如果合規轉帳成功則回傳 true。",
+
+  "fn.isVerified.desc": "檢查投資者地址是否在身份註冊表中經過驗證。驗證需要來自受信任發行者的有效聲明。",
+  "fn.isVerified.params.investor": "要檢查驗證狀態的投資者地址。",
+  "fn.isVerified.returns.verified": "如果投資者擁有來自受信任發行者的有效身份聲明則為 true。",
+
+  "fn.identityRegistry.desc": "回傳管理投資者身份和驗證狀態的身份註冊表合約地址。",
+  "fn.identityRegistry.returns.registry": "關聯的身份註冊表合約地址。",
+
+  "fn.compliance.desc": "回傳強制執行轉帳規則（例如國家限制、投資者限額）的合規模組合約地址。",
+  "fn.compliance.returns.complianceModule": "合規模組合約的地址。",
+
+  "fn.pause.desc": "暫停所有代幣轉帳。只能由授權代理人呼叫。暫停後，在取消暫停之前不能進行任何轉帳。",
+
+  "fn.freeze.desc": "凍結特定使用者的代幣，阻止其發送或接收轉帳。用於法規執法行動。",
+  "fn.freeze.params.userAddress": "要凍結的地址。該投資者將無法轉帳代幣。",
+
+  "node.investor": "投資者",
+  "node.tokenContract": "T-REX 代幣合約",
+  "node.identityRegistry": "身份註冊表",
+  "node.complianceModule": "合規模組",
+  "node.trustedIssuer": "受信任的聲明發行者",
+  "node.claimRegistry": "聲明註冊表 (ONCHAINID)",
+
+  "edge.transfer": "呼叫 transfer()",
+  "edge.checkIdentity": "檢查身份驗證",
+  "edge.checkCompliance": "檢查合規規則",
+  "edge.verifyIssuer": "驗證受信任的發行者",
+  "edge.fetchClaim": "取得身份聲明",
+  "edge.approveTransfer": "合規已核准",
+
+  "sim.compliantTransfer.name": "合規證券型代幣轉帳",
+  "sim.compliantTransfer.desc": "透過完整的身份驗證和合規檢查轉帳受監管的證券型代幣。",
+  "sim.compliantTransfer.param.sender": "發送者（投資者）",
+  "sim.compliantTransfer.param.recipient": "收款人（投資者）",
+  "sim.compliantTransfer.param.amount": "轉帳金額",
+  "sim.compliantTransfer.step.initiate": "投資者發起證券型代幣轉帳。代幣合約在執行前開始合規驗證流程。",
+  "sim.compliantTransfer.step.initiate.mobile": "發起轉帳",
+  "sim.compliantTransfer.step.identityCheck": "代幣合約查詢身份註冊表以驗證發送者和收款人。註冊表透過 ONCHAINID 檢查來自受信任發行者的聲明。",
+  "sim.compliantTransfer.step.identityCheck.mobile": "驗證身份",
+  "sim.compliantTransfer.step.complianceCheck": "合規模組檢查轉帳規則：國家限制、最大持有人限額、轉帳量限制以及任何其他法規約束。",
+  "sim.compliantTransfer.step.complianceCheck.mobile": "檢查合規規則",
+  "sim.compliantTransfer.step.settle": "所有檢查通過。轉帳執行，更新餘額。雙方投資者在整個過程中保持已驗證和合規狀態。",
+  "sim.compliantTransfer.step.settle.mobile": "執行轉帳"
+}

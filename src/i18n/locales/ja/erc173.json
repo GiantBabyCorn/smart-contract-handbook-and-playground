@@ -1,0 +1,39 @@
+{
+  "short": "コントラクト所有権標準",
+  "introduction": "ERC-173は、コントラクトの所有権のためのシンプルな標準インターフェースです。owner()クエリ関数と、現在のオーナーが新しいアドレスに制御を移譲できるtransferOwnership()関数から成る最小限のAPIを定義しています。また、所有権が変更されるたびに発行されなければならないOwnershipTransferredイベントも規定しています。この標準は、OpenZeppelinの広く使用されているOwnableコントラクトの基盤です。",
+  "designPurpose": "ERC-173は、コントラクトが所有権を公開し移譲する方法を標準化するために設計されました。この標準以前は、異なるプロジェクトが互換性のない方法で所有権を実装しており、ツールやインターフェースがコントラクトの管理者を検出することが困難でした。共通のインターフェースを定義することで、ERC-173はブロックエクスプローラ、ガバナンスダッシュボード、およびその他のツールがコントラクトのオーナーを確実に特定できるようにします。",
+  "commonUsage": "ERC-173は、アップグレード可能なプロキシ、ミント権限を持つトークンコントラクト、プロトコルガバナンスなど、管理者またはオーナーの役割が必要なほぼすべてのコントラクトで使用されています。通常、機密性の高い関数をオーナーアドレスに制限するアクセス制御修飾子と組み合わせて使用されます。この標準は、2段階の所有権移転やrenounce ownershipなどの機能で拡張されることが多いです。",
+
+  "fn.owner.desc": "現在のコントラクトオーナーのアドレスを返します。ストレージから読み取るビュー関数です。",
+  "fn.owner.returns.owner": "コントラクトの現在のオーナーのアドレス。",
+
+  "fn.transferOwnership.desc": "コントラクトの所有権を新しいアドレスに移転します。現在のオーナーのみが呼び出せます。OwnershipTransferredイベントを発行します。",
+  "fn.transferOwnership.params.newOwner": "新しいオーナーのアドレス。address(0)に設定すると、所有権を実質的に放棄します。",
+
+  "fn.OwnershipTransferred.desc": "コントラクトの所有権があるアドレスから別のアドレスに移転された際に発行されます。",
+  "fn.OwnershipTransferred.params.previousOwner": "前のオーナーのアドレス。",
+  "fn.OwnershipTransferred.params.newOwner": "新しいオーナーのアドレス。",
+
+  "node.owner": "現在のオーナー",
+  "node.newOwner": "新しいオーナー",
+  "node.contract": "ERC-173コントラクト",
+  "node.storage": "所有権ストレージ",
+
+  "edge.callTransfer": "transferOwnership()を呼び出し",
+  "edge.updateOwner": "_ownerを更新",
+  "edge.ownershipGranted": "所有権が付与",
+  "edge.emitEvent": "イベントを発行",
+
+  "sim.transferOwnership.name": "所有権の移転",
+  "sim.transferOwnership.desc": "コントラクトの所有権を現在のオーナーから新しいアドレスに移転します。",
+  "sim.transferOwnership.param.currentOwner": "現在のオーナーアドレス",
+  "sim.transferOwnership.param.newOwner": "新しいオーナーアドレス",
+  "sim.transferOwnership.step.call": "現在のオーナーがコントラクトに対してtransferOwnership(newOwner)を呼び出し、所有権の移転を開始します。",
+  "sim.transferOwnership.step.call.mobile": "transferOwnership()を呼び出し",
+  "sim.transferOwnership.step.validate": "コントラクトはmsg.senderがステートに保存されている現在の_ownerと一致することを検証します。一致しない場合、トランザクションはリバートされます。",
+  "sim.transferOwnership.step.validate.mobile": "呼び出し元がオーナーか検証",
+  "sim.transferOwnership.step.updateStorage": "コントラクトは_ownerストレージスロットを前のオーナーから新しいオーナーアドレスに更新します。",
+  "sim.transferOwnership.step.updateStorage.mobile": "ストレージ内のオーナーを更新",
+  "sim.transferOwnership.step.event": "コントラクトがOwnershipTransferredイベントを発行し、新しいオーナーがコントラクトの完全な制御権を持つようになります。",
+  "sim.transferOwnership.step.event.mobile": "OwnershipTransferredを発行"
+}

@@ -1,0 +1,45 @@
+{
+  "short": "프록시 스토리지 슬롯 표준",
+  "introduction": "ERC-1967은 프록시 컨트랙트가 구현 주소, 관리자 주소, 비콘 주소를 저장하는 데 사용하는 스토리지 슬롯을 표준화합니다. 이 슬롯들은 잘 알려진 문자열의 keccak256에서 1을 뺀 값으로 계산되어, 구현 컨트랙트 스토리지와 충돌할 가능성이 극히 낮은 의사 무작위 위치에 배치됩니다. 이 표준은 블록 탐색기와 도구가 프록시 컨트랙트를 안정적으로 감지하고 구현 주소를 표시할 수 있게 합니다.",
+  "designPurpose": "ERC-1967은 프록시 컨트랙트의 스토리지 충돌 문제를 해결하고 프록시 컨트랙트를 발견 가능하게 만들기 위해 설계되었습니다. 이 표준이 등장하기 전에는 각 프록시 구현이 서로 다른 스토리지 슬롯을 사용하여 도구가 프록시를 안정적으로 감지하는 것이 불가능했습니다. 스토리지 슬롯 위치와 관련 이벤트를 표준화함으로써, ERC-1967은 Etherscan 및 기타 탐색기가 프록시를 식별하고 구현 소스 코드에 연결할 수 있게 합니다.",
+  "commonUsage": "ERC-1967은 OpenZeppelin의 TransparentUpgradeableProxy와 UUPS 프록시를 포함하여 이더리움 생태계의 거의 모든 프록시 컨트랙트에서 사용됩니다. Etherscan 같은 블록 탐색기는 이 표준화된 슬롯을 읽어 구현 컨트랙트 세부 정보를 표시합니다. 이 표준은 세 가지 슬롯을 정의합니다: 로직 컨트랙트를 위한 IMPLEMENTATION_SLOT, 업그레이드 관리자를 위한 ADMIN_SLOT, 비콘 프록시 패턴을 위한 BEACON_SLOT입니다.",
+
+  "fn.implementation.desc": "표준화된 ERC-1967 구현 슬롯에 저장된 현재 로직/구현 컨트랙트의 주소를 반환합니다.",
+  "fn.implementation.returns.impl": "현재 구현 컨트랙트의 주소입니다.",
+
+  "fn.admin.desc": "표준화된 ERC-1967 관리자 슬롯에 저장된 프록시 관리자의 주소를 반환합니다. 관리자는 일반적으로 프록시를 업그레이드할 권한을 가집니다.",
+  "fn.admin.returns.admin": "현재 프록시 관리자의 주소입니다.",
+
+  "fn.Upgraded.desc": "구현 주소가 변경될 때 발생합니다. 도구와 인덱서는 이 이벤트를 감시하여 프록시 업그레이드를 추적합니다.",
+  "fn.Upgraded.params.implementation": "새 구현 컨트랙트의 주소입니다.",
+
+  "fn.AdminChanged.desc": "프록시 관리자 주소가 변경될 때 발생합니다.",
+  "fn.AdminChanged.params.previousAdmin": "이전 관리자의 주소입니다.",
+  "fn.AdminChanged.params.newAdmin": "새 관리자의 주소입니다.",
+
+  "node.user": "사용자 / 호출자",
+  "node.proxy": "ERC-1967 프록시",
+  "node.implementation": "구현 컨트랙트",
+  "node.admin": "프록시 관리자",
+  "node.storageSlots": "표준 스토리지 슬롯",
+
+  "edge.callProxy": "프록시 호출",
+  "edge.delegatecall": "delegatecall",
+  "edge.readSlot": "스토리지 슬롯 읽기",
+  "edge.upgrade": "구현 업그레이드",
+  "edge.emitUpgraded": "Upgraded 이벤트 발생",
+  "edge.emitAdminChanged": "AdminChanged 이벤트 발생",
+
+  "sim.delegatecallProxy.name": "프록시 Delegatecall 흐름",
+  "sim.delegatecallProxy.desc": "사용자의 호출이 ERC-1967 프록시를 통해 delegatecall로 구현 컨트랙트에 전달되는 과정을 관찰합니다.",
+  "sim.delegatecallProxy.param.caller": "호출자 주소",
+  "sim.delegatecallProxy.param.proxyAddress": "프록시 주소",
+  "sim.delegatecallProxy.step.callProxy": "사용자가 프록시 컨트랙트 주소로 트랜잭션을 전송합니다. 프록시의 fallback 함수가 트리거됩니다.",
+  "sim.delegatecallProxy.step.callProxy.mobile": "프록시 호출",
+  "sim.delegatecallProxy.step.readSlot": "프록시가 표준화된 ERC-1967 스토리지 슬롯(keccak256('eip1967.proxy.implementation') - 1)에서 구현 주소를 읽습니다.",
+  "sim.delegatecallProxy.step.readSlot.mobile": "구현 슬롯 읽기",
+  "sim.delegatecallProxy.step.delegatecall": "프록시가 구현으로 delegatecall을 수행합니다. 코드는 프록시의 컨텍스트에서 프록시의 스토리지와 msg.sender를 사용하여 실행됩니다.",
+  "sim.delegatecallProxy.step.delegatecall.mobile": "구현으로 delegatecall",
+  "sim.delegatecallProxy.step.return": "구현이 함수 로직을 실행하고 프록시를 통해 원래 호출자에게 결과를 반환합니다.",
+  "sim.delegatecallProxy.step.return.mobile": "호출자에게 결과 반환"
+}

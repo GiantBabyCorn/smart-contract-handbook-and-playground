@@ -1,0 +1,39 @@
+{
+  "short": "合约所有权标准",
+  "introduction": "ERC-173 是一个简单的合约所有权标准接口。它定义了一个最小化的 API，包括一个 owner() 查询函数和一个 transferOwnership() 函数，允许当前所有者将控制权移交给新地址。该标准还规定了每次所有权变更时必须触发的 OwnershipTransferred 事件。此标准是 OpenZeppelin 广泛使用的 Ownable 合约的基础。",
+  "designPurpose": "ERC-173 旨在标准化合约暴露和转移所有权的方式。在此标准之前，不同项目以不兼容的方式实现所有权，使得工具和界面难以检测谁控制着合约。通过定义通用接口，ERC-173 使区块浏览器、治理仪表盘和其他工具能够可靠地识别合约所有者。",
+  "commonUsage": "ERC-173 几乎用于任何需要管理员或所有者角色的合约，例如可升级代理、具有铸造权限的代币合约和协议治理。它通常与访问控制修饰符配合使用，将敏感函数限制为所有者地址。该标准经常扩展以支持两步所有权转移和放弃所有权等功能。",
+
+  "fn.owner.desc": "返回当前合约所有者的地址。这是一个从存储中读取的视图函数。",
+  "fn.owner.returns.owner": "合约当前所有者的地址。",
+
+  "fn.transferOwnership.desc": "将合约的所有权转移给新地址。只能由当前所有者调用。触发 OwnershipTransferred 事件。",
+  "fn.transferOwnership.params.newOwner": "新所有者的地址。设置为 address(0) 实际上等于放弃所有权。",
+
+  "fn.OwnershipTransferred.desc": "当合约的所有权从一个地址转移到另一个地址时触发。",
+  "fn.OwnershipTransferred.params.previousOwner": "前所有者的地址。",
+  "fn.OwnershipTransferred.params.newOwner": "新所有者的地址。",
+
+  "node.owner": "当前所有者",
+  "node.newOwner": "新所有者",
+  "node.contract": "ERC-173 合约",
+  "node.storage": "所有权存储",
+
+  "edge.callTransfer": "调用 transferOwnership()",
+  "edge.updateOwner": "更新 _owner",
+  "edge.ownershipGranted": "所有权已授予",
+  "edge.emitEvent": "触发事件",
+
+  "sim.transferOwnership.name": "转移所有权",
+  "sim.transferOwnership.desc": "将合约的所有权从当前所有者转移到新地址。",
+  "sim.transferOwnership.param.currentOwner": "当前所有者地址",
+  "sim.transferOwnership.param.newOwner": "新所有者地址",
+  "sim.transferOwnership.step.call": "当前所有者在合约上调用 transferOwnership(newOwner) 以发起所有权转移。",
+  "sim.transferOwnership.step.call.mobile": "调用 transferOwnership()",
+  "sim.transferOwnership.step.validate": "合约验证 msg.sender 是否等于存储在状态中的当前 _owner。如果不是，交易将回滚。",
+  "sim.transferOwnership.step.validate.mobile": "验证调用者是否为所有者",
+  "sim.transferOwnership.step.updateStorage": "合约将 _owner 存储槽从前所有者更新为新所有者地址。",
+  "sim.transferOwnership.step.updateStorage.mobile": "更新存储中的所有者",
+  "sim.transferOwnership.step.event": "合约触发 OwnershipTransferred 事件，新所有者现在拥有对合约的完全控制权。",
+  "sim.transferOwnership.step.event.mobile": "触发 OwnershipTransferred"
+}

@@ -1,0 +1,87 @@
+{
+  "short": "需要 M-of-N 擁有者批准才能執行交易的多重簽名智能合約錢包",
+  "introduction": "Safe（前身為 Gnosis Safe）是以太坊生態系統中使用最廣泛的多重簽名錢包，保護數十億美元的資產。它要求在執行任何交易之前達到可設定的擁有者簽名門檻，提供針對單點故障的強大保護。Safe 支援模組、守衛和回退處理器以實現可擴展性，使其成為可程式化的帳戶抽象化基礎元件。",
+  "designPurpose": "Safe 的設計目的是透過要求多方批准每筆交易來消除單一私鑰洩露的風險。模組化架構允許擴展功能，如花費限額、社交恢復和自動交易模組，而無需修改核心合約。其基於代理的部署模式最大限度降低了 Gas 成本，同時維持經過實戰考驗的單例實現。",
+  "commonUsage": "DAO 和團隊使用 Safe 以多重簽名批准要求管理資金庫。協議使用 Safe 錢包控制合約升級和參數變更的管理金鑰。個人使用 Safe 搭配硬體錢包簽名者和社交恢復模組來保障個人安全。",
+
+  "fn.execTransaction.desc": "在收集到所需數量的擁有者簽名後執行交易。驗證簽名、執行守衛檢查、執行調用，並可選擇性地退還 Gas 費用。",
+  "fn.execTransaction.params.to": "交易的目標地址。",
+  "fn.execTransaction.params.value": "隨交易發送的 ETH 數量。",
+  "fn.execTransaction.params.data": "交易的 calldata 負載。",
+  "fn.execTransaction.params.operation": "操作類型：0 為 Call，1 為 DelegateCall。",
+  "fn.execTransaction.params.safeTxGas": "內部 Safe 交易執行的 Gas 限制。",
+  "fn.execTransaction.params.baseGas": "用於 Gas 退款計算的資料和交易開銷的 Gas 成本。",
+  "fn.execTransaction.params.gasPrice": "用於退款計算的 Gas 價格。設為 0 以停用退款。",
+  "fn.execTransaction.params.gasToken": "用於 Gas 退款的代幣（address(0) 表示 ETH）。",
+  "fn.execTransaction.params.refundReceiver": "接收 Gas 退款的地址。使用 address(0) 表示 tx.origin。",
+  "fn.execTransaction.params.signatures": "來自所需數量擁有者的打包簽名位元組。",
+  "fn.execTransaction.returns.success": "內部交易執行是否成功。",
+
+  "fn.approveHash.desc": "在鏈上預先批准交易雜湊，使其能在 execTransaction 中作為簽名計算，無需 ECDSA 簽名。",
+  "fn.approveHash.params.hashToApprove": "要批准的 Safe 交易雜湊。",
+
+  "fn.addOwnerWithThreshold.desc": "新增一位擁有者到 Safe 並更新所需的簽名門檻。只能由 Safe 本身透過 execTransaction 調用。",
+  "fn.addOwnerWithThreshold.params.owner": "要新增的新擁有者地址。",
+  "fn.addOwnerWithThreshold.params.threshold": "新增擁有者後的新簽名門檻。",
+
+  "fn.removeOwner.desc": "從 Safe 的擁有者鏈結串列中移除一位擁有者並更新門檻。只能由 Safe 本身調用。",
+  "fn.removeOwner.params.prevOwner": "在鏈結串列中指向被移除擁有者的前一位擁有者。",
+  "fn.removeOwner.params.owner": "要移除的擁有者地址。",
+  "fn.removeOwner.params.threshold": "移除擁有者後的新簽名門檻。",
+
+  "fn.changeThreshold.desc": "變更執行交易所需的擁有者確認數量。只能由 Safe 本身調用。",
+  "fn.changeThreshold.params.threshold": "新的簽名門檻。必須至少為 1 且不超過擁有者數量。",
+
+  "fn.getOwners.desc": "返回目前 Safe 擁有者的完整列表。",
+  "fn.getOwners.returns.owners": "擁有者地址的陣列。",
+
+  "fn.getThreshold.desc": "返回目前執行交易所需的確認數量。",
+  "fn.getThreshold.returns.threshold": "目前的簽名門檻。",
+
+  "fn.isOwner.desc": "檢查給定地址是否為 Safe 的註冊擁有者。",
+  "fn.isOwner.params.owner": "要檢查擁有權的地址。",
+  "fn.isOwner.returns.isOwner": "如果該地址是擁有者則為 true，否則為 false。",
+
+  "fn.nonce.desc": "返回 Safe 的目前交易 nonce。每次執行交易都會遞增此值以防止重放攻擊。",
+  "fn.nonce.returns.nonce": "目前的 nonce 值。",
+
+  "node.owner-a": "擁有者 A",
+  "node.owner-b": "擁有者 B",
+  "node.owner-c": "擁有者 C",
+  "node.safe-contract": "Safe 合約",
+  "node.guard": "交易守衛",
+  "node.module": "模組",
+  "node.fallback-handler": "回退處理器",
+  "node.target-contract": "目標合約",
+
+  "edge.signTx": "簽署交易",
+  "edge.approveHash": "approveHash()",
+  "edge.checkGuard": "checkTransaction()",
+  "edge.execCall": "執行調用",
+  "edge.moduleExec": "execTransactionFromModule()",
+  "edge.fallback": "回退 / ERC-1271",
+
+  "sim.submit-confirm-multisig.name": "提交 & 確認多重簽名交易",
+  "sim.submit-confirm-multisig.desc": "模擬 2-of-3 多重簽名交易：一位擁有者提議，另一位確認，交易在守衛驗證後執行。",
+  "sim.submit-confirm-multisig.param.targetAddress": "目標合約地址",
+  "sim.submit-confirm-multisig.param.threshold": "所需確認數",
+  "sim.submit-confirm-multisig.step.propose": "擁有者 A 透過離線簽署 Safe 交易雜湊並提交至 Safe 服務來提議新交易。",
+  "sim.submit-confirm-multisig.step.propose.mobile": "擁有者 A 提議交易",
+  "sim.submit-confirm-multisig.step.confirm": "擁有者 B 審核並簽署相同的交易雜湊，達到執行所需的 2-of-3 門檻。",
+  "sim.submit-confirm-multisig.step.confirm.mobile": "擁有者 B 確認",
+  "sim.submit-confirm-multisig.step.guardCheck": "交易守衛的 checkTransaction() 函式在執行前驗證交易參數。",
+  "sim.submit-confirm-multisig.step.guardCheck.mobile": "守衛驗證交易",
+  "sim.submit-confirm-multisig.step.execute": "Safe 合約驗證所有簽名並執行對目標合約的調用。nonce 會遞增以防止重放攻擊。",
+  "sim.submit-confirm-multisig.step.execute.mobile": "執行交易",
+
+  "sim.add-new-owner.name": "新增擁有者",
+  "sim.add-new-owner.desc": "模擬新增擁有者到 Safe 並更新簽名門檻，需要現有擁有者的批准。",
+  "sim.add-new-owner.param.newOwner": "新擁有者地址",
+  "sim.add-new-owner.param.newThreshold": "新門檻",
+  "sim.add-new-owner.step.proposeAdd": "擁有者 A 提議一筆 addOwnerWithThreshold() 交易，以新增一位簽名者並將門檻提高至 3。",
+  "sim.add-new-owner.step.proposeAdd.mobile": "提議新增擁有者",
+  "sim.add-new-owner.step.collectSigs": "擁有者 B 和擁有者 C 簽署該交易，提供足夠的確認以滿足目前的門檻。",
+  "sim.add-new-owner.step.collectSigs.mobile": "收集簽名",
+  "sim.add-new-owner.step.addOwner": "Safe 執行 addOwnerWithThreshold()，將新擁有者加入鏈結串列並將門檻從 2 更新為 3。",
+  "sim.add-new-owner.step.addOwner.mobile": "新增擁有者 & 更新門檻"
+}

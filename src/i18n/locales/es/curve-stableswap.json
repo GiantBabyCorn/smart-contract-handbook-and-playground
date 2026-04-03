@@ -1,0 +1,68 @@
+{
+  "short": "AMM optimizado para intercambios de stablecoins y activos anclados con deslizamiento mínimo",
+  "introduction": "Curve StableSwap es un creador de mercado automatizado diseñado específicamente para intercambiar activos que deberían mantener un valor similar, como stablecoins o tokens envueltos. Utiliza una invariante híbrida que combina fórmulas de suma constante y producto constante, logrando un deslizamiento significativamente menor que los AMMs tradicionales para activos anclados. Curve es una de las fuentes de liquidez más profundas en DeFi para el comercio de stablecoins.",
+  "designPurpose": "Curve fue diseñado para resolver la ineficiencia de capital de los AMMs de producto constante como Uniswap al intercambiar activos de precio similar. La invariante StableSwap, controlada por un parámetro de amplificación A, crea una curva de precios casi plana alrededor del anclaje, permitiendo operaciones grandes con un impacto mínimo en el precio. Este diseño hace de Curve el lugar preferido para intercambios de stablecoins en todo DeFi.",
+  "commonUsage": "Los traders usan Curve para intercambiar entre stablecoins (DAI, USDC, USDT) con deslizamiento y comisiones mínimas. Los proveedores de liquidez depositan stablecoins para ganar comisiones de trading y recompensas de tokens CRV a través del sistema de gauges. Curve también es ampliamente utilizado por agregadores como 1inch para enrutar operaciones de stablecoins con la mejor ejecución.",
+
+  "fn.exchange.desc": "Intercambia un token por otro dentro del pool usando la invariante StableSwap. Se deduce una comisión que se distribuye a los proveedores de liquidez.",
+  "fn.exchange.params.i": "El índice del token de entrada en el pool.",
+  "fn.exchange.params.j": "El índice del token de salida en el pool.",
+  "fn.exchange.params.dx": "La cantidad del token de entrada a intercambiar.",
+  "fn.exchange.params.min_dy": "La cantidad mínima del token de salida a recibir. Revierte si no se cumple (protección contra deslizamiento).",
+  "fn.exchange.returns.dy": "La cantidad real del token de salida recibido.",
+
+  "fn.add_liquidity.desc": "Deposita tokens en el pool a cambio de tokens LP. Los tokens se pueden agregar en cualquier proporción, aunque los depósitos desequilibrados incurren en una pequeña comisión.",
+  "fn.add_liquidity.params.amounts": "Un arreglo de cantidades de tokens a depositar, una por cada token del pool.",
+  "fn.add_liquidity.params.min_mint_amount": "El número mínimo de tokens LP a acuñar. Revierte si no se cumple.",
+  "fn.add_liquidity.returns.lpAmount": "La cantidad de tokens LP acuñados para el depositante.",
+
+  "fn.remove_liquidity.desc": "Quema tokens LP y retira todos los tokens subyacentes proporcionalmente según los saldos actuales del pool.",
+  "fn.remove_liquidity.params._amount": "La cantidad de tokens LP a quemar.",
+  "fn.remove_liquidity.params.min_amounts": "Cantidades mínimas de cada token subyacente a recibir.",
+  "fn.remove_liquidity.returns.amounts": "Las cantidades reales de cada token subyacente retirado.",
+
+  "fn.remove_liquidity_one_coin.desc": "Quema tokens LP y retira un único token subyacente. La cantidad de retiro tiene en cuenta las comisiones y la invariante StableSwap.",
+  "fn.remove_liquidity_one_coin.params._token_amount": "La cantidad de tokens LP a quemar.",
+  "fn.remove_liquidity_one_coin.params.i": "El índice del token a retirar.",
+  "fn.remove_liquidity_one_coin.params._min_amount": "La cantidad mínima del token a recibir.",
+  "fn.remove_liquidity_one_coin.returns.coinAmount": "La cantidad real del token retirado.",
+
+  "fn.get_dy.desc": "Calcula la cantidad de salida esperada para un intercambio dado sin ejecutarlo. Útil para cotizar precios off-chain.",
+  "fn.get_dy.params.i": "El índice del token de entrada.",
+  "fn.get_dy.params.j": "El índice del token de salida.",
+  "fn.get_dy.params.dx": "La cantidad de entrada a simular.",
+  "fn.get_dy.returns.dy": "La cantidad de salida esperada después de comisiones.",
+
+  "fn.get_virtual_price.desc": "Devuelve el precio virtual del token LP, representando el valor de un token LP en términos de los activos subyacentes. Se usa para detectar el crecimiento del pool a lo largo del tiempo.",
+  "fn.get_virtual_price.returns.price": "El precio virtual escalado a 18 decimales.",
+
+  "node.trader": "Trader",
+  "node.stableswapPool": "Pool StableSwap",
+  "node.tokenA": "Token A (DAI)",
+  "node.tokenB": "Token B (USDC)",
+  "node.lpToken": "Token LP (3CRV)",
+  "node.gauge": "Gauge de liquidez",
+  "node.crvRewards": "Recompensas CRV",
+
+  "edge.exchange": "exchange(i, j, dx)",
+  "edge.tokenIn": "Token de entrada",
+  "edge.tokenOut": "Token de salida",
+  "edge.mintLP": "Acuñar tokens LP",
+  "edge.stakeLP": "Hacer staking de LP en gauge",
+  "edge.crvEmissions": "Emisiones de CRV",
+  "edge.claimCRV": "Reclamar recompensas CRV",
+
+  "sim.stablecoinSwap.name": "Intercambio de stablecoins",
+  "sim.stablecoinSwap.desc": "Simula un intercambio de DAI a USDC a través del 3Pool, demostrando el deslizamiento casi nulo de la invariante StableSwap para activos anclados.",
+  "sim.stablecoinSwap.param.dx": "Cantidad de intercambio (wei)",
+  "sim.stablecoinSwap.param.tokenIn": "Token de entrada",
+  "sim.stablecoinSwap.param.tokenOut": "Token de salida",
+  "sim.stablecoinSwap.step.queryGetDy": "El trader consulta get_dy() para previsualizar la salida esperada. La invariante StableSwap produce precios casi 1:1 para pools equilibrados.",
+  "sim.stablecoinSwap.step.queryGetDy.mobile": "Consultar salida esperada",
+  "sim.stablecoinSwap.step.transferTokenIn": "El DAI de entrada se transfiere del trader al pool, aumentando la reserva de DAI del pool.",
+  "sim.stablecoinSwap.step.transferTokenIn.mobile": "Transferir DAI al pool",
+  "sim.stablecoinSwap.step.stableswapInvariant": "El pool recalcula usando la invariante StableSwap con el factor de amplificación A, determinando la cantidad de salida a lo largo de la curva de precios casi lineal.",
+  "sim.stablecoinSwap.step.stableswapInvariant.mobile": "Calcular vía invariante",
+  "sim.stablecoinSwap.step.receiveTokenOut": "El pool transfiere USDC al trader. Se deduce una pequeña comisión (típicamente 0.04%) que se retiene en el pool para los poseedores de LP.",
+  "sim.stablecoinSwap.step.receiveTokenOut.mobile": "Recibir salida de USDC"
+}

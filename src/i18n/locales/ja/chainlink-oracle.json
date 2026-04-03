@@ -1,0 +1,59 @@
+{
+  "short": "スマートコントラクトに改ざん不可能な価格フィードを提供する分散型オラクルネットワーク",
+  "introduction": "Chainlinkは最も広く採用されている分散型オラクルネットワークであり、オフチェーンデータをオンチェーンスマートコントラクトに信頼性高く提供します。その価格フィードアグリゲーターは、レンディングの清算、デリバティブの決済、ステーブルコインのペグ維持などの重要な操作にDeFiプロトコルの大多数が使用する改ざん不可能な資産価格を提供します。ネットワークは、独立してデータの取得、検証、集約を行う分散型のオラクルノードセットを使用します。",
+  "designPurpose": "Chainlinkはオラクル問題、すなわち現実世界のデータをトラストレスな方法でブロックチェーンに取り込むという根本的な課題を解決するために設計されました。LINKトークンをステークする独立したノードオペレーターの分散ネットワークを使用することで、単一のエンティティが価格データを操作できないことを保証します。アグリゲーターコントラクトは複数のノード提出の中央値を取ることで、外れ値や操作に対する堅牢な耐性を提供します。",
+  "commonUsage": "AaveやCompoundなどのDeFiレンディングプロトコルは、担保価値の決定と清算のトリガーにChainlink価格フィードを使用しています。DEXやデリバティブプラットフォームは決済価格や時価評価の計算に使用します。ステーブルコインプロトコルはペグの維持やリスクパラメータの管理にChainlinkオラクルを利用しています。",
+
+  "fn.latestRoundData.desc": "アグリゲーターから最新の価格データ（価格、ラウンドID、タイムスタンプを含む）を返します。DeFiプロトコルが現在の資産価格を取得するために使用する主要な関数です。",
+  "fn.latestRoundData.returns.roundId": "現在の集約ラウンドの一意な識別子。",
+  "fn.latestRoundData.returns.answer": "フィードの小数点桁数（通常USDペアでは8桁）でスケーリングされた集約価格の回答。",
+  "fn.latestRoundData.returns.startedAt": "ラウンドが開始されたUnixタイムスタンプ。",
+  "fn.latestRoundData.returns.updatedAt": "回答が最後に更新されたUnixタイムスタンプ。データの鮮度確認に使用されます。",
+  "fn.latestRoundData.returns.answeredInRound": "回答が計算されたラウンドID。新鮮なデータの場合、roundIdと一致するべきです。",
+
+  "fn.getRoundData.desc": "特定の過去のラウンドの価格データを返します。過去の価格の検証や時間加重平均の構築に有用です。",
+  "fn.getRoundData.params.roundId": "過去のデータを照会するラウンドID。",
+  "fn.getRoundData.returns.roundId": "照会したデータのラウンドID。",
+  "fn.getRoundData.returns.answer": "照会したラウンドの価格回答。",
+  "fn.getRoundData.returns.startedAt": "照会したラウンドが開始されたUnixタイムスタンプ。",
+  "fn.getRoundData.returns.updatedAt": "照会したラウンドが最後に更新されたUnixタイムスタンプ。",
+  "fn.getRoundData.returns.answeredInRound": "回答が計算されたラウンド。",
+
+  "fn.decimals.desc": "価格フィードの回答における小数点桁数を返します。ほとんどのUSD建てフィードは8桁の小数点を使用します。",
+  "fn.decimals.returns.decimals": "小数点桁数（例：USD価格フィードでは8）。",
+
+  "fn.description.desc": "価格フィードの人間が読める説明（例：'ETH / USD'）を返します。",
+  "fn.description.returns.description": "価格フィードの説明文字列。",
+
+  "fn.AnswerUpdated.desc": "アグリゲーターがオラクルネットワークから新しい回答を受信した時に発行されます。オフチェーンシステムがリアルタイムで価格更新を監視するために使用されます。",
+  "fn.AnswerUpdated.params.current": "新しい集約価格の回答。",
+  "fn.AnswerUpdated.params.roundId": "この回答更新のラウンドID。",
+  "fn.AnswerUpdated.params.updatedAt": "更新のUnixタイムスタンプ。",
+
+  "node.consumer-contract": "コンシューマーコントラクト（DeFiプロトコル）",
+  "node.aggregator-proxy": "アグリゲータープロキシ",
+  "node.aggregator": "オフチェーンアグリゲーター",
+  "node.oracle-nodes": "オラクルノードネットワーク（DON）",
+  "node.off-chain-data": "オフチェーンデータソース",
+  "node.round-storage": "ラウンドデータストレージ",
+
+  "edge.requestPrice": "latestRoundData()",
+  "edge.delegate": "アグリゲーターに委任",
+  "edge.readRound": "ラウンドデータを読み取り",
+  "edge.fetchData": "市場データを取得",
+  "edge.submitAnswer": "オラクル回答を送信",
+  "edge.returnPrice": "価格データを返却",
+  "edge.priceData": "コンシューマーへ価格を送信",
+
+  "sim.price-feed-request.name": "価格フィードリクエスト",
+  "sim.price-feed-request.desc": "Chainlink価格更新の完全なライフサイクルをシミュレートします：オラクルノードによるオフチェーンデータの集約、オンチェーンへの送信、コンシューマーコントラクトによる価格の読み取り。",
+  "sim.price-feed-request.param.consumerAddress": "コンシューマーコントラクトアドレス",
+  "sim.price-feed-request.step.offChainFetch": "分散型オラクルネットワーク（DON）内のオラクルノードが、複数のオフチェーンデータソースからETH/USD価格を独立して取得します。",
+  "sim.price-feed-request.step.offChainFetch.mobile": "ノードがオフチェーン価格を取得",
+  "sim.price-feed-request.step.submit": "オラクルノードが個々の回答をアグリゲーターコントラクトに送信し、中央値を計算して最新のラウンドデータとして保存します。",
+  "sim.price-feed-request.step.submit.mobile": "集約された回答を送信",
+  "sim.price-feed-request.step.consumerCall": "DeFiプロトコルのコンシューマーコントラクトがアグリゲータープロキシ上でlatestRoundData()を呼び出し、現在のETH/USD価格を取得します。",
+  "sim.price-feed-request.step.consumerCall.mobile": "コンシューマーがlatestRoundData()を呼び出し",
+  "sim.price-feed-request.step.proxyDelegate": "プロキシが現在のアグリゲーター実装にコールを委任し、ストレージから最新のラウンドを読み取って価格データをコンシューマーに返します。",
+  "sim.price-feed-request.step.proxyDelegate.mobile": "プロキシが価格データを返却"
+}

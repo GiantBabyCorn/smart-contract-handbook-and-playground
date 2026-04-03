@@ -1,0 +1,63 @@
+{
+  "short": "再質押協議，將以太坊的經濟安全性擴展到額外服務（AVS）",
+  "introduction": "EigenLayer 是建構在以太坊上的再質押協議，允許已質押的 ETH 和流動性質押代幣（如 stETH）被重新用作額外去中心化服務的安全保障，這些服務被稱為主動驗證服務（AVS）。這使得協議能夠在不建立自己驗證者集合的情況下引導加密經濟安全性。EigenLayer 引入了一個市場機制，質押者可以選擇為 AVS 提供安全保障以換取額外獎勵。",
+  "designPurpose": "EigenLayer 旨在解決以太坊生態系統中加密經濟安全性的碎片化問題。與其每個新協議都需要自己的驗證者集合和質押資本，EigenLayer 允許現有的以太坊質押者同時將其安全保障擴展到多個服務。這種共享安全模型大幅降低了保護新的去中心化基礎設施的成本。",
+  "commonUsage": "再質押者將流動性質押代幣或原生 ETH 存入 EigenLayer 策略合約，並委託給代表他們驗證 AVS 的運營商。運營商向資料可用性層、跨鏈橋或預言機網路等 AVS 註冊。該協議也被希望利用以太坊安全性而無需建立新驗證者網路的 AVS 開發者所使用。",
+
+  "fn.depositIntoStrategy.desc": "將代幣存入 EigenLayer 策略合約，獲得代表再質押部位的份額。",
+  "fn.depositIntoStrategy.params.strategy": "要存入的策略合約地址。",
+  "fn.depositIntoStrategy.params.token": "要存入的代幣地址（例如 stETH）。",
+  "fn.depositIntoStrategy.params.amount": "要存入的代幣數量。",
+  "fn.depositIntoStrategy.returns.shares": "鑄造給存款人的策略份額數量。",
+
+  "fn.delegateTo.desc": "將呼叫者所有的再質押份額委託給選定的運營商，由運營商代表質押者驗證 AVS。",
+  "fn.delegateTo.params.operator": "要委託的運營商地址。",
+  "fn.delegateTo.params.approverSignatureAndExpiry": "來自運營商委託審批者的簽章和到期時間（如需要）。",
+  "fn.delegateTo.params.approverSalt": "用於防止審批者簽章重放的唯一鹽值。",
+
+  "fn.undelegate.desc": "將質押者從當前運營商取消委託，並為其所有再質押份額排入提領佇列。",
+  "fn.undelegate.params.staker": "要取消委託的質押者地址。",
+  "fn.undelegate.returns.withdrawalRoots": "提領根陣列，可在延遲期後用於完成排隊中的提領。",
+
+  "fn.completeQueuedWithdrawals.desc": "在所需的延遲期過後完成先前排入佇列的提領，將代幣或份額返回給質押者。",
+  "fn.completeQueuedWithdrawals.params.withdrawals": "要完成的提領結構陣列。",
+  "fn.completeQueuedWithdrawals.params.tokens": "每筆提領的代幣地址二維陣列。",
+  "fn.completeQueuedWithdrawals.params.middlewareTimesIndexes": "用於罰沒驗證的中介軟體時間陣列索引。",
+  "fn.completeQueuedWithdrawals.params.receiveAsTokens": "布林值陣列，指示是接收底層代幣（true）還是重新存入為份額（false）。",
+
+  "fn.getShares.desc": "回傳指定質押者存款的策略和對應份額數量。",
+  "fn.getShares.params.staker": "要查詢的質押者地址。",
+  "fn.getShares.returns.strategies": "質押者已存入的策略合約地址陣列。",
+  "fn.getShares.returns.shares": "與每個策略對應的份額數量陣列。",
+
+  "node.restaker": "再質押者",
+  "node.strategy-manager": "策略管理器",
+  "node.delegation-manager": "委託管理器",
+  "node.strategy": "策略合約",
+  "node.operator": "運營商",
+  "node.avs": "主動驗證服務（AVS）",
+  "node.slasher": "罰沒器",
+  "node.withdrawal-queue": "提領佇列",
+
+  "edge.depositIntoStrategy": "depositIntoStrategy()",
+  "edge.depositTokens": "存入代幣",
+  "edge.delegateTo": "delegateTo(operator)",
+  "edge.assignDelegate": "指派委託",
+  "edge.registerToAVS": "向 AVS 註冊",
+  "edge.queueWithdrawal": "排入提領佇列",
+  "edge.slash": "罰沒運營商",
+  "edge.returnShares": "返還份額",
+
+  "sim.deposit-delegate-operator.name": "存入、委託與註冊",
+  "sim.deposit-delegate-operator.desc": "模擬完整的再質押流程：將 stETH 存入策略合約、委託給運營商，以及運營商向 AVS 註冊。",
+  "sim.deposit-delegate-operator.param.depositAmount": "存入金額（wei）",
+  "sim.deposit-delegate-operator.param.operatorAddress": "運營商地址",
+  "sim.deposit-delegate-operator.step.approve": "再質押者授權策略管理器花費其 stETH 代幣。",
+  "sim.deposit-delegate-operator.step.approve.mobile": "授權 stETH",
+  "sim.deposit-delegate-operator.step.deposit": "再質押者呼叫 depositIntoStrategy()，將 stETH 轉移到策略合約並獲得代表再質押部位的份額。",
+  "sim.deposit-delegate-operator.step.deposit.mobile": "存入策略合約",
+  "sim.deposit-delegate-operator.step.delegate": "再質押者透過委託管理器將其份額委託給運營商。運營商現在控制再質押的安全保障。",
+  "sim.deposit-delegate-operator.step.delegate.mobile": "委託給運營商",
+  "sim.deposit-delegate-operator.step.avsRegister": "運營商向 AVS 註冊，將委託的質押資本承諾用於保護該服務。質押資本現在受到罰沒條件的約束。",
+  "sim.deposit-delegate-operator.step.avsRegister.mobile": "運營商向 AVS 註冊"
+}

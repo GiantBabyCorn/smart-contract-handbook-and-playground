@@ -1,0 +1,36 @@
+{
+  "short": "Validacion estandar de firmas para contratos",
+  "introduction": "ERC-1271 define una forma estandar para que los contratos inteligentes verifiquen firmas. Dado que los contratos inteligentes no tienen claves privadas, no pueden producir firmas ECDSA como las cuentas de propiedad externa (EOA). ERC-1271 introduce una unica funcion, isValidSignature, que permite a cualquier contrato implementar su propia logica de validacion de firmas. Esto permite que billeteras de contratos inteligentes, multifirmas y otras cuentas basadas en contratos firmen mensajes y autoricen acciones.",
+  "designPurpose": "ERC-1271 fue disenado para cerrar la brecha entre la verificacion de firmas basada en EOA y las billeteras de contratos inteligentes. Muchos protocolos y dApps requieren que los usuarios firmen mensajes para autenticacion o autorizacion, pero esto solo funcionaba para EOA. Al estandarizar como los contratos validan firmas, ERC-1271 permite que billeteras de contratos inteligentes (como Safe/Gnosis) y soluciones de abstraccion de cuentas participen en flujos de trabajo que dependen de firmas.",
+  "commonUsage": "ERC-1271 es utilizado por billeteras multifirma (Safe), billeteras de contratos inteligentes y sistemas de abstraccion de cuentas para validar firmas en autorizaciones fuera de cadena. Permite que cuentas de contratos firmen datos tipados EIP-712, aprueben transacciones sin gas y se autentiquen con dApps. Protocolos como Permit2, CoW Protocol y 0x utilizan ERC-1271 para aceptar firmas tanto de EOA como de contratos inteligentes.",
+
+  "fn.isValidSignature.desc": "Valida si una firma dada es valida para el hash proporcionado. Devuelve un valor magico (0x1626ba7e) si es valida, o cualquier otro valor si es invalida. La implementacion define su propia logica de validacion (por ejemplo, verificar el umbral de multifirma).",
+  "fn.isValidSignature.params.hash": "El hash de los datos que fueron firmados. Tipicamente un hash de datos tipados EIP-712.",
+  "fn.isValidSignature.params.signature": "Los bytes de firma a validar contra el hash.",
+  "fn.isValidSignature.returns.magicValue": "Devuelve 0x1626ba7e si la firma es valida, cualquier otro valor bytes4 en caso contrario.",
+
+  "node.verifier": "Verificador / DApp",
+  "node.contract": "Contrato ERC-1271",
+  "node.signer": "Firmante recuperado",
+  "node.signatureStorage": "Almacenamiento de validacion de firmas",
+  "node.magicValue": "Resultado del valor magico",
+
+  "edge.verifyRequest": "Enviar solicitud de verificacion",
+  "edge.checkOwners": "Verificar registro de propietarios",
+  "edge.recoverSigner": "Recuperar firmante via ecrecover",
+  "edge.returnMagic": "Devolver valor magico",
+  "edge.validSignal": "Firma valida confirmada",
+
+  "sim.contractSigVerification.name": "Verificacion de firma de contrato",
+  "sim.contractSigVerification.desc": "Verificar una firma contra una billetera de contrato inteligente usando la funcion isValidSignature.",
+  "sim.contractSigVerification.param.hash": "Hash del mensaje",
+  "sim.contractSigVerification.param.signature": "Bytes de firma",
+  "sim.contractSigVerification.step.submit": "El verificador (dApp o protocolo) llama a isValidSignature(hash, signature) en la billetera de contrato inteligente para verificar una firma.",
+  "sim.contractSigVerification.step.submit.mobile": "Enviar firma para verificacion",
+  "sim.contractSigVerification.step.recover": "El contrato utiliza ecrecover para extraer la direccion del firmante a partir del hash y la firma.",
+  "sim.contractSigVerification.step.recover.mobile": "Recuperar direccion del firmante",
+  "sim.contractSigVerification.step.checkOwner": "El contrato verifica si el firmante recuperado es un propietario autorizado en su registro interno (por ejemplo, lista de propietarios de multifirma).",
+  "sim.contractSigVerification.step.checkOwner.mobile": "Verificar si el firmante es propietario",
+  "sim.contractSigVerification.step.return": "El contrato devuelve el valor magico 0x1626ba7e para indicar que la firma es valida. El verificador puede ahora proceder con la accion autorizada.",
+  "sim.contractSigVerification.step.return.mobile": "Devolver valor magico valido"
+}

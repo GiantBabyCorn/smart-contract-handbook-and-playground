@@ -1,0 +1,41 @@
+{
+  "short": "通用可升級代理標準 (UUPS)",
+  "introduction": "ERC-1822 定義了通用可升級代理標準 (UUPS)，一種將升級邏輯放置在實作合約而非代理本身的模式。實作合約公開一個 proxiableUUID 函式，回傳特定的儲存槽，而升級函式（upgradeTo、upgradeToAndCall）是實作的一部分。這使代理合約保持最小化且節省 Gas，同時允許實作控制自身的升級路徑。",
+  "designPurpose": "ERC-1822 旨在創建一種更節省 Gas 且更安全的代理升級模式。與透明代理由代理合約管理升級不同，UUPS 將升級邏輯放在實作中。這意味著代理更小且部署成本更低。它還提供了一種安全機制：新實作也必須支援 proxiableUUID，防止意外升級到不相容的合約而導致代理無法使用。",
+  "commonUsage": "ERC-1822 用於可升級智能合約的部署，特別是與 OpenZeppelin 的 UUPSUpgradeable 基礎合約搭配使用。對於希望降低部署 Gas 成本並偏好由實作控制升級的專案，通常會選擇它而非透明代理。許多 DeFi 協議、DAO 和代幣合約使用 UUPS 代理來滿足其可升級性需求。",
+
+  "fn.proxiableUUID.desc": "回傳實作用於儲存實作地址的儲存槽。必須回傳 'PROXIABLE' 的 keccak256 雜湊以驗證與 UUPS 模式的相容性。",
+  "fn.proxiableUUID.returns.slot": "bytes32 儲存槽識別碼，通常為 keccak256('PROXIABLE')。",
+
+  "fn.upgradeTo.desc": "將代理升級為指向新的實作合約。新實作也必須支援 proxiableUUID 以防止代理無法使用。",
+  "fn.upgradeTo.params.newImplementation": "新實作合約的地址。",
+
+  "fn.upgradeToAndCall.desc": "將代理升級到新實作並在單一交易中執行初始化呼叫。適用於升級後重新初始化狀態。",
+  "fn.upgradeToAndCall.params.newImplementation": "新實作合約的地址。",
+  "fn.upgradeToAndCall.params.data": "升級後在新實作上執行的編碼函式呼叫。",
+
+  "node.admin": "管理員 / 升級者",
+  "node.proxy": "UUPS 代理",
+  "node.oldImplementation": "舊實作",
+  "node.newImplementation": "新實作",
+  "node.storage": "代理儲存",
+
+  "edge.callUpgrade": "呼叫 upgradeTo()",
+  "edge.verifyProxiableUUID": "驗證 proxiableUUID",
+  "edge.writeSlot": "寫入實作槽",
+  "edge.pointToNew": "指向新實作",
+  "edge.emitUpgraded": "發出 Upgraded 事件",
+
+  "sim.uupsUpgrade.name": "UUPS 代理升級",
+  "sim.uupsUpgrade.desc": "將 UUPS 代理升級到新的實作合約，同時驗證相容性。",
+  "sim.uupsUpgrade.param.admin": "管理員地址",
+  "sim.uupsUpgrade.param.newImpl": "新實作地址",
+  "sim.uupsUpgrade.step.callUpgrade": "管理員在代理上呼叫 upgradeTo(newImplementation)，代理將委派到當前實作的升級邏輯。",
+  "sim.uupsUpgrade.step.callUpgrade.mobile": "呼叫 upgradeTo()",
+  "sim.uupsUpgrade.step.verifyUUID": "當前實作在新實作上呼叫 proxiableUUID() 以驗證其回傳正確的儲存槽，確保升級相容性。",
+  "sim.uupsUpgrade.step.verifyUUID.mobile": "驗證 proxiableUUID()",
+  "sim.uupsUpgrade.step.writeSlot": "儲存在 PROXIABLE_SLOT 的實作地址從舊實作更新為新實作。",
+  "sim.uupsUpgrade.step.writeSlot.mobile": "更新實作槽",
+  "sim.uupsUpgrade.step.pointNew": "代理現在指向新實作。發出 Upgraded 事件。所有未來的呼叫將被委派到新合約。",
+  "sim.uupsUpgrade.step.pointNew.mobile": "代理已升級"
+}

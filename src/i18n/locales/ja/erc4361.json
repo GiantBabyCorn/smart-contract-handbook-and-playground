@@ -1,0 +1,48 @@
+{
+  "short": "Ethereumでサインイン（SIWE）",
+  "introduction": "ERC-4361は、Sign-In with Ethereum（SIWE）として知られ、Ethereumアカウントをオフチェーンサービスで認証するための標準メッセージフォーマットとワークフローを定義しています。中央集権的なアイデンティティプロバイダに依存する代わりに、ユーザーはウォレットで構造化されたメッセージに署名してEthereumアドレスの所有権を証明します。メッセージにはドメイン、アドレス、ノンス、チェーンID、有効期限が含まれます。これにより、ユーザーが自分のアイデンティティを管理する自己管理型認証が実現されます。",
+  "designPurpose": "ERC-4361は、Web3アプリケーションにおけるソーシャルログイン（Google、Facebookなど）の分散型代替手段を提供するために設計されました。既存のEthereumウォレットを認証クレデンシャルとして使用することで、ユーザーにデジタルアイデンティティの主権を与えます。標準メッセージフォーマットは、ドメインバインディングによるフィッシング攻撃、ノンスによるリプレイ攻撃、有効期限タイムスタンプによるセッション管理を防止します。",
+  "commonUsage": "SIWEは、dApp、DAO、およびWeb3プラットフォームでユーザー認証に使用されています。ダッシュボード、ガバナンスプラットフォーム、トークンゲートコンテンツ、分散型ソーシャルメディアへのウォレットベースのログインを実現します。siwe.jsやSign-In with Ethereum SDKなどのライブラリにより統合が簡単になります。スマートコントラクトウォレット認証のためにERC-1271と組み合わせて使用されることが一般的です。",
+
+  "fn.constructMessage.desc": "構造化されたメッセージフィールドから人間が読めるSIWEメッセージを構築します。結果の文字列はERC-4361フォーマットに従い、ドメイン、アドレス、ステートメント、URI、ノンス、タイムスタンプを含みます。",
+  "fn.constructMessage.params.message": "ドメイン、アドレス、ステートメント、URI、バージョン、チェーンID、ノンス、タイムスタンプを含む構造化SIWEメッセージ。",
+  "fn.constructMessage.returns.messageString": "署名用にフォーマットされた人間が読めるメッセージ文字列。",
+
+  "fn.signMessage.desc": "ウォレットの秘密鍵を使用してSIWEメッセージのハッシュに署名し、アドレスの所有権を証明するECDSA署名を生成します。",
+  "fn.signMessage.params.messageHash": "署名するSIWEメッセージのkeccak256ハッシュ。",
+  "fn.signMessage.returns.signature": "署名アドレスの所有権を証明するECDSA署名（v, r, s）。",
+
+  "fn.verifySignature.desc": "署名者のアドレスを復元し、メッセージ内の主張されたアドレスと比較することでSIWE署名を検証します。",
+  "fn.verifySignature.params.message": "元のSIWEメッセージ文字列。",
+  "fn.verifySignature.params.signature": "検証する署名バイト。",
+  "fn.verifySignature.returns.signer": "復元された署名者アドレス。",
+
+  "node.userWallet": "ユーザーウォレット",
+  "node.dappFrontend": "DAppフロントエンド",
+  "node.dappServer": "DAppサーバー",
+  "node.siweMessage": "SIWEメッセージ",
+  "node.signature": "ECDSA署名",
+  "node.session": "認証済みセッション",
+
+  "edge.requestSign": "署名をリクエスト",
+  "edge.constructMessage": "SIWEメッセージを構築",
+  "edge.signMessage": "メッセージに署名",
+  "edge.submitSignature": "署名を送信",
+  "edge.createSession": "セッションを作成",
+  "edge.verifyNonce": "ノンスとメッセージを検証",
+
+  "sim.siweAuth.name": "Ethereumでサインインフロー",
+  "sim.siweAuth.desc": "Sign-In with Ethereum（SIWE）標準を使用して、dAppでユーザーを認証します。",
+  "sim.siweAuth.param.userAddress": "ユーザーウォレットアドレス",
+  "sim.siweAuth.param.domain": "アプリケーションドメイン",
+  "sim.siweAuth.step.request": "dAppフロントエンドがドメイン、ランダムノンス、現在のタイムスタンプ、およびユーザーのアドレスを含むSIWEメッセージを構築します。",
+  "sim.siweAuth.step.request.mobile": "SIWEメッセージを構築",
+  "sim.siweAuth.step.prompt": "dAppがSIWEメッセージをユーザーのウォレットに署名用として提示します。メッセージは人間が読めるため、ユーザーはドメインと意図を確認できます。",
+  "sim.siweAuth.step.prompt.mobile": "ウォレットにメッセージを表示",
+  "sim.siweAuth.step.sign": "ユーザーがSIWEメッセージを確認し、ウォレットで署名して、オンチェーントランザクションなしで65バイトのECDSA署名を生成します。",
+  "sim.siweAuth.step.sign.mobile": "SIWEメッセージに署名",
+  "sim.siweAuth.step.verify": "dAppサーバーが署名を受信し、ecrecoverを使用して署名者のアドレスを復元し、ノンスが未使用であることを確認し、ドメインが一致することを確認します。",
+  "sim.siweAuth.step.verify.mobile": "署名とノンスを検証",
+  "sim.siweAuth.step.session": "サーバーがユーザーのEthereumアドレスに紐づいた認証済みセッションを作成します。ユーザーは中央集権的なアイデンティティプロバイダなしでサインインされます。",
+  "sim.siweAuth.step.session.mobile": "認証済みセッションを作成"
+}

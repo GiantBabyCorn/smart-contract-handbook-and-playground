@@ -1,0 +1,40 @@
+{
+  "short": "EIP-712ドメイン検出",
+  "introduction": "ERC-5267は、スマートコントラクトがEIP-712ドメインセパレータの設定を公開するための標準的な方法を提供します。単一の関数eip712Domain()を定義し、ドメインセパレータの構築に使用されるすべてのフィールド（名前、バージョン、チェーンID、検証コントラクトアドレス、ソルト、および実際に使用されるフィールド）を返します。これにより、dAppやウォレットはEIP-712型付きデータの署名に必要な正しいドメインパラメータをハードコーディングせずに動的に検出できます。",
+  "designPurpose": "ERC-5267は、EIP-712署名のドメインセパレータ検出の問題を解決するために設計されました。この標準以前は、dAppはドメインパラメータをハードコーディングするか、オフチェーンレジストリを使用してコントラクトの正しいドメインセパレータの構築方法を知る必要がありました。これは、チェーンフォークやコントラクト移行後に特にエラーが発生しやすいものでした。ERC-5267はドメイン情報を自己記述的にし、ウォレットがコントラクトから直接問い合わせることを可能にします。",
+  "commonUsage": "ERC-5267は、EIP-712構造化データ署名を実装するすべてのコントラクトで使用されます。ERC-2612（permit）、ガバナンスコントラクト、オーダーブックDEXなどが含まれます。MetaMaskなどのウォレットはeip712Domain()を呼び出して正しい署名パラメータを検出できます。OpenZeppelinのEIP712ベースコントラクトはこの標準を自動的に実装しています。",
+
+  "fn.eip712Domain.desc": "このコントラクトが使用するEIP-712ドメインフィールドを返します。fieldsビットマスクは、返された値のうちどれがドメインセパレータの計算に実際に使用されるかを示します。",
+  "fn.eip712Domain.returns.fields": "使用されるドメインフィールドを示すビットマスク（ビット0 = name、ビット1 = version、ビット2 = chainId、ビット3 = verifyingContract、ビット4 = salt）。",
+  "fn.eip712Domain.returns.name": "署名ドメインの人間が読める名前（例：トークン名）。",
+  "fn.eip712Domain.returns.version": "署名ドメインの現在のメジャーバージョン（例：'1'）。",
+  "fn.eip712Domain.returns.chainId": "コントラクトがデプロイされているチェーンID。",
+  "fn.eip712Domain.returns.verifyingContract": "署名を検証するコントラクトのアドレス。",
+  "fn.eip712Domain.returns.salt": "ドメインのオプションの曖昧さ解消用ソルト。",
+  "fn.eip712Domain.returns.extensions": "ドメインセパレータロジックの拡張のためのEIP番号の配列。",
+
+  "fn.EIP712DomainChanged.desc": "ドメインパラメータが変更された際に発行され、キャッシュされたドメインセパレータを無効化すべきことを通知します。コントラクトのアップグレードやチェーンフォーク後に発生する可能性があります。",
+
+  "node.dapp": "DApp / ウォレット",
+  "node.contract": "ERC-5267コントラクト",
+  "node.domainInfo": "ドメイン情報",
+  "node.eip712Context": "EIP-712ドメインセパレータ",
+
+  "edge.discoverDomain": "eip712Domain()を呼び出し",
+  "edge.readDomainFields": "ドメインフィールドを読み取り",
+  "edge.buildDomainSeparator": "DOMAIN_SEPARATORを構築",
+  "edge.domainReturned": "ドメイン情報が返される",
+  "edge.emitChanged": "EIP712DomainChangedを発行",
+
+  "sim.domainDiscovery.name": "EIP-712ドメイン検出",
+  "sim.domainDiscovery.desc": "eip712Domain()関数を呼び出して、コントラクトのEIP-712ドメイン設定を検出します。",
+  "sim.domainDiscovery.param.contractAddress": "問い合わせるコントラクトアドレス",
+  "sim.domainDiscovery.step.call": "dAppまたはウォレットが対象コントラクトに対してeip712Domain()を呼び出し、EIP-712署名パラメータを検出します。",
+  "sim.domainDiscovery.step.call.mobile": "eip712Domain()を呼び出し",
+  "sim.domainDiscovery.step.read": "コントラクトが保存されたドメインフィールド（name、version、チェーンID）を読み取ります。これらは通常、コントラクトの初期化時に設定されます。",
+  "sim.domainDiscovery.step.read.mobile": "ドメインフィールドを読み取り",
+  "sim.domainDiscovery.step.build": "コントラクトがタイプハッシュとドメインフィールドをkeccak256を使用してハッシュ化し、完全なドメインセパレータを組み立てます。",
+  "sim.domainDiscovery.step.build.mobile": "ドメインセパレータを構築",
+  "sim.domainDiscovery.step.return": "ドメイン情報がdAppに返されます。ウォレットは署名用の正しいEIP-712型付きデータを構築できるようになります。",
+  "sim.domainDiscovery.step.return.mobile": "ドメイン情報が返される"
+}

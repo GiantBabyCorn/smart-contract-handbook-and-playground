@@ -1,0 +1,56 @@
+{
+  "short": "模块化智能合约账户",
+  "introduction": "ERC-6900 定义了一种基于插件架构的模块化智能合约账户标准。账户可以安装和卸载扩展其功能的插件，包括自定义验证逻辑、执行处理器和钩子。每个插件声明一个描述其权限和能力的清单，账户通过结构化的执行流程来强制执行这些权限。该标准确保插件在不同的账户实现之间可互操作。",
+  "designPurpose": "ERC-6900 旨在为 ERC-4337 智能账户创建标准化的插件系统。如果没有通用的模块接口，每个账户提供商都会构建自己不兼容的扩展系统。ERC-6900 定义了插件如何通过验证、执行和钩子阶段与账户交互，从而实现可在所有合规账户上运行的可复用插件市场。清单系统确保透明的权限管理。",
+  "commonUsage": "ERC-6900 被 Alchemy 的 Modular Account 等模块化账户实现所使用。插件可以添加多签验证、会话密钥、消费限额、定时交易、社交恢复等功能。开发者可以一次构建插件并将其部署到所有兼容 ERC-6900 的账户上，创建可组合的账户功能生态系统。",
+
+  "fn.installPlugin.desc": "在模块化账户上安装插件。验证清单哈希，注册验证和执行钩子，并使用提供的数据初始化插件。",
+  "fn.installPlugin.params.plugin": "要安装的插件合约地址。",
+  "fn.installPlugin.params.manifestHash": "插件清单的 keccak256 哈希，用于验证插件声明的权限。",
+  "fn.installPlugin.params.pluginInstallData": "传递给插件 onInstall 函数的编码初始化数据。",
+  "fn.installPlugin.params.dependencies": "插件依赖的其他已安装插件的函数引用数组。",
+
+  "fn.uninstallPlugin.desc": "从模块化账户中移除插件。注销所有钩子和选择器，并调用插件的 onUninstall 函数。",
+  "fn.uninstallPlugin.params.plugin": "要卸载的插件地址。",
+  "fn.uninstallPlugin.params.config": "卸载过程的编码配置数据。",
+  "fn.uninstallPlugin.params.pluginUninstallData": "传递给插件 onUninstall 函数的编码数据。",
+
+  "fn.executeFromPluginExternal.desc": "允许插件通过账户对外部合约执行调用。账户强制执行插件声明的权限。",
+  "fn.executeFromPluginExternal.params.target": "要调用的外部合约地址。",
+  "fn.executeFromPluginExternal.params.value": "随调用发送的 ETH 值。",
+  "fn.executeFromPluginExternal.params.data": "外部调用的编码调用数据。",
+  "fn.executeFromPluginExternal.returns.result": "外部调用的返回数据。",
+
+  "fn.getInstalledPlugins.desc": "返回账户上当前所有已安装的插件地址列表。",
+  "fn.getInstalledPlugins.returns.plugins": "已安装的插件合约地址数组。",
+
+  "node.accountOwner": "账户所有者",
+  "node.modularAccount": "模块化账户",
+  "node.validationPlugin": "验证插件",
+  "node.executionPlugin": "执行插件",
+  "node.hook": "钩子（前置/后置）",
+  "node.permissionManager": "权限管理器",
+  "node.target": "目标合约",
+
+  "edge.installPlugin": "安装插件",
+  "edge.checkManifest": "检查清单和权限",
+  "edge.validateUserOp": "验证 UserOp",
+  "edge.runHooks": "运行前置/后置钩子",
+  "edge.routeExecution": "路由执行到插件",
+  "edge.executeFromPlugin": "从插件执行",
+  "edge.directExecute": "直接执行",
+
+  "sim.pluginInstallExec.name": "插件安装与执行",
+  "sim.pluginInstallExec.desc": "在模块化账户上安装插件并观察验证和执行流程。",
+  "sim.pluginInstallExec.param.accountAddress": "模块化账户地址",
+  "sim.pluginInstallExec.param.pluginAddress": "插件地址",
+  "sim.pluginInstallExec.param.targetContract": "目标合约",
+  "sim.pluginInstallExec.step.checkManifest": "账户验证插件的清单哈希并检查所有声明的依赖是否满足。权限管理器验证插件请求的能力。",
+  "sim.pluginInstallExec.step.checkManifest.mobile": "验证清单和权限",
+  "sim.pluginInstallExec.step.install": "插件已安装：验证选择器、执行选择器和钩子注册到账户上。调用插件的 onInstall 函数。",
+  "sim.pluginInstallExec.step.install.mobile": "安装并注册插件",
+  "sim.pluginInstallExec.step.validateOp": "当 UserOperation 到达时，账户将验证路由到已安装的验证插件。预验证钩子先运行，然后插件验证签名。",
+  "sim.pluginInstallExec.step.validateOp.mobile": "通过插件验证",
+  "sim.pluginInstallExec.step.execute": "执行插件处理操作。后执行钩子运行以强制执行不变量，如消费限额。",
+  "sim.pluginInstallExec.step.execute.mobile": "通过插件执行"
+}

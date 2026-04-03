@@ -1,0 +1,48 @@
+{
+  "short": "EOAコード委任",
+  "introduction": "ERC-7702は、外部所有アカウント（EOA）がコード実行をスマートコントラクトに一時的に委任できる新しいトランザクションタイプを導入しています。承認タプルに署名することで、EOAはコードを委任コントラクトに向けて設定でき、単一のトランザクション内でEOAにスマートコントラクトの機能を効果的に付与します。これにより、EOAはスマートコントラクトアカウントに永久変換することなく、バッチトランザクション、ガススポンサーシップ、カスタムバリデーションなどの機能を使用できます。",
+  "designPurpose": "ERC-7702は、プロトコルレベルでEOAとスマートコントラクトアカウントの間のギャップを埋めるために設計されました。ERC-4337がより高レベルのシステムを通じてアカウント抽象化を提供する一方で、ERC-7702はトランザクションレベルで動作し、任意のEOAが一時的にスマートコントラクトのように振る舞うことを可能にします。これにより、既存のEOAがアドレスを変更したりアカウントタイプを永久に変更したりすることなく、スマートアカウント機能を段階的に採用できるスムーズな移行パスが実現されます。",
+  "commonUsage": "ERC-7702は、EOAにスマートアカウントのスーパーパワーを与えるために使用されます：バッチトランザクション（approve + swapを1つのtxで）、サードパーティによるガススポンサーシップ、カスタム署名スキームなどです。エコシステムがEOAからスマートアカウントへ移行する過渡期に特に有用です。ウォレットプロバイダはこれを使用して、アカウント移行を必要とせずに既存のEOAユーザーに強化されたUX機能を提供しています。",
+
+  "fn.authorize.desc": "EOAのコード実行を指定されたコントラクトに委任する署名済み承認タプルを作成します。承認にはチェーンID、委任アドレス、およびノンスが含まれます。",
+  "fn.authorize.params.delegation": "コード実行を委任するスマートコントラクトのアドレス。",
+  "fn.authorize.returns.authorization": "chainId、アドレス、ノンス、およびECDSA署名を含む署名済み承認タプル。",
+
+  "fn.execute.desc": "EOAに代わって委任コントラクトを通じて呼び出しを実行します。EOAのコードは委任コントラクトを指しており、呼び出しを処理します。",
+  "fn.execute.params.to": "呼び出し先のターゲットアドレス。",
+  "fn.execute.params.value": "呼び出しと共に送信するETHの値。",
+  "fn.execute.params.data": "実行するエンコードされたcalldata。",
+  "fn.execute.returns.result": "実行された呼び出しからの戻りデータ。",
+
+  "fn.executeBatch.desc": "委任コントラクトを通じて単一のトランザクションで複数の呼び出しを実行します。EOAからのアトミックなバッチ操作を可能にします。",
+  "fn.executeBatch.params.calls": "それぞれターゲットアドレス、値、およびcalldataを含むCall構造体の配列。",
+  "fn.executeBatch.returns.results": "各実行された呼び出しからの戻りデータの配列。",
+
+  "node.eoa": "EOA（ユーザーウォレット）",
+  "node.authorizationTuple": "承認タプル",
+  "node.validator": "署名バリデータ",
+  "node.delegationContract": "委任コントラクト",
+  "node.target": "ターゲットコントラクト",
+  "node.storage": "EOAコードストレージ",
+
+  "edge.signAuthorization": "承認タプルに署名",
+  "edge.verifySignature": "署名を検証",
+  "edge.setCode": "EOAコードポインタを設定",
+  "edge.storeDelegation": "委任を保存",
+  "edge.callExecute": "execute()を呼び出し",
+  "edge.execute": "ターゲットで実行",
+
+  "sim.eoaDelegation.name": "EOAコード委任",
+  "sim.eoaDelegation.desc": "EOAのコードをスマートコントラクト実装に委任し、スマートアカウント機能を有効にします。",
+  "sim.eoaDelegation.param.eoaAddress": "EOAアドレス",
+  "sim.eoaDelegation.param.delegationImpl": "委任実装",
+  "sim.eoaDelegation.param.targetContract": "ターゲットコントラクト",
+  "sim.eoaDelegation.step.signAuth": "EOAがチェーンID、委任コントラクトアドレス、および現在のノンスを含む承認タプルに署名します。これによりコード委任が承認されます。",
+  "sim.eoaDelegation.step.signAuth.mobile": "承認に署名",
+  "sim.eoaDelegation.step.verify": "承認署名が検証され、EOAの所有者によって署名されたことおよびノンスが有効であることが確認されます。",
+  "sim.eoaDelegation.step.verify.mobile": "署名を検証",
+  "sim.eoaDelegation.step.setCode": "EOAのコードがスマートコントラクト実装を指す委任デジグネータ（0xEF0100...）に設定されます。EOAはスマートコントラクトのように振る舞うようになります。",
+  "sim.eoaDelegation.step.setCode.mobile": "EOAコードポインタを設定",
+  "sim.eoaDelegation.step.execute": "EOAは委任コントラクトを通じて呼び出しを実行できるようになり、バッチトランザクション、ガススポンサーシップ、その他のスマートアカウント機能が有効になります。",
+  "sim.eoaDelegation.step.execute.mobile": "委任経由で実行"
+}

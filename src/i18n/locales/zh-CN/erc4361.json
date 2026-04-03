@@ -1,0 +1,48 @@
+{
+  "short": "以太坊登录 (SIWE)",
+  "introduction": "ERC-4361，即以太坊登录 (Sign-In with Ethereum, SIWE)，定义了一种标准消息格式和工作流程，用于通过以太坊账户对链下服务进行身份验证。用户无需依赖中心化身份提供商，而是使用钱包签署结构化消息来证明对以太坊地址的所有权。消息包括域名、地址、随机数、链 ID 和过期时间。这实现了用户控制自己身份的自托管身份验证。",
+  "designPurpose": "ERC-4361 旨在为 Web3 应用提供一种去中心化的替代方案来取代社交登录（Google、Facebook 等）。它通过使用现有的以太坊钱包作为身份验证凭据，赋予用户对其数字身份的主权。标准消息格式通过域绑定防止钓鱼攻击，通过随机数防止重放攻击，通过过期时间戳进行会话管理。",
+  "commonUsage": "SIWE 被 DApp、DAO 和 Web3 平台用于用户身份验证。它支持基于钱包的登录，适用于仪表盘、治理平台、代币门控内容和去中心化社交媒体。siwe.js 和 Sign-In with Ethereum SDK 等库使集成变得简单。它通常与 ERC-1271 结合使用以支持智能合约钱包身份验证。",
+
+  "fn.constructMessage.desc": "从结构化消息字段构造人类可读的 SIWE 消息。生成的字符串遵循 ERC-4361 格式，包含域名、地址、声明、URI、随机数和时间戳。",
+  "fn.constructMessage.params.message": "包含域名、地址、声明、URI、版本、链 ID、随机数和时间戳的结构化 SIWE 消息。",
+  "fn.constructMessage.returns.messageString": "格式化的人类可读消息字符串，可供签名。",
+
+  "fn.signMessage.desc": "使用钱包的私钥签署 SIWE 消息哈希，生成证明地址所有权的 ECDSA 签名。",
+  "fn.signMessage.params.messageHash": "要签名的 SIWE 消息的 keccak256 哈希。",
+  "fn.signMessage.returns.signature": "证明签名地址所有权的 ECDSA 签名 (v, r, s)。",
+
+  "fn.verifySignature.desc": "通过恢复签名者地址并将其与消息中声明的地址进行比较来验证 SIWE 签名。",
+  "fn.verifySignature.params.message": "原始 SIWE 消息字符串。",
+  "fn.verifySignature.params.signature": "要验证的签名字节。",
+  "fn.verifySignature.returns.signer": "恢复的签名者地址。",
+
+  "node.userWallet": "用户钱包",
+  "node.dappFrontend": "DApp 前端",
+  "node.dappServer": "DApp 服务器",
+  "node.siweMessage": "SIWE 消息",
+  "node.signature": "ECDSA 签名",
+  "node.session": "已认证会话",
+
+  "edge.requestSign": "请求签名",
+  "edge.constructMessage": "构造 SIWE 消息",
+  "edge.signMessage": "签署消息",
+  "edge.submitSignature": "提交签名",
+  "edge.createSession": "创建会话",
+  "edge.verifyNonce": "验证随机数和消息",
+
+  "sim.siweAuth.name": "以太坊登录流程",
+  "sim.siweAuth.desc": "使用以太坊登录 (SIWE) 标准对 DApp 用户进行身份验证。",
+  "sim.siweAuth.param.userAddress": "用户钱包地址",
+  "sim.siweAuth.param.domain": "应用域名",
+  "sim.siweAuth.step.request": "DApp 前端使用域名、随机数、当前时间戳和用户地址构造一条 SIWE 消息。",
+  "sim.siweAuth.step.request.mobile": "构造 SIWE 消息",
+  "sim.siweAuth.step.prompt": "DApp 将 SIWE 消息呈现给用户的钱包进行签名。消息是人类可读的，用户可以验证域名和意图。",
+  "sim.siweAuth.step.prompt.mobile": "在钱包中显示消息",
+  "sim.siweAuth.step.sign": "用户审核并使用钱包签署 SIWE 消息，生成 65 字节的 ECDSA 签名，无需链上交易。",
+  "sim.siweAuth.step.sign.mobile": "签署 SIWE 消息",
+  "sim.siweAuth.step.verify": "DApp 服务器接收签名，使用 ecrecover 恢复签名者地址，验证随机数未被使用，并确认域名匹配。",
+  "sim.siweAuth.step.verify.mobile": "验证签名和随机数",
+  "sim.siweAuth.step.session": "服务器创建与用户以太坊地址关联的已认证会话。用户现在无需中心化身份提供商即可登录。",
+  "sim.siweAuth.step.session.mobile": "创建已认证会话"
+}

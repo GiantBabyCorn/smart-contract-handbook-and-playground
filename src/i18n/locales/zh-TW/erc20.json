@@ -1,0 +1,83 @@
+{
+  "short": "同質化代幣標準",
+  "introduction": "ERC-20 是以太坊上的基礎代幣標準，定義了同質化代幣的通用介面。它由 Fabian Vogelsteller 於 2015 年 11 月提出，已成為生態系統中採用最廣泛的代幣標準。每個 ERC-20 代幣都是相同且可互換的，就像一張美元鈔票等同於任何其他美元鈔票一樣。該標準指定了六個核心函式和兩個事件，使代幣能夠被轉帳、授權給第三方使用，以及查詢餘額。",
+  "designPurpose": "ERC-20 的設計目的是創建一個統一的介面，讓任何同質化代幣都能被錢包、交易所和其他智能合約以一致的方式處理。在 ERC-20 之前，每個代幣合約都有自己的自訂 API，使整合過程痛苦且容易出錯。透過標準化介面，ERC-20 促成了代幣生態系統和依賴可組合代幣互動的 DeFi 應用程式的爆發性成長。",
+  "commonUsage": "ERC-20 代幣用於加密貨幣、穩定幣（USDC、DAI、USDT）、治理代幣、實用型代幣和包裝資產。它們是去中心化交易所、借貸協議、流動性挖礦以及幾乎所有 DeFi 應用程式的基礎構建模組。該標準通常也會擴展鑄造、銷毀和基於許可的授權（ERC-2612）等功能。",
+
+  "fn.totalSupply.desc": "返回目前存在的代幣總數。此值表示所有已鑄造的代幣減去已銷毀的代幣。",
+  "fn.totalSupply.returns.supply": "代幣的總供應量，以最小單位表示（例如，18 位小數代幣的 wei）。",
+
+  "fn.balanceOf.desc": "返回特定帳戶的代幣餘額。此函式查詢內部 _balances 映射，以檢索給定地址持有的代幣數量。",
+  "fn.balanceOf.params.account": "要查詢餘額的地址。",
+  "fn.balanceOf.returns.balance": "該帳戶持有的代幣數量，以最小單位表示。",
+
+  "fn.transfer.desc": "將代幣從調用者的帳戶轉移到接收者。調用者必須有足夠的餘額。成功時觸發 Transfer 事件。",
+  "fn.transfer.params.to": "將接收代幣的接收者地址。",
+  "fn.transfer.params.amount": "要轉帳的代幣數量，以最小單位表示。",
+  "fn.transfer.returns.success": "如果轉帳成功則返回 true，否則回退。",
+
+  "fn.approve.desc": "設定允許花費者從調用者帳戶轉帳的授權額度。替換任何現有的授權額度。觸發 Approval 事件。",
+  "fn.approve.params.spender": "被授權代表調用者花費代幣的地址。",
+  "fn.approve.params.amount": "允許花費者轉帳的最大代幣數量。",
+  "fn.approve.returns.success": "如果授權成功則返回 true。",
+
+  "fn.allowance.desc": "返回花費者被允許代表擁有者轉帳的剩餘代幣數量。此值在調用 transferFrom 時會減少。",
+  "fn.allowance.params.owner": "擁有代幣的地址。",
+  "fn.allowance.params.spender": "被授權花費擁有者代幣的地址。",
+  "fn.allowance.returns.remaining": "花費者的剩餘授權額度。",
+
+  "fn.transferFrom.desc": "使用授權機制將代幣從一個帳戶轉移到另一個帳戶。調用者必須已被「from」地址授權至少轉帳金額的額度。相應地減少授權額度。",
+  "fn.transferFrom.params.from": "要從中轉出代幣的地址。",
+  "fn.transferFrom.params.to": "要轉入代幣的地址。",
+  "fn.transferFrom.params.amount": "要轉帳的代幣數量。",
+  "fn.transferFrom.returns.success": "如果轉帳成功則返回 true。",
+
+  "fn.Transfer.desc": "當代幣從一個帳戶轉移到另一個帳戶時觸發，包括零值轉帳。在鑄造（from = address(0)）和銷毀（to = address(0)）時也會觸發。",
+  "fn.Transfer.params.from": "代幣轉出的地址。",
+  "fn.Transfer.params.to": "代幣轉入的地址。",
+  "fn.Transfer.params.value": "轉帳的代幣數量。",
+
+  "fn.Approval.desc": "當擁有者透過調用 approve 設定花費者的授權額度時觸發。該值為新的授權額度。",
+  "fn.Approval.params.owner": "批准花費的地址。",
+  "fn.Approval.params.spender": "被批准花費的地址。",
+  "fn.Approval.params.value": "新的授權額度。",
+
+  "node.user": "代幣持有者",
+  "node.contract": "ERC-20 合約",
+  "node.recipient": "接收者",
+  "node.spender": "授權花費者",
+  "node.storageBalances": "代幣儲存",
+  "node.tokenFlow": "代幣轉帳",
+
+  "edge.callTransfer": "調用 transfer()",
+  "edge.updateBalance": "更新餘額",
+  "edge.tokensMove": "代幣已轉移",
+  "edge.callApprove": "調用 approve()",
+  "edge.allowanceGranted": "授權額度已授予",
+  "edge.callTransferFrom": "調用 transferFrom()",
+  "edge.emitTransfer": "觸發 Transfer 事件",
+
+  "sim.basicTransfer.name": "基本代幣轉帳",
+  "sim.basicTransfer.desc": "使用 transfer() 函式直接將 ERC-20 代幣從一個地址轉帳到另一個地址。",
+  "sim.basicTransfer.param.sender": "發送者地址",
+  "sim.basicTransfer.param.recipient": "接收者地址",
+  "sim.basicTransfer.param.amount": "數量（以 wei 為單位）",
+  "sim.basicTransfer.step.call": "發送者在 ERC-20 合約上調用 transfer(to, amount)，發起直接代幣轉帳。",
+  "sim.basicTransfer.step.call.mobile": "發送者調用 transfer()",
+  "sim.basicTransfer.step.validate": "合約驗證發送者有足夠的餘額，然後更新 _balances 映射：減少發送者餘額並增加接收者餘額。",
+  "sim.basicTransfer.step.validate.mobile": "驗證 & 更新餘額",
+  "sim.basicTransfer.step.tokenflow": "代幣從發送者的餘額轉移到接收者的餘額。接收者現在持有已轉帳的金額。",
+  "sim.basicTransfer.step.tokenflow.mobile": "代幣已送達",
+  "sim.basicTransfer.step.event": "合約觸發 Transfer(from, to, value) 事件，允許鏈下服務追蹤該轉帳。",
+  "sim.basicTransfer.step.event.mobile": "觸發 Transfer 事件",
+
+  "sim.approveAndTransfer.name": "授權 & TransferFrom",
+  "sim.approveAndTransfer.desc": "示範 DEX 和 DeFi 協議使用的兩步驟 approve + transferFrom 模式，以代表使用者花費代幣。",
+  "sim.approveAndTransfer.param.owner": "代幣擁有者",
+  "sim.approveAndTransfer.param.spender": "授權花費者",
+  "sim.approveAndTransfer.param.allowanceAmount": "授權額度（以 wei 為單位）",
+  "sim.approveAndTransfer.step.approve": "代幣擁有者調用 approve(spender, amount) 授權花費者轉帳最多指定數量的代幣。",
+  "sim.approveAndTransfer.step.storageAllowance": "合約將授權額度儲存在 _allowances 映射中：_allowances[owner][spender] = amount。",
+  "sim.approveAndTransfer.step.grant": "花費者現已獲得授權。他們可以隨時調用 transferFrom 從擁有者的餘額中轉移代幣。",
+  "sim.approveAndTransfer.step.transferFrom": "花費者調用 transferFrom(owner, recipient, amount)。合約檢查授權額度，扣除金額，並將代幣轉移到接收者。"
+}

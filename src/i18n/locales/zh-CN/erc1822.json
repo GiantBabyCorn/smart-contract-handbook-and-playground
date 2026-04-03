@@ -1,0 +1,41 @@
+{
+  "short": "通用可升级代理标准 (UUPS)",
+  "introduction": "ERC-1822 定义了通用可升级代理标准 (UUPS)，这是一种将升级逻辑放在实现合约中而非代理本身的模式。实现合约公开一个 proxiableUUID 函数，返回特定的存储槽，而升级函数（upgradeTo、upgradeToAndCall）是实现合约的一部分。这使代理合约保持最小化和高 Gas 效率，同时允许实现合约控制自己的升级路径。",
+  "designPurpose": "ERC-1822 旨在创建更高 Gas 效率和更安全的代理升级模式。与透明代理由代理合约管理升级不同，UUPS 将升级逻辑放在实现合约中。这意味着代理更小、部署更便宜。它还提供了安全机制：新的实现合约也必须支持 proxiableUUID，防止意外升级到不兼容的合约而导致代理失效。",
+  "commonUsage": "ERC-1822 用于可升级智能合约部署，特别是与 OpenZeppelin 的 UUPSUpgradeable 基础合约配合使用。对于希望降低部署 Gas 成本并偏好由实现合约控制升级的项目，它通常被选择来替代透明代理。许多 DeFi 协议、DAO 和代币合约使用 UUPS 代理来满足可升级性需求。",
+
+  "fn.proxiableUUID.desc": "返回实现合约用于存储实现地址的存储槽。必须返回 'PROXIABLE' 的 keccak256 哈希值以验证与 UUPS 模式的兼容性。",
+  "fn.proxiableUUID.returns.slot": "bytes32 存储槽标识符，通常为 keccak256('PROXIABLE')。",
+
+  "fn.upgradeTo.desc": "将代理升级为指向新的实现合约。新的实现合约也必须支持 proxiableUUID，以防止代理失效。",
+  "fn.upgradeTo.params.newImplementation": "新实现合约的地址。",
+
+  "fn.upgradeToAndCall.desc": "将代理升级到新的实现合约，并在单个交易中执行初始化调用。适用于升级后重新初始化状态。",
+  "fn.upgradeToAndCall.params.newImplementation": "新实现合约的地址。",
+  "fn.upgradeToAndCall.params.data": "升级后在新实现合约上执行的编码函数调用。",
+
+  "node.admin": "管理员 / 升级者",
+  "node.proxy": "UUPS 代理",
+  "node.oldImplementation": "旧实现合约",
+  "node.newImplementation": "新实现合约",
+  "node.storage": "代理存储",
+
+  "edge.callUpgrade": "调用 upgradeTo()",
+  "edge.verifyProxiableUUID": "验证 proxiableUUID",
+  "edge.writeSlot": "写入实现槽",
+  "edge.pointToNew": "指向新实现",
+  "edge.emitUpgraded": "触发 Upgraded 事件",
+
+  "sim.uupsUpgrade.name": "UUPS 代理升级",
+  "sim.uupsUpgrade.desc": "将 UUPS 代理升级到新的实现合约，同时验证兼容性。",
+  "sim.uupsUpgrade.param.admin": "管理员地址",
+  "sim.uupsUpgrade.param.newImpl": "新实现合约地址",
+  "sim.uupsUpgrade.step.callUpgrade": "管理员在代理上调用 upgradeTo(newImplementation)，代理将调用委托给当前实现合约的升级逻辑。",
+  "sim.uupsUpgrade.step.callUpgrade.mobile": "调用 upgradeTo()",
+  "sim.uupsUpgrade.step.verifyUUID": "当前实现合约在新实现合约上调用 proxiableUUID() 以验证其返回正确的存储槽，确保升级兼容性。",
+  "sim.uupsUpgrade.step.verifyUUID.mobile": "验证 proxiableUUID()",
+  "sim.uupsUpgrade.step.writeSlot": "存储在 PROXIABLE_SLOT 中的实现地址从旧实现更新为新实现。",
+  "sim.uupsUpgrade.step.writeSlot.mobile": "更新实现槽",
+  "sim.uupsUpgrade.step.pointNew": "代理现在指向新的实现合约。触发 Upgraded 事件。所有未来的调用将被委托给新合约。",
+  "sim.uupsUpgrade.step.pointNew.mobile": "代理已升级"
+}

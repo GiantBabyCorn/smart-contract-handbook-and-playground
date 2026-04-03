@@ -1,0 +1,39 @@
+{
+  "short": "合約所有權標準",
+  "introduction": "ERC-173 是一個簡單的合約所有權標準介面。它定義了一個最小的 API，包含一個 owner() 查詢函式和一個 transferOwnership() 函式，允許目前的擁有者將控制權移交給新地址。該標準還指定了一個 OwnershipTransferred 事件，必須在每次所有權變更時發出。此標準是 OpenZeppelin 廣泛使用的 Ownable 合約的基礎。",
+  "designPurpose": "ERC-173 旨在標準化合約如何公開和轉移所有權。在此標準之前，不同的專案以不相容的方式實作所有權，使得工具和介面難以偵測誰控制合約。透過定義通用介面，ERC-173 使區塊瀏覽器、治理儀表板和其他工具能夠可靠地識別合約擁有者。",
+  "commonUsage": "ERC-173 幾乎用於任何需要管理員或擁有者角色的合約，例如可升級代理、具有鑄造權限的代幣合約和協議治理。它通常與存取控制修飾符搭配使用，將敏感函式限制為擁有者地址。該標準經常透過兩步驟所有權轉移和放棄所有權等功能進行擴展。",
+
+  "fn.owner.desc": "回傳目前合約擁有者的地址。這是一個從儲存中讀取的 view 函式。",
+  "fn.owner.returns.owner": "合約目前擁有者的地址。",
+
+  "fn.transferOwnership.desc": "將合約的所有權轉移給新地址。只能由目前的擁有者呼叫。發出 OwnershipTransferred 事件。",
+  "fn.transferOwnership.params.newOwner": "新擁有者的地址。設定為 address(0) 實際上等同於放棄所有權。",
+
+  "fn.OwnershipTransferred.desc": "當合約的所有權從一個地址轉移到另一個地址時發出。",
+  "fn.OwnershipTransferred.params.previousOwner": "前一個擁有者的地址。",
+  "fn.OwnershipTransferred.params.newOwner": "新擁有者的地址。",
+
+  "node.owner": "目前擁有者",
+  "node.newOwner": "新擁有者",
+  "node.contract": "ERC-173 合約",
+  "node.storage": "所有權儲存",
+
+  "edge.callTransfer": "呼叫 transferOwnership()",
+  "edge.updateOwner": "更新 _owner",
+  "edge.ownershipGranted": "所有權已授予",
+  "edge.emitEvent": "發出事件",
+
+  "sim.transferOwnership.name": "轉移所有權",
+  "sim.transferOwnership.desc": "將合約的所有權從目前擁有者轉移到新地址。",
+  "sim.transferOwnership.param.currentOwner": "目前擁有者地址",
+  "sim.transferOwnership.param.newOwner": "新擁有者地址",
+  "sim.transferOwnership.step.call": "目前擁有者在合約上呼叫 transferOwnership(newOwner) 以啟動所有權轉移。",
+  "sim.transferOwnership.step.call.mobile": "呼叫 transferOwnership()",
+  "sim.transferOwnership.step.validate": "合約驗證 msg.sender 是否等於儲存在狀態中的目前 _owner。如果不是，交易將回退。",
+  "sim.transferOwnership.step.validate.mobile": "驗證呼叫者是否為擁有者",
+  "sim.transferOwnership.step.updateStorage": "合約將 _owner 儲存槽從前一個擁有者更新為新擁有者地址。",
+  "sim.transferOwnership.step.updateStorage.mobile": "更新儲存中的擁有者",
+  "sim.transferOwnership.step.event": "合約發出 OwnershipTransferred 事件，新擁有者現在對合約擁有完全控制權。",
+  "sim.transferOwnership.step.event.mobile": "發出 OwnershipTransferred"
+}

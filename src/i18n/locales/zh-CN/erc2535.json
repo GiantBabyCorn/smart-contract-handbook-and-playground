@@ -1,0 +1,70 @@
+{
+  "short": "钻石标准（多面代理）",
+  "introduction": "ERC-2535，即钻石标准，定义了一种多面代理架构，其中单个代理合约可以根据函数选择器将调用委托给多个实现合约（称为切面）。与指向单一实现的传统代理不同，钻石将每个函数选择器映射到不同的切面地址。这使合约能够突破 24KB 大小限制，并提供函数级别的细粒度可升级性。",
+  "designPurpose": "ERC-2535 旨在解决单一实现代理的若干限制。它通过将逻辑拆分到多个切面来消除 24KB 合约大小限制，支持添加或替换单个函数而无需重新部署整个实现，并提供标准化的内省机制（DiamondLoupe）用于发现钻石支持的切面和函数。它还允许在多个钻石之间共享切面。",
+  "commonUsage": "ERC-2535 被需要模块化、可升级架构的复杂协议使用，如 Aavegotchi、Beanstalk 和各种 DeFi 系统。当项目需要频繁添加新功能、逻辑超出合约大小限制或希望在多个代理合约之间共享通用功能时特别有用。该标准包括用于升级的 DiamondCut 和用于内省的 DiamondLoupe。",
+
+  "fn.diamondCut.desc": "通过更新选择器到切面的映射来添加、替换或移除钻石中的函数。可以选择在切割后执行初始化函数调用。",
+  "fn.diamondCut.params.diamondCut": "FacetCut 结构体数组，每个包含切面地址、操作（Add/Replace/Remove）和函数选择器数组。",
+  "fn.diamondCut.params.init": "切割后用于 delegatecall 初始化的合约地址。不需要初始化时使用 address(0)。",
+  "fn.diamondCut.params.calldata": "应用钻石切割后在 init 地址上执行的编码函数调用。",
+
+  "fn.facets.desc": "返回所有切面地址及其关联的函数选择器。属于 DiamondLoupe 内省接口的一部分。",
+  "fn.facets.returns.facets": "Facet 结构体数组，每个包含切面地址及其已注册的函数选择器。",
+
+  "fn.facetFunctionSelectors.desc": "返回特定切面地址注册的所有函数选择器。",
+  "fn.facetFunctionSelectors.params.facet": "要查询选择器的切面地址。",
+  "fn.facetFunctionSelectors.returns.selectors": "与该切面关联的 bytes4 函数选择器数组。",
+
+  "fn.facetAddresses.desc": "返回至少有一个已注册函数选择器的所有切面地址。",
+  "fn.facetAddresses.returns.addresses": "所有活动切面地址的数组。",
+
+  "fn.facetAddress.desc": "返回处理特定函数选择器的切面地址。",
+  "fn.facetAddress.params.selector": "要查找的 4 字节函数选择器。",
+  "fn.facetAddress.returns.facet": "实现给定函数选择器的切面地址。",
+
+  "fn.DiamondCut.desc": "当 diamondCut 操作修改钻石的函数选择器和切面映射时发出。",
+  "fn.DiamondCut.params.diamondCut": "描述所做更改的 FacetCut 结构体数组。",
+  "fn.DiamondCut.params.init": "切割后使用的初始化合约地址。",
+  "fn.DiamondCut.params.calldata": "传递给 init 合约的 calldata。",
+
+  "node.user": "用户/调用者",
+  "node.diamondProxy": "钻石代理",
+  "node.facetA": "切面 A（代币）",
+  "node.facetB": "切面 B（质押）",
+  "node.facetC": "切面 C（治理）",
+  "node.diamondStorage": "钻石存储",
+  "node.diamondCutFacet": "DiamondCut 切面",
+
+  "edge.callWithSelector": "使用函数选择器调用",
+  "edge.lookupSelector": "查找选择器 → 切面",
+  "edge.delegateToFacetA": "delegatecall 到切面 A",
+  "edge.delegateToFacetB": "delegatecall 到切面 B",
+  "edge.delegateToFacetC": "delegatecall 到切面 C",
+  "edge.callDiamondCut": "调用 diamondCut()",
+  "edge.updateMappings": "更新选择器映射",
+
+  "sim.functionCallRouting.name": "函数调用路由",
+  "sim.functionCallRouting.desc": "观察钻石代理如何根据函数选择器将函数调用路由到不同的切面。",
+  "sim.functionCallRouting.param.caller": "调用者地址",
+  "sim.functionCallRouting.param.selector": "函数选择器",
+  "sim.functionCallRouting.step.call": "用户使用特定的函数选择器（例如 transfer()）调用钻石代理。代理的 fallback 函数被触发。",
+  "sim.functionCallRouting.step.call.mobile": "使用选择器调用钻石",
+  "sim.functionCallRouting.step.lookup": "钻石在钻石存储中的 selectorToFacet 映射中查找函数选择器，以找到哪个切面处理此函数。",
+  "sim.functionCallRouting.step.lookup.mobile": "查找选择器对应的切面",
+  "sim.functionCallRouting.step.delegate": "钻石对解析到的切面执行 delegatecall。切面代码使用钻石的存储上下文执行。",
+  "sim.functionCallRouting.step.delegate.mobile": "delegatecall 到切面",
+
+  "sim.diamondCutAddFacet.name": "钻石切割：添加切面",
+  "sim.diamondCutAddFacet.desc": "向钻石添加新切面，注册新的函数选择器并可选运行初始化函数。",
+  "sim.diamondCutAddFacet.param.admin": "管理员/所有者",
+  "sim.diamondCutAddFacet.param.newFacet": "新切面地址",
+  "sim.diamondCutAddFacet.step.prepareCut": "管理员准备一个 diamondCut 调用，包含新的切面地址、操作类型 'Add' 以及要注册的函数选择器数组。",
+  "sim.diamondCutAddFacet.step.prepareCut.mobile": "准备钻石切割",
+  "sim.diamondCutAddFacet.step.validateFacet": "钻石验证切面是否有代码、选择器是否尚未注册，并更新 selectorToFacet 映射和 facetAddresses 数组。",
+  "sim.diamondCutAddFacet.step.validateFacet.mobile": "验证并注册切面",
+  "sim.diamondCutAddFacet.step.initCall": "如果提供了 init 地址，钻石执行 delegatecall 以在新切面上运行初始化函数。",
+  "sim.diamondCutAddFacet.step.initCall.mobile": "运行初始化函数",
+  "sim.diamondCutAddFacet.step.emitEvent": "发出 DiamondCut 事件记录所有更改。新切面的函数现在可以通过钻石代理访问。",
+  "sim.diamondCutAddFacet.step.emitEvent.mobile": "发出 DiamondCut 事件"
+}

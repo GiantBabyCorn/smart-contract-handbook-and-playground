@@ -1,0 +1,48 @@
+{
+  "short": "以太坊登入 (SIWE)",
+  "introduction": "ERC-4361，又稱為以太坊登入 (SIWE)，定義了一種標準訊息格式和工作流程，用於使用以太坊帳戶對鏈下服務進行身份驗證。使用者不再依賴中心化身份提供者，而是使用錢包簽署結構化訊息來證明對以太坊地址的所有權。訊息包含網域、地址、隨機數、鏈 ID 和到期時間。這實現了使用者控制自身身份的自託管身份驗證。",
+  "designPurpose": "ERC-4361 旨在為 Web3 應用程式提供一種去中心化的替代方案，取代社交登入（Google、Facebook 等）。它透過使用現有的以太坊錢包作為身份驗證憑證，賦予使用者對其數位身份的主權。標準訊息格式透過網域綁定防止釣魚攻擊、透過隨機數防止重放攻擊，以及透過到期時間戳記進行會話管理。",
+  "commonUsage": "SIWE 被 DApp、DAO 和 Web3 平台用於使用者身份驗證。它可實現基於錢包的登入，適用於儀表板、治理平台、代幣門控內容和去中心化社交媒體。siwe.js 和 Sign-In with Ethereum SDK 等程式庫使整合變得簡單。它通常與 ERC-1271 結合使用以支援智能合約錢包的身份驗證。",
+
+  "fn.constructMessage.desc": "從結構化訊息欄位建構人類可讀的 SIWE 訊息。產生的字串遵循 ERC-4361 格式，包含網域、地址、聲明、URI、隨機數和時間戳記。",
+  "fn.constructMessage.params.message": "包含網域、地址、聲明、URI、版本、鏈 ID、隨機數和時間戳記的結構化 SIWE 訊息。",
+  "fn.constructMessage.returns.messageString": "格式化的人類可讀訊息字串，準備用於簽署。",
+
+  "fn.signMessage.desc": "使用錢包的私鑰簽署 SIWE 訊息雜湊，產生證明地址所有權的 ECDSA 簽章。",
+  "fn.signMessage.params.messageHash": "要簽署的 SIWE 訊息的 keccak256 雜湊。",
+  "fn.signMessage.returns.signature": "證明簽署地址所有權的 ECDSA 簽章 (v, r, s)。",
+
+  "fn.verifySignature.desc": "透過恢復簽署者地址並與訊息中聲稱的地址進行比較來驗證 SIWE 簽章。",
+  "fn.verifySignature.params.message": "原始的 SIWE 訊息字串。",
+  "fn.verifySignature.params.signature": "要驗證的簽章位元組。",
+  "fn.verifySignature.returns.signer": "恢復的簽署者地址。",
+
+  "node.userWallet": "使用者錢包",
+  "node.dappFrontend": "DApp 前端",
+  "node.dappServer": "DApp 伺服器",
+  "node.siweMessage": "SIWE 訊息",
+  "node.signature": "ECDSA 簽章",
+  "node.session": "已驗證的會話",
+
+  "edge.requestSign": "請求簽署",
+  "edge.constructMessage": "建構 SIWE 訊息",
+  "edge.signMessage": "簽署訊息",
+  "edge.submitSignature": "提交簽章",
+  "edge.createSession": "建立會話",
+  "edge.verifyNonce": "驗證隨機數和訊息",
+
+  "sim.siweAuth.name": "以太坊登入流程",
+  "sim.siweAuth.desc": "使用以太坊登入 (SIWE) 標準對 DApp 進行使用者身份驗證。",
+  "sim.siweAuth.param.userAddress": "使用者錢包地址",
+  "sim.siweAuth.param.domain": "應用程式網域",
+  "sim.siweAuth.step.request": "DApp 前端使用網域、隨機數、當前時間戳記和使用者地址建構 SIWE 訊息。",
+  "sim.siweAuth.step.request.mobile": "建構 SIWE 訊息",
+  "sim.siweAuth.step.prompt": "DApp 將 SIWE 訊息呈現給使用者的錢包進行簽署。訊息是人類可讀的，使用者可以驗證網域和意圖。",
+  "sim.siweAuth.step.prompt.mobile": "在錢包中顯示訊息",
+  "sim.siweAuth.step.sign": "使用者審閱並使用錢包簽署 SIWE 訊息，產生 65 位元組的 ECDSA 簽章，無需任何鏈上交易。",
+  "sim.siweAuth.step.sign.mobile": "簽署 SIWE 訊息",
+  "sim.siweAuth.step.verify": "DApp 伺服器接收簽章，使用 ecrecover 恢復簽署者地址，驗證隨機數未被使用，並確認網域匹配。",
+  "sim.siweAuth.step.verify.mobile": "驗證簽章和隨機數",
+  "sim.siweAuth.step.session": "伺服器建立與使用者以太坊地址綁定的已驗證會話。使用者現在無需中心化身份提供者即可登入。",
+  "sim.siweAuth.step.session.mobile": "建立已驗證的會話"
+}

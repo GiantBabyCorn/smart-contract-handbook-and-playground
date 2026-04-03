@@ -1,0 +1,34 @@
+{
+  "short": "Estandar de regalias para NFT",
+  "introduction": "ERC-2981 define una forma estandarizada de obtener informacion de pago de regalias para NFT. Proporciona una unica funcion, royaltyInfo, que devuelve la direccion del destinatario de regalias y el monto de regalias para un precio de venta de token dado. El estandar es agnostico al estandar de token y funciona tanto con tokens ERC-721 como ERC-1155. Es importante destacar que ERC-2981 solo proporciona informacion de regalias; no aplica pagos de regalias en cadena.",
+  "designPurpose": "ERC-2981 fue disenado para dar a los creadores de NFT una forma estandar de senalar su porcentaje de regalias deseado y la direccion del destinatario. Antes de este estandar, cada mercado tenia su propio sistema propietario de regalias, lo que generaba fragmentacion y regalias perdidas cuando los tokens se comercializaban en diferentes plataformas. Al incorporar la informacion de regalias en el propio contrato del token, ERC-2981 permite que cualquier mercado descubra y respete las preferencias de regalias del creador.",
+  "commonUsage": "ERC-2981 es utilizado por colecciones de NFT, plataformas de arte digital y mercados para especificar regalias de creadores. Mercados como OpenSea, LooksRare y Blur consultan royaltyInfo al facilitar ventas para determinar cuanto pagar al creador. El estandar soporta configuraciones de regalias tanto por token como predeterminadas, permitiendo diferentes tasas de regalias para diferentes tokens dentro de la misma coleccion.",
+
+  "fn.royaltyInfo.desc": "Devuelve el destinatario de regalias y el monto de regalias para un token y precio de venta dado. El monto de regalias se calcula como salePrice * feeNumerator / feeDenominator (tipicamente 10000 para puntos basicos).",
+  "fn.royaltyInfo.params.tokenId": "El ID del token para consultar informacion de regalias.",
+  "fn.royaltyInfo.params.salePrice": "El precio de venta del token, utilizado para calcular el monto de regalias.",
+  "fn.royaltyInfo.returns.receiver": "La direccion que debe recibir el pago de regalias.",
+  "fn.royaltyInfo.returns.royaltyAmount": "El monto de regalias a pagar, denominado en la misma unidad que salePrice.",
+
+  "node.marketplace": "Mercado",
+  "node.contract": "Contrato NFT ERC-2981",
+  "node.storage": "Almacenamiento de regalias",
+  "node.seller": "Vendedor",
+  "node.royaltyReceiver": "Receptor de regalias (Creador)",
+
+  "edge.queryRoyalty": "Consultar royaltyInfo()",
+  "edge.lookupRoyalty": "Buscar configuracion de regalias",
+  "edge.saleProceeds": "Ingresos de venta (menos regalias)",
+  "edge.royaltyPayment": "Pago de regalias",
+
+  "sim.royaltyCalculation.name": "Calculo de regalias en venta",
+  "sim.royaltyCalculation.desc": "Observar como un mercado consulta informacion de regalias y distribuye los pagos entre el vendedor y el creador.",
+  "sim.royaltyCalculation.param.tokenId": "ID del token",
+  "sim.royaltyCalculation.param.salePrice": "Precio de venta (en wei)",
+  "sim.royaltyCalculation.step.sale": "Se realiza una venta en el mercado para un NFT especifico. El mercado necesita determinar como dividir el pago.",
+  "sim.royaltyCalculation.step.sale.mobile": "Venta de NFT iniciada",
+  "sim.royaltyCalculation.step.query": "El mercado llama a royaltyInfo(tokenId, salePrice) para obtener el destinatario de regalias y el monto. El contrato devuelve la direccion del creador y el 5% del precio de venta.",
+  "sim.royaltyCalculation.step.query.mobile": "Consultar informacion de regalias",
+  "sim.royaltyCalculation.step.distribute": "El mercado distribuye los fondos: el 95% va al vendedor y el 5% va al receptor de regalias (creador). Esta division se calcula a partir de la respuesta de royaltyInfo.",
+  "sim.royaltyCalculation.step.distribute.mobile": "Distribuir ingresos de venta"
+}

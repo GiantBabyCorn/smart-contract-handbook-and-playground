@@ -1,0 +1,63 @@
+{
+  "short": "이더리움의 경제적 보안을 추가 서비스(AVS)로 확장하는 리스테이킹 프로토콜",
+  "introduction": "EigenLayer는 이더리움 위에 구축된 리스테이킹 프로토콜로, 스테이킹된 ETH와 리퀴드 스테이킹 토큰(stETH 등)을 능동적으로 검증되는 서비스(AVS)라 불리는 추가 탈중앙화 서비스의 보안으로 재사용할 수 있게 합니다. 이를 통해 프로토콜이 자체 검증자 세트를 구축하지 않고도 암호경제적 보안을 확보할 수 있습니다. EigenLayer는 스테이커가 추가 보상을 대가로 AVS에 보안을 제공하는 마켓플레이스를 도입합니다.",
+  "designPurpose": "EigenLayer는 이더리움 기반 서비스 간 암호경제적 보안의 파편화 문제를 해결하기 위해 설계되었습니다. 새로운 프로토콜마다 자체 검증자 세트와 스테이킹 자본이 필요한 대신, EigenLayer는 기존 이더리움 스테이커가 여러 서비스에 동시에 보안 보증을 확장할 수 있게 합니다. 이 풀링된 보안 모델은 새로운 탈중앙화 인프라를 보호하는 비용을 크게 낮춥니다.",
+  "commonUsage": "리스테이커는 리퀴드 스테이킹 토큰이나 네이티브 ETH를 EigenLayer 전략에 예치하고, 자신을 대신하여 AVS를 검증하는 운영자에게 위임합니다. 운영자는 데이터 가용성 레이어, 브릿지, 오라클 네트워크 등의 AVS에 등록합니다. 이 프로토콜은 새로운 검증자 네트워크를 구축하지 않고 이더리움의 보안을 활용하려는 AVS 개발자에게도 사용됩니다.",
+
+  "fn.depositIntoStrategy.desc": "EigenLayer 전략 컨트랙트에 토큰을 예치하고, 리스테이킹된 포지션을 나타내는 지분을 받습니다.",
+  "fn.depositIntoStrategy.params.strategy": "예치할 전략 컨트랙트의 주소입니다.",
+  "fn.depositIntoStrategy.params.token": "예치할 토큰의 주소입니다 (예: stETH).",
+  "fn.depositIntoStrategy.params.amount": "예치할 토큰의 수량입니다.",
+  "fn.depositIntoStrategy.returns.shares": "예치자에게 발행된 전략 지분의 수량입니다.",
+
+  "fn.delegateTo.desc": "호출자의 모든 리스테이킹된 지분을 선택한 운영자에게 위임하며, 운영자는 스테이커를 대신하여 AVS를 검증합니다.",
+  "fn.delegateTo.params.operator": "위임할 운영자의 주소입니다.",
+  "fn.delegateTo.params.approverSignatureAndExpiry": "필요한 경우 운영자의 위임 승인자로부터의 서명과 만료 시간입니다.",
+  "fn.delegateTo.params.approverSalt": "승인자 서명의 재사용을 방지하기 위한 고유 salt입니다.",
+
+  "fn.undelegate.desc": "스테이커를 현재 운영자로부터 위임 해제하고 모든 리스테이킹된 지분에 대한 출금을 대기열에 넣습니다.",
+  "fn.undelegate.params.staker": "위임 해제할 스테이커의 주소입니다.",
+  "fn.undelegate.returns.withdrawalRoots": "지연 기간 후 대기 중인 출금을 완료하는 데 사용할 수 있는 출금 루트 배열입니다.",
+
+  "fn.completeQueuedWithdrawals.desc": "필요한 지연 기간이 경과한 후 이전에 대기열에 넣은 출금을 완료하여 토큰 또는 지분을 스테이커에게 반환합니다.",
+  "fn.completeQueuedWithdrawals.params.withdrawals": "완료할 출금 구조체 배열입니다.",
+  "fn.completeQueuedWithdrawals.params.tokens": "각 출금에 대한 토큰 주소의 2차원 배열입니다.",
+  "fn.completeQueuedWithdrawals.params.middlewareTimesIndexes": "슬래싱 검증을 위한 미들웨어 타임 배열의 인덱스입니다.",
+  "fn.completeQueuedWithdrawals.params.receiveAsTokens": "기본 토큰으로 수령할지(true) 또는 지분으로 재예치할지(false)를 나타내는 불리언 배열입니다.",
+
+  "fn.getShares.desc": "주어진 스테이커의 예치금에 대한 전략 및 해당 지분 수량을 반환합니다.",
+  "fn.getShares.params.staker": "조회할 스테이커의 주소입니다.",
+  "fn.getShares.returns.strategies": "스테이커가 예치한 전략 컨트랙트 주소 배열입니다.",
+  "fn.getShares.returns.shares": "각 전략에 대응하는 지분 수량 배열입니다.",
+
+  "node.restaker": "리스테이커",
+  "node.strategy-manager": "전략 매니저",
+  "node.delegation-manager": "위임 매니저",
+  "node.strategy": "전략 컨트랙트",
+  "node.operator": "운영자",
+  "node.avs": "능동적 검증 서비스 (AVS)",
+  "node.slasher": "슬래셔",
+  "node.withdrawal-queue": "출금 대기열",
+
+  "edge.depositIntoStrategy": "depositIntoStrategy()",
+  "edge.depositTokens": "토큰 예치",
+  "edge.delegateTo": "delegateTo(operator)",
+  "edge.assignDelegate": "위임 할당",
+  "edge.registerToAVS": "AVS에 등록",
+  "edge.queueWithdrawal": "출금 대기열 등록",
+  "edge.slash": "운영자 슬래싱",
+  "edge.returnShares": "지분 반환",
+
+  "sim.deposit-delegate-operator.name": "예치, 위임 및 등록",
+  "sim.deposit-delegate-operator.desc": "전체 리스테이킹 흐름을 시뮬레이션합니다: stETH를 전략에 예치하고, 운영자에게 위임하며, 운영자가 AVS에 등록합니다.",
+  "sim.deposit-delegate-operator.param.depositAmount": "예치 금액 (wei)",
+  "sim.deposit-delegate-operator.param.operatorAddress": "운영자 주소",
+  "sim.deposit-delegate-operator.step.approve": "리스테이커가 전략 매니저에 stETH 토큰 사용을 승인합니다.",
+  "sim.deposit-delegate-operator.step.approve.mobile": "stETH 승인",
+  "sim.deposit-delegate-operator.step.deposit": "리스테이커가 depositIntoStrategy()를 호출하여 stETH를 전략 컨트랙트에 전송하고 리스테이킹된 포지션을 나타내는 지분을 받습니다.",
+  "sim.deposit-delegate-operator.step.deposit.mobile": "전략에 예치",
+  "sim.deposit-delegate-operator.step.delegate": "리스테이커가 위임 매니저를 통해 지분을 운영자에게 위임합니다. 이제 운영자가 리스테이킹된 보안을 제어합니다.",
+  "sim.deposit-delegate-operator.step.delegate.mobile": "운영자에게 위임",
+  "sim.deposit-delegate-operator.step.avsRegister": "운영자가 AVS에 등록하여 위임된 스테이크를 서비스 보안에 투입합니다. 스테이킹된 자본은 이제 슬래싱 조건의 적용을 받습니다.",
+  "sim.deposit-delegate-operator.step.avsRegister.mobile": "운영자가 AVS에 등록"
+}

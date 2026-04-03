@@ -1,0 +1,84 @@
+{
+  "short": "セミファンジブルトークン（SFT）規格",
+  "introduction": "ERC-3525はセミファンジブルトークン（SFT）規格を定義しており、代替可能トークンと非代替性トークンの両方の特性を兼ね備えています。各SFTは一意のトークンID（ERC-721のように）、互換性のあるトークンをグループ化するスロット、同じスロット内のトークン間で転送可能な定量的な値（ERC-20のように）を持ちます。この三次元構造（ID、スロット、値）により、一意でありながらカテゴリ内で転送可能かつ分割可能な値を持つトークンが実現されます。",
+  "designPurpose": "ERC-3525は、純粋に代替可能でも純粋に非代替性でもない資産を表現するために設計されました。債券、オプション、保険証券などの金融商品は一意（異なる満期日、行使価格）でありながら、分割・統合が可能な代替可能な値を持ちます。ERC-3525は、各トークンの固有のアイデンティティを維持しながら、同じスロット内のトークン間で値を流通させることで、この二重性を捉えます。",
+  "commonUsage": "ERC-3525は、ストラクチャードファイナンス商品、トークン化された債券、バウチャーシステム、フラクショナルNFT、および一意のアイデンティティと定量的な値の両方が必要なあらゆる資産に使用されます。Solv Protocolはコンバーティブルバウチャーに使用しています。ベスティングポジション、ローントランシェ、利回り付きトークンなど、各ポジションが一意でありながら転送可能な値を持つDeFi商品に特に適しています。",
+
+  "fn.valueDecimals.desc": "各トークンのvalue属性に使用される小数点以下の桁数を返します。ERC-20のdecimalsに類似しています。",
+  "fn.valueDecimals.returns.decimals": "トークン値の小数点以下の桁数。",
+
+  "fn.valueOf.desc": "特定のトークンIDが保持する値を返します。これはセミファンジブルトークンの定量的で転送可能な要素です。",
+  "fn.valueOf.params.tokenId": "照会するトークンの一意の識別子。",
+  "fn.valueOf.returns.value": "トークンに格納されている定量的な値。",
+
+  "fn.slotOf.desc": "特定のトークンのスロット番号を返します。トークンは同じスロット内の他のトークンにのみ値を転送できます。",
+  "fn.slotOf.params.tokenId": "照会するトークンの一意の識別子。",
+  "fn.slotOf.returns.slot": "このトークンを分類するスロット番号。",
+
+  "fn.approve.desc": "特定のトークンから指定した量の値を転送する権限をアドレスに承認します。これは値レベルの承認です（ERC-721のトークンレベルの承認とは異なります）。",
+  "fn.approve.params.tokenId": "値の使用を承認するトークンID。",
+  "fn.approve.params.to": "値の転送を承認するアドレス。",
+  "fn.approve.params.value": "このトークンからアドレスが転送できる最大値。",
+
+  "fn.allowance.desc": "オペレーターが特定のトークンから転送を許可されている残りの値を返します。",
+  "fn.allowance.params.tokenId": "アローワンスを照会するトークンID。",
+  "fn.allowance.params.operator": "値のアローワンスを確認するアドレス。",
+  "fn.allowance.returns.value": "このトークンにおけるオペレーターの残りの値のアローワンス。",
+
+  "fn.transferValueFrom.desc": "あるトークンから別のトークンに値を転送します。両方のトークンは同じスロットに属している必要があります。toTokenIdが0の場合、受取人に新しいトークンがミントされます。",
+  "fn.transferValueFrom.params.fromTokenId": "値の転送元トークンID。",
+  "fn.transferValueFrom.params.toTokenId": "値の転送先トークンID（新しいトークンをミントする場合は0）。",
+  "fn.transferValueFrom.params.value": "転送する値の量。",
+
+  "fn.TransferValue.desc": "同じスロット内であるトークンから別のトークンに値が転送されたときに発行されます。",
+  "fn.TransferValue.params.fromTokenId": "値の転送元トークンID。",
+  "fn.TransferValue.params.toTokenId": "値の転送先トークンID。",
+  "fn.TransferValue.params.value": "転送された値の量。",
+
+  "fn.ApprovalValue.desc": "特定のトークンに対してオペレーターの値のアローワンスが設定されたときに発行されます。",
+  "fn.ApprovalValue.params.tokenId": "承認の対象となるトークンID。",
+  "fn.ApprovalValue.params.operator": "値の転送を承認されたアドレス。",
+  "fn.ApprovalValue.params.value": "承認された値の量。",
+
+  "fn.SlotChanged.desc": "トークンのスロットが変更されたときに発行されます。",
+  "fn.SlotChanged.params.tokenId": "スロットが変更されたトークンID。",
+  "fn.SlotChanged.params.oldSlot": "以前のスロット番号。",
+  "fn.SlotChanged.params.newSlot": "新しいスロット番号。",
+
+  "node.holder": "トークン保有者",
+  "node.contract": "ERC-3525コントラクト",
+  "node.recipient": "受取人",
+  "node.storageSlotValue": "スロット＆値ストレージ",
+  "node.slotValidator": "スロットバリデータ",
+
+  "edge.callTransferValue": "transferValueFrom()を呼び出す",
+  "edge.updateValues": "トークン値を更新",
+  "edge.validateSlot": "同一スロットを検証",
+  "edge.valueTransferred": "値を転送済み",
+  "edge.callApproveValue": "approve(value)を呼び出す",
+  "edge.emitTransferValue": "TransferValueを発行",
+  "edge.emitApprovalValue": "ApprovalValueを発行",
+
+  "sim.valueTransfer.name": "トークン間の値の転送",
+  "sim.valueTransfer.desc": "同じスロット内のあるセミファンジブルトークンから別のトークンに値を転送します。",
+  "sim.valueTransfer.param.fromTokenId": "転送元トークンID",
+  "sim.valueTransfer.param.toTokenId": "転送先トークンID",
+  "sim.valueTransfer.param.value": "転送する値（wei単位）",
+  "sim.valueTransfer.step.checkSlot": "転送の前に、コントラクトは両方のトークンが存在し、同じスロットに属していることを検証します。異なるスロットのトークン間では値を交換できません。",
+  "sim.valueTransfer.step.checkSlot.mobile": "同一スロットを確認",
+  "sim.valueTransfer.step.call": "保有者がtransferValueFrom(fromTokenId, toTokenId, value)を呼び出して、トークン間の値の転送を開始します。",
+  "sim.valueTransfer.step.call.mobile": "transferValueFrom()を呼び出す",
+  "sim.valueTransfer.step.validateAndUpdate": "コントラクトは承認を検証し、転送元トークンに十分な値があることを確認した後、転送元を減額し転送先を増額します。",
+  "sim.valueTransfer.step.validateAndUpdate.mobile": "検証して値を更新",
+  "sim.valueTransfer.step.recipientUpdated": "転送先トークンが転送された値を保持します。値の移動を記録するTransferValueイベントが発行されます。",
+  "sim.valueTransfer.step.recipientUpdated.mobile": "値の配達完了",
+
+  "sim.valueApproval.name": "値の承認",
+  "sim.valueApproval.desc": "トークンから特定の量の値を転送するためにオペレーターを承認します。",
+  "sim.valueApproval.param.tokenId": "トークンID",
+  "sim.valueApproval.param.operator": "オペレーターアドレス",
+  "sim.valueApproval.param.approvedValue": "承認する値の量（wei単位）",
+  "sim.valueApproval.step.approve": "トークン保有者がapprove(tokenId, operator, value)を呼び出して、オペレーターに指定した値までの使用を承認します。",
+  "sim.valueApproval.step.storeAllowance": "コントラクトは、指定されたトークンIDとオペレーターアドレスの_valueApprovalsマッピングに値のアローワンスを保存します。",
+  "sim.valueApproval.step.event": "トークンID、オペレーター、承認された値の量を記録するApprovalValueイベントが発行されます。"
+}

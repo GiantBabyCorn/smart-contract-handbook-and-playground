@@ -1,0 +1,36 @@
+{
+  "short": "コントラクト署名検証標準",
+  "introduction": "ERC-1271は、スマートコントラクトが署名を検証するための標準的な方法を定義しています。スマートコントラクトは秘密鍵を持たないため、外部所有アカウント（EOA）のようにECDSA署名を生成できません。ERC-1271は、任意のコントラクトが独自の署名検証ロジックを実装できるようにする単一の関数isValidSignatureを導入しています。これにより、スマートコントラクトウォレット、マルチシグ、およびその他のコントラクトベースのアカウントがメッセージに署名し、アクションを承認できるようになります。",
+  "designPurpose": "ERC-1271は、EOAベースの署名検証とスマートコントラクトウォレットの間のギャップを埋めるために設計されました。多くのプロトコルやdAppは認証や承認のためにユーザーにメッセージの署名を要求しますが、これはEOAでのみ機能していました。コントラクトが署名を検証する方法を標準化することで、ERC-1271はスマートコントラクトウォレット（Safe/Gnosisなど）やアカウント抽象化ソリューションが署名に依存するワークフローに参加できるようにします。",
+  "commonUsage": "ERC-1271は、マルチシグウォレット（Safe）、スマートコントラクトウォレット、およびアカウント抽象化システムで、オフチェーン承認の署名を検証するために使用されています。コントラクトアカウントがEIP-712型付きデータに署名し、ガスレストランザクションを承認し、dAppとの認証を行うことを可能にします。Permit2、CoW Protocol、0xなどのプロトコルは、EOAとスマートコントラクトの両方からの署名を受け入れるためにERC-1271を使用しています。",
+
+  "fn.isValidSignature.desc": "提供されたハッシュに対して指定された署名が有効かどうかを検証します。有効な場合はマジックバリュー（0x1626ba7e）を返し、無効な場合はその他の値を返します。実装は独自の検証ロジック（例：マルチシグの閾値チェック）を定義します。",
+  "fn.isValidSignature.params.hash": "署名されたデータのハッシュ。通常はEIP-712型付きデータハッシュです。",
+  "fn.isValidSignature.params.signature": "ハッシュに対して検証する署名バイト。",
+  "fn.isValidSignature.returns.magicValue": "署名が有効な場合は0x1626ba7eを返し、それ以外の場合はその他のbytes4値を返します。",
+
+  "node.verifier": "検証者 / DApp",
+  "node.contract": "ERC-1271コントラクト",
+  "node.signer": "復元された署名者",
+  "node.signatureStorage": "署名検証ストレージ",
+  "node.magicValue": "マジックバリュー結果",
+
+  "edge.verifyRequest": "検証リクエストを送信",
+  "edge.checkOwners": "オーナーレジストリを確認",
+  "edge.recoverSigner": "ecrecoverで署名者を復元",
+  "edge.returnMagic": "マジックバリューを返す",
+  "edge.validSignal": "有効な署名が確認",
+
+  "sim.contractSigVerification.name": "コントラクト署名検証",
+  "sim.contractSigVerification.desc": "isValidSignature関数を使用して、スマートコントラクトウォレットに対する署名を検証します。",
+  "sim.contractSigVerification.param.hash": "メッセージハッシュ",
+  "sim.contractSigVerification.param.signature": "署名バイト",
+  "sim.contractSigVerification.step.submit": "検証者（dAppまたはプロトコル）がスマートコントラクトウォレットに対してisValidSignature(hash, signature)を呼び出し、署名を検証します。",
+  "sim.contractSigVerification.step.submit.mobile": "署名を検証に送信",
+  "sim.contractSigVerification.step.recover": "コントラクトがecrecoverを使用して、ハッシュと署名から署名者のアドレスを抽出します。",
+  "sim.contractSigVerification.step.recover.mobile": "署名者アドレスを復元",
+  "sim.contractSigVerification.step.checkOwner": "コントラクトが、復元された署名者が内部レジストリ（例：マルチシグのオーナーリスト）で承認されたオーナーであるかを確認します。",
+  "sim.contractSigVerification.step.checkOwner.mobile": "署名者がオーナーか確認",
+  "sim.contractSigVerification.step.return": "コントラクトが署名の有効性を示すマジックバリュー0x1626ba7eを返します。検証者は承認されたアクションを続行できます。",
+  "sim.contractSigVerification.step.return.mobile": "有効なマジックバリューを返す"
+}

@@ -1,0 +1,40 @@
+{
+  "short": "EIP-712 域发现",
+  "introduction": "ERC-5267 提供了一种标准方式，使智能合约能够公开其 EIP-712 域分隔符配置。它定义了一个函数 eip712Domain()，返回用于构造域分隔符的所有字段：名称、版本、链 ID、验证合约地址、盐值以及实际使用了哪些字段。这使 DApp 和钱包能够动态发现用于签署 EIP-712 类型化数据的正确域参数，而无需硬编码。",
+  "designPurpose": "ERC-5267 旨在解决 EIP-712 签名的域分隔符发现问题。在此标准之前，DApp 必须硬编码域参数或使用链下注册表来了解如何为合约构造正确的域分隔符。这容易出错，特别是在链分叉或合约迁移之后。ERC-5267 使域信息具有自描述性，允许钱包直接从合约查询。",
+  "commonUsage": "ERC-5267 被任何实现 EIP-712 结构化数据签名的合约使用，包括 ERC-2612（permit）、治理合约和订单簿 DEX。MetaMask 等钱包可以调用 eip712Domain() 来发现正确的签名参数。OpenZeppelin 的 EIP712 基础合约自动实现了此标准。",
+
+  "fn.eip712Domain.desc": "返回此合约使用的 EIP-712 域字段。fields 位掩码指示返回的哪些值实际用于域分隔符计算。",
+  "fn.eip712Domain.returns.fields": "指示使用了哪些域字段的位掩码（位 0 = name，位 1 = version，位 2 = chainId，位 3 = verifyingContract，位 4 = salt）。",
+  "fn.eip712Domain.returns.name": "签名域的人类可读名称（例如，代币名称）。",
+  "fn.eip712Domain.returns.version": "签名域的当前主版本（例如，'1'）。",
+  "fn.eip712Domain.returns.chainId": "合约部署所在的链 ID。",
+  "fn.eip712Domain.returns.verifyingContract": "将验证签名的合约地址。",
+  "fn.eip712Domain.returns.salt": "域的可选消歧盐值。",
+  "fn.eip712Domain.returns.extensions": "域分隔符逻辑的任何扩展的 EIP 编号数组。",
+
+  "fn.EIP712DomainChanged.desc": "当域参数变更时触发，表示缓存的域分隔符应被失效。这可能在合约升级或链分叉后发生。",
+
+  "node.dapp": "DApp / 钱包",
+  "node.contract": "ERC-5267 合约",
+  "node.domainInfo": "域信息",
+  "node.eip712Context": "EIP-712 域分隔符",
+
+  "edge.discoverDomain": "调用 eip712Domain()",
+  "edge.readDomainFields": "读取域字段",
+  "edge.buildDomainSeparator": "构建 DOMAIN_SEPARATOR",
+  "edge.domainReturned": "域信息已返回",
+  "edge.emitChanged": "触发 EIP712DomainChanged",
+
+  "sim.domainDiscovery.name": "EIP-712 域发现",
+  "sim.domainDiscovery.desc": "通过调用 eip712Domain() 函数发现合约的 EIP-712 域配置。",
+  "sim.domainDiscovery.param.contractAddress": "要查询的合约地址",
+  "sim.domainDiscovery.step.call": "DApp 或钱包在目标合约上调用 eip712Domain() 以发现其 EIP-712 签名参数。",
+  "sim.domainDiscovery.step.call.mobile": "调用 eip712Domain()",
+  "sim.domainDiscovery.step.read": "合约读取其存储的域字段：名称、版本和链 ID。这些通常在合约初始化时设置。",
+  "sim.domainDiscovery.step.read.mobile": "读取域字段",
+  "sim.domainDiscovery.step.build": "合约通过使用 keccak256 将类型哈希与域字段一起哈希来组装完整的域分隔符。",
+  "sim.domainDiscovery.step.build.mobile": "构建域分隔符",
+  "sim.domainDiscovery.step.return": "域信息返回给 DApp。钱包现在可以构造正确的 EIP-712 类型化数据用于签名。",
+  "sim.domainDiscovery.step.return.mobile": "域信息已返回"
+}
