@@ -1,0 +1,36 @@
+{
+  "short": "合约标准签名验证",
+  "introduction": "ERC-1271 定义了智能合约验证签名的标准方式。由于智能合约没有私钥，它们无法像外部拥有账户（EOA）那样生成 ECDSA 签名。ERC-1271 引入了一个函数 isValidSignature，允许任何合约实现自己的签名验证逻辑。这使得智能合约钱包、多签和其他基于合约的账户能够签署消息和授权操作。",
+  "designPurpose": "ERC-1271 旨在弥合基于 EOA 的签名验证与智能合约钱包之间的差距。许多协议和 DApp 要求用户签署消息以进行身份验证或授权，但这仅适用于 EOA。通过标准化合约验证签名的方式，ERC-1271 使智能合约钱包（如 Safe/Gnosis）和账户抽象解决方案能够参与依赖签名的工作流程。",
+  "commonUsage": "ERC-1271 被多签钱包（Safe）、智能合约钱包和账户抽象系统用于验证链下授权的签名。它使合约账户能够签署 EIP-712 类型化数据、批准无 Gas 交易以及与 DApp 进行身份验证。Permit2、CoW Protocol 和 0x 等协议使用 ERC-1271 来接受来自 EOA 和智能合约的签名。",
+
+  "fn.isValidSignature.desc": "验证给定签名对于提供的哈希是否有效。如果有效则返回魔术值 (0x1626ba7e)，否则返回任何其他值。实现定义了自己的验证逻辑（例如，检查多签阈值）。",
+  "fn.isValidSignature.params.hash": "被签名数据的哈希。通常是 EIP-712 类型化数据哈希。",
+  "fn.isValidSignature.params.signature": "用于验证哈希的签名字节。",
+  "fn.isValidSignature.returns.magicValue": "如果签名有效则返回 0x1626ba7e，否则返回任何其他 bytes4 值。",
+
+  "node.verifier": "验证者 / DApp",
+  "node.contract": "ERC-1271 合约",
+  "node.signer": "恢复的签名者",
+  "node.signatureStorage": "签名验证存储",
+  "node.magicValue": "魔术值结果",
+
+  "edge.verifyRequest": "提交验证请求",
+  "edge.checkOwners": "检查所有者注册表",
+  "edge.recoverSigner": "通过 ecrecover 恢复签名者",
+  "edge.returnMagic": "返回魔术值",
+  "edge.validSignal": "签名验证通过",
+
+  "sim.contractSigVerification.name": "合约签名验证",
+  "sim.contractSigVerification.desc": "使用 isValidSignature 函数验证智能合约钱包的签名。",
+  "sim.contractSigVerification.param.hash": "消息哈希",
+  "sim.contractSigVerification.param.signature": "签名字节",
+  "sim.contractSigVerification.step.submit": "验证者（DApp 或协议）在智能合约钱包上调用 isValidSignature(hash, signature) 以验证签名。",
+  "sim.contractSigVerification.step.submit.mobile": "提交签名进行验证",
+  "sim.contractSigVerification.step.recover": "合约使用 ecrecover 从哈希和签名中提取签名者地址。",
+  "sim.contractSigVerification.step.recover.mobile": "恢复签名者地址",
+  "sim.contractSigVerification.step.checkOwner": "合约检查恢复的签名者是否为其内部注册表中的授权所有者（例如，多签所有者列表）。",
+  "sim.contractSigVerification.step.checkOwner.mobile": "检查签名者是否为所有者",
+  "sim.contractSigVerification.step.return": "合约返回魔术值 0x1626ba7e 以表示签名有效。验证者现在可以继续执行授权的操作。",
+  "sim.contractSigVerification.step.return.mobile": "返回有效魔术值"
+}

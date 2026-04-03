@@ -1,0 +1,56 @@
+{
+  "short": "モジュラースマートコントラクトアカウント",
+  "introduction": "ERC-6900は、プラグインベースのアーキテクチャを持つモジュラースマートコントラクトアカウントの標準を定義しています。アカウントは、カスタムバリデーションロジック、実行ハンドラ、およびフックで機能を拡張するプラグインをインストール・アンインストールできます。各プラグインは権限と機能を記述するマニフェストを宣言し、アカウントは構造化された実行フローを通じてこれらの権限を強制します。この標準により、プラグインが異なるアカウント実装間で相互運用可能であることが保証されます。",
+  "designPurpose": "ERC-6900は、ERC-4337スマートアカウントのための標準化されたプラグインシステムを作成するために設計されました。共通のモジュールインターフェースがなければ、各アカウントプロバイダが独自の互換性のない拡張システムを構築します。ERC-6900は、プラグインがバリデーション、実行、フックのフェーズを通じてアカウントとやり取りする方法を定義し、すべての準拠アカウントで動作する再利用可能なプラグインのマーケットプレイスを可能にします。マニフェストシステムにより透明な権限管理が確保されます。",
+  "commonUsage": "ERC-6900は、AlchemyのModular Accountなどのモジュラーアカウント実装で使用されています。プラグインはマルチシグバリデーション、セッションキー、支出制限、スケジュールされたトランザクション、ソーシャルリカバリ、その他の機能を追加できます。開発者はプラグインを一度構築すれば、すべてのERC-6900互換アカウントにデプロイでき、コンポーザブルなアカウント機能のエコシステムを構築できます。",
+
+  "fn.installPlugin.desc": "モジュラーアカウントにプラグインをインストールします。マニフェストハッシュを検証し、バリデーションと実行フックを登録し、提供されたデータでプラグインを初期化します。",
+  "fn.installPlugin.params.plugin": "インストールするプラグインコントラクトのアドレス。",
+  "fn.installPlugin.params.manifestHash": "プラグインの宣言された権限を検証するために使用される、プラグインのマニフェストのkeccak256ハッシュ。",
+  "fn.installPlugin.params.pluginInstallData": "プラグインのonInstall関数に渡されるエンコードされた初期化データ。",
+  "fn.installPlugin.params.dependencies": "プラグインが他のインストール済みプラグインから依存する関数リファレンスの配列。",
+
+  "fn.uninstallPlugin.desc": "モジュラーアカウントからプラグインを削除します。すべてのフックとセレクタの登録を解除し、プラグインのonUninstall関数を呼び出します。",
+  "fn.uninstallPlugin.params.plugin": "アンインストールするプラグインのアドレス。",
+  "fn.uninstallPlugin.params.config": "アンインストールプロセスのエンコードされた設定データ。",
+  "fn.uninstallPlugin.params.pluginUninstallData": "プラグインのonUninstall関数に渡されるエンコードされたデータ。",
+
+  "fn.executeFromPluginExternal.desc": "プラグインがアカウントを通じて外部コントラクトへの呼び出しを実行できるようにします。アカウントはプラグインの宣言された権限を強制します。",
+  "fn.executeFromPluginExternal.params.target": "呼び出す外部コントラクトのアドレス。",
+  "fn.executeFromPluginExternal.params.value": "呼び出しと共に送信するETHの値。",
+  "fn.executeFromPluginExternal.params.data": "外部呼び出し用のエンコードされたcalldata。",
+  "fn.executeFromPluginExternal.returns.result": "外部呼び出しからの戻りデータ。",
+
+  "fn.getInstalledPlugins.desc": "アカウントに現在インストールされているすべてのプラグインアドレスのリストを返します。",
+  "fn.getInstalledPlugins.returns.plugins": "インストール済みプラグインコントラクトアドレスの配列。",
+
+  "node.accountOwner": "アカウントオーナー",
+  "node.modularAccount": "モジュラーアカウント",
+  "node.validationPlugin": "バリデーションプラグイン",
+  "node.executionPlugin": "実行プラグイン",
+  "node.hook": "フック（Pre/Post）",
+  "node.permissionManager": "権限マネージャー",
+  "node.target": "ターゲットコントラクト",
+
+  "edge.installPlugin": "プラグインをインストール",
+  "edge.checkManifest": "マニフェストと権限を確認",
+  "edge.validateUserOp": "UserOpを検証",
+  "edge.runHooks": "pre/postフックを実行",
+  "edge.routeExecution": "プラグインに実行をルーティング",
+  "edge.executeFromPlugin": "プラグインから実行",
+  "edge.directExecute": "直接実行",
+
+  "sim.pluginInstallExec.name": "プラグインのインストールと実行",
+  "sim.pluginInstallExec.desc": "モジュラーアカウントにプラグインをインストールし、バリデーションと実行のフローを観察します。",
+  "sim.pluginInstallExec.param.accountAddress": "モジュラーアカウントアドレス",
+  "sim.pluginInstallExec.param.pluginAddress": "プラグインアドレス",
+  "sim.pluginInstallExec.param.targetContract": "ターゲットコントラクト",
+  "sim.pluginInstallExec.step.checkManifest": "アカウントがプラグインのマニフェストハッシュを検証し、宣言されたすべての依存関係が満たされていることを確認します。権限マネージャーがプラグインの要求する機能を検証します。",
+  "sim.pluginInstallExec.step.checkManifest.mobile": "マニフェストと権限を検証",
+  "sim.pluginInstallExec.step.install": "プラグインがインストールされます：バリデーションセレクタ、実行セレクタ、およびフックがアカウントに登録されます。プラグインのonInstall関数が呼び出されます。",
+  "sim.pluginInstallExec.step.install.mobile": "プラグインをインストール・登録",
+  "sim.pluginInstallExec.step.validateOp": "UserOperationが到着すると、アカウントはバリデーションをインストール済みのバリデーションプラグインにルーティングします。プリバリデーションフックが最初に実行され、その後プラグインが署名を検証します。",
+  "sim.pluginInstallExec.step.validateOp.mobile": "プラグイン経由で検証",
+  "sim.pluginInstallExec.step.execute": "実行プラグインが操作を処理します。ポスト実行フックが実行され、支出制限などの不変条件を強制します。",
+  "sim.pluginInstallExec.step.execute.mobile": "プラグイン経由で実行"
+}

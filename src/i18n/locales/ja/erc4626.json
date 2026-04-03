@@ -1,0 +1,97 @@
+{
+  "short": "トークン化ボールト規格",
+  "introduction": "ERC-4626はトークン化ボールトの標準インターフェースです。ボールトは基礎となるERC-20トークンの預入を受け付け、ボールトの資産に対する比例的な請求権を表すシェアを発行するスマートコントラクトです。この規格は、資産とシェアの相互変換、操作のプレビュー、預入・引出し制限の確認のための完全な預入・引出しライフサイクルを定義します。ERC-20を拡張しているため、ボールトシェア自体が転送可能なトークンです。",
+  "designPurpose": "ERC-4626は、DeFi全体で使用されている利回り付きボールトパターンを標準化するために設計されました。この規格以前は、すべてのレンディングプロトコル、イールドアグリゲーター、ステーキングコントラクトが預入と引出しのための独自の互換性のないインターフェースを持っていました。この断片化により、コンポーザブルなDeFi戦略の構築が困難でした。ERC-4626は、あらゆるボールトをアグリゲーター、ルーター、その他のプロトコルにシームレスに統合できる統一インターフェースを提供します。",
+  "commonUsage": "ERC-4626は、イールドアグリゲーター（Yearn）、レンディングプロトコル（Aave、Compound）、リキッドステーキング（Lido）、および預入資産を管理するあらゆるプロトコルで使用されています。標準化されたボールトのコンポーザビリティを実現します：イールドアグリゲーターは同じインターフェースを使用して任意のERC-4626ボールトに預入できます。レシートトークン、リベーストークンラッパー、ストラクチャードDeFi商品にも使用されます。",
+
+  "fn.asset.desc": "ボールトが預入で受け付け、引出しで返却する基礎となるERC-20トークンのアドレスを返します。",
+  "fn.asset.returns.address": "基礎となる資産トークンコントラクトのアドレス。",
+
+  "fn.totalAssets.desc": "発生した利回りを含む、ボールトが管理する基礎資産の総額を返します。",
+  "fn.totalAssets.returns.total": "ボールトが保持・管理する基礎資産の総額。",
+
+  "fn.convertToShares.desc": "現在の交換レートに基づいて、指定した資産量に対してミントされるボールトシェアの数を返します。",
+  "fn.convertToShares.params.assets": "変換する基礎資産の量。",
+  "fn.convertToShares.returns.shares": "相当するボールトシェアの数。",
+
+  "fn.convertToAssets.desc": "現在の交換レートに基づいて、指定したシェア数が相当する基礎資産の量を返します。",
+  "fn.convertToAssets.params.shares": "変換するボールトシェアの数。",
+  "fn.convertToAssets.returns.assets": "相当する基礎資産の量。",
+
+  "fn.maxDeposit.desc": "ボールト固有の制限を考慮して、指定した受取人に預入できる最大資産量を返します。",
+  "fn.maxDeposit.params.receiver": "ミントされたシェアを受け取るアドレス。",
+  "fn.maxDeposit.returns.maxAssets": "預入可能な最大資産量。",
+
+  "fn.previewDeposit.desc": "預入をシミュレーションし、手数料を含めてミントされるシェア数を返します。UIプレビューに便利です。",
+  "fn.previewDeposit.params.assets": "預入をシミュレーションする資産量。",
+  "fn.previewDeposit.returns.shares": "ミントされるシェアの数。",
+
+  "fn.deposit.desc": "基礎資産をボールトに預入し、受取人にシェアをミントします。呼び出し元はボールトが資産を使用する承認を事前に行っている必要があります。",
+  "fn.deposit.params.assets": "預入する基礎資産の量。",
+  "fn.deposit.params.receiver": "ミントされたボールトシェアを受け取るアドレス。",
+  "fn.deposit.returns.shares": "受取人にミントされたボールトシェアの数。",
+
+  "fn.mint.desc": "必要な量の基礎資産を預入して、正確な数のボールトシェアをミントします。",
+  "fn.mint.params.shares": "ミントするボールトシェアの正確な数。",
+  "fn.mint.params.receiver": "ミントされたシェアを受け取るアドレス。",
+  "fn.mint.returns.assets": "預入された基礎資産の量。",
+
+  "fn.maxWithdraw.desc": "ボールトの制限と利用可能な流動性を考慮して、所有者が引き出せる最大基礎資産量を返します。",
+  "fn.maxWithdraw.params.owner": "ボールトシェアを所有するアドレス。",
+  "fn.maxWithdraw.returns.maxAssets": "引出し可能な最大資産量。",
+
+  "fn.previewRedeem.desc": "償還をシミュレーションし、指定したシェア数に対して返却される資産量を返します。",
+  "fn.previewRedeem.params.shares": "償還をシミュレーションするシェア数。",
+  "fn.previewRedeem.returns.assets": "返却される基礎資産の量。",
+
+  "fn.withdraw.desc": "必要なボールトシェアをバーンして、特定の量の基礎資産を引き出します。所有者または承認されたspenderが呼び出し可能です。",
+  "fn.withdraw.params.assets": "引き出す基礎資産の量。",
+  "fn.withdraw.params.receiver": "引き出した資産を受け取るアドレス。",
+  "fn.withdraw.params.owner": "バーンするシェアを所有するアドレス。",
+  "fn.withdraw.returns.shares": "バーンされたボールトシェアの数。",
+
+  "fn.redeem.desc": "特定の数のボールトシェアをバーンし、対応する量の基礎資産を受取人に返却します。",
+  "fn.redeem.params.shares": "バーンするボールトシェアの数。",
+  "fn.redeem.params.receiver": "基礎資産を受け取るアドレス。",
+  "fn.redeem.params.owner": "バーンするシェアを所有するアドレス。",
+  "fn.redeem.returns.assets": "返却された基礎資産の量。",
+
+  "node.depositor": "預入者",
+  "node.vault": "ERC-4626ボールト",
+  "node.underlyingAsset": "基礎資産（ERC-20）",
+  "node.storageShares": "シェア＆資産ストレージ",
+  "node.shareToken": "ボールトシェアトークン",
+  "node.yieldStrategy": "利回り戦略",
+
+  "edge.callDeposit": "deposit()を呼び出す",
+  "edge.transferAssets": "基礎資産を転送",
+  "edge.assetsHeld": "ボールトが資産を保持",
+  "edge.mintShares": "ボールトシェアをミント",
+  "edge.sharesIssued": "シェアを発行",
+  "edge.deployCapital": "戦略に資本を投入",
+  "edge.callRedeem": "redeem()を呼び出す",
+  "edge.emitDeposit": "Depositイベントを発行",
+  "edge.emitWithdraw": "Withdrawイベントを発行",
+
+  "sim.depositMintShares.name": "資産を預入してシェアをミント",
+  "sim.depositMintShares.desc": "ERC-4626ボールトに基礎資産を預入し、比例的な請求権を表すボールトシェアを受け取ります。",
+  "sim.depositMintShares.param.assets": "預入する資産量（wei単位）",
+  "sim.depositMintShares.param.receiver": "シェア受取人アドレス",
+  "sim.depositMintShares.step.preview": "預入者がpreviewDepositを呼び出し、ボールト手数料を考慮して資産量に対して受け取るシェア数を確認します。",
+  "sim.depositMintShares.step.preview.mobile": "預入をプレビュー",
+  "sim.depositMintShares.step.transferAssets": "預入者がdeposit()を呼び出します。ボールトがtransferFromを通じて預入者から基礎資産を転送します。ボールトが資産を保持します。",
+  "sim.depositMintShares.step.transferAssets.mobile": "ボールトに資産を転送",
+  "sim.depositMintShares.step.mintShares": "ボールトが預入資産に比例したシェアをミントし、受取人に付与します。シェア/資産の交換レートが量を決定します。",
+  "sim.depositMintShares.step.mintShares.mobile": "ボールトシェアをミント",
+  "sim.depositMintShares.step.deploy": "ボールトは預入された資産を利回り戦略に投入し、シェア保有者のためにリターンを生成する場合があります。",
+  "sim.depositMintShares.step.event": "送信者、受取人、資産量、ミントされたシェアを記録するDepositイベントが発行されます。",
+
+  "sim.redeemShares.name": "シェアを償還して資産を受け取る",
+  "sim.redeemShares.desc": "ボールトシェアをバーンして、発生した利回りを含む基礎資産を引き出します。",
+  "sim.redeemShares.param.shares": "償還するシェア（wei単位）",
+  "sim.redeemShares.param.receiver": "資産受取人アドレス",
+  "sim.redeemShares.step.previewRedeem": "預入者がpreviewRedeemを呼び出し、受け取る資産量を確認します。利回りが発生している場合、シェアの価値は最初の預入額を上回る可能性があります。",
+  "sim.redeemShares.step.burnShares": "預入者がredeem()を呼び出します。ボールトが所有者の残高から指定されたシェアをバーンし、対応する資産量を計算します。",
+  "sim.redeemShares.step.returnAssets": "ボールトが基礎資産を受取人に転送します。金額にはシェア保有期間中に獲得した利回りが含まれます。",
+  "sim.redeemShares.step.event": "送信者、受取人、所有者、資産量、バーンされたシェアを記録するWithdrawイベントが発行されます。"
+}

@@ -1,0 +1,97 @@
+{
+  "short": "Estandar de Vault Tokenizado",
+  "introduction": "ERC-4626 es la interfaz estandar para vaults tokenizados, que son contratos inteligentes que aceptan depositos de un token ERC-20 subyacente y emiten participaciones que representan un derecho proporcional sobre los activos del vault. El estandar define un ciclo de vida completo de deposito/retiro con funciones para convertir entre activos y participaciones, previsualizar operaciones y verificar limites de deposito/retiro. Extiende ERC-20, por lo que las participaciones del vault son en si mismas tokens transferibles.",
+  "designPurpose": "ERC-4626 fue disenado para estandarizar el patron de vaults con rendimiento utilizado en todo DeFi. Antes de este estandar, cada protocolo de prestamos, agregador de rendimiento y contrato de staking tenia su propia interfaz incompatible para depositos y retiros. Esta fragmentacion dificultaba la construccion de estrategias DeFi componibles. ERC-4626 proporciona una interfaz unificada que permite que cualquier vault sea integrado en agregadores, routers y otros protocolos de manera transparente.",
+  "commonUsage": "ERC-4626 es utilizado por agregadores de rendimiento (Yearn), protocolos de prestamo (Aave, Compound), liquid staking (Lido) y cualquier protocolo que gestione activos depositados. Permite la componibilidad estandarizada de vaults: un agregador de rendimiento puede depositar en cualquier vault ERC-4626 usando la misma interfaz. El estandar tambien se utiliza para tokens de recibo, wrappers de tokens con rebase y productos DeFi estructurados.",
+
+  "fn.asset.desc": "Devuelve la direccion del token ERC-20 subyacente que el vault acepta para depositos y devuelve en retiros.",
+  "fn.asset.returns.address": "La direccion del contrato del token del activo subyacente.",
+
+  "fn.totalAssets.desc": "Devuelve la cantidad total de activos subyacentes gestionados por el vault, incluyendo cualquier rendimiento acumulado.",
+  "fn.totalAssets.returns.total": "El total de activos subyacentes mantenidos y gestionados por el vault.",
+
+  "fn.convertToShares.desc": "Devuelve el numero de participaciones del vault que se acunarian para una cantidad dada de activos, basado en la tasa de cambio actual.",
+  "fn.convertToShares.params.assets": "La cantidad de activos subyacentes a convertir.",
+  "fn.convertToShares.returns.shares": "El numero equivalente de participaciones del vault.",
+
+  "fn.convertToAssets.desc": "Devuelve la cantidad de activos subyacentes que vale un numero dado de participaciones, basado en la tasa de cambio actual.",
+  "fn.convertToAssets.params.shares": "El numero de participaciones del vault a convertir.",
+  "fn.convertToAssets.returns.assets": "La cantidad equivalente de activos subyacentes.",
+
+  "fn.maxDeposit.desc": "Devuelve la cantidad maxima de activos que pueden depositarse para un receptor dado, teniendo en cuenta cualquier limite especifico del vault.",
+  "fn.maxDeposit.params.receiver": "La direccion que recibiria las participaciones acunadas.",
+  "fn.maxDeposit.returns.maxAssets": "La cantidad maxima de activos depositables.",
+
+  "fn.previewDeposit.desc": "Simula un deposito y devuelve el numero de participaciones que se acunarian, incluyendo cualquier tarifa. Util para previsualizaciones en la interfaz.",
+  "fn.previewDeposit.params.assets": "La cantidad de activos a simular como deposito.",
+  "fn.previewDeposit.returns.shares": "El numero de participaciones que se acunarian.",
+
+  "fn.deposit.desc": "Deposita activos subyacentes en el vault y acuna participaciones para el receptor. El llamador debe haber aprobado al vault para gastar sus activos.",
+  "fn.deposit.params.assets": "La cantidad de activos subyacentes a depositar.",
+  "fn.deposit.params.receiver": "La direccion que recibira las participaciones del vault acunadas.",
+  "fn.deposit.returns.shares": "El numero de participaciones del vault acunadas para el receptor.",
+
+  "fn.mint.desc": "Acuna un numero exacto de participaciones del vault depositando la cantidad requerida de activos subyacentes.",
+  "fn.mint.params.shares": "El numero exacto de participaciones del vault a acunar.",
+  "fn.mint.params.receiver": "La direccion que recibira las participaciones acunadas.",
+  "fn.mint.returns.assets": "La cantidad de activos subyacentes depositados.",
+
+  "fn.maxWithdraw.desc": "Devuelve la cantidad maxima de activos subyacentes que puede retirar el propietario, teniendo en cuenta los limites del vault y la liquidez disponible.",
+  "fn.maxWithdraw.params.owner": "La direccion que posee las participaciones del vault.",
+  "fn.maxWithdraw.returns.maxAssets": "La cantidad maxima de activos retirables.",
+
+  "fn.previewRedeem.desc": "Simula un canje y devuelve la cantidad de activos que se devolverian por un numero dado de participaciones.",
+  "fn.previewRedeem.params.shares": "El numero de participaciones a simular para el canje.",
+  "fn.previewRedeem.returns.assets": "La cantidad de activos subyacentes que se devolverian.",
+
+  "fn.withdraw.desc": "Retira una cantidad especifica de activos subyacentes quemando las participaciones del vault necesarias. Puede ser llamado por el propietario o un gastador aprobado.",
+  "fn.withdraw.params.assets": "La cantidad de activos subyacentes a retirar.",
+  "fn.withdraw.params.receiver": "La direccion que recibira los activos retirados.",
+  "fn.withdraw.params.owner": "La direccion que posee las participaciones a quemar.",
+  "fn.withdraw.returns.shares": "El numero de participaciones del vault quemadas.",
+
+  "fn.redeem.desc": "Quema un numero especifico de participaciones del vault y devuelve la cantidad correspondiente de activos subyacentes al receptor.",
+  "fn.redeem.params.shares": "El numero de participaciones del vault a quemar.",
+  "fn.redeem.params.receiver": "La direccion que recibira los activos subyacentes.",
+  "fn.redeem.params.owner": "La direccion que posee las participaciones a quemar.",
+  "fn.redeem.returns.assets": "La cantidad de activos subyacentes devueltos.",
+
+  "node.depositor": "Depositante",
+  "node.vault": "Vault ERC-4626",
+  "node.underlyingAsset": "Activo Subyacente (ERC-20)",
+  "node.storageShares": "Almacenamiento de Participaciones y Activos",
+  "node.shareToken": "Token de Participacion del Vault",
+  "node.yieldStrategy": "Estrategia de Rendimiento",
+
+  "edge.callDeposit": "Llamar deposit()",
+  "edge.transferAssets": "Transferir activos subyacentes",
+  "edge.assetsHeld": "Activos mantenidos por el vault",
+  "edge.mintShares": "Acunar participaciones del vault",
+  "edge.sharesIssued": "Participaciones emitidas",
+  "edge.deployCapital": "Desplegar capital a la estrategia",
+  "edge.callRedeem": "Llamar redeem()",
+  "edge.emitDeposit": "Emitir evento Deposit",
+  "edge.emitWithdraw": "Emitir evento Withdraw",
+
+  "sim.depositMintShares.name": "Depositar Activos y Acunar Participaciones",
+  "sim.depositMintShares.desc": "Depositar activos subyacentes en un vault ERC-4626 y recibir participaciones del vault que representan su derecho proporcional.",
+  "sim.depositMintShares.param.assets": "Cantidad de activos a depositar (en wei)",
+  "sim.depositMintShares.param.receiver": "Direccion del receptor de participaciones",
+  "sim.depositMintShares.step.preview": "El depositante llama a previewDeposit para ver cuantas participaciones recibira por su cantidad de activos, teniendo en cuenta cualquier tarifa del vault.",
+  "sim.depositMintShares.step.preview.mobile": "Previsualizar deposito",
+  "sim.depositMintShares.step.transferAssets": "El depositante llama a deposit(). El vault transfiere los activos subyacentes del depositante mediante transferFrom. El vault ahora mantiene los activos.",
+  "sim.depositMintShares.step.transferAssets.mobile": "Transferir activos al vault",
+  "sim.depositMintShares.step.mintShares": "El vault acuna participaciones proporcionales a los activos depositados y las acredita al receptor. La tasa de cambio participaciones/activos determina la cantidad.",
+  "sim.depositMintShares.step.mintShares.mobile": "Acunar participaciones del vault",
+  "sim.depositMintShares.step.deploy": "El vault puede desplegar los activos depositados en una estrategia de rendimiento para generar retornos para los accionistas.",
+  "sim.depositMintShares.step.event": "Se emite un evento Deposit registrando el remitente, receptor, cantidad de activos y participaciones acunadas.",
+
+  "sim.redeemShares.name": "Canjear Participaciones por Activos",
+  "sim.redeemShares.desc": "Quemar participaciones del vault para retirar activos subyacentes, incluyendo cualquier rendimiento acumulado.",
+  "sim.redeemShares.param.shares": "Participaciones a canjear (en wei)",
+  "sim.redeemShares.param.receiver": "Direccion del receptor de activos",
+  "sim.redeemShares.step.previewRedeem": "El depositante llama a previewRedeem para ver cuantos activos recibira. Si se ha acumulado rendimiento, las participaciones pueden valer mas que el deposito original.",
+  "sim.redeemShares.step.burnShares": "El depositante llama a redeem(). El vault quema las participaciones especificadas del saldo del propietario y calcula la cantidad correspondiente de activos.",
+  "sim.redeemShares.step.returnAssets": "El vault transfiere los activos subyacentes de vuelta al receptor. La cantidad incluye cualquier rendimiento ganado mientras se mantuvieron las participaciones.",
+  "sim.redeemShares.step.event": "Se emite un evento Withdraw registrando el remitente, receptor, propietario, cantidad de activos y participaciones quemadas."
+}

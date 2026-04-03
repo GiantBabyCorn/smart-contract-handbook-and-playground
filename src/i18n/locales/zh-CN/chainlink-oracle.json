@@ -1,0 +1,59 @@
+{
+  "short": "去中心化预言机网络，为智能合约提供防篡改的价格数据源",
+  "introduction": "Chainlink 是使用最广泛的去中心化预言机网络，为链上智能合约提供可靠的链下数据。其价格聚合器提供防篡改的资产价格，被大多数 DeFi 协议用于借贷清算、衍生品结算和稳定币锚定等关键操作。该网络使用一组去中心化的预言机节点，独立获取、验证和聚合数据。",
+  "designPurpose": "Chainlink 旨在解决预言机问题——以无需信任的方式将现实世界数据引入区块链的根本挑战。通过使用一个质押 LINK 代币的独立节点运营商去中心化网络，Chainlink 确保没有单一实体可以操纵价格数据。聚合器合约取多个节点提交的中位数，提供了对异常值和操纵的强大抵抗力。",
+  "commonUsage": "Aave 和 Compound 等 DeFi 借贷协议使用 Chainlink 价格数据源来确定抵押品价值并触发清算。DEX 和衍生品平台使用它们进行结算价格和按市值计价计算。稳定币协议依赖 Chainlink 预言机来维持其锚定价格并管理风险参数。",
+
+  "fn.latestRoundData.desc": "从聚合器返回最新的价格数据，包括价格、轮次 ID 和时间戳。这是 DeFi 协议获取当前资产价格的主要函数。",
+  "fn.latestRoundData.returns.roundId": "当前聚合轮次的唯一标识符。",
+  "fn.latestRoundData.returns.answer": "聚合后的价格答案，按数据源的小数位数缩放（USD 交易对通常为 8 位）。",
+  "fn.latestRoundData.returns.startedAt": "轮次开始时的 Unix 时间戳。",
+  "fn.latestRoundData.returns.updatedAt": "答案最后更新时的 Unix 时间戳。用于检查数据是否过期。",
+  "fn.latestRoundData.returns.answeredInRound": "计算出答案的轮次 ID。对于最新数据，应与 roundId 匹配。",
+
+  "fn.getRoundData.desc": "返回特定历史轮次的价格数据。用于验证历史价格或构建时间加权平均值。",
+  "fn.getRoundData.params.roundId": "要查询历史数据的轮次 ID。",
+  "fn.getRoundData.returns.roundId": "查询数据的轮次 ID。",
+  "fn.getRoundData.returns.answer": "查询轮次的价格答案。",
+  "fn.getRoundData.returns.startedAt": "查询轮次开始时的 Unix 时间戳。",
+  "fn.getRoundData.returns.updatedAt": "查询轮次最后更新时的 Unix 时间戳。",
+  "fn.getRoundData.returns.answeredInRound": "计算出答案的轮次。",
+
+  "fn.decimals.desc": "返回价格数据源答案的小数位数。大多数以 USD 计价的数据源使用 8 位小数。",
+  "fn.decimals.returns.decimals": "小数位数（例如 USD 价格数据源为 8）。",
+
+  "fn.description.desc": "返回价格数据源的可读描述，例如 'ETH / USD'。",
+  "fn.description.returns.description": "价格数据源的描述字符串。",
+
+  "fn.AnswerUpdated.desc": "当聚合器从预言机网络收到新答案时触发。用于链下系统实时监控价格更新。",
+  "fn.AnswerUpdated.params.current": "新的聚合价格答案。",
+  "fn.AnswerUpdated.params.roundId": "此答案更新的轮次 ID。",
+  "fn.AnswerUpdated.params.updatedAt": "更新时的 Unix 时间戳。",
+
+  "node.consumer-contract": "消费者合约（DeFi 协议）",
+  "node.aggregator-proxy": "聚合器代理",
+  "node.aggregator": "链下聚合器",
+  "node.oracle-nodes": "预言机节点网络 (DON)",
+  "node.off-chain-data": "链下数据源",
+  "node.round-storage": "轮次数据存储",
+
+  "edge.requestPrice": "latestRoundData()",
+  "edge.delegate": "委托给聚合器",
+  "edge.readRound": "读取轮次数据",
+  "edge.fetchData": "获取市场数据",
+  "edge.submitAnswer": "提交预言机答案",
+  "edge.returnPrice": "返回价格数据",
+  "edge.priceData": "价格至消费者",
+
+  "sim.price-feed-request.name": "价格数据源请求",
+  "sim.price-feed-request.desc": "模拟 Chainlink 价格更新的完整生命周期：预言机节点的链下数据聚合、链上提交，以及消费者合约读取价格。",
+  "sim.price-feed-request.param.consumerAddress": "消费者合约地址",
+  "sim.price-feed-request.step.offChainFetch": "去中心化预言机网络 (DON) 中的预言机节点独立从多个链下数据源获取 ETH/USD 价格。",
+  "sim.price-feed-request.step.offChainFetch.mobile": "节点获取链下价格",
+  "sim.price-feed-request.step.submit": "预言机节点将各自的答案提交给聚合器合约，聚合器计算中位数并将其存储为最新轮次数据。",
+  "sim.price-feed-request.step.submit.mobile": "提交聚合后的答案",
+  "sim.price-feed-request.step.consumerCall": "DeFi 协议的消费者合约调用聚合器代理上的 latestRoundData() 以获取当前的 ETH/USD 价格。",
+  "sim.price-feed-request.step.consumerCall.mobile": "消费者调用 latestRoundData()",
+  "sim.price-feed-request.step.proxyDelegate": "代理将调用委托给当前的聚合器实现，聚合器从存储中读取最新轮次并将价格数据返回给消费者。",
+  "sim.price-feed-request.step.proxyDelegate.mobile": "代理返回价格数据"
+}

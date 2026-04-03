@@ -1,0 +1,69 @@
+{
+  "short": "具有隔离市场和高效吸收清算机制的单资产借贷协议",
+  "introduction": "Compound V3，又称 Comet，是一个精简的借贷协议，采用了与其前身根本不同的方法。每个 Comet 部署管理单一可借基础资产（如 USDC）和多种抵押资产，简化了风险管理。该协议取消了 cToken，使用内部余额记账代替。",
+  "designPurpose": "Compound V3 旨在通过将每个市场聚焦于一种基础资产来降低多资产借贷池的复杂性和攻击面。这种单一可借资产架构改善了风险隔离，使协议更易于推理。基于吸收的清算机制取代了传统的关闭因子模型，实现了更高效的坏账社会化。",
+  "commonUsage": "用户通常提供 WETH 或 WBTC 等抵押资产以可变利率借入 USDC。基础资产的供应者通过协议的内部记账自动获得利息。Compound V3 也被寻求简单、可审计借贷原语的协议用于构建上层应用。",
+
+  "fn.supply.desc": "向 Comet 市场供应资产。如果资产是基础代币，则赚取利息。如果是抵押代币，则支持借款能力。",
+  "fn.supply.params.asset": "要供应的代币地址（基础代币或抵押品）。",
+  "fn.supply.params.amount": "要供应的数量，以代币的原生精度为单位。",
+
+  "fn.withdraw.desc": "从 Comet 市场提取之前供应的资产。",
+  "fn.withdraw.params.asset": "要提取的代币地址。",
+  "fn.withdraw.params.amount": "要提取的数量，以代币的原生精度为单位。",
+
+  "fn.borrow.desc": "从 Comet 市场借入基础资产。当用户没有基础余额时，内部使用带有基础代币地址的 withdraw 函数。",
+  "fn.borrow.params.asset": "要借入的基础代币地址（例如 USDC）。",
+  "fn.borrow.params.amount": "要借入的基础代币数量。",
+
+  "fn.repay.desc": "偿还基础资产的借款。内部使用 supply 函数将基础代币归还给协议。",
+  "fn.repay.params.asset": "要偿还的基础代币地址。",
+  "fn.repay.params.amount": "要偿还的基础代币数量。",
+
+  "fn.absorb.desc": "通过吸收一个或多个抵押不足的账户来触发清算。协议没收其抵押品并在基础供应者之间社会化任何坏账。",
+  "fn.absorb.params.absorber": "发起吸收的地址，可能会获得奖励。",
+  "fn.absorb.params.accounts": "要吸收的抵押不足账户地址数组。",
+
+  "fn.buyCollateral.desc": "在吸收事件后以折扣价从协议购买被没收的抵押品。这是清算抵押品回归市场的方式。",
+  "fn.buyCollateral.params.asset": "要购买的抵押代币地址。",
+  "fn.buyCollateral.params.minAmount": "要收到的最低抵押品数量。",
+  "fn.buyCollateral.params.baseAmount": "用于购买抵押品的基础代币数量。",
+  "fn.buyCollateral.params.recipient": "接收所购抵押品的地址。",
+
+  "fn.getUtilization.desc": "返回市场当前的利用率，通过利率模型决定利率。",
+  "fn.getUtilization.returns.utilization": "当前利用率，以 18 位精度缩放的分数表示（例如 0.8e18 = 80%）。",
+
+  "fn.getSupplyRate.desc": "返回给定利用率水平下的每秒供应利率。",
+  "fn.getSupplyRate.params.utilization": "要查询的利用率，以 18 位精度缩放。",
+  "fn.getSupplyRate.returns.supplyRate": "每秒供应利率，以 18 位精度缩放。",
+
+  "node.supplier": "基础供应者",
+  "node.borrower": "借款人",
+  "node.cometContract": "Comet 合约",
+  "node.baseToken": "基础代币（USDC）",
+  "node.collateralToken": "抵押代币（WETH）",
+  "node.priceFeed": "Chainlink 价格数据源",
+  "node.absorber": "吸收者/清算者",
+
+  "edge.supplyBase": "supply(USDC)",
+  "edge.baseTokenBalance": "跟踪基础余额",
+  "edge.supplyCollateral": "supply(WETH 抵押品)",
+  "edge.collateralHeld": "持有抵押品",
+  "edge.assetPrice": "获取资产价格",
+  "edge.borrowedUSDC": "借入 USDC",
+  "edge.absorb": "absorb(accounts)",
+  "edge.absorberReward": "吸收奖励",
+
+  "sim.supplyAndBorrowComet.name": "供应抵押品并借款",
+  "sim.supplyAndBorrowComet.desc": "模拟向 Comet 市场供应 WETH 抵押品并借入 USDC，展示单资产借款模型。",
+  "sim.supplyAndBorrowComet.param.collateralAmount": "抵押品数量（wei）",
+  "sim.supplyAndBorrowComet.param.borrowAmount": "借款数量（USDC 基础单位）",
+  "sim.supplyAndBorrowComet.step.supplyCollateral": "借款人向 Comet 合约供应 WETH 作为抵押品。抵押品与基础代币池分开持有。",
+  "sim.supplyAndBorrowComet.step.supplyCollateral.mobile": "供应 WETH 抵押品",
+  "sim.supplyAndBorrowComet.step.checkPrice": "Comet 合约查询 Chainlink 价格数据源以评估抵押品价值，并根据 LTV 因子计算最大借款能力。",
+  "sim.supplyAndBorrowComet.step.checkPrice.mobile": "检查抵押品价格",
+  "sim.supplyAndBorrowComet.step.borrowBase": "借款人以 USDC 调用 withdraw() 进行借款。协议内部跟踪借款余额并将 USDC 转给借款人。",
+  "sim.supplyAndBorrowComet.step.borrowBase.mobile": "借入 USDC",
+  "sim.supplyAndBorrowComet.step.utilization": "市场利用率上升，导致利率模型调整借贷和供应利率。基础供应者获得更高的收益。",
+  "sim.supplyAndBorrowComet.step.utilization.mobile": "利用率和利率调整"
+}

@@ -1,0 +1,54 @@
+{
+  "short": "セキュリティトークン標準（T-REX）",
+  "introduction": "ERC-3643は、T-REX（Token for Regulated EXchanges）とも呼ばれ、オンチェーンで規制コンプライアンスを強制するセキュリティトークンの包括的な標準です。ERC-20をアイデンティティ検証、コンプライアンスルール、および管理制御で拡張しています。すべての転送は実行前にアイデンティティレジストリとコンプライアンスモジュールに対して検証され、検証済みの投資家のみがトークンを保有・取引できることを保証します。この標準はISO 20022互換であり、現実世界の規制対象証券向けに設計されています。",
+  "designPurpose": "ERC-3643は、完全な規制コンプライアンスを維持しながら、従来の証券をブロックチェーン上に持ち込むために設計されました。証券規制は、顧客確認（KYC）検証、管轄区域に基づく転送制限、投資家の適格性認定、および転送の凍結や一時停止の機能を要求します。ERC-3643はこれらすべての制御をトークンコントラクトに直接組み込み、未検証のアドレスへのトークン転送を不可能にします。",
+  "commonUsage": "ERC-3643は、トークン化された証券、不動産トークン、株式トークン、およびオンチェーンコンプライアンスが必要なあらゆる規制対象金融商品に使用されています。Tokeny Solutionsなどの企業が規制対象デジタル証券の発行に展開しています。この標準は、オンチェーンクレーム発行者によるアイデンティティ検証、国ベースの転送制限、投資家制限、およびアカウントの凍結や強制転送などの管理操作をサポートしています。",
+
+  "fn.transfer.desc": "セキュリティトークンを受取人に転送しますが、アイデンティティレジストリを通じて両者を検証し、コンプライアンスルールを確認した後にのみ実行されます。コンプライアンスチェックに失敗した場合はリバートします。",
+  "fn.transfer.params.to": "受取人アドレス。アイデンティティレジストリで検証済みである必要があります。",
+  "fn.transfer.params.amount": "転送するトークンの数量。",
+  "fn.transfer.returns.success": "コンプライアンス準拠の転送が成功した場合にtrueを返します。",
+
+  "fn.isVerified.desc": "投資家のアドレスがアイデンティティレジストリで検証済みかどうかを確認します。検証には信頼できる発行者からの有効なクレームが必要です。",
+  "fn.isVerified.params.investor": "検証ステータスを確認する投資家のアドレス。",
+  "fn.isVerified.returns.verified": "投資家が信頼できる発行者からの有効なアイデンティティクレームを持っている場合はtrue。",
+
+  "fn.identityRegistry.desc": "投資家のアイデンティティと検証ステータスを管理するアイデンティティレジストリコントラクトのアドレスを返します。",
+  "fn.identityRegistry.returns.registry": "関連するアイデンティティレジストリコントラクトのアドレス。",
+
+  "fn.compliance.desc": "転送ルール（例：国の制限、投資家制限）を強制するコンプライアンスモジュールコントラクトのアドレスを返します。",
+  "fn.compliance.returns.complianceModule": "コンプライアンスモジュールコントラクトのアドレス。",
+
+  "fn.pause.desc": "すべてのトークン転送を一時停止します。承認されたエージェントのみが呼び出せます。一時停止中は、解除されるまで転送は行えません。",
+
+  "fn.freeze.desc": "特定のユーザーのトークンを凍結し、送受信を防止します。規制上の執行措置に使用されます。",
+  "fn.freeze.params.userAddress": "凍結するアドレス。この投資家はトークンを転送できなくなります。",
+
+  "node.investor": "投資家",
+  "node.tokenContract": "T-REXトークンコントラクト",
+  "node.identityRegistry": "アイデンティティレジストリ",
+  "node.complianceModule": "コンプライアンスモジュール",
+  "node.trustedIssuer": "信頼できるクレーム発行者",
+  "node.claimRegistry": "クレームレジストリ（ONCHAINID）",
+
+  "edge.transfer": "transfer()を呼び出し",
+  "edge.checkIdentity": "アイデンティティ検証を確認",
+  "edge.checkCompliance": "コンプライアンスルールを確認",
+  "edge.verifyIssuer": "信頼できる発行者を検証",
+  "edge.fetchClaim": "アイデンティティクレームを取得",
+  "edge.approveTransfer": "コンプライアンス承認",
+
+  "sim.compliantTransfer.name": "コンプライアンス準拠セキュリティトークン転送",
+  "sim.compliantTransfer.desc": "完全なアイデンティティ検証とコンプライアンスチェックを伴う規制対象セキュリティトークンの転送。",
+  "sim.compliantTransfer.param.sender": "送信者（投資家）",
+  "sim.compliantTransfer.param.recipient": "受取人（投資家）",
+  "sim.compliantTransfer.param.amount": "転送金額",
+  "sim.compliantTransfer.step.initiate": "投資家がセキュリティトークンの転送を開始します。トークンコントラクトは実行前にコンプライアンス検証プロセスを開始します。",
+  "sim.compliantTransfer.step.initiate.mobile": "転送を開始",
+  "sim.compliantTransfer.step.identityCheck": "トークンコントラクトがアイデンティティレジストリに問い合わせて送信者と受取人の両方を検証します。レジストリはONCHAINIDを通じて信頼できる発行者からのクレームを確認します。",
+  "sim.compliantTransfer.step.identityCheck.mobile": "アイデンティティを検証",
+  "sim.compliantTransfer.step.complianceCheck": "コンプライアンスモジュールが転送ルールを確認します：国の制限、最大保有者制限、転送量制限、およびその他の規制上の制約。",
+  "sim.compliantTransfer.step.complianceCheck.mobile": "コンプライアンスルールを確認",
+  "sim.compliantTransfer.step.settle": "すべてのチェックに合格しました。転送が実行され、残高が更新されます。両方の投資家はプロセス全体を通じて検証済みかつコンプライアンス準拠の状態を維持します。",
+  "sim.compliantTransfer.step.settle.mobile": "転送を実行"
+}

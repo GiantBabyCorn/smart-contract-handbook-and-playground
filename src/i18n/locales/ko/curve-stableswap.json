@@ -1,0 +1,68 @@
+{
+  "short": "스테이블코인 및 페깅 자산 스왑을 위한 최소 슬리피지 최적화 AMM",
+  "introduction": "Curve StableSwap은 스테이블코인이나 래핑된 토큰처럼 유사한 가치를 유지해야 하는 자산의 거래를 위해 특별히 설계된 자동화 시장 조성자입니다. 상수합과 상수곱 공식을 결합한 하이브리드 불변량을 사용하여, 페깅된 자산에 대해 기존 AMM보다 훨씬 낮은 슬리피지를 달성합니다. Curve는 DeFi에서 스테이블코인 거래를 위한 가장 깊은 유동성 소스 중 하나입니다.",
+  "designPurpose": "Curve는 유사한 가격의 자산을 거래할 때 Uniswap과 같은 상수곱 AMM의 자본 비효율성을 해결하기 위해 설계되었습니다. 증폭 파라미터 A로 제어되는 StableSwap 불변량은 페그 주변에 거의 평탄한 가격 곡선을 만들어, 최소한의 가격 영향으로 대규모 거래를 가능하게 합니다. 이 설계로 Curve는 DeFi 전반에서 스테이블코인 스왑의 선호 거래소가 되었습니다.",
+  "commonUsage": "트레이더는 Curve를 사용하여 최소 슬리피지와 수수료로 스테이블코인(DAI, USDC, USDT) 간에 스왑합니다. 유동성 공급자는 스테이블코인을 예치하여 거래 수수료와 게이지 시스템을 통한 CRV 토큰 보상을 얻습니다. Curve는 또한 1inch 같은 애그리게이터가 최적의 실행을 위해 스테이블코인 거래를 라우팅하는 데 많이 사용됩니다.",
+
+  "fn.exchange.desc": "StableSwap 불변량을 사용하여 풀 내에서 하나의 토큰을 다른 토큰으로 스왑합니다. 수수료가 차감되어 유동성 공급자에게 분배됩니다.",
+  "fn.exchange.params.i": "풀에서 입력 토큰의 인덱스입니다.",
+  "fn.exchange.params.j": "풀에서 출력 토큰의 인덱스입니다.",
+  "fn.exchange.params.dx": "스왑할 입력 토큰의 수량입니다.",
+  "fn.exchange.params.min_dy": "받을 출력 토큰의 최소 수량입니다. 충족되지 않으면 트랜잭션이 되돌려집니다 (슬리피지 보호).",
+  "fn.exchange.returns.dy": "실제로 받은 출력 토큰의 수량입니다.",
+
+  "fn.add_liquidity.desc": "LP 토큰을 대가로 토큰을 풀에 예치합니다. 토큰은 어떤 비율로든 추가할 수 있지만, 불균형한 예치에는 소액의 수수료가 발생합니다.",
+  "fn.add_liquidity.params.amounts": "예치할 토큰 수량 배열로, 풀 토큰당 하나씩입니다.",
+  "fn.add_liquidity.params.min_mint_amount": "발행할 LP 토큰의 최소 수량입니다. 충족되지 않으면 되돌려집니다.",
+  "fn.add_liquidity.returns.lpAmount": "예치자에게 발행된 LP 토큰의 수량입니다.",
+
+  "fn.remove_liquidity.desc": "LP 토큰을 소각하고 현재 풀 잔액에 비례하여 모든 기초 토큰을 인출합니다.",
+  "fn.remove_liquidity.params._amount": "소각할 LP 토큰의 수량입니다.",
+  "fn.remove_liquidity.params.min_amounts": "각 기초 토큰의 최소 수령 수량입니다.",
+  "fn.remove_liquidity.returns.amounts": "인출된 각 기초 토큰의 실제 수량입니다.",
+
+  "fn.remove_liquidity_one_coin.desc": "LP 토큰을 소각하고 단일 기초 토큰을 인출합니다. 인출 금액은 수수료와 StableSwap 불변량을 고려합니다.",
+  "fn.remove_liquidity_one_coin.params._token_amount": "소각할 LP 토큰의 수량입니다.",
+  "fn.remove_liquidity_one_coin.params.i": "인출할 토큰의 인덱스입니다.",
+  "fn.remove_liquidity_one_coin.params._min_amount": "받을 토큰의 최소 수량입니다.",
+  "fn.remove_liquidity_one_coin.returns.coinAmount": "인출된 토큰의 실제 수량입니다.",
+
+  "fn.get_dy.desc": "실행하지 않고 주어진 스왑에 대한 예상 출력 수량을 계산합니다. 오프체인에서 가격을 조회하는 데 유용합니다.",
+  "fn.get_dy.params.i": "입력 토큰의 인덱스입니다.",
+  "fn.get_dy.params.j": "출력 토큰의 인덱스입니다.",
+  "fn.get_dy.params.dx": "시뮬레이션할 입력 수량입니다.",
+  "fn.get_dy.returns.dy": "수수료 차감 후 예상 출력 수량입니다.",
+
+  "fn.get_virtual_price.desc": "기초 자산 기준으로 LP 토큰 1개의 가치를 나타내는 LP 토큰의 가상 가격을 반환합니다. 시간에 따른 풀 성장을 감지하는 데 사용됩니다.",
+  "fn.get_virtual_price.returns.price": "18자리 소수점으로 스케일링된 가상 가격입니다.",
+
+  "node.trader": "트레이더",
+  "node.stableswapPool": "StableSwap 풀",
+  "node.tokenA": "토큰 A (DAI)",
+  "node.tokenB": "토큰 B (USDC)",
+  "node.lpToken": "LP 토큰 (3CRV)",
+  "node.gauge": "유동성 게이지",
+  "node.crvRewards": "CRV 보상",
+
+  "edge.exchange": "exchange(i, j, dx)",
+  "edge.tokenIn": "토큰 입금",
+  "edge.tokenOut": "토큰 출금",
+  "edge.mintLP": "LP 토큰 발행",
+  "edge.stakeLP": "게이지에 LP 스테이킹",
+  "edge.crvEmissions": "CRV 배출",
+  "edge.claimCRV": "CRV 보상 청구",
+
+  "sim.stablecoinSwap.name": "스테이블코인 스왑",
+  "sim.stablecoinSwap.desc": "3Pool을 통한 DAI에서 USDC로의 스왑을 시뮬레이션하여, 페깅된 자산에 대한 StableSwap 불변량의 거의 제로에 가까운 슬리피지를 보여줍니다.",
+  "sim.stablecoinSwap.param.dx": "스왑 금액 (wei)",
+  "sim.stablecoinSwap.param.tokenIn": "입력 토큰",
+  "sim.stablecoinSwap.param.tokenOut": "출력 토큰",
+  "sim.stablecoinSwap.step.queryGetDy": "트레이더가 get_dy()를 조회하여 예상 출력을 미리 확인합니다. StableSwap 불변량은 균형 잡힌 풀에서 거의 1:1 가격을 생성합니다.",
+  "sim.stablecoinSwap.step.queryGetDy.mobile": "예상 출력 조회",
+  "sim.stablecoinSwap.step.transferTokenIn": "입력 DAI가 트레이더로부터 풀로 전송되어 풀의 DAI 준비금이 증가합니다.",
+  "sim.stablecoinSwap.step.transferTokenIn.mobile": "DAI를 풀로 전송",
+  "sim.stablecoinSwap.step.stableswapInvariant": "풀이 증폭 계수 A를 사용하여 StableSwap 불변량으로 재계산하여, 거의 선형적인 가격 곡선을 따라 출력 수량을 결정합니다.",
+  "sim.stablecoinSwap.step.stableswapInvariant.mobile": "불변량을 통한 계산",
+  "sim.stablecoinSwap.step.receiveTokenOut": "풀이 트레이더에게 USDC를 전송합니다. 소액의 수수료(일반적으로 0.04%)가 차감되어 LP 보유자를 위해 풀에 유지됩니다.",
+  "sim.stablecoinSwap.step.receiveTokenOut.mobile": "USDC 출력 수령"
+}

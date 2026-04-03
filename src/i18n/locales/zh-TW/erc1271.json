@@ -1,0 +1,36 @@
+{
+  "short": "合約標準簽名驗證",
+  "introduction": "ERC-1271 定義了智能合約驗證簽名的標準方式。由於智能合約沒有私鑰，無法像外部擁有帳戶（EOA）那樣產生 ECDSA 簽名。ERC-1271 引入了一個函式 isValidSignature，允許任何合約實作自己的簽名驗證邏輯。這使得智能合約錢包、多重簽名和其他基於合約的帳戶能夠簽署訊息並授權操作。",
+  "designPurpose": "ERC-1271 旨在彌合基於 EOA 的簽名驗證與智能合約錢包之間的差距。許多協議和 DApp 要求使用者簽署訊息以進行身份驗證或授權，但這僅適用於 EOA。透過標準化合約驗證簽名的方式，ERC-1271 使智能合約錢包（如 Safe/Gnosis）和帳戶抽象解決方案能夠參與依賴簽名的工作流程。",
+  "commonUsage": "ERC-1271 被多重簽名錢包（Safe）、智能合約錢包和帳戶抽象系統用來驗證鏈下授權的簽名。它使合約帳戶能夠簽署 EIP-712 結構化資料、批准免 Gas 交易，以及與 DApp 進行身份驗證。Permit2、CoW Protocol 和 0x 等協議使用 ERC-1271 來接受來自 EOA 和智能合約的簽名。",
+
+  "fn.isValidSignature.desc": "驗證給定的簽名對於提供的雜湊值是否有效。如果有效則回傳魔術值（0x1626ba7e），否則回傳任何其他值。實作定義了自己的驗證邏輯（例如，檢查多重簽名門檻）。",
+  "fn.isValidSignature.params.hash": "被簽署資料的雜湊值。通常是 EIP-712 結構化資料雜湊。",
+  "fn.isValidSignature.params.signature": "要針對雜湊值驗證的簽名位元組。",
+  "fn.isValidSignature.returns.magicValue": "如果簽名有效則回傳 0x1626ba7e，否則回傳任何其他 bytes4 值。",
+
+  "node.verifier": "驗證者 / DApp",
+  "node.contract": "ERC-1271 合約",
+  "node.signer": "恢復的簽署者",
+  "node.signatureStorage": "簽名驗證儲存",
+  "node.magicValue": "魔術值結果",
+
+  "edge.verifyRequest": "提交驗證請求",
+  "edge.checkOwners": "檢查擁有者註冊表",
+  "edge.recoverSigner": "透過 ecrecover 恢復簽署者",
+  "edge.returnMagic": "回傳魔術值",
+  "edge.validSignal": "簽名驗證確認",
+
+  "sim.contractSigVerification.name": "合約簽名驗證",
+  "sim.contractSigVerification.desc": "使用 isValidSignature 函式針對智能合約錢包驗證簽名。",
+  "sim.contractSigVerification.param.hash": "訊息雜湊",
+  "sim.contractSigVerification.param.signature": "簽名位元組",
+  "sim.contractSigVerification.step.submit": "驗證者（DApp 或協議）在智能合約錢包上呼叫 isValidSignature(hash, signature) 以驗證簽名。",
+  "sim.contractSigVerification.step.submit.mobile": "提交簽名進行驗證",
+  "sim.contractSigVerification.step.recover": "合約使用 ecrecover 從雜湊和簽名中提取簽署者地址。",
+  "sim.contractSigVerification.step.recover.mobile": "恢復簽署者地址",
+  "sim.contractSigVerification.step.checkOwner": "合約檢查恢復的簽署者是否為其內部註冊表中的授權擁有者（例如，多重簽名擁有者列表）。",
+  "sim.contractSigVerification.step.checkOwner.mobile": "檢查簽署者是否為擁有者",
+  "sim.contractSigVerification.step.return": "合約回傳魔術值 0x1626ba7e 以表示簽名有效。驗證者現在可以繼續進行授權操作。",
+  "sim.contractSigVerification.step.return.mobile": "回傳有效魔術值"
+}

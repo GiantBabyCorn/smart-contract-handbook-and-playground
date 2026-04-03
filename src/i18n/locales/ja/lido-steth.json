@@ -1,0 +1,70 @@
+{
+  "short": "ステークされたETHを表すリベーストークンstETHを発行するリキッドステーキングプロトコル",
+  "introduction": "LidoはEthereum上の最大のリキッドステーキングプロトコルで、ユーザーがETHをステークしてstETHを受け取ることができます。stETHはリベースするERC-20トークンで、Beacon Chainで獲得したステーキング報酬を反映して残高が毎日自動的に増加します。ネイティブのEthereumステーキングとは異なり、Lidoは32 ETHの最低要件を撤廃し、ユーザーがステーキング利回りを獲得しながら流動性を維持できるようにします。",
+  "designPurpose": "Lidoは、ETH保有量や技術的能力に関係なく、すべてのユーザーがEthereumのステーキングにアクセスできるように設計されました。預け入れをプールし、プロフェッショナルなノードオペレーター全体に分配することで、分散化を維持しながらステーキングを民主化します。リベースするstETHトークンはDeFi全体で担保として、流動性プールで、または利回りを生むベース資産として使用できます。",
+  "commonUsage": "ユーザーはバリデーターインフラを運用せずにステーキング報酬を獲得するためにLidoにETHを送信します。結果として得られるstETHは、AaveやMakerDAOの担保として、Curveプールでの取引ペアとして、EigenLayerでのリステーキングとして広く使用されています。開発者はstETHをストラクチャード商品やボールトにおける利回り生成プリミティブとして統合しています。",
+
+  "fn.submit.desc": "stETHシェアと引き換えにLidoステーキングプールにETHを送信します。送信されたETH値（msg.value）が預け入れられ、対応するstETHが発行されます。",
+  "fn.submit.params.referral": "統合追跡用のオプションのリファラルアドレス。該当しない場合はゼロアドレスを使用してください。",
+  "fn.submit.returns.shares": "呼び出し元に発行されるstETHシェアの数量。",
+
+  "fn.approve.desc": "標準のERC-20 approveパターンに従い、呼び出し元に代わってstETHを転送する権限をスペンダーに付与します。",
+  "fn.approve.params.spender": "stETHの使用を承認するアドレス。",
+  "fn.approve.params.amount": "スペンダーが転送を許可されるstETHの数量。",
+  "fn.approve.returns.success": "承認が成功した場合trueを返します。",
+
+  "fn.transferShares.desc": "リベースする残高ベースの転送で発生する可能性のある丸め誤差を回避して、stETHシェアを直接転送します。受取人はプールされたETHの比例量にマッピングされるシェアを受け取ります。",
+  "fn.transferShares.params.recipient": "stETHシェアを受け取るアドレス。",
+  "fn.transferShares.params.sharesAmount": "転送するシェアの数量。",
+  "fn.transferShares.returns.tokensAmount": "現在の交換レートでの転送されたシェアに相当するstETHトークン量。",
+
+  "fn.getSharesByPooledEth.desc": "現在の合計プールETHに基づいて、stETHトークン量を対応する内部シェア数に変換します。",
+  "fn.getSharesByPooledEth.params.ethAmount": "変換するstETHトークン量。",
+  "fn.getSharesByPooledEth.returns.shares": "相当するシェア数。",
+
+  "fn.getPooledEthByShares.desc": "現在の合計プールETHに基づいて、シェア量を対応するstETHトークン量に変換します。",
+  "fn.getPooledEthByShares.params.sharesAmount": "変換するシェア数。",
+  "fn.getPooledEthByShares.returns.ethAmount": "指定されたシェアに相当するstETHトークン量。",
+
+  "fn.getTotalPooledEther.desc": "預け入れETH、ステーキング報酬、およびペナルティを含む、Lidoプロトコルが管理するETHの合計量を返します。",
+  "fn.getTotalPooledEther.returns.total": "合計プールETH量（wei単位）。",
+
+  "fn.Transfer.desc": "stETHトークンがアドレス間で転送された時に発行されます。発行（ゼロアドレスから）とバーン（ゼロアドレスへ）を含みます。",
+  "fn.Transfer.params.from": "送信者アドレス。",
+  "fn.Transfer.params.to": "受取人アドレス。",
+  "fn.Transfer.params.value": "転送されたstETHトークン量。",
+
+  "fn.TransferShares.desc": "stETHシェアがアドレス間で転送された時に発行されます。このイベントは転送のシェアベースの会計ビューを提供します。",
+  "fn.TransferShares.params.from": "送信者アドレス。",
+  "fn.TransferShares.params.to": "受取人アドレス。",
+  "fn.TransferShares.params.sharesValue": "転送されたシェア数。",
+
+  "node.staker": "ステーカー",
+  "node.lido-contract": "Lidoコントラクト",
+  "node.steth-token": "stETHトークン",
+  "node.withdrawal-queue": "引き出しキュー",
+  "node.beacon-chain": "Beacon Chain",
+  "node.oracle": "Lidoオラクル",
+  "node.node-operators": "ノードオペレーター",
+
+  "edge.submitEth": "submit() + ETH",
+  "edge.mintSteth": "stETHを発行",
+  "edge.depositEth": "バリデーターにETHを預け入れ",
+  "edge.assignValidators": "バリデーターを割り当て",
+  "edge.rebaseReport": "報酬を報告（リベース）",
+  "edge.requestWithdrawal": "引き出しをリクエスト",
+  "edge.processWithdrawal": "引き出しを処理",
+
+  "sim.stake-eth-receive-steth.name": "ETHをステークしてstETHを受取",
+  "sim.stake-eth-receive-steth.desc": "完全なステーキングフローをシミュレートします：LidoへのETH送信、stETHの受取、Beacon Chainへの預け入れ、stETH残高を増加させる毎日のリベース。",
+  "sim.stake-eth-receive-steth.param.ethAmount": "ETH量（wei）",
+  "sim.stake-eth-receive-steth.param.referral": "リファラルアドレス",
+  "sim.stake-eth-receive-steth.step.submit": "ステーカーがETHを添付してsubmit()を呼び出します。ETHはBeacon Chainへの預け入れを待つ間、Lidoコントラクトにバッファリングされます。",
+  "sim.stake-eth-receive-steth.step.submit.mobile": "LidoにETHを送信",
+  "sim.stake-eth-receive-steth.step.mintSteth": "Lidoがプール全体に対するステーカーのシェアに比例してstETHを発行します。ステーカーは流動的で転送可能なステークの受領証を保持するようになります。",
+  "sim.stake-eth-receive-steth.step.mintSteth.mobile": "stETHを受取",
+  "sim.stake-eth-receive-steth.step.depositBeacon": "バッファリングされたETHは、バリデーターを運用する選定されたノードオペレーターを通じて、32 ETH単位でBeacon Chainに預け入れられます。",
+  "sim.stake-eth-receive-steth.step.depositBeacon.mobile": "Beacon Chainに預け入れ",
+  "sim.stake-eth-receive-steth.step.rebase": "Lidoオラクルが新しいステーキング報酬を報告します。合計プールETHが増加し、すべてのstETH残高が自動的に上方にリベースされます。",
+  "sim.stake-eth-receive-steth.step.rebase.mobile": "毎日のリベースで残高が増加"
+}

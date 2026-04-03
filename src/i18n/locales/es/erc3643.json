@@ -1,0 +1,54 @@
+{
+  "short": "Estándar de Tokens de Seguridad (T-REX)",
+  "introduction": "ERC-3643, también conocido como T-REX (Token for Regulated EXchanges), es un estándar integral para tokens de seguridad que aplica el cumplimiento regulatorio en la cadena. Extiende ERC-20 con verificación de identidad, reglas de cumplimiento y controles administrativos. Cada transferencia se valida contra un registro de identidad y un módulo de cumplimiento antes de su ejecución, asegurando que solo los inversores verificados puedan poseer y negociar el token. El estándar es compatible con ISO 20022 y está diseñado para valores regulados del mundo real.",
+  "designPurpose": "ERC-3643 fue diseñado para llevar los valores tradicionales a la blockchain manteniendo el cumplimiento regulatorio completo. Las regulaciones de valores requieren verificación de Conozca a Su Cliente (KYC), restricciones de transferencia basadas en jurisdicción, acreditación de inversores y la capacidad de congelar o pausar transferencias. ERC-3643 incorpora todos estos controles directamente en el contrato del token, haciendo imposible transferir tokens a direcciones no verificadas.",
+  "commonUsage": "ERC-3643 se utiliza para valores tokenizados, tokens inmobiliarios, tokens de capital y cualquier instrumento financiero regulado que requiera cumplimiento en la cadena. Es desplegado por empresas como Tokeny Solutions para emitir valores digitales regulados. El estándar soporta verificación de identidad a través de emisores de claims en la cadena, restricciones de transferencia por país, límites de inversores y operaciones administrativas como congelamiento de cuentas y transferencias forzadas.",
+
+  "fn.transfer.desc": "Transfiere tokens de seguridad a un destinatario, pero solo después de verificar ambas partes a través del registro de identidad y comprobar las reglas de cumplimiento. Revierte si las verificaciones de cumplimiento fallan.",
+  "fn.transfer.params.to": "La dirección del destinatario. Debe estar verificada en el registro de identidad.",
+  "fn.transfer.params.amount": "La cantidad de tokens a transferir.",
+  "fn.transfer.returns.success": "Devuelve true si la transferencia con cumplimiento tuvo éxito.",
+
+  "fn.isVerified.desc": "Verifica si una dirección de inversor está verificada en el registro de identidad. La verificación requiere claims válidos de emisores de confianza.",
+  "fn.isVerified.params.investor": "La dirección del inversor para verificar el estado de verificación.",
+  "fn.isVerified.returns.verified": "True si el inversor tiene claims de identidad válidos de emisores de confianza.",
+
+  "fn.identityRegistry.desc": "Devuelve la dirección del contrato de registro de identidad que gestiona las identidades de los inversores y el estado de verificación.",
+  "fn.identityRegistry.returns.registry": "La dirección del contrato de registro de identidad asociado.",
+
+  "fn.compliance.desc": "Devuelve la dirección del contrato del módulo de cumplimiento que aplica las reglas de transferencia (por ejemplo, restricciones por país, límites de inversores).",
+  "fn.compliance.returns.complianceModule": "La dirección del contrato del módulo de cumplimiento.",
+
+  "fn.pause.desc": "Pausa todas las transferencias de tokens. Solo puede ser llamada por un agente autorizado. Cuando está pausado, no se pueden realizar transferencias hasta que se reanude.",
+
+  "fn.freeze.desc": "Congela los tokens de un usuario específico, impidiéndole enviar o recibir transferencias. Se utiliza para acciones de cumplimiento regulatorio.",
+  "fn.freeze.params.userAddress": "La dirección a congelar. Este inversor no podrá transferir tokens.",
+
+  "node.investor": "Inversor",
+  "node.tokenContract": "Contrato de Token T-REX",
+  "node.identityRegistry": "Registro de Identidad",
+  "node.complianceModule": "Módulo de Cumplimiento",
+  "node.trustedIssuer": "Emisores de Claims de Confianza",
+  "node.claimRegistry": "Registro de Claims (ONCHAINID)",
+
+  "edge.transfer": "Llamar transfer()",
+  "edge.checkIdentity": "Verificar identidad",
+  "edge.checkCompliance": "Verificar reglas de cumplimiento",
+  "edge.verifyIssuer": "Verificar emisor de confianza",
+  "edge.fetchClaim": "Obtener claims de identidad",
+  "edge.approveTransfer": "Cumplimiento aprobado",
+
+  "sim.compliantTransfer.name": "Transferencia de Token de Seguridad con Cumplimiento",
+  "sim.compliantTransfer.desc": "Transferir tokens de seguridad regulados con verificación completa de identidad y comprobación de cumplimiento.",
+  "sim.compliantTransfer.param.sender": "Remitente (inversor)",
+  "sim.compliantTransfer.param.recipient": "Destinatario (inversor)",
+  "sim.compliantTransfer.param.amount": "Cantidad a transferir",
+  "sim.compliantTransfer.step.initiate": "Un inversor inicia una transferencia de tokens de seguridad. El contrato del token comienza el proceso de verificación de cumplimiento antes de ejecutarla.",
+  "sim.compliantTransfer.step.initiate.mobile": "Iniciar transferencia",
+  "sim.compliantTransfer.step.identityCheck": "El contrato del token consulta el registro de identidad para verificar tanto al remitente como al destinatario. El registro comprueba los claims de emisores de confianza a través de ONCHAINID.",
+  "sim.compliantTransfer.step.identityCheck.mobile": "Verificar identidades",
+  "sim.compliantTransfer.step.complianceCheck": "El módulo de cumplimiento verifica las reglas de transferencia: restricciones por país, límites máximos de tenedores, límites de volumen de transferencia y cualquier otra restricción regulatoria.",
+  "sim.compliantTransfer.step.complianceCheck.mobile": "Verificar reglas de cumplimiento",
+  "sim.compliantTransfer.step.settle": "Todas las verificaciones pasan. La transferencia se ejecuta, actualizando los saldos. Ambos inversores permanecen verificados y en cumplimiento durante todo el proceso.",
+  "sim.compliantTransfer.step.settle.mobile": "Ejecutar transferencia"
+}

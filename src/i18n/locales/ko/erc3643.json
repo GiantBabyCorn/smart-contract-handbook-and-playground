@@ -1,0 +1,54 @@
+{
+  "short": "증권 토큰 표준 (T-REX)",
+  "introduction": "ERC-3643은 T-REX(Token for Regulated EXchanges)로도 알려져 있으며, 온체인에서 규제 준수를 강제하는 증권 토큰을 위한 포괄적인 표준입니다. ERC-20을 신원 검증, 준수 규칙, 관리 제어 기능으로 확장합니다. 모든 전송은 실행 전에 신원 레지스트리와 준수 모듈에 대해 검증되어, 검증된 투자자만 토큰을 보유하고 거래할 수 있도록 보장합니다. 이 표준은 ISO 20022과 호환되며 실물 규제 증권을 위해 설계되었습니다.",
+  "designPurpose": "ERC-3643은 완전한 규제 준수를 유지하면서 전통적인 증권을 블록체인으로 가져오기 위해 설계되었습니다. 증권 규정은 고객 신원 확인(KYC) 검증, 관할권에 따른 전송 제한, 투자자 인가, 전송 동결 또는 일시 중지 기능을 요구합니다. ERC-3643은 이러한 모든 제어를 토큰 컨트랙트에 직접 내장하여, 검증되지 않은 주소로 토큰을 전송하는 것을 불가능하게 만듭니다.",
+  "commonUsage": "ERC-3643은 토큰화된 증권, 부동산 토큰, 지분 토큰, 온체인 준수가 필요한 모든 규제 금융 상품에 사용됩니다. Tokeny Solutions와 같은 회사에서 규제 디지털 증권을 발행하는 데 배포됩니다. 이 표준은 온체인 클레임 발행자를 통한 신원 검증, 국가별 전송 제한, 투자자 한도, 계정 동결 및 강제 전송과 같은 관리 작업을 지원합니다.",
+
+  "fn.transfer.desc": "수령인에게 증권 토큰을 전송하지만, 신원 레지스트리를 통해 양 당사자를 검증하고 준수 규칙을 확인한 후에만 실행됩니다. 준수 확인에 실패하면 되돌려집니다.",
+  "fn.transfer.params.to": "수령인 주소입니다. 신원 레지스트리에서 검증되어야 합니다.",
+  "fn.transfer.params.amount": "전송할 토큰 수량입니다.",
+  "fn.transfer.returns.success": "준수 전송이 성공하면 true를 반환합니다.",
+
+  "fn.isVerified.desc": "투자자 주소가 신원 레지스트리에서 검증되었는지 확인합니다. 검증에는 신뢰할 수 있는 발행자의 유효한 클레임이 필요합니다.",
+  "fn.isVerified.params.investor": "검증 상태를 확인할 투자자 주소입니다.",
+  "fn.isVerified.returns.verified": "투자자가 신뢰할 수 있는 발행자로부터 유효한 신원 클레임을 가지고 있으면 true입니다.",
+
+  "fn.identityRegistry.desc": "투자자 신원 및 검증 상태를 관리하는 신원 레지스트리 컨트랙트의 주소를 반환합니다.",
+  "fn.identityRegistry.returns.registry": "연결된 신원 레지스트리 컨트랙트의 주소입니다.",
+
+  "fn.compliance.desc": "전송 규칙(예: 국가 제한, 투자자 한도)을 강제하는 준수 모듈 컨트랙트의 주소를 반환합니다.",
+  "fn.compliance.returns.complianceModule": "준수 모듈 컨트랙트의 주소입니다.",
+
+  "fn.pause.desc": "모든 토큰 전송을 일시 중지합니다. 승인된 에이전트만 호출할 수 있습니다. 일시 중지되면 해제될 때까지 전송이 불가능합니다.",
+
+  "fn.freeze.desc": "특정 사용자의 토큰을 동결하여 전송 및 수령을 방지합니다. 규제 집행 조치에 사용됩니다.",
+  "fn.freeze.params.userAddress": "동결할 주소입니다. 이 투자자는 토큰을 전송할 수 없게 됩니다.",
+
+  "node.investor": "투자자",
+  "node.tokenContract": "T-REX 토큰 컨트랙트",
+  "node.identityRegistry": "신원 레지스트리",
+  "node.complianceModule": "준수 모듈",
+  "node.trustedIssuer": "신뢰할 수 있는 클레임 발행자",
+  "node.claimRegistry": "클레임 레지스트리 (ONCHAINID)",
+
+  "edge.transfer": "transfer() 호출",
+  "edge.checkIdentity": "신원 검증 확인",
+  "edge.checkCompliance": "준수 규칙 확인",
+  "edge.verifyIssuer": "신뢰할 수 있는 발행자 검증",
+  "edge.fetchClaim": "신원 클레임 조회",
+  "edge.approveTransfer": "준수 승인됨",
+
+  "sim.compliantTransfer.name": "준수 증권 토큰 전송",
+  "sim.compliantTransfer.desc": "완전한 신원 검증 및 준수 확인을 포함하여 규제 증권 토큰을 전송합니다.",
+  "sim.compliantTransfer.param.sender": "발신자 (투자자)",
+  "sim.compliantTransfer.param.recipient": "수령인 (투자자)",
+  "sim.compliantTransfer.param.amount": "전송 수량",
+  "sim.compliantTransfer.step.initiate": "투자자가 증권 토큰 전송을 시작합니다. 토큰 컨트랙트는 실행 전에 준수 검증 프로세스를 시작합니다.",
+  "sim.compliantTransfer.step.initiate.mobile": "전송 시작",
+  "sim.compliantTransfer.step.identityCheck": "토큰 컨트랙트가 신원 레지스트리에 발신자와 수령인 모두를 검증하도록 조회합니다. 레지스트리는 ONCHAINID를 통해 신뢰할 수 있는 발행자의 클레임을 확인합니다.",
+  "sim.compliantTransfer.step.identityCheck.mobile": "신원 검증",
+  "sim.compliantTransfer.step.complianceCheck": "준수 모듈이 전송 규칙을 확인합니다: 국가 제한, 최대 보유자 한도, 전송 수량 한도 및 기타 규제 조건을 검사합니다.",
+  "sim.compliantTransfer.step.complianceCheck.mobile": "준수 규칙 확인",
+  "sim.compliantTransfer.step.settle": "모든 확인을 통과합니다. 전송이 실행되고 잔액이 업데이트됩니다. 양 투자자는 프로세스 전반에 걸쳐 검증되고 준수 상태를 유지합니다.",
+  "sim.compliantTransfer.step.settle.mobile": "전송 실행"
+}

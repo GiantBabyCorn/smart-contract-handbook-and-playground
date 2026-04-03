@@ -1,0 +1,45 @@
+{
+  "short": "プロキシストレージスロット標準",
+  "introduction": "ERC-1967は、プロキシコントラクトが実装アドレス、管理者アドレス、およびビーコンアドレスを保存するために使用するストレージスロットを標準化しています。これらのスロットは、よく知られた文字列のkeccak256から1を引いた値として計算され、実装コントラクトのストレージと衝突する可能性が極めて低い疑似ランダムな位置に配置されます。この標準により、ブロックエクスプローラやツールがプロキシコントラクトを確実に検出し、実装アドレスを表示できるようになります。",
+  "designPurpose": "ERC-1967は、プロキシコントラクトのストレージ衝突問題を解決し、プロキシコントラクトを検出可能にするために設計されました。この標準以前は、異なるプロキシ実装が異なるストレージスロットを使用しており、ツールがプロキシを確実に検出することが不可能でした。ストレージスロットの位置と関連イベントを標準化することで、ERC-1967はEtherscanやその他のエクスプローラがプロキシを識別し、実装のソースコードにリンクすることを可能にします。",
+  "commonUsage": "ERC-1967は、OpenZeppelinのTransparentUpgradeableProxyやUUPSプロキシを含む、Ethereumエコシステムのほぼすべてのプロキシコントラクトで使用されています。Etherscanなどのブロックエクスプローラは、これらの標準化されたスロットを読み取って実装コントラクトの詳細を表示します。この標準は3つのスロットを定義しています：ロジックコントラクト用のIMPLEMENTATION_SLOT、アップグレード管理者用のADMIN_SLOT、およびビーコンプロキシパターン用のBEACON_SLOT。",
+
+  "fn.implementation.desc": "標準化されたERC-1967実装スロットに保存されている現在のロジック/実装コントラクトのアドレスを返します。",
+  "fn.implementation.returns.impl": "現在の実装コントラクトのアドレス。",
+
+  "fn.admin.desc": "標準化されたERC-1967管理者スロットに保存されているプロキシ管理者のアドレスを返します。管理者は通常、プロキシをアップグレードする権限を持っています。",
+  "fn.admin.returns.admin": "現在のプロキシ管理者のアドレス。",
+
+  "fn.Upgraded.desc": "実装アドレスが変更された際に発行されます。ツールやインデクサはこのイベントを監視してプロキシのアップグレードを追跡します。",
+  "fn.Upgraded.params.implementation": "新しい実装コントラクトのアドレス。",
+
+  "fn.AdminChanged.desc": "プロキシ管理者のアドレスが変更された際に発行されます。",
+  "fn.AdminChanged.params.previousAdmin": "前の管理者のアドレス。",
+  "fn.AdminChanged.params.newAdmin": "新しい管理者のアドレス。",
+
+  "node.user": "ユーザー / 呼び出し元",
+  "node.proxy": "ERC-1967プロキシ",
+  "node.implementation": "実装コントラクト",
+  "node.admin": "プロキシ管理者",
+  "node.storageSlots": "標準ストレージスロット",
+
+  "edge.callProxy": "プロキシを呼び出し",
+  "edge.delegatecall": "delegatecall",
+  "edge.readSlot": "ストレージスロットを読み取り",
+  "edge.upgrade": "実装をアップグレード",
+  "edge.emitUpgraded": "Upgradedイベントを発行",
+  "edge.emitAdminChanged": "AdminChangedイベントを発行",
+
+  "sim.delegatecallProxy.name": "プロキシDelegatecallフロー",
+  "sim.delegatecallProxy.desc": "ユーザーの呼び出しがERC-1967プロキシを通じてdelegatecallで実装コントラクトに流れる様子を観察します。",
+  "sim.delegatecallProxy.param.caller": "呼び出し元アドレス",
+  "sim.delegatecallProxy.param.proxyAddress": "プロキシアドレス",
+  "sim.delegatecallProxy.step.callProxy": "ユーザーがプロキシコントラクトアドレスにトランザクションを送信します。プロキシのfallback関数がトリガーされます。",
+  "sim.delegatecallProxy.step.callProxy.mobile": "プロキシを呼び出し",
+  "sim.delegatecallProxy.step.readSlot": "プロキシが標準化されたERC-1967ストレージスロット（keccak256('eip1967.proxy.implementation') - 1）から実装アドレスを読み取ります。",
+  "sim.delegatecallProxy.step.readSlot.mobile": "実装スロットを読み取り",
+  "sim.delegatecallProxy.step.delegatecall": "プロキシが実装に対してdelegatecallを実行します。コードはプロキシのコンテキストで実行され、プロキシのストレージとmsg.senderを使用します。",
+  "sim.delegatecallProxy.step.delegatecall.mobile": "実装にdelegatecall",
+  "sim.delegatecallProxy.step.return": "実装が関数ロジックを実行し、プロキシを通じて元の呼び出し元に結果を返します。",
+  "sim.delegatecallProxy.step.return.mobile": "呼び出し元に結果を返す"
+}

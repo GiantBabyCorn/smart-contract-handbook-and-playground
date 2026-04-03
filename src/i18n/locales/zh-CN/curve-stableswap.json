@@ -1,0 +1,68 @@
+{
+  "short": "针对稳定币和锚定资产兑换优化的低滑点 AMM",
+  "introduction": "Curve StableSwap 是一个专为交易应保持相似价值的资产（如稳定币或封装代币）而设计的自动做市商。它使用结合恒定和与恒定乘积公式的混合不变量，相比传统 AMM 在锚定资产交易中实现了显著更低的滑点。Curve 是 DeFi 中稳定币交易最深的流动性来源之一。",
+  "designPurpose": "Curve 旨在解决像 Uniswap 这样的恒定乘积 AMM 在交易相似价格资产时的资本效率低下问题。由放大系数 A 控制的 StableSwap 不变量在锚定点附近创建了近乎平坦的价格曲线，使大额交易的价格影响最小化。这种设计使 Curve 成为 DeFi 中稳定币兑换的首选场所。",
+  "commonUsage": "交易者使用 Curve 以最低的滑点和手续费在稳定币（DAI、USDC、USDT）之间兑换。流动性提供者存入稳定币以赚取交易手续费和通过 Gauge 系统获得 CRV 代币奖励。Curve 也被 1inch 等聚合器大量用于路由稳定币交易以获得最佳执行。",
+
+  "fn.exchange.desc": "使用 StableSwap 不变量在池内将一种代币兑换为另一种。扣除手续费并分配给流动性提供者。",
+  "fn.exchange.params.i": "池中输入代币的索引。",
+  "fn.exchange.params.j": "池中输出代币的索引。",
+  "fn.exchange.params.dx": "要兑换的输入代币数量。",
+  "fn.exchange.params.min_dy": "要接收的最低输出代币数量。未满足则回退（滑点保护）。",
+  "fn.exchange.returns.dy": "实际收到的输出代币数量。",
+
+  "fn.add_liquidity.desc": "将代币存入池中以换取 LP 代币。代币可以任意比例添加，但不平衡的存款会产生少量费用。",
+  "fn.add_liquidity.params.amounts": "要存入的代币数量数组，每种池代币一个。",
+  "fn.add_liquidity.params.min_mint_amount": "要铸造的最低 LP 代币数量。未满足则回退。",
+  "fn.add_liquidity.returns.lpAmount": "铸造给存款人的 LP 代币数量。",
+
+  "fn.remove_liquidity.desc": "销毁 LP 代币并按当前池余额比例提取所有底层代币。",
+  "fn.remove_liquidity.params._amount": "要销毁的 LP 代币数量。",
+  "fn.remove_liquidity.params.min_amounts": "每种底层代币要接收的最低数量。",
+  "fn.remove_liquidity.returns.amounts": "实际提取的每种底层代币数量。",
+
+  "fn.remove_liquidity_one_coin.desc": "销毁 LP 代币并提取单一底层代币。提取数量考虑了手续费和 StableSwap 不变量。",
+  "fn.remove_liquidity_one_coin.params._token_amount": "要销毁的 LP 代币数量。",
+  "fn.remove_liquidity_one_coin.params.i": "要提取的代币索引。",
+  "fn.remove_liquidity_one_coin.params._min_amount": "要接收的最低代币数量。",
+  "fn.remove_liquidity_one_coin.returns.coinAmount": "实际提取的代币数量。",
+
+  "fn.get_dy.desc": "在不执行交易的情况下计算给定兑换的预期输出数量。适用于链下报价。",
+  "fn.get_dy.params.i": "输入代币的索引。",
+  "fn.get_dy.params.j": "输出代币的索引。",
+  "fn.get_dy.params.dx": "要模拟的输入数量。",
+  "fn.get_dy.returns.dy": "扣除手续费后的预期输出数量。",
+
+  "fn.get_virtual_price.desc": "返回 LP 代币的虚拟价格，表示一个 LP 代币相对于底层资产的价值。用于检测池随时间的增长。",
+  "fn.get_virtual_price.returns.price": "以 18 位精度缩放的虚拟价格。",
+
+  "node.trader": "交易者",
+  "node.stableswapPool": "StableSwap 池",
+  "node.tokenA": "代币 A（DAI）",
+  "node.tokenB": "代币 B（USDC）",
+  "node.lpToken": "LP 代币（3CRV）",
+  "node.gauge": "流动性 Gauge",
+  "node.crvRewards": "CRV 奖励",
+
+  "edge.exchange": "exchange(i, j, dx)",
+  "edge.tokenIn": "代币输入",
+  "edge.tokenOut": "代币输出",
+  "edge.mintLP": "铸造 LP 代币",
+  "edge.stakeLP": "在 Gauge 中质押 LP",
+  "edge.crvEmissions": "CRV 排放",
+  "edge.claimCRV": "领取 CRV 奖励",
+
+  "sim.stablecoinSwap.name": "稳定币兑换",
+  "sim.stablecoinSwap.desc": "模拟通过 3Pool 将 DAI 兑换为 USDC，展示 StableSwap 不变量对锚定资产的近零滑点。",
+  "sim.stablecoinSwap.param.dx": "兑换数量（wei）",
+  "sim.stablecoinSwap.param.tokenIn": "输入代币",
+  "sim.stablecoinSwap.param.tokenOut": "输出代币",
+  "sim.stablecoinSwap.step.queryGetDy": "交易者查询 get_dy() 以预览预期输出。StableSwap 不变量为平衡池产生接近 1:1 的定价。",
+  "sim.stablecoinSwap.step.queryGetDy.mobile": "查询预期输出",
+  "sim.stablecoinSwap.step.transferTokenIn": "输入的 DAI 从交易者转入池中，增加池的 DAI 储备。",
+  "sim.stablecoinSwap.step.transferTokenIn.mobile": "将 DAI 转入池中",
+  "sim.stablecoinSwap.step.stableswapInvariant": "池使用带放大系数 A 的 StableSwap 不变量重新计算，沿近线性价格曲线确定输出数量。",
+  "sim.stablecoinSwap.step.stableswapInvariant.mobile": "通过不变量计算",
+  "sim.stablecoinSwap.step.receiveTokenOut": "池将 USDC 转给交易者。扣除少量手续费（通常为 0.04%），留在池中分配给 LP 持有者。",
+  "sim.stablecoinSwap.step.receiveTokenOut.mobile": "接收 USDC 输出"
+}

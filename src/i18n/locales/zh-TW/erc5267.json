@@ -1,0 +1,40 @@
+{
+  "short": "EIP-712 網域發現",
+  "introduction": "ERC-5267 提供了一種標準方式，讓智能合約公開其 EIP-712 網域分隔符配置。它定義了一個單一函式 eip712Domain()，回傳用於建構網域分隔符的所有欄位：名稱、版本、鏈 ID、驗證合約地址、鹽值，以及實際使用了哪些欄位。這使 DApp 和錢包能夠動態發現正確的網域參數以簽署 EIP-712 類型化資料，而無需硬編碼。",
+  "designPurpose": "ERC-5267 旨在解決 EIP-712 簽署的網域分隔符發現問題。在此標準之前，DApp 必須硬編碼網域參數或使用鏈下註冊表來了解如何為合約建構正確的網域分隔符。這容易出錯，特別是在鏈分叉或合約遷移之後。ERC-5267 使網域資訊具有自描述性，允許錢包直接從合約查詢。",
+  "commonUsage": "ERC-5267 被任何實作 EIP-712 結構化資料簽署的合約使用，包括 ERC-2612（permit）、治理合約和訂單簿 DEX。MetaMask 等錢包可以呼叫 eip712Domain() 來發現正確的簽署參數。OpenZeppelin 的 EIP712 基礎合約自動實作了此標準。",
+
+  "fn.eip712Domain.desc": "回傳此合約使用的 EIP-712 網域欄位。欄位位元遮罩指示回傳值中哪些實際用於網域分隔符計算。",
+  "fn.eip712Domain.returns.fields": "指示使用了哪些網域欄位的位元遮罩（位元 0 = 名稱，位元 1 = 版本，位元 2 = chainId，位元 3 = verifyingContract，位元 4 = salt）。",
+  "fn.eip712Domain.returns.name": "簽署網域的人類可讀名稱（例如代幣名稱）。",
+  "fn.eip712Domain.returns.version": "簽署網域的當前主要版本（例如 '1'）。",
+  "fn.eip712Domain.returns.chainId": "合約部署所在的鏈 ID。",
+  "fn.eip712Domain.returns.verifyingContract": "將驗證簽章的合約地址。",
+  "fn.eip712Domain.returns.salt": "用於網域消歧的可選鹽值。",
+  "fn.eip712Domain.returns.extensions": "網域分隔符邏輯的任何擴展的 EIP 編號陣列。",
+
+  "fn.EIP712DomainChanged.desc": "當網域參數變更時發出，表示快取的網域分隔符應被失效。這可能在合約升級或鏈分叉後發生。",
+
+  "node.dapp": "DApp / 錢包",
+  "node.contract": "ERC-5267 合約",
+  "node.domainInfo": "網域資訊",
+  "node.eip712Context": "EIP-712 網域分隔符",
+
+  "edge.discoverDomain": "呼叫 eip712Domain()",
+  "edge.readDomainFields": "讀取網域欄位",
+  "edge.buildDomainSeparator": "建構 DOMAIN_SEPARATOR",
+  "edge.domainReturned": "網域資訊已回傳",
+  "edge.emitChanged": "發出 EIP712DomainChanged",
+
+  "sim.domainDiscovery.name": "EIP-712 網域發現",
+  "sim.domainDiscovery.desc": "透過呼叫 eip712Domain() 函式發現合約的 EIP-712 網域配置。",
+  "sim.domainDiscovery.param.contractAddress": "要查詢的合約地址",
+  "sim.domainDiscovery.step.call": "DApp 或錢包在目標合約上呼叫 eip712Domain() 以發現其 EIP-712 簽署參數。",
+  "sim.domainDiscovery.step.call.mobile": "呼叫 eip712Domain()",
+  "sim.domainDiscovery.step.read": "合約讀取其儲存的網域欄位：名稱、版本和鏈 ID。這些通常在合約初始化期間設定。",
+  "sim.domainDiscovery.step.read.mobile": "讀取網域欄位",
+  "sim.domainDiscovery.step.build": "合約透過使用 keccak256 將類型雜湊與網域欄位一起雜湊來組裝完整的網域分隔符。",
+  "sim.domainDiscovery.step.build.mobile": "建構網域分隔符",
+  "sim.domainDiscovery.step.return": "網域資訊回傳給 DApp。錢包現在可以為簽署建構正確的 EIP-712 類型化資料。",
+  "sim.domainDiscovery.step.return.mobile": "網域資訊已回傳"
+}

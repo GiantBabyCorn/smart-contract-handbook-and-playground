@@ -1,0 +1,83 @@
+{
+  "short": "代替可能トークン規格",
+  "introduction": "ERC-20はEthereum上の代替可能トークンの基盤となる規格であり、共通インターフェースを定義しています。2015年11月にFabian Vogelstellerによって提案され、エコシステムで最も広く採用されているトークン規格となりました。すべてのERC-20トークンは同一で交換可能であり、1ドル紙幣が他のどのドル紙幣とも等価であるのと同様です。この規格は、トークンの転送、第三者による支出の承認、残高の照会を可能にする6つのコア関数と2つのイベントを定義しています。",
+  "designPurpose": "ERC-20は、あらゆる代替可能トークンがウォレット、取引所、その他のスマートコントラクトで統一的に扱えるインターフェースを作成するために設計されました。ERC-20以前は、各トークンコントラクトが独自のカスタムAPIを持っており、統合が煩雑でエラーが発生しやすい状況でした。インターフェースを標準化することで、ERC-20はトークンエコシステムとコンポーザブルなトークンインタラクションに依存するDeFiアプリケーションの爆発的な成長を可能にしました。",
+  "commonUsage": "ERC-20トークンは、暗号通貨、ステーブルコイン（USDC、DAI、USDT）、ガバナンストークン、ユーティリティトークン、ラップドアセットに使用されます。分散型取引所、レンディングプロトコル、イールドファーミング、そしてほぼすべてのDeFiアプリケーションの構成要素として機能します。この規格は、ミント、バーン、パーミットベースの承認（ERC-2612）などの機能で拡張されることも一般的です。",
+
+  "fn.totalSupply.desc": "存在するトークンの総数を返します。この値は、ミントされたすべてのトークンからバーンされたトークンを差し引いたものです。",
+  "fn.totalSupply.returns.supply": "トークンの総供給量。最小単位（例：18桁トークンの場合はwei）で表されます。",
+
+  "fn.balanceOf.desc": "特定のアカウントのトークン残高を返します。内部の_balancesマッピングを照会して、指定されたアドレスが保有するトークン数を取得します。",
+  "fn.balanceOf.params.account": "残高を照会するアドレス。",
+  "fn.balanceOf.returns.balance": "アカウントが保有するトークン数。最小単位で表されます。",
+
+  "fn.transfer.desc": "呼び出し元のアカウントから受取人にトークンを移動します。呼び出し元は十分な残高を持っている必要があります。成功時にTransferイベントを発行します。",
+  "fn.transfer.params.to": "トークンを受け取る受取人のアドレス。",
+  "fn.transfer.params.amount": "転送するトークン数。最小単位で表します。",
+  "fn.transfer.returns.success": "転送が成功した場合はtrueを返し、それ以外はリバートします。",
+
+  "fn.approve.desc": "呼び出し元のアカウントからspenderが転送できる許可量を設定します。既存の許可量を置き換えます。Approvalイベントを発行します。",
+  "fn.approve.params.spender": "呼び出し元に代わってトークンを使用する権限を付与されたアドレス。",
+  "fn.approve.params.amount": "spenderが転送を許可される最大トークン数。",
+  "fn.approve.returns.success": "承認が成功した場合はtrueを返します。",
+
+  "fn.allowance.desc": "ownerに代わってspenderが転送できる残りのトークン数を返します。transferFromが呼び出されるとこの値は減少します。",
+  "fn.allowance.params.owner": "トークンを所有するアドレス。",
+  "fn.allowance.params.spender": "ownerのトークンを使用する権限を持つアドレス。",
+  "fn.allowance.returns.remaining": "spenderの残りの許可量。",
+
+  "fn.transferFrom.desc": "許可量メカニズムを使用して、あるアカウントから別のアカウントにトークンを移動します。呼び出し元は、少なくとも転送量分、'from'アドレスから承認されている必要があります。許可量はそれに応じて減少します。",
+  "fn.transferFrom.params.from": "トークンの転送元アドレス。",
+  "fn.transferFrom.params.to": "トークンの転送先アドレス。",
+  "fn.transferFrom.params.amount": "転送するトークン数。",
+  "fn.transferFrom.returns.success": "転送が成功した場合はtrueを返します。",
+
+  "fn.Transfer.desc": "ゼロ値の転送を含め、トークンがあるアカウントから別のアカウントに移動された時に発行されます。ミント時（from = address(0)）およびバーン時（to = address(0)）にも発行されます。",
+  "fn.Transfer.params.from": "トークンの転送元アドレス。",
+  "fn.Transfer.params.to": "トークンの転送先アドレス。",
+  "fn.Transfer.params.value": "転送されたトークン数。",
+
+  "fn.Approval.desc": "approve呼び出しによってownerに対するspenderの許可量が設定された時に発行されます。valueは新しい許可量です。",
+  "fn.Approval.params.owner": "支出を承認したアドレス。",
+  "fn.Approval.params.spender": "支出を承認されたアドレス。",
+  "fn.Approval.params.value": "新しい許可量。",
+
+  "node.user": "トークン保有者",
+  "node.contract": "ERC-20コントラクト",
+  "node.recipient": "受取人",
+  "node.spender": "承認されたSpender",
+  "node.storageBalances": "トークンストレージ",
+  "node.tokenFlow": "トークン転送",
+
+  "edge.callTransfer": "transfer()を呼び出す",
+  "edge.updateBalance": "残高を更新",
+  "edge.tokensMove": "トークンが移動",
+  "edge.callApprove": "approve()を呼び出す",
+  "edge.allowanceGranted": "許可量を付与",
+  "edge.callTransferFrom": "transferFrom()を呼び出す",
+  "edge.emitTransfer": "Transferイベントを発行",
+
+  "sim.basicTransfer.name": "基本トークン転送",
+  "sim.basicTransfer.desc": "transfer()関数を使用して、ERC-20トークンをあるアドレスから別のアドレスに直接転送します。",
+  "sim.basicTransfer.param.sender": "送信者アドレス",
+  "sim.basicTransfer.param.recipient": "受取人アドレス",
+  "sim.basicTransfer.param.amount": "量（wei単位）",
+  "sim.basicTransfer.step.call": "送信者がERC-20コントラクトでtransfer(to, amount)を呼び出し、直接トークン転送を開始します。",
+  "sim.basicTransfer.step.call.mobile": "送信者がtransfer()を呼び出す",
+  "sim.basicTransfer.step.validate": "コントラクトは送信者が十分な残高を持っていることを検証し、_balancesマッピングを更新します：送信者を減額し、受取人を増額します。",
+  "sim.basicTransfer.step.validate.mobile": "検証と残高更新",
+  "sim.basicTransfer.step.tokenflow": "トークンが送信者の残高から受取人の残高に移動されます。受取人は転送された量を保有します。",
+  "sim.basicTransfer.step.tokenflow.mobile": "トークン配送完了",
+  "sim.basicTransfer.step.event": "コントラクトがTransfer(from, to, value)イベントを発行し、オフチェーンサービスが転送を追跡できるようにします。",
+  "sim.basicTransfer.step.event.mobile": "Transferイベントを発行",
+
+  "sim.approveAndTransfer.name": "承認とTransferFrom",
+  "sim.approveAndTransfer.desc": "DEXやDeFiプロトコルがユーザーに代わってトークンを使用するために使う、2段階のapprove + transferFromパターンを示します。",
+  "sim.approveAndTransfer.param.owner": "トークン所有者",
+  "sim.approveAndTransfer.param.spender": "承認されたSpender",
+  "sim.approveAndTransfer.param.allowanceAmount": "許可量（wei単位）",
+  "sim.approveAndTransfer.step.approve": "トークン所有者がapprove(spender, amount)を呼び出し、spenderに指定量までの転送を許可します。",
+  "sim.approveAndTransfer.step.storageAllowance": "コントラクトが_allowancesマッピングに許可量を保存します：_allowances[owner][spender] = amount。",
+  "sim.approveAndTransfer.step.grant": "spenderが承認されました。いつでもtransferFromを呼び出して、ownerの残高からトークンを移動できます。",
+  "sim.approveAndTransfer.step.transferFrom": "spenderがtransferFrom(owner, recipient, amount)を呼び出します。コントラクトは許可量を確認し、量を差し引き、トークンを受取人に移動します。"
+}

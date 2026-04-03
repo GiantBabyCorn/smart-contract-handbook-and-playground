@@ -1,0 +1,34 @@
+{
+  "short": "NFTロイヤリティ標準",
+  "introduction": "ERC-2981は、NFTのロイヤリティ支払い情報を取得するための標準化された方法を定義しています。単一の関数royaltyInfoを提供し、指定されたトークンの販売価格に対するロイヤリティ受取人のアドレスとロイヤリティ金額を返します。この標準はトークン標準に依存せず、ERC-721とERC-1155の両方のトークンで動作します。重要な点として、ERC-2981はロイヤリティ情報を提供するだけであり、オンチェーンでのロイヤリティ支払いを強制するものではありません。",
+  "designPurpose": "ERC-2981は、NFTクリエイターが希望するロイヤリティの割合と受取人アドレスを標準的な方法で示せるように設計されました。この標準以前は、各マーケットプレイスが独自のロイヤリティシステムを持っており、異なるプラットフォームでトークンが取引された際にロイヤリティの断片化や未払いが発生していました。ロイヤリティ情報をトークンコントラクト自体に埋め込むことで、ERC-2981はあらゆるマーケットプレイスがクリエイターのロイヤリティ設定を発見し尊重することを可能にします。",
+  "commonUsage": "ERC-2981は、NFTコレクション、デジタルアートプラットフォーム、およびマーケットプレイスでクリエイターのロイヤリティを指定するために使用されています。OpenSea、LooksRare、Blurなどのマーケットプレイスは、販売時にroyaltyInfoを問い合わせてクリエイターへの支払い額を決定します。この標準は、トークンごとおよびデフォルトのロイヤリティ設定をサポートしており、同じコレクション内の異なるトークンに異なるロイヤリティ率を設定できます。",
+
+  "fn.royaltyInfo.desc": "指定されたトークンと販売価格に対するロイヤリティ受取人とロイヤリティ金額を返します。ロイヤリティ金額はsalePrice * feeNumerator / feeDenominator（通常、ベーシスポイントで10000）として計算されます。",
+  "fn.royaltyInfo.params.tokenId": "ロイヤリティ情報を問い合わせるトークンID。",
+  "fn.royaltyInfo.params.salePrice": "ロイヤリティ金額の計算に使用されるトークンの販売価格。",
+  "fn.royaltyInfo.returns.receiver": "ロイヤリティの支払いを受け取るべきアドレス。",
+  "fn.royaltyInfo.returns.royaltyAmount": "支払われるべきロイヤリティ金額。salePriceと同じ単位で表示されます。",
+
+  "node.marketplace": "マーケットプレイス",
+  "node.contract": "ERC-2981 NFTコントラクト",
+  "node.storage": "ロイヤリティストレージ",
+  "node.seller": "売り手",
+  "node.royaltyReceiver": "ロイヤリティ受取人（クリエイター）",
+
+  "edge.queryRoyalty": "royaltyInfo()を問い合わせ",
+  "edge.lookupRoyalty": "ロイヤリティ設定を検索",
+  "edge.saleProceeds": "販売収益（ロイヤリティ差引後）",
+  "edge.royaltyPayment": "ロイヤリティ支払い",
+
+  "sim.royaltyCalculation.name": "販売時のロイヤリティ計算",
+  "sim.royaltyCalculation.desc": "マーケットプレイスがロイヤリティ情報を問い合わせ、売り手とクリエイター間で支払いを分配する方法を観察します。",
+  "sim.royaltyCalculation.param.tokenId": "トークンID",
+  "sim.royaltyCalculation.param.salePrice": "販売価格（wei単位）",
+  "sim.royaltyCalculation.step.sale": "特定のNFTについてマーケットプレイスで販売が発生します。マーケットプレイスは支払いの分配方法を決定する必要があります。",
+  "sim.royaltyCalculation.step.sale.mobile": "NFT販売が開始",
+  "sim.royaltyCalculation.step.query": "マーケットプレイスがroyaltyInfo(tokenId, salePrice)を呼び出し、ロイヤリティ受取人と金額を取得します。コントラクトはクリエイターのアドレスと販売価格の5%を返します。",
+  "sim.royaltyCalculation.step.query.mobile": "ロイヤリティ情報を問い合わせ",
+  "sim.royaltyCalculation.step.distribute": "マーケットプレイスが資金を分配します：95%は売り手に、5%はロイヤリティ受取人（クリエイター）に支払われます。この分配はroyaltyInfoのレスポンスから計算されます。",
+  "sim.royaltyCalculation.step.distribute.mobile": "販売収益を分配"
+}

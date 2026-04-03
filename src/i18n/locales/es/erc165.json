@@ -1,0 +1,30 @@
+{
+  "short": "Deteccion estandar de interfaces",
+  "introduction": "ERC-165 define un metodo estandar para detectar que interfaces soporta un contrato inteligente. Introduce una unica funcion, supportsInterface, que recibe un identificador de interfaz de 4 bytes y devuelve un booleano. Esto permite que contratos y dApps consulten si un contrato objetivo implementa una interfaz especifica antes de intentar interactuar con el. El estandar en si debe devolver true para el ID de interfaz de ERC-165 (0x01ffc9a7) y false para 0xffffffff.",
+  "designPurpose": "ERC-165 fue disenado para resolver el problema de descubrimiento de interfaces en Ethereum. Sin el, los llamadores no tenian una forma confiable de determinar si un contrato soporta un conjunto particular de funciones, lo que provocaba llamadas fallidas y desperdicio de gas. Al proporcionar un mecanismo de deteccion estandarizado, ERC-165 permite interacciones mas seguras entre contratos y es un prerrequisito para muchos otros estandares como ERC-721 y ERC-1155.",
+  "commonUsage": "ERC-165 es utilizado ampliamente por mercados de NFT, contratos de tokens y enrutadores de protocolos para verificar que un contrato objetivo implementa la interfaz esperada. Por ejemplo, un mercado puede verificar si un contrato soporta ERC-721 antes de intentar transferir un NFT. Tambien es utilizado por patrones de proxy y cuentas inteligentes modulares para anunciar las capacidades soportadas.",
+
+  "fn.supportsInterface.desc": "Devuelve true si el contrato implementa la interfaz definida por el identificador de 4 bytes proporcionado. El ID de interfaz se calcula como el XOR de todos los selectores de funcion en la interfaz.",
+  "fn.supportsInterface.params.interfaceId": "El identificador de interfaz de 4 bytes a consultar, tal como se define en ERC-165. Se calcula como el XOR de todos los selectores de funcion en la interfaz.",
+  "fn.supportsInterface.returns.supported": "True si el contrato implementa la interfaz consultada, false en caso contrario.",
+
+  "node.caller": "Llamador / DApp",
+  "node.contract": "Contrato ERC-165",
+  "node.interfaceRegistry": "Registro de interfaces",
+  "node.result": "Resultado de la consulta",
+
+  "edge.query": "Consultar interfaz",
+  "edge.lookupRegistry": "Buscar en el registro",
+  "edge.returnBool": "Devolver resultado",
+  "edge.response": "Respuesta booleana",
+
+  "sim.interfaceQuery.name": "Consulta de deteccion de interfaz",
+  "sim.interfaceQuery.desc": "Consultar un contrato para verificar si soporta una interfaz especifica usando la funcion supportsInterface.",
+  "sim.interfaceQuery.param.interfaceId": "ID de interfaz a consultar",
+  "sim.interfaceQuery.step.call": "El llamador invoca supportsInterface(interfaceId) en el contrato objetivo para verificar si una interfaz especifica esta soportada.",
+  "sim.interfaceQuery.step.call.mobile": "Llamar a supportsInterface()",
+  "sim.interfaceQuery.step.lookup": "El contrato busca el ID de interfaz en su mapeo de registro interno. Cada interfaz soportada se registra previamente durante la construccion.",
+  "sim.interfaceQuery.step.lookup.mobile": "Buscar en registro de interfaces",
+  "sim.interfaceQuery.step.return": "El contrato devuelve un resultado booleano. El llamador ahora puede proceder de forma segura si la interfaz esta soportada, o manejar el caso no soportado de manera elegante.",
+  "sim.interfaceQuery.step.return.mobile": "Devolver true/false"
+}

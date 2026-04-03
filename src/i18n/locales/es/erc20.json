@@ -1,0 +1,83 @@
+{
+  "short": "Estándar de Token Fungible",
+  "introduction": "ERC-20 es el estándar de token fundamental en Ethereum, que define una interfaz común para tokens fungibles. Fue propuesto por Fabian Vogelsteller en noviembre de 2015 y se ha convertido en el estándar de token más ampliamente adoptado en el ecosistema. Cada token ERC-20 es idéntico e intercambiable, de manera similar a cómo un billete de dólar es equivalente a cualquier otro billete de dólar. El estándar especifica seis funciones principales y dos eventos que permiten transferir tokens, aprobar su gasto por terceros y consultar saldos.",
+  "designPurpose": "ERC-20 fue diseñado para crear una interfaz unificada que permita que cualquier token fungible sea manejado por billeteras, exchanges y otros contratos inteligentes de manera consistente. Antes de ERC-20, cada contrato de token tenía su propia API personalizada, lo que hacía la integración difícil y propensa a errores. Al estandarizar la interfaz, ERC-20 permitió la explosión del ecosistema de tokens y las aplicaciones DeFi que dependen de interacciones componibles entre tokens.",
+  "commonUsage": "Los tokens ERC-20 se utilizan para criptomonedas, stablecoins (USDC, DAI, USDT), tokens de gobernanza, tokens de utilidad y activos envueltos. Sirven como bloques de construcción para exchanges descentralizados, protocolos de préstamo, yield farming y prácticamente todas las aplicaciones DeFi. El estándar también se extiende comúnmente con funciones de acuñación, quema y aprobaciones basadas en permisos (ERC-2612).",
+
+  "fn.totalSupply.desc": "Devuelve el número total de tokens en existencia. Este valor representa todos los tokens que han sido acuñados menos los que han sido quemados.",
+  "fn.totalSupply.returns.supply": "El suministro total del token, expresado en la unidad más pequeña (por ejemplo, wei para tokens de 18 decimales).",
+
+  "fn.balanceOf.desc": "Devuelve el saldo de tokens de una cuenta específica. Consulta el mapeo interno _balances para obtener cuántos tokens posee la dirección dada.",
+  "fn.balanceOf.params.account": "La dirección de la que se consultará el saldo.",
+  "fn.balanceOf.returns.balance": "La cantidad de tokens que posee la cuenta, en la unidad más pequeña.",
+
+  "fn.transfer.desc": "Mueve tokens de la cuenta del llamador al destinatario. El llamador debe tener un saldo suficiente. Emite un evento Transfer en caso de éxito.",
+  "fn.transfer.params.to": "La dirección del destinatario que recibirá los tokens.",
+  "fn.transfer.params.amount": "La cantidad de tokens a transferir, en la unidad más pequeña.",
+  "fn.transfer.returns.success": "Devuelve true si la transferencia fue exitosa, revierte en caso contrario.",
+
+  "fn.approve.desc": "Establece la asignación que un gastador está autorizado a transferir desde la cuenta del llamador. Reemplaza cualquier asignación existente. Emite un evento Approval.",
+  "fn.approve.params.spender": "La dirección autorizada para gastar tokens en nombre del llamador.",
+  "fn.approve.params.amount": "La cantidad máxima de tokens que el gastador está autorizado a transferir.",
+  "fn.approve.returns.success": "Devuelve true si la aprobación fue exitosa.",
+
+  "fn.allowance.desc": "Devuelve la cantidad restante de tokens que el gastador está autorizado a transferir en nombre del propietario. Este valor disminuye cuando se llama a transferFrom.",
+  "fn.allowance.params.owner": "La dirección propietaria de los tokens.",
+  "fn.allowance.params.spender": "La dirección autorizada para gastar los tokens del propietario.",
+  "fn.allowance.returns.remaining": "La asignación restante para el gastador.",
+
+  "fn.transferFrom.desc": "Mueve tokens de una cuenta a otra usando el mecanismo de asignación. El llamador debe haber sido aprobado por la dirección 'from' por al menos la cantidad de la transferencia. Decrementa la asignación en consecuencia.",
+  "fn.transferFrom.params.from": "La dirección desde la que se transferirán los tokens.",
+  "fn.transferFrom.params.to": "La dirección a la que se transferirán los tokens.",
+  "fn.transferFrom.params.amount": "La cantidad de tokens a transferir.",
+  "fn.transferFrom.returns.success": "Devuelve true si la transferencia fue exitosa.",
+
+  "fn.Transfer.desc": "Se emite cuando los tokens se mueven de una cuenta a otra, incluyendo transferencias de valor cero. También se emite al acuñar (from = address(0)) y al quemar (to = address(0)).",
+  "fn.Transfer.params.from": "La dirección desde la que se transfieren los tokens.",
+  "fn.Transfer.params.to": "La dirección a la que se transfieren los tokens.",
+  "fn.Transfer.params.value": "La cantidad de tokens transferidos.",
+
+  "fn.Approval.desc": "Se emite cuando la asignación de un gastador para un propietario es establecida mediante una llamada a approve. El valor es la nueva asignación.",
+  "fn.Approval.params.owner": "La dirección que aprobó el gasto.",
+  "fn.Approval.params.spender": "La dirección que está aprobada para gastar.",
+  "fn.Approval.params.value": "La nueva cantidad de asignación.",
+
+  "node.user": "Poseedor de Tokens",
+  "node.contract": "Contrato ERC-20",
+  "node.recipient": "Destinatario",
+  "node.spender": "Gastador Aprobado",
+  "node.storageBalances": "Almacenamiento de Tokens",
+  "node.tokenFlow": "Transferencia de Tokens",
+
+  "edge.callTransfer": "Llamar a transfer()",
+  "edge.updateBalance": "Actualizar saldos",
+  "edge.tokensMove": "Tokens movidos",
+  "edge.callApprove": "Llamar a approve()",
+  "edge.allowanceGranted": "Asignación otorgada",
+  "edge.callTransferFrom": "Llamar a transferFrom()",
+  "edge.emitTransfer": "Emitir evento Transfer",
+
+  "sim.basicTransfer.name": "Transferencia Básica de Tokens",
+  "sim.basicTransfer.desc": "Transfiere tokens ERC-20 directamente de una dirección a otra usando la función transfer().",
+  "sim.basicTransfer.param.sender": "Dirección del emisor",
+  "sim.basicTransfer.param.recipient": "Dirección del destinatario",
+  "sim.basicTransfer.param.amount": "Cantidad (en wei)",
+  "sim.basicTransfer.step.call": "El emisor llama a transfer(to, amount) en el contrato ERC-20, iniciando una transferencia directa de tokens.",
+  "sim.basicTransfer.step.call.mobile": "El emisor llama a transfer()",
+  "sim.basicTransfer.step.validate": "El contrato valida que el emisor tiene saldo suficiente, luego actualiza el mapeo _balances: decrementa al emisor e incrementa al destinatario.",
+  "sim.basicTransfer.step.validate.mobile": "Validar y actualizar saldos",
+  "sim.basicTransfer.step.tokenflow": "Los tokens se mueven del saldo del emisor al saldo del destinatario. El destinatario ahora posee la cantidad transferida.",
+  "sim.basicTransfer.step.tokenflow.mobile": "Tokens entregados",
+  "sim.basicTransfer.step.event": "El contrato emite un evento Transfer(from, to, value), permitiendo que servicios fuera de cadena rastreen la transferencia.",
+  "sim.basicTransfer.step.event.mobile": "Emitir evento Transfer",
+
+  "sim.approveAndTransfer.name": "Aprobar y TransferFrom",
+  "sim.approveAndTransfer.desc": "Demuestra el patrón de dos pasos approve + transferFrom utilizado por DEXes y protocolos DeFi para gastar tokens en nombre de un usuario.",
+  "sim.approveAndTransfer.param.owner": "Propietario del token",
+  "sim.approveAndTransfer.param.spender": "Gastador aprobado",
+  "sim.approveAndTransfer.param.allowanceAmount": "Cantidad de asignación (en wei)",
+  "sim.approveAndTransfer.step.approve": "El propietario del token llama a approve(spender, amount) para autorizar al gastador a transferir hasta la cantidad especificada.",
+  "sim.approveAndTransfer.step.storageAllowance": "El contrato almacena la asignación en el mapeo _allowances: _allowances[owner][spender] = amount.",
+  "sim.approveAndTransfer.step.grant": "El gastador ahora está autorizado. Puede llamar a transferFrom en cualquier momento para mover tokens del saldo del propietario.",
+  "sim.approveAndTransfer.step.transferFrom": "El gastador llama a transferFrom(owner, recipient, amount). El contrato verifica la asignación, deduce la cantidad y mueve los tokens al destinatario."
+}

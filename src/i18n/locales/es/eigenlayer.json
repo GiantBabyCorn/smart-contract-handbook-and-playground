@@ -1,0 +1,63 @@
+{
+  "short": "Protocolo de restaking que extiende la seguridad económica de Ethereum a servicios adicionales (AVSs)",
+  "introduction": "EigenLayer es un protocolo de restaking construido sobre Ethereum que permite reutilizar ETH en staking y tokens de staking líquido (como stETH) como seguridad para servicios descentralizados adicionales llamados Servicios Activamente Validados (AVSs). Esto permite a los protocolos establecer seguridad criptoeconómica sin lanzar sus propios conjuntos de validadores. EigenLayer introduce un mercado donde los stakers optan por proporcionar seguridad a los AVSs a cambio de recompensas adicionales.",
+  "designPurpose": "EigenLayer fue diseñado para resolver la fragmentación de la seguridad criptoeconómica entre los servicios basados en Ethereum. En lugar de que cada nuevo protocolo requiera su propio conjunto de validadores y capital en staking, EigenLayer permite a los stakers existentes de Ethereum extender sus garantías de seguridad a múltiples servicios simultáneamente. Este modelo de seguridad compartida reduce drásticamente el costo de asegurar nueva infraestructura descentralizada.",
+  "commonUsage": "Los restakers depositan tokens de staking líquido o ETH nativo en las estrategias de EigenLayer y delegan a operadores que validan AVSs en su nombre. Los operadores se registran en AVSs como capas de disponibilidad de datos, puentes o redes de oráculos. El protocolo también es utilizado por desarrolladores de AVS que desean aprovechar la seguridad de Ethereum para sus propios servicios sin crear una nueva red de validadores.",
+
+  "fn.depositIntoStrategy.desc": "Deposita tokens en un contrato de estrategia de EigenLayer, recibiendo participaciones que representan la posición de restaking.",
+  "fn.depositIntoStrategy.params.strategy": "La dirección del contrato de estrategia en el que depositar.",
+  "fn.depositIntoStrategy.params.token": "La dirección del token a depositar (por ejemplo, stETH).",
+  "fn.depositIntoStrategy.params.amount": "La cantidad de tokens a depositar.",
+  "fn.depositIntoStrategy.returns.shares": "El número de participaciones de estrategia acuñadas para el depositante.",
+
+  "fn.delegateTo.desc": "Delega todas las participaciones de restaking del llamante a un operador elegido, que valida AVSs en nombre del staker.",
+  "fn.delegateTo.params.operator": "La dirección del operador al que delegar.",
+  "fn.delegateTo.params.approverSignatureAndExpiry": "Una firma y expiración del aprobador de delegación del operador, si es requerido.",
+  "fn.delegateTo.params.approverSalt": "Un salt único para prevenir la repetición de la firma del aprobador.",
+
+  "fn.undelegate.desc": "Cancela la delegación de un staker de su operador actual y pone en cola los retiros de todas sus participaciones de restaking.",
+  "fn.undelegate.params.staker": "La dirección del staker a desdelegar.",
+  "fn.undelegate.returns.withdrawalRoots": "Un arreglo de raíces de retiro que se pueden usar para completar los retiros en cola después del período de espera.",
+
+  "fn.completeQueuedWithdrawals.desc": "Completa retiros previamente en cola después de que haya transcurrido el período de espera requerido, devolviendo tokens o participaciones al staker.",
+  "fn.completeQueuedWithdrawals.params.withdrawals": "Un arreglo de estructuras de retiro a completar.",
+  "fn.completeQueuedWithdrawals.params.tokens": "Un arreglo 2D de direcciones de tokens para cada retiro.",
+  "fn.completeQueuedWithdrawals.params.middlewareTimesIndexes": "Índices en el arreglo de tiempos del middleware para verificación de slashing.",
+  "fn.completeQueuedWithdrawals.params.receiveAsTokens": "Un arreglo de booleanos que indica si se reciben tokens subyacentes (true) o se re-depositan como participaciones (false).",
+
+  "fn.getShares.desc": "Devuelve las estrategias y las cantidades de participaciones correspondientes para los depósitos de un staker dado.",
+  "fn.getShares.params.staker": "La dirección del staker a consultar.",
+  "fn.getShares.returns.strategies": "Un arreglo de direcciones de contratos de estrategia en los que el staker ha depositado.",
+  "fn.getShares.returns.shares": "Un arreglo de cantidades de participaciones correspondientes a cada estrategia.",
+
+  "node.restaker": "Restaker",
+  "node.strategy-manager": "Gestor de estrategias",
+  "node.delegation-manager": "Gestor de delegación",
+  "node.strategy": "Contrato de estrategia",
+  "node.operator": "Operador",
+  "node.avs": "Servicio Activamente Validado (AVS)",
+  "node.slasher": "Slasher",
+  "node.withdrawal-queue": "Cola de retiros",
+
+  "edge.depositIntoStrategy": "depositIntoStrategy()",
+  "edge.depositTokens": "Depositar tokens",
+  "edge.delegateTo": "delegateTo(operator)",
+  "edge.assignDelegate": "Asignar delegación",
+  "edge.registerToAVS": "Registrarse en AVS",
+  "edge.queueWithdrawal": "Poner retiro en cola",
+  "edge.slash": "Penalizar operador",
+  "edge.returnShares": "Devolver participaciones",
+
+  "sim.deposit-delegate-operator.name": "Depositar, delegar y registrar",
+  "sim.deposit-delegate-operator.desc": "Simula el flujo completo de restaking: depositar stETH en una estrategia, delegar a un operador y que el operador se registre en un AVS.",
+  "sim.deposit-delegate-operator.param.depositAmount": "Cantidad de depósito (wei)",
+  "sim.deposit-delegate-operator.param.operatorAddress": "Dirección del operador",
+  "sim.deposit-delegate-operator.step.approve": "El restaker aprueba al Gestor de estrategias para gastar sus tokens stETH.",
+  "sim.deposit-delegate-operator.step.approve.mobile": "Aprobar stETH",
+  "sim.deposit-delegate-operator.step.deposit": "El restaker llama a depositIntoStrategy(), transfiriendo stETH al contrato de estrategia y recibiendo participaciones que representan la posición de restaking.",
+  "sim.deposit-delegate-operator.step.deposit.mobile": "Depositar en estrategia",
+  "sim.deposit-delegate-operator.step.delegate": "El restaker delega sus participaciones a un operador a través del Gestor de delegación. El operador ahora controla la seguridad restakeada.",
+  "sim.deposit-delegate-operator.step.delegate.mobile": "Delegar al operador",
+  "sim.deposit-delegate-operator.step.avsRegister": "El operador se registra en un AVS, comprometiendo el stake delegado para asegurar el servicio. El capital en staking ahora está sujeto a condiciones de slashing.",
+  "sim.deposit-delegate-operator.step.avsRegister.mobile": "El operador se registra en el AVS"
+}

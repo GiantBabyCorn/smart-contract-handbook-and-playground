@@ -1,0 +1,69 @@
+{
+  "short": "分離されたマーケットとアブソープションによる効率的な清算を備えた単一資産レンディングプロトコル",
+  "introduction": "Compound V3（Cometとも呼ばれる）は、前身とは根本的に異なるアプローチを採用した合理化されたレンディングプロトコルです。各Cometデプロイメントは、複数の担保資産を伴う単一の借入可能なベース資産（USDCなど）を管理し、リスク管理を簡素化します。このプロトコルはcTokenの必要性を排除し、内部残高会計を代わりに使用します。",
+  "designPurpose": "Compound V3は、各マーケットを1つのベース資産に集中させることで、マルチアセットレンディングプールの複雑さと攻撃対象面を削減するために設計されました。この単一借入資産アーキテクチャはリスクの分離を改善し、プロトコルの理解を容易にします。アブソープションベースの清算メカニズムはレガシーのクローズファクターモデルに代わり、より効率的な不良債権の社会化を可能にします。",
+  "commonUsage": "ユーザーは通常、WETHやWBTCなどの担保資産を供給し、変動金利でUSDCを借り入れます。ベース資産の供給者はプロトコルの内部会計を通じて自動的に利息を獲得します。Compound V3は、その上に構築するためのシンプルで監査可能なレンディングプリミティブを求めるプロトコルにも使用されています。",
+
+  "fn.supply.desc": "Cometマーケットに資産を供給します。ベーストークンの場合は利息を獲得し、担保トークンの場合は借入能力を裏付けます。",
+  "fn.supply.params.asset": "供給するトークンのアドレス（ベーストークンまたは担保）。",
+  "fn.supply.params.amount": "トークンのネイティブ小数点桁数での供給量。",
+
+  "fn.withdraw.desc": "Cometマーケットから以前に供給した資産を引き出します。",
+  "fn.withdraw.params.asset": "引き出すトークンのアドレス。",
+  "fn.withdraw.params.amount": "トークンのネイティブ小数点桁数での引き出し量。",
+
+  "fn.borrow.desc": "Cometマーケットからベース資産を借り入れます。ユーザーにベース残高がない場合、内部的にベーストークンアドレスでwithdraw関数を使用します。",
+  "fn.borrow.params.asset": "借り入れるベーストークンのアドレス（例：USDC）。",
+  "fn.borrow.params.amount": "借り入れるベーストークンの数量。",
+
+  "fn.repay.desc": "ベース資産の借入を返済します。内部的にsupply関数を使用してベーストークンをプロトコルに返却します。",
+  "fn.repay.params.asset": "返済するベーストークンのアドレス。",
+  "fn.repay.params.amount": "返済するベーストークンの数量。",
+
+  "fn.absorb.desc": "1つ以上の担保不足のアカウントをアブソープションすることで清算をトリガーします。プロトコルは担保を差し押さえ、不良債権をベース供給者間で社会化します。",
+  "fn.absorb.params.absorber": "アブソープションを開始するアドレス。報酬を受け取る場合があります。",
+  "fn.absorb.params.accounts": "アブソープションする担保不足のアカウントアドレスの配列。",
+
+  "fn.buyCollateral.desc": "アブソープションイベント後に、差し押さえられた担保をプロトコルから割引価格で購入します。これが清算された担保がマーケットに戻される方法です。",
+  "fn.buyCollateral.params.asset": "購入する担保トークンのアドレス。",
+  "fn.buyCollateral.params.minAmount": "受け取る最小担保量。",
+  "fn.buyCollateral.params.baseAmount": "担保購入に使用するベーストークンの量。",
+  "fn.buyCollateral.params.recipient": "購入した担保を受け取るアドレス。",
+
+  "fn.getUtilization.desc": "マーケットの現在の利用率を返します。これは金利モデルを通じて金利を決定します。",
+  "fn.getUtilization.returns.utilization": "18桁にスケーリングされた分数としての現在の利用率（例：0.8e18 = 80%）。",
+
+  "fn.getSupplyRate.desc": "指定された利用率レベルに対する秒あたりの供給金利を返します。",
+  "fn.getSupplyRate.params.utilization": "照会する利用率。18桁にスケーリング。",
+  "fn.getSupplyRate.returns.supplyRate": "18桁にスケーリングされた秒あたりの供給金利。",
+
+  "node.supplier": "ベース供給者",
+  "node.borrower": "借入者",
+  "node.cometContract": "Cometコントラクト",
+  "node.baseToken": "ベーストークン（USDC）",
+  "node.collateralToken": "担保トークン（WETH）",
+  "node.priceFeed": "Chainlink価格フィード",
+  "node.absorber": "アブソーバー / 清算人",
+
+  "edge.supplyBase": "supply(USDC)",
+  "edge.baseTokenBalance": "ベース残高を追跡",
+  "edge.supplyCollateral": "supply(WETH担保)",
+  "edge.collateralHeld": "担保を保持",
+  "edge.assetPrice": "資産価格を取得",
+  "edge.borrowedUSDC": "USDCを借入",
+  "edge.absorb": "absorb(accounts)",
+  "edge.absorberReward": "アブソープション報酬",
+
+  "sim.supplyAndBorrowComet.name": "担保の供給と借入",
+  "sim.supplyAndBorrowComet.desc": "WETH担保を供給し、Cometマーケットからの単一資産借入モデルを実演するUSDCの借入をシミュレートします。",
+  "sim.supplyAndBorrowComet.param.collateralAmount": "担保額（wei）",
+  "sim.supplyAndBorrowComet.param.borrowAmount": "借入額（USDCベース単位）",
+  "sim.supplyAndBorrowComet.step.supplyCollateral": "借入者がWETHを担保としてCometコントラクトに供給します。担保はベーストークンプールとは別に保持されます。",
+  "sim.supplyAndBorrowComet.step.supplyCollateral.mobile": "WETH担保を供給",
+  "sim.supplyAndBorrowComet.step.checkPrice": "CometコントラクトがChainlink価格フィードに照会して担保を評価し、LTVファクターに基づいて最大借入能力を計算します。",
+  "sim.supplyAndBorrowComet.step.checkPrice.mobile": "担保価格を確認",
+  "sim.supplyAndBorrowComet.step.borrowBase": "借入者がUSDCでwithdraw()を呼び出して借入します。プロトコルは内部的に借入残高を追跡し、USDCを借入者に転送します。",
+  "sim.supplyAndBorrowComet.step.borrowBase.mobile": "USDCを借入",
+  "sim.supplyAndBorrowComet.step.utilization": "マーケットの利用率が上昇し、金利モデルが借入金利と供給金利を調整します。ベース供給者はより高い利回りを獲得します。",
+  "sim.supplyAndBorrowComet.step.utilization.mobile": "利用率と金利が調整"
+}

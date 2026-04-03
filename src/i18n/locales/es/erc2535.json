@@ -1,0 +1,70 @@
+{
+  "short": "Estándar Diamond (Proxy Multi-Faceta)",
+  "introduction": "ERC-2535, conocido como el Estándar Diamond, define una arquitectura de proxy multi-faceta donde un único contrato proxy puede delegar llamadas a múltiples contratos de implementación (llamados facetas) basándose en selectores de función. A diferencia de los proxies tradicionales que apuntan a una única implementación, un Diamond mapea cada selector de función a una dirección de faceta diferente. Esto permite a los contratos superar el límite de tamaño de 24KB y proporciona una capacidad de actualización granular a nivel de función.",
+  "designPurpose": "ERC-2535 fue diseñado para resolver varias limitaciones de los proxies de implementación única. Elimina el límite de tamaño de contrato de 24KB dividiendo la lógica entre múltiples facetas, permite agregar o reemplazar funciones individuales sin redesplegar toda la implementación, y proporciona un mecanismo de introspección estandarizado (DiamondLoupe) para descubrir qué facetas y funciones soporta un Diamond. También permite compartir facetas entre múltiples Diamonds.",
+  "commonUsage": "ERC-2535 es utilizado por protocolos complejos que necesitan arquitecturas modulares y actualizables como Aavegotchi, Beanstalk y varios sistemas DeFi. Es particularmente útil cuando un proyecto necesita agregar nuevas funcionalidades frecuentemente, tiene lógica que excede el límite de tamaño del contrato, o quiere compartir funcionalidad común entre múltiples contratos proxy. El estándar incluye DiamondCut para actualizaciones y DiamondLoupe para introspección.",
+
+  "fn.diamondCut.desc": "Agrega, reemplaza o elimina funciones del Diamond actualizando el mapeo de selector a faceta. Opcionalmente puede ejecutar una llamada de función de inicialización después del corte.",
+  "fn.diamondCut.params.diamondCut": "Arreglo de estructuras FacetCut, cada una conteniendo una dirección de faceta, acción (Add/Replace/Remove) y arreglo de selectores de función.",
+  "fn.diamondCut.params.init": "Dirección del contrato al que hacer delegatecall para inicialización después del corte. Usar address(0) si no se requiere inicialización.",
+  "fn.diamondCut.params.calldata": "Llamada de función codificada a ejecutar en la dirección init después de aplicar el diamond cut.",
+
+  "fn.facets.desc": "Devuelve todas las direcciones de facetas y sus selectores de función asociados. Parte de la interfaz DiamondLoupe para introspección.",
+  "fn.facets.returns.facets": "Arreglo de estructuras Facet, cada una conteniendo una dirección de faceta y sus selectores de función registrados.",
+
+  "fn.facetFunctionSelectors.desc": "Devuelve todos los selectores de función registrados para una dirección de faceta específica.",
+  "fn.facetFunctionSelectors.params.facet": "La dirección de la faceta para consultar selectores.",
+  "fn.facetFunctionSelectors.returns.selectors": "Arreglo de selectores de función bytes4 asociados con la faceta.",
+
+  "fn.facetAddresses.desc": "Devuelve todas las direcciones de facetas que tienen al menos un selector de función registrado.",
+  "fn.facetAddresses.returns.addresses": "Arreglo de todas las direcciones de facetas activas.",
+
+  "fn.facetAddress.desc": "Devuelve la dirección de la faceta que maneja un selector de función específico.",
+  "fn.facetAddress.params.selector": "El selector de función de 4 bytes a buscar.",
+  "fn.facetAddress.returns.facet": "La dirección de la faceta que implementa el selector de función dado.",
+
+  "fn.DiamondCut.desc": "Se emite cuando una operación diamondCut modifica los selectores de función y los mapeos de facetas del Diamond.",
+  "fn.DiamondCut.params.diamondCut": "Arreglo de estructuras FacetCut describiendo los cambios realizados.",
+  "fn.DiamondCut.params.init": "La dirección del contrato de inicialización utilizada después del corte.",
+  "fn.DiamondCut.params.calldata": "Los calldata pasados al contrato init.",
+
+  "node.user": "Usuario / Llamante",
+  "node.diamondProxy": "Proxy Diamond",
+  "node.facetA": "Faceta A (Token)",
+  "node.facetB": "Faceta B (Staking)",
+  "node.facetC": "Faceta C (Gobernanza)",
+  "node.diamondStorage": "Almacenamiento Diamond",
+  "node.diamondCutFacet": "Faceta DiamondCut",
+
+  "edge.callWithSelector": "Llamar con selector de función",
+  "edge.lookupSelector": "Buscar selector → faceta",
+  "edge.delegateToFacetA": "delegatecall a Faceta A",
+  "edge.delegateToFacetB": "delegatecall a Faceta B",
+  "edge.delegateToFacetC": "delegatecall a Faceta C",
+  "edge.callDiamondCut": "Llamar a diamondCut()",
+  "edge.updateMappings": "Actualizar mapeos de selectores",
+
+  "sim.functionCallRouting.name": "Enrutamiento de llamadas de función",
+  "sim.functionCallRouting.desc": "Observar cómo el proxy Diamond enruta las llamadas de función a diferentes facetas basándose en el selector de función.",
+  "sim.functionCallRouting.param.caller": "Dirección del llamante",
+  "sim.functionCallRouting.param.selector": "Selector de función",
+  "sim.functionCallRouting.step.call": "El usuario llama al proxy Diamond con un selector de función específico (por ejemplo, transfer()). Se activa la función fallback del proxy.",
+  "sim.functionCallRouting.step.call.mobile": "Llamar al Diamond con selector",
+  "sim.functionCallRouting.step.lookup": "El Diamond busca el selector de función en su mapeo selectorToFacet en el Almacenamiento Diamond para encontrar qué faceta maneja esta función.",
+  "sim.functionCallRouting.step.lookup.mobile": "Buscar faceta para el selector",
+  "sim.functionCallRouting.step.delegate": "El Diamond realiza un delegatecall a la faceta resuelta. El código de la faceta se ejecuta usando el contexto de almacenamiento del Diamond.",
+  "sim.functionCallRouting.step.delegate.mobile": "delegatecall a la faceta",
+
+  "sim.diamondCutAddFacet.name": "Diamond Cut: Agregar faceta",
+  "sim.diamondCutAddFacet.desc": "Agregar una nueva faceta al Diamond, registrando nuevos selectores de función y opcionalmente ejecutando una función de inicialización.",
+  "sim.diamondCutAddFacet.param.admin": "Administrador / Propietario",
+  "sim.diamondCutAddFacet.param.newFacet": "Dirección de la nueva faceta",
+  "sim.diamondCutAddFacet.step.prepareCut": "El administrador prepara una llamada a diamondCut con la nueva dirección de faceta, el tipo de acción 'Add' y el arreglo de selectores de función a registrar.",
+  "sim.diamondCutAddFacet.step.prepareCut.mobile": "Preparar diamond cut",
+  "sim.diamondCutAddFacet.step.validateFacet": "El Diamond valida que la faceta tiene código, los selectores no están ya registrados, y actualiza el mapeo selectorToFacet y el arreglo facetAddresses.",
+  "sim.diamondCutAddFacet.step.validateFacet.mobile": "Validar y registrar faceta",
+  "sim.diamondCutAddFacet.step.initCall": "Si se proporciona una dirección init, el Diamond realiza un delegatecall para ejecutar la función de inicialización en la nueva faceta.",
+  "sim.diamondCutAddFacet.step.initCall.mobile": "Ejecutar función init",
+  "sim.diamondCutAddFacet.step.emitEvent": "Se emite un evento DiamondCut registrando todos los cambios. Las funciones de la nueva faceta ahora son accesibles a través del proxy Diamond.",
+  "sim.diamondCutAddFacet.step.emitEvent.mobile": "Emitir evento DiamondCut"
+}

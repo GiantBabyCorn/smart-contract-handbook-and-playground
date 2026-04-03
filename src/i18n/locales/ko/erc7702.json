@@ -1,0 +1,48 @@
+{
+  "short": "EOA 코드 위임",
+  "introduction": "ERC-7702는 외부 소유 계정(EOA)이 코드 실행을 스마트 컨트랙트에 임시로 위임할 수 있는 새로운 트랜잭션 유형을 도입합니다. 승인 튜플에 서명함으로써, EOA는 코드가 위임 컨트랙트를 가리키도록 설정하여 단일 트랜잭션 내에서 EOA에 스마트 컨트랙트 기능을 효과적으로 부여할 수 있습니다. 이를 통해 EOA가 스마트 컨트랙트 계정으로 영구 변환 없이도 배치 트랜잭션, 가스 후원, 커스텀 검증과 같은 기능을 사용할 수 있습니다.",
+  "designPurpose": "ERC-7702는 프로토콜 수준에서 EOA와 스마트 컨트랙트 계정 간의 격차를 해소하기 위해 설계되었습니다. ERC-4337이 상위 레벨 시스템을 통해 계정 추상화를 제공하는 반면, ERC-7702는 트랜잭션 수준에서 작동하여 모든 EOA가 일시적으로 스마트 컨트랙트처럼 동작할 수 있게 합니다. 이를 통해 기존 EOA가 주소를 변경하거나 계정 유형을 영구적으로 변경하지 않고도 점진적으로 스마트 계정 기능을 채택할 수 있는 원활한 마이그레이션 경로를 제공합니다.",
+  "commonUsage": "ERC-7702는 EOA에 스마트 계정 슈퍼파워를 부여하는 데 사용됩니다: 배치 트랜잭션(하나의 tx로 approve + swap), 제3자에 의한 가스 후원, 커스텀 서명 체계 등입니다. 생태계가 EOA에서 스마트 계정으로 전환하는 과도기에 특히 유용합니다. 지갑 제공자는 이를 사용하여 계정 마이그레이션 없이 기존 EOA 사용자에게 향상된 UX 기능을 제공합니다.",
+
+  "fn.authorize.desc": "EOA의 코드 실행을 지정된 컨트랙트에 위임하는 서명된 승인 튜플을 생성합니다. 승인에는 체인 ID, 위임 주소, 논스가 포함됩니다.",
+  "fn.authorize.params.delegation": "코드 실행을 위임할 스마트 컨트랙트의 주소입니다.",
+  "fn.authorize.returns.authorization": "chainId, address, nonce, ECDSA 서명을 포함하는 서명된 승인 튜플입니다.",
+
+  "fn.execute.desc": "EOA를 대신하여 위임 컨트랙트를 통해 호출을 실행합니다. EOA의 코드가 이제 위임 컨트랙트를 가리키며, 이 컨트랙트가 호출을 처리합니다.",
+  "fn.execute.params.to": "호출할 대상 주소입니다.",
+  "fn.execute.params.value": "호출과 함께 전송할 ETH 값입니다.",
+  "fn.execute.params.data": "실행할 인코딩된 calldata입니다.",
+  "fn.execute.returns.result": "실행된 호출의 반환 데이터입니다.",
+
+  "fn.executeBatch.desc": "위임 컨트랙트를 통해 단일 트랜잭션으로 여러 호출을 실행합니다. EOA에서의 원자적 배치 작업을 가능하게 합니다.",
+  "fn.executeBatch.params.calls": "각각 대상 주소, 값, calldata를 포함하는 Call 구조체의 배열입니다.",
+  "fn.executeBatch.returns.results": "각 실행된 호출의 반환 데이터 배열입니다.",
+
+  "node.eoa": "EOA (사용자 지갑)",
+  "node.authorizationTuple": "승인 튜플",
+  "node.validator": "서명 검증자",
+  "node.delegationContract": "위임 컨트랙트",
+  "node.target": "대상 컨트랙트",
+  "node.storage": "EOA 코드 스토리지",
+
+  "edge.signAuthorization": "승인 튜플 서명",
+  "edge.verifySignature": "서명 검증",
+  "edge.setCode": "EOA 코드 포인터 설정",
+  "edge.storeDelegation": "위임 저장",
+  "edge.callExecute": "execute() 호출",
+  "edge.execute": "대상에서 실행",
+
+  "sim.eoaDelegation.name": "EOA 코드 위임",
+  "sim.eoaDelegation.desc": "EOA의 코드를 스마트 컨트랙트 구현에 위임하여 스마트 계정 기능을 활성화합니다.",
+  "sim.eoaDelegation.param.eoaAddress": "EOA 주소",
+  "sim.eoaDelegation.param.delegationImpl": "위임 구현",
+  "sim.eoaDelegation.param.targetContract": "대상 컨트랙트",
+  "sim.eoaDelegation.step.signAuth": "EOA가 체인 ID, 위임 컨트랙트 주소, 현재 논스를 포함하는 승인 튜플에 서명합니다. 이로써 코드 위임이 승인됩니다.",
+  "sim.eoaDelegation.step.signAuth.mobile": "승인 서명",
+  "sim.eoaDelegation.step.verify": "승인 서명이 EOA 소유자에 의해 서명되었고 논스가 유효한지 검증됩니다.",
+  "sim.eoaDelegation.step.verify.mobile": "서명 검증",
+  "sim.eoaDelegation.step.setCode": "EOA의 코드가 스마트 컨트랙트 구현을 가리키는 위임 지정자(0xEF0100...)로 설정됩니다. EOA가 이제 스마트 컨트랙트처럼 동작합니다.",
+  "sim.eoaDelegation.step.setCode.mobile": "EOA 코드 포인터 설정",
+  "sim.eoaDelegation.step.execute": "EOA가 이제 위임 컨트랙트를 통해 호출을 실행할 수 있어, 배치 트랜잭션, 가스 후원 및 기타 스마트 계정 기능을 사용할 수 있습니다.",
+  "sim.eoaDelegation.step.execute.mobile": "위임을 통해 실행"
+}

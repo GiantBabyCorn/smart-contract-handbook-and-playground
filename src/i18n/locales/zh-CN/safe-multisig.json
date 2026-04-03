@@ -1,0 +1,87 @@
+{
+  "short": "需要 M-of-N 所有者批准才能执行交易的多签智能合约钱包",
+  "introduction": "Safe（前称 Gnosis Safe）是以太坊生态系统中使用最广泛的多签钱包，保护着数十亿美元的资产。它要求在执行任何交易之前获得可配置阈值的所有者签名，提供了对单点故障的强大保护。Safe 支持模块、守卫和回退处理器以实现可扩展性，使其成为可编程的账户抽象原语。",
+  "designPurpose": "Safe 旨在通过要求多方批准每笔交易来消除单一私钥泄露的风险。模块化架构允许在不修改核心合约的情况下扩展功能，如支出限额、社交恢复和自动化交易模块。其基于代理的部署模式最大限度地降低了 Gas 成本，同时维护经过实战检验的单例实现。",
+  "commonUsage": "DAO 和团队使用 Safe 通过多签批准要求管理资金库。协议使用 Safe 钱包控制合约升级和参数更改的管理员密钥。个人使用 Safe 结合硬件钱包签名者和社交恢复模块来增强个人安全性。",
+
+  "fn.execTransaction.desc": "在收集到所需数量的所有者签名后执行交易。验证签名，运行守卫检查，执行调用，并可选择退还 Gas 费用。",
+  "fn.execTransaction.params.to": "交易的目标地址。",
+  "fn.execTransaction.params.value": "随交易发送的 ETH 值。",
+  "fn.execTransaction.params.data": "交易的 calldata 载荷。",
+  "fn.execTransaction.params.operation": "操作类型：0 为 Call，1 为 DelegateCall。",
+  "fn.execTransaction.params.safeTxGas": "内部 Safe 交易执行的 Gas 限制。",
+  "fn.execTransaction.params.baseGas": "用于 Gas 退还计算的数据和交易开销的 Gas 成本。",
+  "fn.execTransaction.params.gasPrice": "用于退还计算的 Gas 价格。设为 0 禁用退还。",
+  "fn.execTransaction.params.gasToken": "用于 Gas 退还的代币（address(0) 表示 ETH）。",
+  "fn.execTransaction.params.refundReceiver": "接收 Gas 退还的地址。使用 address(0) 表示 tx.origin。",
+  "fn.execTransaction.params.signatures": "来自所需数量所有者的打包签名字节。",
+  "fn.execTransaction.returns.success": "内部交易执行是否成功。",
+
+  "fn.approveHash.desc": "在链上预批准交易哈希，使其能在 execTransaction 中作为签名计入，无需 ECDSA 签名。",
+  "fn.approveHash.params.hashToApprove": "要批准的 Safe 交易哈希。",
+
+  "fn.addOwnerWithThreshold.desc": "向 Safe 添加新所有者并更新所需的签名阈值。只能由 Safe 自身通过 execTransaction 调用。",
+  "fn.addOwnerWithThreshold.params.owner": "要添加的新所有者的地址。",
+  "fn.addOwnerWithThreshold.params.threshold": "添加所有者后的新签名阈值。",
+
+  "fn.removeOwner.desc": "从 Safe 的所有者链表中移除一个所有者并更新阈值。只能由 Safe 自身调用。",
+  "fn.removeOwner.params.prevOwner": "在链表中指向被移除所有者的前一个所有者。",
+  "fn.removeOwner.params.owner": "要移除的所有者地址。",
+  "fn.removeOwner.params.threshold": "移除所有者后的新签名阈值。",
+
+  "fn.changeThreshold.desc": "更改执行交易所需的所有者确认数量。只能由 Safe 自身调用。",
+  "fn.changeThreshold.params.threshold": "新的签名阈值。必须至少为 1 且不超过所有者数量。",
+
+  "fn.getOwners.desc": "返回当前 Safe 所有者的完整列表。",
+  "fn.getOwners.returns.owners": "所有者地址数组。",
+
+  "fn.getThreshold.desc": "返回当前执行交易所需的确认数量。",
+  "fn.getThreshold.returns.threshold": "当前签名阈值。",
+
+  "fn.isOwner.desc": "检查给定地址是否是 Safe 的注册所有者。",
+  "fn.isOwner.params.owner": "要检查所有权的地址。",
+  "fn.isOwner.returns.isOwner": "如果该地址是所有者返回 true，否则返回 false。",
+
+  "fn.nonce.desc": "返回 Safe 当前的交易 nonce。每笔已执行的交易都会递增此值以防止重放。",
+  "fn.nonce.returns.nonce": "当前的 nonce 值。",
+
+  "node.owner-a": "所有者 A",
+  "node.owner-b": "所有者 B",
+  "node.owner-c": "所有者 C",
+  "node.safe-contract": "Safe 合约",
+  "node.guard": "交易守卫",
+  "node.module": "模块",
+  "node.fallback-handler": "回退处理器",
+  "node.target-contract": "目标合约",
+
+  "edge.signTx": "签署交易",
+  "edge.approveHash": "approveHash()",
+  "edge.checkGuard": "checkTransaction()",
+  "edge.execCall": "执行调用",
+  "edge.moduleExec": "execTransactionFromModule()",
+  "edge.fallback": "回退 / ERC-1271",
+
+  "sim.submit-confirm-multisig.name": "提交并确认多签交易",
+  "sim.submit-confirm-multisig.desc": "模拟一笔 2-of-3 多签交易：一个所有者提议，另一个确认，交易在守卫验证后执行。",
+  "sim.submit-confirm-multisig.param.targetAddress": "目标合约地址",
+  "sim.submit-confirm-multisig.param.threshold": "所需确认数",
+  "sim.submit-confirm-multisig.step.propose": "所有者 A 通过在链下签署 Safe 交易哈希并将其提交到 Safe 服务来提议新交易。",
+  "sim.submit-confirm-multisig.step.propose.mobile": "所有者 A 提议交易",
+  "sim.submit-confirm-multisig.step.confirm": "所有者 B 审核并签署相同的交易哈希，达到执行所需的 2-of-3 阈值。",
+  "sim.submit-confirm-multisig.step.confirm.mobile": "所有者 B 确认",
+  "sim.submit-confirm-multisig.step.guardCheck": "交易守卫的 checkTransaction() 函数在执行前验证交易参数。",
+  "sim.submit-confirm-multisig.step.guardCheck.mobile": "守卫验证交易",
+  "sim.submit-confirm-multisig.step.execute": "Safe 合约验证所有签名并对目标合约执行调用。nonce 递增以防止重放。",
+  "sim.submit-confirm-multisig.step.execute.mobile": "执行交易",
+
+  "sim.add-new-owner.name": "添加新所有者",
+  "sim.add-new-owner.desc": "模拟向 Safe 添加新所有者并更新签名阈值，需要现有所有者的批准。",
+  "sim.add-new-owner.param.newOwner": "新所有者地址",
+  "sim.add-new-owner.param.newThreshold": "新阈值",
+  "sim.add-new-owner.step.proposeAdd": "所有者 A 提议一笔 addOwnerWithThreshold() 交易以添加新签名者并将阈值提高到 3。",
+  "sim.add-new-owner.step.proposeAdd.mobile": "提议添加所有者",
+  "sim.add-new-owner.step.collectSigs": "所有者 B 和所有者 C 签署该交易，提供足够的确认以满足当前阈值。",
+  "sim.add-new-owner.step.collectSigs.mobile": "收集签名",
+  "sim.add-new-owner.step.addOwner": "Safe 执行 addOwnerWithThreshold()，将新所有者添加到链表中并将阈值从 2 更新为 3。",
+  "sim.add-new-owner.step.addOwner.mobile": "添加所有者并更新阈值"
+}

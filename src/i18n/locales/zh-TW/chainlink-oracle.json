@@ -1,0 +1,59 @@
+{
+  "short": "去中心化預言機網路，為智能合約提供防篡改的價格資料",
+  "introduction": "Chainlink 是最廣泛採用的去中心化預言機網路，為鏈上智能合約提供可靠的鏈下資料。其價格資料聚合器提供防篡改的資產價格，被大多數 DeFi 協議用於借貸清算、衍生品結算和穩定幣錨定等關鍵操作。該網路使用一組去中心化的預言機節點，各自獨立地獲取、驗證和聚合資料。",
+  "designPurpose": "Chainlink 旨在解決預言機問題——以無需信任的方式將真實世界資料引入區塊鏈的根本挑戰。透過使用質押 LINK 代幣的獨立節點運營商組成的去中心化網路，Chainlink 確保沒有任何單一實體能夠操縱價格資料。聚合器合約取多個節點提交資料的中位數，提供對異常值和操縱的強大抵抗力。",
+  "commonUsage": "Aave 和 Compound 等 DeFi 借貸協議使用 Chainlink 價格資料來確定抵押品價值並觸發清算。去中心化交易所和衍生品平台使用它們進行結算價格和按市值計價計算。穩定幣協議依賴 Chainlink 預言機來維持其錨定匯率並管理風險參數。",
+
+  "fn.latestRoundData.desc": "回傳聚合器的最新價格資料，包括價格、輪次 ID 和時間戳記。這是 DeFi 協議用來獲取當前資產價格的主要函式。",
+  "fn.latestRoundData.returns.roundId": "當前聚合輪次的唯一識別碼。",
+  "fn.latestRoundData.returns.answer": "聚合後的價格答案，按資料源的小數位數縮放（USD 配對通常為 8 位）。",
+  "fn.latestRoundData.returns.startedAt": "輪次開始時的 Unix 時間戳記。",
+  "fn.latestRoundData.returns.updatedAt": "答案上次更新的 Unix 時間戳記。用於檢查資料是否過時。",
+  "fn.latestRoundData.returns.answeredInRound": "計算答案的輪次 ID。對於最新資料應與 roundId 匹配。",
+
+  "fn.getRoundData.desc": "回傳特定歷史輪次的價格資料。適用於驗證過去的價格或建構時間加權平均值。",
+  "fn.getRoundData.params.roundId": "要查詢歷史資料的輪次 ID。",
+  "fn.getRoundData.returns.roundId": "查詢資料的輪次 ID。",
+  "fn.getRoundData.returns.answer": "查詢輪次的價格答案。",
+  "fn.getRoundData.returns.startedAt": "查詢輪次開始時的 Unix 時間戳記。",
+  "fn.getRoundData.returns.updatedAt": "查詢輪次上次更新的 Unix 時間戳記。",
+  "fn.getRoundData.returns.answeredInRound": "計算答案的輪次。",
+
+  "fn.decimals.desc": "回傳價格資料答案中的小數位數。大多數以美元計價的資料源使用 8 位小數。",
+  "fn.decimals.returns.decimals": "小數位數（例如，USD 價格資料為 8）。",
+
+  "fn.description.desc": "回傳價格資料的人類可讀描述，例如 'ETH / USD'。",
+  "fn.description.returns.description": "價格資料描述字串。",
+
+  "fn.AnswerUpdated.desc": "當聚合器從預言機網路收到新答案時觸發。供鏈下系統用於即時監控價格更新。",
+  "fn.AnswerUpdated.params.current": "新的聚合價格答案。",
+  "fn.AnswerUpdated.params.roundId": "此次答案更新的輪次 ID。",
+  "fn.AnswerUpdated.params.updatedAt": "更新的 Unix 時間戳記。",
+
+  "node.consumer-contract": "消費者合約（DeFi 協議）",
+  "node.aggregator-proxy": "聚合器代理",
+  "node.aggregator": "鏈下聚合器",
+  "node.oracle-nodes": "預言機節點網路（DON）",
+  "node.off-chain-data": "鏈下資料來源",
+  "node.round-storage": "輪次資料儲存",
+
+  "edge.requestPrice": "latestRoundData()",
+  "edge.delegate": "委託給聚合器",
+  "edge.readRound": "讀取輪次資料",
+  "edge.fetchData": "獲取市場資料",
+  "edge.submitAnswer": "提交預言機答案",
+  "edge.returnPrice": "回傳價格資料",
+  "edge.priceData": "價格至消費者",
+
+  "sim.price-feed-request.name": "價格資料請求",
+  "sim.price-feed-request.desc": "模擬 Chainlink 價格更新的完整生命週期：預言機節點的鏈下資料聚合、鏈上提交，以及消費者合約讀取價格。",
+  "sim.price-feed-request.param.consumerAddress": "消費者合約地址",
+  "sim.price-feed-request.step.offChainFetch": "去中心化預言機網路（DON）中的預言機節點各自獨立從多個鏈下資料來源獲取 ETH/USD 價格。",
+  "sim.price-feed-request.step.offChainFetch.mobile": "節點獲取鏈下價格",
+  "sim.price-feed-request.step.submit": "預言機節點將各自的答案提交到聚合器合約，聚合器計算中位數值並將其儲存為最新輪次資料。",
+  "sim.price-feed-request.step.submit.mobile": "提交聚合答案",
+  "sim.price-feed-request.step.consumerCall": "DeFi 協議的消費者合約在聚合器代理上呼叫 latestRoundData() 以獲取當前 ETH/USD 價格。",
+  "sim.price-feed-request.step.consumerCall.mobile": "消費者呼叫 latestRoundData()",
+  "sim.price-feed-request.step.proxyDelegate": "代理將呼叫委託給當前的聚合器實作，聚合器從儲存中讀取最新輪次並將價格資料回傳給消費者。",
+  "sim.price-feed-request.step.proxyDelegate.mobile": "代理回傳價格資料"
+}

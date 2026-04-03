@@ -1,0 +1,69 @@
+{
+  "short": "Protocolo de préstamos con activo único, mercados aislados y liquidación eficiente por absorción",
+  "introduction": "Compound V3, también conocido como Comet, es un protocolo de préstamos simplificado que adopta un enfoque fundamentalmente diferente al de su predecesor. Cada despliegue de Comet gestiona un único activo base prestable (como USDC) con múltiples activos de colateral, simplificando la gestión de riesgos. El protocolo elimina la necesidad de cTokens, utilizando en su lugar una contabilidad interna de saldos.",
+  "designPurpose": "Compound V3 fue diseñado para reducir la complejidad y la superficie de ataque de los pools de préstamos multi-activo al enfocar cada mercado en un activo base. Esta arquitectura de un solo activo prestable mejora el aislamiento de riesgos y hace que el protocolo sea más fácil de comprender. El mecanismo de liquidación basado en absorción reemplaza el modelo legacy de factor de cierre, permitiendo una socialización más eficiente de la deuda incobrable.",
+  "commonUsage": "Los usuarios típicamente suministran activos de colateral como WETH o WBTC para pedir prestado USDC a tasas variables. Los proveedores del activo base ganan intereses automáticamente a través de la contabilidad interna del protocolo. Compound V3 también es utilizado por protocolos que buscan una primitiva de préstamo simple y auditable sobre la cual construir.",
+
+  "fn.supply.desc": "Suministra un activo al mercado Comet. Si el activo es el token base, genera intereses. Si es un token de colateral, respalda la capacidad de préstamo.",
+  "fn.supply.params.asset": "La dirección del token a suministrar (token base o colateral).",
+  "fn.supply.params.amount": "La cantidad a suministrar, en los decimales nativos del token.",
+
+  "fn.withdraw.desc": "Retira un activo previamente suministrado del mercado Comet.",
+  "fn.withdraw.params.asset": "La dirección del token a retirar.",
+  "fn.withdraw.params.amount": "La cantidad a retirar, en los decimales nativos del token.",
+
+  "fn.borrow.desc": "Pide prestado el activo base del mercado Comet. Internamente usa la función withdraw con la dirección del token base cuando el usuario no tiene saldo base.",
+  "fn.borrow.params.asset": "La dirección del token base a pedir prestado (por ejemplo, USDC).",
+  "fn.borrow.params.amount": "La cantidad del token base a pedir prestado.",
+
+  "fn.repay.desc": "Reembolsa un préstamo del activo base. Internamente usa la función supply para devolver el token base al protocolo.",
+  "fn.repay.params.asset": "La dirección del token base que se está reembolsando.",
+  "fn.repay.params.amount": "La cantidad del token base a reembolsar.",
+
+  "fn.absorb.desc": "Activa la liquidación absorbiendo una o más cuentas subcolateralizadas. El protocolo confisca su colateral y socializa cualquier deuda incobrable entre los proveedores base.",
+  "fn.absorb.params.absorber": "La dirección que inicia la absorción, que puede recibir una recompensa.",
+  "fn.absorb.params.accounts": "Un arreglo de direcciones de cuentas subcolateralizadas a absorber.",
+
+  "fn.buyCollateral.desc": "Compra colateral confiscado del protocolo con descuento después de un evento de absorción. Así es como el colateral liquidado se devuelve al mercado.",
+  "fn.buyCollateral.params.asset": "La dirección del token de colateral a comprar.",
+  "fn.buyCollateral.params.minAmount": "La cantidad mínima de colateral a recibir.",
+  "fn.buyCollateral.params.baseAmount": "La cantidad de token base a gastar comprando el colateral.",
+  "fn.buyCollateral.params.recipient": "La dirección que recibirá el colateral comprado.",
+
+  "fn.getUtilization.desc": "Devuelve la tasa de utilización actual del mercado, que determina la tasa de interés a través del modelo de tasa de interés.",
+  "fn.getUtilization.returns.utilization": "La utilización actual como fracción escalada a 18 decimales (por ejemplo, 0.8e18 = 80%).",
+
+  "fn.getSupplyRate.desc": "Devuelve la tasa de suministro por segundo para un nivel de utilización dado.",
+  "fn.getSupplyRate.params.utilization": "La tasa de utilización a consultar, escalada a 18 decimales.",
+  "fn.getSupplyRate.returns.supplyRate": "La tasa de interés de suministro por segundo, escalada a 18 decimales.",
+
+  "node.supplier": "Proveedor base",
+  "node.borrower": "Prestatario",
+  "node.cometContract": "Contrato Comet",
+  "node.baseToken": "Token base (USDC)",
+  "node.collateralToken": "Token de colateral (WETH)",
+  "node.priceFeed": "Feed de precios de Chainlink",
+  "node.absorber": "Absorbedor / Liquidador",
+
+  "edge.supplyBase": "supply(USDC)",
+  "edge.baseTokenBalance": "Rastrear saldo base",
+  "edge.supplyCollateral": "supply(colateral WETH)",
+  "edge.collateralHeld": "Mantener colateral",
+  "edge.assetPrice": "Obtener precio del activo",
+  "edge.borrowedUSDC": "Pedir prestado USDC",
+  "edge.absorb": "absorb(accounts)",
+  "edge.absorberReward": "Recompensa de absorción",
+
+  "sim.supplyAndBorrowComet.name": "Suministrar colateral y pedir prestado",
+  "sim.supplyAndBorrowComet.desc": "Simula el suministro de colateral WETH y el préstamo de USDC del mercado Comet, demostrando el modelo de préstamo de activo único.",
+  "sim.supplyAndBorrowComet.param.collateralAmount": "Cantidad de colateral (wei)",
+  "sim.supplyAndBorrowComet.param.borrowAmount": "Cantidad de préstamo (unidades base USDC)",
+  "sim.supplyAndBorrowComet.step.supplyCollateral": "El prestatario suministra WETH como colateral en el contrato Comet. El colateral se mantiene separado del pool del token base.",
+  "sim.supplyAndBorrowComet.step.supplyCollateral.mobile": "Suministrar colateral WETH",
+  "sim.supplyAndBorrowComet.step.checkPrice": "El contrato Comet consulta el feed de precios de Chainlink para valorar el colateral y calcular la capacidad máxima de préstamo basada en el factor LTV.",
+  "sim.supplyAndBorrowComet.step.checkPrice.mobile": "Verificar precio del colateral",
+  "sim.supplyAndBorrowComet.step.borrowBase": "El prestatario llama a withdraw() con USDC para pedir prestado. El protocolo rastrea el saldo del préstamo internamente y transfiere USDC al prestatario.",
+  "sim.supplyAndBorrowComet.step.borrowBase.mobile": "Pedir prestado USDC",
+  "sim.supplyAndBorrowComet.step.utilization": "La utilización del mercado aumenta, causando que el modelo de tasa de interés ajuste las tasas de préstamo y suministro. Los proveedores base obtienen mayores rendimientos.",
+  "sim.supplyAndBorrowComet.step.utilization.mobile": "Utilización y tasas se ajustan"
+}

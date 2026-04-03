@@ -1,0 +1,96 @@
+{
+  "short": "非代替性トークン（NFT）規格",
+  "introduction": "ERC-721はEthereum上の非代替性トークン（NFT）の標準インターフェースです。各ユニットが同一であるERC-20トークンとは異なり、すべてのERC-721トークンは他のすべてのトークンと区別する一意のtokenIdを持ちます。この規格は2018年1月にWilliam Entriken、Dieter Shirley、Jacob Evans、Nastassia Sachsによって提案されました。所有権の転送、残高と所有権の照会、個別トークンとオペレーターの承認管理のための関数を定義しています。",
+  "designPurpose": "ERC-721は、ブロックチェーン上の一意で区別可能な資産の所有権を表現するために設計されました。各トークンは非代替性であり、あるトークンを別のトークンと1対1で交換することはできません。この規格には、受取人がNFTを処理できるかどうかを確認する安全な転送メカニズム（onERC721Received経由）が含まれており、NFTとやり取りできないコントラクトにトークンが永久にロックされることを防ぎます。",
+  "commonUsage": "ERC-721はデジタルアート（CryptoPunks、Bored Apes）、ゲームアイテム、ドメイン名（ENS）、不動産証書、イベントチケット、および証明可能な一意性を必要とするあらゆる資産に使用されます。OpenSeaなどのNFTマーケットプレイスは、トークンの出品、転送、オークションにこの規格を利用しています。メタデータ（ERC-721Metadata）や列挙機能との拡張も一般的です。",
+
+  "fn.balanceOf.desc": "指定されたアドレスが所有するNFTの数を返します。アドレスはゼロアドレスであってはなりません。",
+  "fn.balanceOf.params.owner": "NFT残高を照会するアドレス。",
+  "fn.balanceOf.returns.balance": "アドレスが所有するNFTの数。",
+
+  "fn.ownerOf.desc": "特定のNFTの所有者を返します。トークンは存在している必要があります（ミント済みかつバーンされていない）。",
+  "fn.ownerOf.params.tokenId": "照会するNFTの一意の識別子。",
+  "fn.ownerOf.returns.owner": "NFTの現在の所有者のアドレス。",
+
+  "fn.safeTransferFrom.desc": "NFTをあるアドレスから別のアドレスに安全に転送します。受取人がコントラクトの場合、onERC721Receivedを実装し正しいマジック値を返す必要があります。そうでなければ転送はリバートされます。",
+  "fn.safeTransferFrom.params.from": "NFTの現在の所有者。",
+  "fn.safeTransferFrom.params.to": "NFTを受け取るアドレス。",
+  "fn.safeTransferFrom.params.tokenId": "転送するNFTの一意の識別子。",
+
+  "fn.transferFrom.desc": "安全な受取人チェックなしでNFTをあるアドレスから別のアドレスに転送します。呼び出し元は所有者、承認されたアドレス、または認可されたオペレーターでなければなりません。",
+  "fn.transferFrom.params.from": "NFTの現在の所有者。",
+  "fn.transferFrom.params.to": "NFTを受け取るアドレス。",
+  "fn.transferFrom.params.tokenId": "転送するNFTの一意の識別子。",
+
+  "fn.approve.desc": "所有者に代わって特定のNFTを転送するための別のアドレスを承認します。トークンごとに一度に1つの承認アドレスのみ許可されます。トークンが転送されると承認はクリアされます。",
+  "fn.approve.params.to": "指定されたトークンに対して承認されるアドレス。",
+  "fn.approve.params.tokenId": "承認するNFTの一意の識別子。",
+
+  "fn.setApprovalForAll.desc": "呼び出し元のすべてのNFTを管理するオペレーターを有効または無効にします。オペレーターは呼び出し元が所有する任意のトークンを転送できます。",
+  "fn.setApprovalForAll.params.operator": "オペレーターステータスを付与または取り消すアドレス。",
+  "fn.setApprovalForAll.params.approved": "オペレーターステータスを付与する場合はtrue、取り消す場合はfalse。",
+
+  "fn.getApproved.desc": "特定のNFTの承認されたアドレスを返します。承認されたアドレスがない場合はゼロアドレスを返します。",
+  "fn.getApproved.params.tokenId": "照会するNFTの一意の識別子。",
+  "fn.getApproved.returns.operator": "このNFTの転送を承認されたアドレス、またはなければaddress(0)。",
+
+  "fn.isApprovedForAll.desc": "オペレーターが指定されたownerのすべてのトークンを管理する承認を受けているかどうかを返します。",
+  "fn.isApprovedForAll.params.owner": "NFTを所有するアドレス。",
+  "fn.isApprovedForAll.params.operator": "オペレーター承認を確認するアドレス。",
+  "fn.isApprovedForAll.returns.approved": "ownerのすべてのトークンに対してオペレーターが承認されている場合はtrue。",
+
+  "fn.Transfer.desc": "NFTがあるアドレスから別のアドレスに転送されたときに発行されます。ミント時（from = address(0)）とバーン時（to = address(0)）にも発行されます。",
+  "fn.Transfer.params.from": "NFTの転送元アドレス。",
+  "fn.Transfer.params.to": "NFTの転送先アドレス。",
+  "fn.Transfer.params.tokenId": "転送されたNFTの一意の識別子。",
+
+  "fn.Approval.desc": "NFTの承認されたアドレスが変更または再確認されたときに発行されます。",
+  "fn.Approval.params.owner": "NFTの所有者。",
+  "fn.Approval.params.approved": "NFTの新しい承認アドレス。",
+  "fn.Approval.params.tokenId": "NFTの一意の識別子。",
+
+  "fn.ApprovalForAll.desc": "所有者がすべてのNFTを管理するオペレーターを有効または無効にしたときに発行されます。",
+  "fn.ApprovalForAll.params.owner": "NFTの所有者。",
+  "fn.ApprovalForAll.params.operator": "ステータスが変更されたオペレーターアドレス。",
+  "fn.ApprovalForAll.params.approved": "オペレーターが承認された場合はtrue、取り消された場合はfalse。",
+
+  "node.owner": "NFT所有者",
+  "node.contract": "ERC-721コントラクト",
+  "node.recipient": "受取人",
+  "node.operator": "承認されたオペレーター",
+  "node.storageOwnership": "所有権ストレージ",
+  "node.approvalStorage": "承認ストレージ",
+  "node.receiver": "ERC721Receiver",
+
+  "edge.callSafeTransfer": "safeTransferFrom()を呼び出す",
+  "edge.updateOwnership": "所有権を更新",
+  "edge.checkReceiver": "onERC721Receivedを確認",
+  "edge.nftMoves": "NFTを転送済み",
+  "edge.callApprove": "approve()を呼び出す",
+  "edge.storeApproval": "承認を保存",
+  "edge.approvalGranted": "承認を付与",
+  "edge.emitTransfer": "Transferイベントを発行",
+
+  "sim.nftTransfer.name": "安全なNFT転送",
+  "sim.nftTransfer.desc": "受取人の安全性チェックを含む、safeTransferFromを使用したNFTの転送です。",
+  "sim.nftTransfer.param.from": "送信元アドレス",
+  "sim.nftTransfer.param.to": "送信先アドレス",
+  "sim.nftTransfer.param.tokenId": "トークンID",
+  "sim.nftTransfer.step.call": "所有者がsafeTransferFrom(from, to, tokenId)を呼び出してNFT転送を開始します。",
+  "sim.nftTransfer.step.call.mobile": "safeTransferFrom()を呼び出す",
+  "sim.nftTransfer.step.validate": "コントラクトが所有権を検証し、_ownersマッピングを新しい所有者に更新し、両者の残高を調整します。",
+  "sim.nftTransfer.step.validate.mobile": "検証して所有権を更新",
+  "sim.nftTransfer.step.receiverCheck": "受取人がコントラクトの場合、ERC-721コントラクトはonERC721Received()を呼び出し、返されたマジック値（0x150b7a02）を検証します。",
+  "sim.nftTransfer.step.receiverCheck.mobile": "受取人コールバックを確認",
+  "sim.nftTransfer.step.complete": "転送が完了しました。Transferイベントが発行され、受取人がNFTを所有します。",
+  "sim.nftTransfer.step.complete.mobile": "転送完了",
+
+  "sim.safeTransferCallback.name": "コールバック付き安全な転送",
+  "sim.safeTransferCallback.desc": "スマートコントラクトにNFTを転送する際のonERC721Receivedコールバックメカニズムを示します。",
+  "sim.safeTransferCallback.param.tokenId": "トークンID",
+  "sim.safeTransferCallback.param.useContract": "コントラクトに送信",
+  "sim.safeTransferCallback.step.initiate": "所有者がコントラクトアドレスにNFTを送信するためにsafeTransferFromを開始します。",
+  "sim.safeTransferCallback.step.ownershipUpdate": "ERC-721コントラクトがストレージの所有権レコードを更新し、トークンを新しいコントラクトアドレスに紐付けます。",
+  "sim.safeTransferCallback.step.callback": "コントラクトが受取人コントラクトのonERC721Receivedを呼び出します。受取人はNFTを処理できることを確認するためにマジック値bytes4(0x150b7a02)を返す必要があります。",
+  "sim.safeTransferCallback.step.event": "コントラクトへの転送が成功したことを確認するTransferイベントが発行されます。"
+}

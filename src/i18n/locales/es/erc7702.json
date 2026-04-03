@@ -1,0 +1,48 @@
+{
+  "short": "Delegación de Código de EOA",
+  "introduction": "ERC-7702 introduce un nuevo tipo de transacción que permite a las cuentas de propiedad externa (EOAs) delegar temporalmente la ejecución de su código a un contrato inteligente. Al firmar una tupla de autorización, una EOA puede establecer su código para apuntar a un contrato de delegación, otorgando efectivamente a la EOA capacidades de contrato inteligente dentro de una sola transacción. Esto permite a las EOAs utilizar funciones como transacciones por lotes, patrocinio de gas y validación personalizada sin convertirse permanentemente en una cuenta de contrato inteligente.",
+  "designPurpose": "ERC-7702 fue diseñado para cerrar la brecha entre las EOAs y las cuentas de contratos inteligentes a nivel de protocolo. Mientras que ERC-4337 proporciona abstracción de cuentas a través de un sistema de nivel superior, ERC-7702 opera a nivel de transacción, permitiendo que cualquier EOA se comporte temporalmente como un contrato inteligente. Esto habilita una ruta de migración fluida donde las EOAs existentes pueden adoptar gradualmente las funciones de cuentas inteligentes sin cambiar su dirección o alterar permanentemente su tipo de cuenta.",
+  "commonUsage": "ERC-7702 se utiliza para dar a las EOAs superpoderes de cuentas inteligentes: transacciones por lotes (aprobar + intercambiar en una tx), patrocinio de gas por terceros y esquemas de firma personalizados. Es particularmente útil durante el período de transición mientras el ecosistema migra de EOAs a cuentas inteligentes. Los proveedores de billeteras lo usan para ofrecer funciones de UX mejoradas a los usuarios de EOA existentes sin requerir migración de cuentas.",
+
+  "fn.authorize.desc": "Crea una tupla de autorización firmada que delega la ejecución de código de la EOA a un contrato especificado. La autorización incluye el ID de cadena, la dirección de delegación y el nonce.",
+  "fn.authorize.params.delegation": "La dirección del contrato inteligente al que se delega la ejecución de código.",
+  "fn.authorize.returns.authorization": "La tupla de autorización firmada que contiene chainId, dirección, nonce y firma ECDSA.",
+
+  "fn.execute.desc": "Ejecuta una llamada a través del contrato de delegación en nombre de la EOA. El código de la EOA ahora apunta al contrato de delegación, que procesa la llamada.",
+  "fn.execute.params.to": "La dirección de destino a llamar.",
+  "fn.execute.params.value": "El valor en ETH a enviar con la llamada.",
+  "fn.execute.params.data": "Los calldata codificados a ejecutar.",
+  "fn.execute.returns.result": "Los datos de retorno de la llamada ejecutada.",
+
+  "fn.executeBatch.desc": "Ejecuta múltiples llamadas en una sola transacción a través del contrato de delegación. Permite operaciones por lotes atómicas desde una EOA.",
+  "fn.executeBatch.params.calls": "Array de structs Call, cada uno conteniendo una dirección de destino, valor y calldata.",
+  "fn.executeBatch.returns.results": "Array de datos de retorno de cada llamada ejecutada.",
+
+  "node.eoa": "EOA (Billetera del Usuario)",
+  "node.authorizationTuple": "Tupla de Autorización",
+  "node.validator": "Validador de Firma",
+  "node.delegationContract": "Contrato de Delegación",
+  "node.target": "Contrato de Destino",
+  "node.storage": "Almacenamiento de Código de EOA",
+
+  "edge.signAuthorization": "Firmar tupla de autorización",
+  "edge.verifySignature": "Verificar firma",
+  "edge.setCode": "Establecer puntero de código de EOA",
+  "edge.storeDelegation": "Almacenar delegación",
+  "edge.callExecute": "Llamar execute()",
+  "edge.execute": "Ejecutar en destino",
+
+  "sim.eoaDelegation.name": "Delegación de Código de EOA",
+  "sim.eoaDelegation.desc": "Delegar el código de una EOA a una implementación de contrato inteligente, habilitando funciones de cuenta inteligente.",
+  "sim.eoaDelegation.param.eoaAddress": "Dirección de EOA",
+  "sim.eoaDelegation.param.delegationImpl": "Implementación de delegación",
+  "sim.eoaDelegation.param.targetContract": "Contrato de destino",
+  "sim.eoaDelegation.step.signAuth": "La EOA firma una tupla de autorización que contiene el ID de cadena, la dirección del contrato de delegación y el nonce actual. Esto autoriza la delegación de código.",
+  "sim.eoaDelegation.step.signAuth.mobile": "Firmar autorización",
+  "sim.eoaDelegation.step.verify": "La firma de autorización se verifica para asegurar que fue firmada por el propietario de la EOA y que el nonce es válido.",
+  "sim.eoaDelegation.step.verify.mobile": "Verificar firma",
+  "sim.eoaDelegation.step.setCode": "El código de la EOA se establece con un designador de delegación (0xEF0100...) que apunta a la implementación del contrato inteligente. La EOA ahora se comporta como un contrato inteligente.",
+  "sim.eoaDelegation.step.setCode.mobile": "Establecer puntero de código de EOA",
+  "sim.eoaDelegation.step.execute": "La EOA ahora puede ejecutar llamadas a través del contrato de delegación, habilitando transacciones por lotes, patrocinio de gas y otras funciones de cuenta inteligente.",
+  "sim.eoaDelegation.step.execute.mobile": "Ejecutar mediante delegación"
+}

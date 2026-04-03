@@ -1,0 +1,30 @@
+{
+  "short": "標準介面偵測",
+  "introduction": "ERC-165 定義了一種標準方法來偵測智能合約支援哪些介面。它引入了一個函式 supportsInterface，接受一個 4 位元組的介面識別碼並回傳一個布林值。這使得合約和 DApp 能夠在嘗試互動之前，查詢目標合約是否實作了特定介面。該標準本身必須對 ERC-165 介面 ID（0x01ffc9a7）回傳 true，對 0xffffffff 回傳 false。",
+  "designPurpose": "ERC-165 旨在解決以太坊上的介面發現問題。沒有它，呼叫者無法可靠地判斷合約是否支援特定的函式集，導致呼叫失敗和浪費 Gas。透過提供標準化的偵測機制，ERC-165 實現了更安全的合約互動，並且是許多其他標準（如 ERC-721 和 ERC-1155）的先決條件。",
+  "commonUsage": "ERC-165 被 NFT 市場、代幣合約和協議路由器廣泛使用，以驗證目標合約是否實作了預期的介面。例如，市場可以在嘗試轉移 NFT 之前檢查合約是否支援 ERC-721。它也被代理模式和模組化智能帳戶用來宣告支援的功能。",
+
+  "fn.supportsInterface.desc": "如果合約實作了由給定 4 位元組識別碼定義的介面，則回傳 true。介面 ID 計算為介面中所有函式選擇器的 XOR。",
+  "fn.supportsInterface.params.interfaceId": "要查詢的 4 位元組介面識別碼，定義於 ERC-165。計算為介面中所有函式選擇器的 XOR。",
+  "fn.supportsInterface.returns.supported": "如果合約實作了查詢的介面則為 true，否則為 false。",
+
+  "node.caller": "呼叫者 / DApp",
+  "node.contract": "ERC-165 合約",
+  "node.interfaceRegistry": "介面註冊表",
+  "node.result": "查詢結果",
+
+  "edge.query": "查詢介面",
+  "edge.lookupRegistry": "查找註冊表",
+  "edge.returnBool": "回傳結果",
+  "edge.response": "布林值回應",
+
+  "sim.interfaceQuery.name": "介面偵測查詢",
+  "sim.interfaceQuery.desc": "查詢合約以檢查其是否支援特定介面，使用 supportsInterface 函式。",
+  "sim.interfaceQuery.param.interfaceId": "要查詢的介面 ID",
+  "sim.interfaceQuery.step.call": "呼叫者在目標合約上呼叫 supportsInterface(interfaceId)，以檢查是否支援特定介面。",
+  "sim.interfaceQuery.step.call.mobile": "呼叫 supportsInterface()",
+  "sim.interfaceQuery.step.lookup": "合約在其內部註冊表映射中查找介面 ID。每個支援的介面在建構時預先註冊。",
+  "sim.interfaceQuery.step.lookup.mobile": "查找介面註冊表",
+  "sim.interfaceQuery.step.return": "合約回傳布林值結果。如果支援該介面，呼叫者可以安全地繼續操作，否則優雅地處理不支援的情況。",
+  "sim.interfaceQuery.step.return.mobile": "回傳 true/false"
+}

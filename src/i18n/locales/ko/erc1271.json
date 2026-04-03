@@ -1,0 +1,36 @@
+{
+  "short": "컨트랙트용 표준 서명 검증",
+  "introduction": "ERC-1271은 스마트 컨트랙트가 서명을 검증하는 표준 방법을 정의합니다. 스마트 컨트랙트는 개인 키가 없기 때문에 외부 소유 계정(EOA)처럼 ECDSA 서명을 생성할 수 없습니다. ERC-1271은 모든 컨트랙트가 자체 서명 검증 로직을 구현할 수 있도록 하는 단일 함수 isValidSignature를 도입합니다. 이를 통해 스마트 컨트랙트 지갑, 멀티시그, 기타 컨트랙트 기반 계정이 메시지에 서명하고 작업을 승인할 수 있습니다.",
+  "designPurpose": "ERC-1271은 EOA 기반 서명 검증과 스마트 컨트랙트 지갑 간의 격차를 해소하기 위해 설계되었습니다. 많은 프로토콜과 dApp이 인증 또는 승인을 위해 사용자에게 메시지 서명을 요구하지만, 이는 EOA에서만 작동했습니다. 컨트랙트의 서명 검증 방식을 표준화함으로써, ERC-1271은 스마트 컨트랙트 지갑(Safe/Gnosis 등)과 계정 추상화 솔루션이 서명 의존 워크플로에 참여할 수 있게 합니다.",
+  "commonUsage": "ERC-1271은 멀티시그 지갑(Safe), 스마트 컨트랙트 지갑, 계정 추상화 시스템에서 오프체인 승인을 위한 서명 검증에 사용됩니다. 컨트랙트 계정이 EIP-712 타입 데이터에 서명하고, 가스리스 트랜잭션을 승인하며, dApp에 인증할 수 있게 합니다. Permit2, CoW Protocol, 0x 같은 프로토콜은 EOA와 스마트 컨트랙트 모두의 서명을 수용하기 위해 ERC-1271을 사용합니다.",
+
+  "fn.isValidSignature.desc": "주어진 서명이 제공된 해시에 대해 유효한지 검증합니다. 유효하면 매직 값(0x1626ba7e)을 반환하고, 유효하지 않으면 다른 값을 반환합니다. 구현체는 자체 검증 로직(예: 멀티시그 임계값 확인)을 정의합니다.",
+  "fn.isValidSignature.params.hash": "서명된 데이터의 해시입니다. 일반적으로 EIP-712 타입 데이터 해시입니다.",
+  "fn.isValidSignature.params.signature": "해시에 대해 검증할 서명 바이트입니다.",
+  "fn.isValidSignature.returns.magicValue": "서명이 유효하면 0x1626ba7e를 반환하고, 그렇지 않으면 다른 bytes4 값을 반환합니다.",
+
+  "node.verifier": "검증자 / DApp",
+  "node.contract": "ERC-1271 컨트랙트",
+  "node.signer": "복구된 서명자",
+  "node.signatureStorage": "서명 검증 저장소",
+  "node.magicValue": "매직 값 결과",
+
+  "edge.verifyRequest": "검증 요청 제출",
+  "edge.checkOwners": "소유자 레지스트리 확인",
+  "edge.recoverSigner": "ecrecover로 서명자 복구",
+  "edge.returnMagic": "매직 값 반환",
+  "edge.validSignal": "유효한 서명 확인됨",
+
+  "sim.contractSigVerification.name": "컨트랙트 서명 검증",
+  "sim.contractSigVerification.desc": "isValidSignature 함수를 사용하여 스마트 컨트랙트 지갑에 대한 서명을 검증합니다.",
+  "sim.contractSigVerification.param.hash": "메시지 해시",
+  "sim.contractSigVerification.param.signature": "서명 바이트",
+  "sim.contractSigVerification.step.submit": "검증자(dApp 또는 프로토콜)가 서명을 검증하기 위해 스마트 컨트랙트 지갑에 isValidSignature(hash, signature)를 호출합니다.",
+  "sim.contractSigVerification.step.submit.mobile": "검증을 위해 서명 제출",
+  "sim.contractSigVerification.step.recover": "컨트랙트가 ecrecover를 사용하여 해시와 서명에서 서명자 주소를 추출합니다.",
+  "sim.contractSigVerification.step.recover.mobile": "서명자 주소 복구",
+  "sim.contractSigVerification.step.checkOwner": "컨트랙트가 복구된 서명자가 내부 레지스트리(예: 멀티시그 소유자 목록)에서 승인된 소유자인지 확인합니다.",
+  "sim.contractSigVerification.step.checkOwner.mobile": "서명자가 소유자인지 확인",
+  "sim.contractSigVerification.step.return": "컨트랙트가 매직 값 0x1626ba7e를 반환하여 서명이 유효함을 나타냅니다. 검증자는 이제 승인된 작업을 진행할 수 있습니다.",
+  "sim.contractSigVerification.step.return.mobile": "유효한 매직 값 반환"
+}

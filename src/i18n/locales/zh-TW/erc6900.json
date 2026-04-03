@@ -1,0 +1,56 @@
+{
+  "short": "模組化智能合約帳戶",
+  "introduction": "ERC-6900 定義了具有外掛架構的模組化智能合約帳戶標準。帳戶可以安裝和卸載外掛，以自訂驗證邏輯、執行處理器和鉤子來擴展功能。每個外掛宣告一個描述其權限和能力的清單，帳戶透過結構化的執行流程來強制執行這些權限。該標準確保外掛在不同帳戶實作之間具有互通性。",
+  "designPurpose": "ERC-6900 旨在為 ERC-4337 智能帳戶建立標準化的外掛系統。如果沒有統一的模組介面，每個帳戶提供商都會建構自己不相容的擴展系統。ERC-6900 定義了外掛如何透過驗證、執行和鉤子階段與帳戶互動，實現了一個可跨所有合規帳戶使用的可重用外掛市場。清單系統確保透明的權限管理。",
+  "commonUsage": "ERC-6900 被 Alchemy 的 Modular Account 等模組化帳戶實作使用。外掛可以添加多重簽名驗證、會話金鑰、支出限額、排程交易、社交恢復和其他功能。開發者可以一次建構外掛並將其部署到所有 ERC-6900 相容的帳戶，創建一個可組合的帳戶功能生態系。",
+
+  "fn.installPlugin.desc": "在模組化帳戶上安裝外掛。驗證清單雜湊、註冊驗證和執行鉤子，並使用提供的資料初始化外掛。",
+  "fn.installPlugin.params.plugin": "要安裝的外掛合約地址。",
+  "fn.installPlugin.params.manifestHash": "外掛清單的 keccak256 雜湊，用於驗證外掛宣告的權限。",
+  "fn.installPlugin.params.pluginInstallData": "傳遞給外掛 onInstall 函式的編碼初始化資料。",
+  "fn.installPlugin.params.dependencies": "外掛依賴的其他已安裝外掛的函式參考陣列。",
+
+  "fn.uninstallPlugin.desc": "從模組化帳戶移除外掛。取消註冊所有鉤子和選擇器，並呼叫外掛的 onUninstall 函式。",
+  "fn.uninstallPlugin.params.plugin": "要卸載的外掛地址。",
+  "fn.uninstallPlugin.params.config": "用於卸載過程的編碼配置資料。",
+  "fn.uninstallPlugin.params.pluginUninstallData": "傳遞給外掛 onUninstall 函式的編碼資料。",
+
+  "fn.executeFromPluginExternal.desc": "允許外掛透過帳戶對外部合約執行呼叫。帳戶強制執行外掛宣告的權限。",
+  "fn.executeFromPluginExternal.params.target": "要呼叫的外部合約地址。",
+  "fn.executeFromPluginExternal.params.value": "隨呼叫發送的 ETH 數量。",
+  "fn.executeFromPluginExternal.params.data": "外部呼叫的編碼 calldata。",
+  "fn.executeFromPluginExternal.returns.result": "外部呼叫的回傳資料。",
+
+  "fn.getInstalledPlugins.desc": "回傳帳戶上所有當前已安裝的外掛地址列表。",
+  "fn.getInstalledPlugins.returns.plugins": "已安裝外掛合約地址的陣列。",
+
+  "node.accountOwner": "帳戶擁有者",
+  "node.modularAccount": "模組化帳戶",
+  "node.validationPlugin": "驗證外掛",
+  "node.executionPlugin": "執行外掛",
+  "node.hook": "鉤子（前置/後置）",
+  "node.permissionManager": "權限管理器",
+  "node.target": "目標合約",
+
+  "edge.installPlugin": "安裝外掛",
+  "edge.checkManifest": "檢查清單和權限",
+  "edge.validateUserOp": "驗證 UserOp",
+  "edge.runHooks": "執行前置/後置鉤子",
+  "edge.routeExecution": "將執行路由到外掛",
+  "edge.executeFromPlugin": "從外掛執行",
+  "edge.directExecute": "直接執行",
+
+  "sim.pluginInstallExec.name": "外掛安裝與執行",
+  "sim.pluginInstallExec.desc": "在模組化帳戶上安裝外掛並觀察驗證和執行流程。",
+  "sim.pluginInstallExec.param.accountAddress": "模組化帳戶地址",
+  "sim.pluginInstallExec.param.pluginAddress": "外掛地址",
+  "sim.pluginInstallExec.param.targetContract": "目標合約",
+  "sim.pluginInstallExec.step.checkManifest": "帳戶驗證外掛的清單雜湊並檢查所有宣告的依賴項是否已滿足。權限管理器驗證外掛請求的功能。",
+  "sim.pluginInstallExec.step.checkManifest.mobile": "驗證清單和權限",
+  "sim.pluginInstallExec.step.install": "外掛已安裝：驗證選擇器、執行選擇器和鉤子已在帳戶上註冊。外掛的 onInstall 函式被呼叫。",
+  "sim.pluginInstallExec.step.install.mobile": "安裝並註冊外掛",
+  "sim.pluginInstallExec.step.validateOp": "當 UserOperation 到達時，帳戶將驗證路由到已安裝的驗證外掛。前置驗證鉤子先執行，然後外掛驗證簽章。",
+  "sim.pluginInstallExec.step.validateOp.mobile": "透過外掛驗證",
+  "sim.pluginInstallExec.step.execute": "執行外掛處理操作。後置執行鉤子執行以強制執行支出限額等不變量。",
+  "sim.pluginInstallExec.step.execute.mobile": "透過外掛執行"
+}

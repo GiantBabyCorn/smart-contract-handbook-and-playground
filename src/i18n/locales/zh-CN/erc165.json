@@ -1,0 +1,30 @@
+{
+  "short": "标准接口检测",
+  "introduction": "ERC-165 定义了一种标准方法来检测智能合约支持哪些接口。它引入了一个函数 supportsInterface，接受一个 4 字节的接口标识符并返回布尔值。这允许合约和 DApp 在尝试交互之前查询目标合约是否实现了特定接口。该标准本身必须对 ERC-165 接口 ID (0x01ffc9a7) 返回 true，对 0xffffffff 返回 false。",
+  "designPurpose": "ERC-165 旨在解决以太坊上的接口发现问题。没有它，调用者无法可靠地确定合约是否支持特定的函数集，导致调用失败和 Gas 浪费。通过提供标准化的检测机制，ERC-165 实现了更安全的合约交互，并且是许多其他标准（如 ERC-721 和 ERC-1155）的前提条件。",
+  "commonUsage": "ERC-165 被 NFT 市场、代币合约和协议路由器广泛使用，用于验证目标合约是否实现了预期的接口。例如，市场可以在尝试转移 NFT 之前检查合约是否支持 ERC-721。它也被代理模式和模块化智能账户用于声明支持的功能。",
+
+  "fn.supportsInterface.desc": "如果合约实现了由给定 4 字节标识符定义的接口，则返回 true。接口 ID 计算为接口中所有函数选择器的 XOR 值。",
+  "fn.supportsInterface.params.interfaceId": "要查询的 4 字节接口标识符，如 ERC-165 中所定义。计算为接口中所有函数选择器的 XOR 值。",
+  "fn.supportsInterface.returns.supported": "如果合约实现了查询的接口则返回 true，否则返回 false。",
+
+  "node.caller": "调用者 / DApp",
+  "node.contract": "ERC-165 合约",
+  "node.interfaceRegistry": "接口注册表",
+  "node.result": "查询结果",
+
+  "edge.query": "查询接口",
+  "edge.lookupRegistry": "查找注册表",
+  "edge.returnBool": "返回结果",
+  "edge.response": "布尔值响应",
+
+  "sim.interfaceQuery.name": "接口检测查询",
+  "sim.interfaceQuery.desc": "查询合约以检查其是否使用 supportsInterface 函数支持特定接口。",
+  "sim.interfaceQuery.param.interfaceId": "要查询的接口 ID",
+  "sim.interfaceQuery.step.call": "调用者在目标合约上调用 supportsInterface(interfaceId) 以检查是否支持特定接口。",
+  "sim.interfaceQuery.step.call.mobile": "调用 supportsInterface()",
+  "sim.interfaceQuery.step.lookup": "合约在其内部注册表映射中查找接口 ID。每个支持的接口在构造时预先注册。",
+  "sim.interfaceQuery.step.lookup.mobile": "查找接口注册表",
+  "sim.interfaceQuery.step.return": "合约返回布尔值结果。调用者现在可以在接口受支持时安全地继续操作，或者优雅地处理不支持的情况。",
+  "sim.interfaceQuery.step.return.mobile": "返回 true/false"
+}

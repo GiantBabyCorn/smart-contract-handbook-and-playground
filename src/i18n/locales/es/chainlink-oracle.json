@@ -1,0 +1,59 @@
+{
+  "short": "Red de oráculos descentralizada que proporciona feeds de precios a prueba de manipulación para contratos inteligentes",
+  "introduction": "Chainlink es la red de oráculos descentralizada más ampliamente adoptada, proporcionando datos off-chain fiables a contratos inteligentes on-chain. Sus agregadores de feeds de precios entregan precios de activos a prueba de manipulación utilizados por la mayoría de los protocolos DeFi para operaciones críticas como liquidaciones de préstamos, liquidación de derivados y anclaje de stablecoins. La red utiliza un conjunto descentralizado de nodos oráculo que obtienen, validan y agregan datos de forma independiente.",
+  "designPurpose": "Chainlink fue diseñado para resolver el problema del oráculo, el desafío fundamental de llevar datos del mundo real a una blockchain de manera confiable. Mediante una red descentralizada de operadores de nodos independientes que hacen staking de tokens LINK, Chainlink garantiza que ninguna entidad pueda manipular los datos de precios. El contrato agregador toma la mediana de múltiples envíos de nodos, proporcionando una resistencia robusta a valores atípicos y manipulación.",
+  "commonUsage": "Los protocolos de préstamos DeFi como Aave y Compound utilizan los feeds de precios de Chainlink para determinar valores de colateral y activar liquidaciones. Los DEXs y las plataformas de derivados los usan para precios de liquidación y cálculos de valoración a mercado. Los protocolos de stablecoins dependen de los oráculos de Chainlink para mantener sus anclajes y gestionar parámetros de riesgo.",
+
+  "fn.latestRoundData.desc": "Devuelve los datos de precio más recientes del agregador, incluyendo el precio, el ID de ronda y las marcas de tiempo. Esta es la función principal utilizada por los protocolos DeFi para obtener precios actuales de activos.",
+  "fn.latestRoundData.returns.roundId": "El identificador único para la ronda de agregación actual.",
+  "fn.latestRoundData.returns.answer": "La respuesta de precio agregada, escalada por los decimales del feed (típicamente 8 para pares en USD).",
+  "fn.latestRoundData.returns.startedAt": "La marca de tiempo Unix cuando se inició la ronda.",
+  "fn.latestRoundData.returns.updatedAt": "La marca de tiempo Unix cuando se actualizó la respuesta por última vez. Se usa para verificar datos obsoletos.",
+  "fn.latestRoundData.returns.answeredInRound": "El ID de ronda en el que se calculó la respuesta. Debe coincidir con roundId para datos actualizados.",
+
+  "fn.getRoundData.desc": "Devuelve datos de precio para una ronda histórica específica. Útil para verificar precios pasados o construir promedios ponderados por tiempo.",
+  "fn.getRoundData.params.roundId": "El ID de ronda para consultar datos históricos.",
+  "fn.getRoundData.returns.roundId": "El ID de ronda de los datos consultados.",
+  "fn.getRoundData.returns.answer": "La respuesta de precio para la ronda consultada.",
+  "fn.getRoundData.returns.startedAt": "La marca de tiempo Unix cuando comenzó la ronda consultada.",
+  "fn.getRoundData.returns.updatedAt": "La marca de tiempo Unix cuando se actualizó por última vez la ronda consultada.",
+  "fn.getRoundData.returns.answeredInRound": "La ronda en la que se calculó la respuesta.",
+
+  "fn.decimals.desc": "Devuelve el número de decimales en la respuesta del feed de precios. La mayoría de los feeds denominados en USD usan 8 decimales.",
+  "fn.decimals.returns.decimals": "El número de decimales (por ejemplo, 8 para feeds de precios en USD).",
+
+  "fn.description.desc": "Devuelve una descripción legible del feed de precios, como 'ETH / USD'.",
+  "fn.description.returns.description": "La cadena de descripción del feed de precios.",
+
+  "fn.AnswerUpdated.desc": "Se emite cuando el agregador recibe una nueva respuesta de la red de oráculos. Utilizado por sistemas off-chain para monitorear actualizaciones de precios en tiempo real.",
+  "fn.AnswerUpdated.params.current": "La nueva respuesta de precio agregada.",
+  "fn.AnswerUpdated.params.roundId": "El ID de ronda para esta actualización de respuesta.",
+  "fn.AnswerUpdated.params.updatedAt": "La marca de tiempo Unix de la actualización.",
+
+  "node.consumer-contract": "Contrato consumidor (protocolo DeFi)",
+  "node.aggregator-proxy": "Proxy del agregador",
+  "node.aggregator": "Agregador Offchain",
+  "node.oracle-nodes": "Red de nodos oráculo (DON)",
+  "node.off-chain-data": "Fuentes de datos off-chain",
+  "node.round-storage": "Almacenamiento de datos de ronda",
+
+  "edge.requestPrice": "latestRoundData()",
+  "edge.delegate": "Delegar al agregador",
+  "edge.readRound": "Leer datos de ronda",
+  "edge.fetchData": "Obtener datos de mercado",
+  "edge.submitAnswer": "Enviar respuesta del oráculo",
+  "edge.returnPrice": "Devolver datos de precio",
+  "edge.priceData": "Precio al consumidor",
+
+  "sim.price-feed-request.name": "Solicitud de feed de precios",
+  "sim.price-feed-request.desc": "Simula el ciclo de vida completo de una actualización de precio de Chainlink: agregación de datos off-chain por nodos oráculo, envío on-chain y lectura del precio por un contrato consumidor.",
+  "sim.price-feed-request.param.consumerAddress": "Dirección del contrato consumidor",
+  "sim.price-feed-request.step.offChainFetch": "Los nodos oráculo en la Red de Oráculos Descentralizada (DON) obtienen de forma independiente el precio de ETH/USD de múltiples fuentes de datos off-chain.",
+  "sim.price-feed-request.step.offChainFetch.mobile": "Los nodos obtienen precios off-chain",
+  "sim.price-feed-request.step.submit": "Los nodos oráculo envían sus respuestas individuales al contrato agregador, que calcula el valor mediano y lo almacena como los datos de la última ronda.",
+  "sim.price-feed-request.step.submit.mobile": "Enviar respuesta agregada",
+  "sim.price-feed-request.step.consumerCall": "El contrato consumidor de un protocolo DeFi llama a latestRoundData() en el proxy del agregador para obtener el precio actual de ETH/USD.",
+  "sim.price-feed-request.step.consumerCall.mobile": "El consumidor llama a latestRoundData()",
+  "sim.price-feed-request.step.proxyDelegate": "El proxy delega la llamada a la implementación actual del agregador, que lee la última ronda del almacenamiento y devuelve los datos de precio al consumidor.",
+  "sim.price-feed-request.step.proxyDelegate.mobile": "El proxy devuelve datos de precio"
+}

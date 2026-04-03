@@ -1,0 +1,45 @@
+{
+  "short": "代理儲存槽標準",
+  "introduction": "ERC-1967 標準化了代理合約用於儲存實作地址、管理員地址和信標地址的儲存槽。這些槽計算為已知字串的 keccak256 減 1，將它們放置在極不可能與實作合約儲存衝突的偽隨機位置。該標準使區塊瀏覽器和工具能夠可靠地偵測代理合約並顯示其實作地址。",
+  "designPurpose": "ERC-1967 旨在解決代理合約中的儲存衝突問題，並使代理合約可被發現。在此標準之前，不同的代理實作使用不同的儲存槽，使得工具無法可靠地偵測代理。透過標準化儲存槽位置和相關事件，ERC-1967 使 Etherscan 和其他瀏覽器能夠識別代理並連結到其實作原始碼。",
+  "commonUsage": "ERC-1967 被以太坊生態系中幾乎每個代理合約使用，包括 OpenZeppelin 的 TransparentUpgradeableProxy 和 UUPS 代理。Etherscan 等區塊瀏覽器讀取這些標準化槽以顯示實作合約的詳細資訊。該標準定義了三個槽：用於邏輯合約的 IMPLEMENTATION_SLOT、用於升級管理員的 ADMIN_SLOT 和用於信標代理模式的 BEACON_SLOT。",
+
+  "fn.implementation.desc": "回傳儲存在標準化 ERC-1967 實作槽中的當前邏輯/實作合約地址。",
+  "fn.implementation.returns.impl": "當前實作合約的地址。",
+
+  "fn.admin.desc": "回傳儲存在標準化 ERC-1967 管理員槽中的代理管理員地址。管理員通常有權限升級代理。",
+  "fn.admin.returns.admin": "當前代理管理員的地址。",
+
+  "fn.Upgraded.desc": "當實作地址變更時發出。工具和索引器監控此事件以追蹤代理升級。",
+  "fn.Upgraded.params.implementation": "新實作合約的地址。",
+
+  "fn.AdminChanged.desc": "當代理管理員地址變更時發出。",
+  "fn.AdminChanged.params.previousAdmin": "前任管理員的地址。",
+  "fn.AdminChanged.params.newAdmin": "新管理員的地址。",
+
+  "node.user": "使用者 / 呼叫者",
+  "node.proxy": "ERC-1967 代理",
+  "node.implementation": "實作合約",
+  "node.admin": "代理管理員",
+  "node.storageSlots": "標準儲存槽",
+
+  "edge.callProxy": "呼叫代理",
+  "edge.delegatecall": "delegatecall",
+  "edge.readSlot": "讀取儲存槽",
+  "edge.upgrade": "升級實作",
+  "edge.emitUpgraded": "發出 Upgraded 事件",
+  "edge.emitAdminChanged": "發出 AdminChanged 事件",
+
+  "sim.delegatecallProxy.name": "代理 Delegatecall 流程",
+  "sim.delegatecallProxy.desc": "觀察使用者的呼叫如何透過 ERC-1967 代理經由 delegatecall 流向實作合約。",
+  "sim.delegatecallProxy.param.caller": "呼叫者地址",
+  "sim.delegatecallProxy.param.proxyAddress": "代理地址",
+  "sim.delegatecallProxy.step.callProxy": "使用者向代理合約地址發送交易。代理的 fallback 函式被觸發。",
+  "sim.delegatecallProxy.step.callProxy.mobile": "呼叫代理",
+  "sim.delegatecallProxy.step.readSlot": "代理從標準化的 ERC-1967 儲存槽（keccak256('eip1967.proxy.implementation') - 1）讀取實作地址。",
+  "sim.delegatecallProxy.step.readSlot.mobile": "讀取實作槽",
+  "sim.delegatecallProxy.step.delegatecall": "代理對實作執行 delegatecall。程式碼在代理的上下文中執行，使用代理的儲存和 msg.sender。",
+  "sim.delegatecallProxy.step.delegatecall.mobile": "delegatecall 到實作",
+  "sim.delegatecallProxy.step.return": "實作執行函式邏輯並透過代理將結果回傳給原始呼叫者。",
+  "sim.delegatecallProxy.step.return.mobile": "將結果回傳給呼叫者"
+}

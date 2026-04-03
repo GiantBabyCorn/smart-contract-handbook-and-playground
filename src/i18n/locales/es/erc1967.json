@@ -1,0 +1,45 @@
+{
+  "short": "Estándar de Slots de Almacenamiento de Proxy",
+  "introduction": "ERC-1967 estandariza los slots de almacenamiento utilizados por contratos proxy para almacenar la dirección de implementación, la dirección de administrador y la dirección de beacon. Estos slots se calculan como keccak256 de una cadena conocida menos 1, lo que los coloca en posiciones pseudoaleatorias que es extremadamente improbable que colisionen con el almacenamiento del contrato de implementación. El estándar permite a los exploradores de bloques y herramientas detectar contratos proxy de manera confiable y mostrar sus direcciones de implementación.",
+  "designPurpose": "ERC-1967 fue diseñado para resolver el problema de colisión de almacenamiento en contratos proxy y para hacer que los contratos proxy sean detectables. Antes de este estándar, diferentes implementaciones de proxy usaban diferentes slots de almacenamiento, haciendo imposible para las herramientas detectar proxies de manera confiable. Al estandarizar las ubicaciones de los slots de almacenamiento y los eventos asociados, ERC-1967 permite que Etherscan y otros exploradores identifiquen proxies y enlacen al código fuente de su implementación.",
+  "commonUsage": "ERC-1967 es utilizado por prácticamente todos los contratos proxy en el ecosistema de Ethereum, incluyendo TransparentUpgradeableProxy y proxies UUPS de OpenZeppelin. Los exploradores de bloques como Etherscan leen estos slots estandarizados para mostrar los detalles del contrato de implementación. El estándar define tres slots: IMPLEMENTATION_SLOT para el contrato lógico, ADMIN_SLOT para el administrador de actualización, y BEACON_SLOT para patrones de proxy beacon.",
+
+  "fn.implementation.desc": "Devuelve la dirección del contrato de lógica/implementación actual almacenado en el slot de implementación estandarizado de ERC-1967.",
+  "fn.implementation.returns.impl": "La dirección del contrato de implementación actual.",
+
+  "fn.admin.desc": "Devuelve la dirección del administrador del proxy almacenada en el slot de administrador estandarizado de ERC-1967. El administrador típicamente tiene permiso para actualizar el proxy.",
+  "fn.admin.returns.admin": "La dirección del administrador actual del proxy.",
+
+  "fn.Upgraded.desc": "Se emite cuando la dirección de implementación cambia. Las herramientas e indexadores observan este evento para rastrear las actualizaciones del proxy.",
+  "fn.Upgraded.params.implementation": "La dirección del nuevo contrato de implementación.",
+
+  "fn.AdminChanged.desc": "Se emite cuando la dirección del administrador del proxy cambia.",
+  "fn.AdminChanged.params.previousAdmin": "La dirección del administrador anterior.",
+  "fn.AdminChanged.params.newAdmin": "La dirección del nuevo administrador.",
+
+  "node.user": "Usuario / Llamador",
+  "node.proxy": "Proxy ERC-1967",
+  "node.implementation": "Contrato de Implementación",
+  "node.admin": "Administrador del Proxy",
+  "node.storageSlots": "Slots de Almacenamiento Estándar",
+
+  "edge.callProxy": "Llamar al proxy",
+  "edge.delegatecall": "delegatecall",
+  "edge.readSlot": "Leer slot de almacenamiento",
+  "edge.upgrade": "Actualizar implementación",
+  "edge.emitUpgraded": "Emitir evento Upgraded",
+  "edge.emitAdminChanged": "Emitir evento AdminChanged",
+
+  "sim.delegatecallProxy.name": "Flujo de Delegatecall del Proxy",
+  "sim.delegatecallProxy.desc": "Observar cómo la llamada de un usuario fluye a través de un proxy ERC-1967 al contrato de implementación mediante delegatecall.",
+  "sim.delegatecallProxy.param.caller": "Dirección del llamador",
+  "sim.delegatecallProxy.param.proxyAddress": "Dirección del proxy",
+  "sim.delegatecallProxy.step.callProxy": "El usuario envía una transacción a la dirección del contrato proxy. Se activa la función fallback del proxy.",
+  "sim.delegatecallProxy.step.callProxy.mobile": "Llamar al proxy",
+  "sim.delegatecallProxy.step.readSlot": "El proxy lee la dirección de implementación desde el slot de almacenamiento estandarizado de ERC-1967 (keccak256('eip1967.proxy.implementation') - 1).",
+  "sim.delegatecallProxy.step.readSlot.mobile": "Leer slot de implementación",
+  "sim.delegatecallProxy.step.delegatecall": "El proxy realiza un delegatecall a la implementación. El código se ejecuta en el contexto del proxy utilizando el almacenamiento del proxy y msg.sender.",
+  "sim.delegatecallProxy.step.delegatecall.mobile": "delegatecall a la implementación",
+  "sim.delegatecallProxy.step.return": "La implementación ejecuta la lógica de la función y devuelve el resultado a través del proxy al llamador original.",
+  "sim.delegatecallProxy.step.return.mobile": "Devolver resultado al llamador"
+}

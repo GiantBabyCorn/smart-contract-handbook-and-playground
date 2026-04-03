@@ -1,0 +1,68 @@
+{
+  "short": "專為穩定幣和錨定資產兌換優化的 AMM，滑點極低",
+  "introduction": "Curve StableSwap 是一個專門為交易應保持相似價值的資產（如穩定幣或包裝代幣）而設計的自動做市商。它使用結合恆定總和和恆定乘積公式的混合不變量，與傳統 AMM 相比，為錨定資產實現顯著更低的滑點。Curve 是 DeFi 中穩定幣交易流動性最深的來源之一。",
+  "designPurpose": "Curve 旨在解決恆定乘積 AMM（如 Uniswap）在交易相似價格資產時的資本效率低下問題。StableSwap 不變量由放大係數 A 控制，在錨定價格附近建立一條近乎平坦的價格曲線，使大額交易的價格影響最小化。這種設計使 Curve 成為 DeFi 中穩定幣兌換的首選場所。",
+  "commonUsage": "交易者使用 Curve 以最小的滑點和手續費在穩定幣（DAI、USDC、USDT）之間兌換。流動性提供者存入穩定幣以賺取交易手續費和透過量規系統獲得的 CRV 代幣獎勵。Curve 也被 1inch 等聚合器大量使用，為穩定幣交易路由最佳執行。",
+
+  "fn.exchange.desc": "使用 StableSwap 不變量在池內將一個代幣兌換為另一個。手續費會被扣除並分配給流動性提供者。",
+  "fn.exchange.params.i": "池中輸入代幣的索引。",
+  "fn.exchange.params.j": "池中輸出代幣的索引。",
+  "fn.exchange.params.dx": "要兌換的輸入代幣數量。",
+  "fn.exchange.params.min_dy": "要接收的最低輸出代幣數量。未達到時會回退（滑點保護）。",
+  "fn.exchange.returns.dy": "實際接收的輸出代幣數量。",
+
+  "fn.add_liquidity.desc": "將代幣存入池中以換取 LP 代幣。代幣可以任意比例添加，但不平衡的存款會產生小額手續費。",
+  "fn.add_liquidity.params.amounts": "要存入的代幣數量陣列，每個池代幣一個。",
+  "fn.add_liquidity.params.min_mint_amount": "要鑄造的最低 LP 代幣數量。未達到時會回退。",
+  "fn.add_liquidity.returns.lpAmount": "鑄造給存款人的 LP 代幣數量。",
+
+  "fn.remove_liquidity.desc": "銷毀 LP 代幣並根據當前池餘額按比例提領所有底層代幣。",
+  "fn.remove_liquidity.params._amount": "要銷毀的 LP 代幣數量。",
+  "fn.remove_liquidity.params.min_amounts": "每種底層代幣要接收的最低數量。",
+  "fn.remove_liquidity.returns.amounts": "每種底層代幣實際提領的數量。",
+
+  "fn.remove_liquidity_one_coin.desc": "銷毀 LP 代幣並提領單一底層代幣。提領金額考慮了手續費和 StableSwap 不變量。",
+  "fn.remove_liquidity_one_coin.params._token_amount": "要銷毀的 LP 代幣數量。",
+  "fn.remove_liquidity_one_coin.params.i": "要提領的代幣索引。",
+  "fn.remove_liquidity_one_coin.params._min_amount": "要接收的最低代幣數量。",
+  "fn.remove_liquidity_one_coin.returns.coinAmount": "實際提領的代幣數量。",
+
+  "fn.get_dy.desc": "計算給定兌換的預期輸出金額而不執行交易。適用於鏈下報價。",
+  "fn.get_dy.params.i": "輸入代幣的索引。",
+  "fn.get_dy.params.j": "輸出代幣的索引。",
+  "fn.get_dy.params.dx": "要模擬的輸入金額。",
+  "fn.get_dy.returns.dy": "扣除手續費後的預期輸出金額。",
+
+  "fn.get_virtual_price.desc": "回傳 LP 代幣的虛擬價格，代表一個 LP 代幣以底層資產計算的價值。用於偵測池隨時間的增長。",
+  "fn.get_virtual_price.returns.price": "縮放至 18 位小數的虛擬價格。",
+
+  "node.trader": "交易者",
+  "node.stableswapPool": "StableSwap 池",
+  "node.tokenA": "代幣 A（DAI）",
+  "node.tokenB": "代幣 B（USDC）",
+  "node.lpToken": "LP 代幣（3CRV）",
+  "node.gauge": "流動性量規",
+  "node.crvRewards": "CRV 獎勵",
+
+  "edge.exchange": "exchange(i, j, dx)",
+  "edge.tokenIn": "代幣輸入",
+  "edge.tokenOut": "代幣輸出",
+  "edge.mintLP": "鑄造 LP 代幣",
+  "edge.stakeLP": "在量規中質押 LP",
+  "edge.crvEmissions": "CRV 釋放",
+  "edge.claimCRV": "領取 CRV 獎勵",
+
+  "sim.stablecoinSwap.name": "穩定幣兌換",
+  "sim.stablecoinSwap.desc": "模擬透過 3Pool 將 DAI 兌換為 USDC，展示 StableSwap 不變量對錨定資產近乎零滑點的特性。",
+  "sim.stablecoinSwap.param.dx": "兌換金額（wei）",
+  "sim.stablecoinSwap.param.tokenIn": "輸入代幣",
+  "sim.stablecoinSwap.param.tokenOut": "輸出代幣",
+  "sim.stablecoinSwap.step.queryGetDy": "交易者查詢 get_dy() 以預覽預期輸出。StableSwap 不變量為平衡池產生接近 1:1 的定價。",
+  "sim.stablecoinSwap.step.queryGetDy.mobile": "查詢預期輸出",
+  "sim.stablecoinSwap.step.transferTokenIn": "輸入的 DAI 從交易者轉移到池中，增加池的 DAI 儲備。",
+  "sim.stablecoinSwap.step.transferTokenIn.mobile": "將 DAI 轉入池中",
+  "sim.stablecoinSwap.step.stableswapInvariant": "池使用帶有放大係數 A 的 StableSwap 不變量重新計算，沿近線性價格曲線確定輸出金額。",
+  "sim.stablecoinSwap.step.stableswapInvariant.mobile": "透過不變量計算",
+  "sim.stablecoinSwap.step.receiveTokenOut": "池將 USDC 轉移給交易者。扣除小額手續費（通常為 0.04%）並由池保留給 LP 持有者。",
+  "sim.stablecoinSwap.step.receiveTokenOut.mobile": "接收 USDC 輸出"
+}

@@ -1,0 +1,41 @@
+{
+  "short": "ユニバーサルアップグレーダブルプロキシ標準（UUPS）",
+  "introduction": "ERC-1822は、アップグレードロジックがプロキシ自体ではなく実装コントラクトに存在するパターンであるユニバーサルアップグレーダブルプロキシ標準（UUPS）を定義しています。実装コントラクトは特定のストレージスロットを返すproxiableUUID関数を公開し、アップグレード関数（upgradeTo、upgradeToAndCall）は実装の一部です。これにより、プロキシコントラクトは最小限かつガス効率が高く保たれ、実装が独自のアップグレードパスを制御できます。",
+  "designPurpose": "ERC-1822は、よりガス効率が良く安全なプロキシアップグレードパターンを作成するために設計されました。プロキシコントラクトがアップグレードを管理するトランスペアレントプロキシとは異なり、UUPSはアップグレードロジックを実装に配置します。これにより、プロキシは小さくなりデプロイコストが安くなります。また、安全メカニズムも提供します：新しい実装もproxiableUUIDをサポートする必要があり、プロキシを使用不能にする互換性のないコントラクトへの誤ったアップグレードを防止します。",
+  "commonUsage": "ERC-1822は、アップグレード可能なスマートコントラクトのデプロイメント、特にOpenZeppelinのUUPSUpgradeableベースコントラクトで使用されています。デプロイのガスコストを抑え、実装制御のアップグレードを好むプロジェクトでは、トランスペアレントプロキシよりも一般的に選択されます。多くのDeFiプロトコル、DAO、およびトークンコントラクトがアップグレード可能性のためにUUPSプロキシを使用しています。",
+
+  "fn.proxiableUUID.desc": "実装が実装アドレスを保存するために使用するストレージスロットを返します。UUPSパターンとの互換性を検証するために、keccak256('PROXIABLE')のハッシュを返す必要があります。",
+  "fn.proxiableUUID.returns.slot": "bytes32ストレージスロット識別子。通常はkeccak256('PROXIABLE')。",
+
+  "fn.upgradeTo.desc": "プロキシを新しい実装コントラクトに向けてアップグレードします。新しい実装もproxiableUUIDをサポートする必要があり、プロキシの使用不能を防止します。",
+  "fn.upgradeTo.params.newImplementation": "新しい実装コントラクトのアドレス。",
+
+  "fn.upgradeToAndCall.desc": "プロキシを新しい実装にアップグレードし、単一のトランザクションで初期化呼び出しを実行します。アップグレード後のステートの再初期化に便利です。",
+  "fn.upgradeToAndCall.params.newImplementation": "新しい実装コントラクトのアドレス。",
+  "fn.upgradeToAndCall.params.data": "アップグレード後に新しい実装で実行するエンコードされた関数呼び出し。",
+
+  "node.admin": "管理者 / アップグレーダー",
+  "node.proxy": "UUPSプロキシ",
+  "node.oldImplementation": "旧実装",
+  "node.newImplementation": "新実装",
+  "node.storage": "プロキシストレージ",
+
+  "edge.callUpgrade": "upgradeTo()を呼び出し",
+  "edge.verifyProxiableUUID": "proxiableUUIDを検証",
+  "edge.writeSlot": "実装スロットに書き込み",
+  "edge.pointToNew": "新しい実装を指す",
+  "edge.emitUpgraded": "Upgradedイベントを発行",
+
+  "sim.uupsUpgrade.name": "UUPSプロキシアップグレード",
+  "sim.uupsUpgrade.desc": "互換性を検証しながら、UUPSプロキシを新しい実装コントラクトにアップグレードします。",
+  "sim.uupsUpgrade.param.admin": "管理者アドレス",
+  "sim.uupsUpgrade.param.newImpl": "新しい実装アドレス",
+  "sim.uupsUpgrade.step.callUpgrade": "管理者がプロキシに対してupgradeTo(newImplementation)を呼び出し、現在の実装のアップグレードロジックに委任されます。",
+  "sim.uupsUpgrade.step.callUpgrade.mobile": "upgradeTo()を呼び出し",
+  "sim.uupsUpgrade.step.verifyUUID": "現在の実装が新しい実装に対してproxiableUUID()を呼び出し、正しいストレージスロットを返すことを検証して、アップグレードの互換性を確保します。",
+  "sim.uupsUpgrade.step.verifyUUID.mobile": "proxiableUUID()を検証",
+  "sim.uupsUpgrade.step.writeSlot": "PROXIABLE_SLOTに保存された実装アドレスが旧実装から新実装に更新されます。",
+  "sim.uupsUpgrade.step.writeSlot.mobile": "実装スロットを更新",
+  "sim.uupsUpgrade.step.pointNew": "プロキシが新しい実装を指すようになります。Upgradedイベントが発行されます。今後のすべての呼び出しは新しいコントラクトに委任されます。",
+  "sim.uupsUpgrade.step.pointNew.mobile": "プロキシがアップグレード完了"
+}

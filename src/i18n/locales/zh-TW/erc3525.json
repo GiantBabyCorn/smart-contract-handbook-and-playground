@@ -1,0 +1,84 @@
+{
+  "short": "半同質化代幣（SFT）標準",
+  "introduction": "ERC-3525 定義了半同質化代幣（SFT）標準，結合了同質化與非同質化代幣的特性。每個 SFT 擁有唯一的代幣 ID（類似 ERC-721）、一個將相容代幣分組的插槽，以及可在同一插槽內代幣間轉移的量化價值（類似 ERC-20）。這種三維結構（ID、插槽、價值）使代幣既獨特又在其類別內擁有可轉移、可分割的價值。",
+  "designPurpose": "ERC-3525 的設計目的是表示既非純粹同質化也非純粹非同質化的資產。金融工具如債券、選擇權和保險單是獨特的（不同的到期日、行使價格），但它們承載的同質化價值可以拆分和合併。ERC-3525 透過允許價值在同一插槽內的代幣間流動，同時維持每個代幣的獨特身份，來捕捉這種雙重性。",
+  "commonUsage": "ERC-3525 用於結構化金融產品、代幣化債券、票券系統、碎片化 NFT，以及任何需要同時具備唯一身份和量化價值的資產。Solv Protocol 使用它來建立可轉換票券。它特別適用於 DeFi 工具，如歸屬倉位、貸款分層和收益型代幣，其中每個倉位都是獨特的，但承載可轉移的價值。",
+
+  "fn.valueDecimals.desc": "返回每個代幣的 value 屬性所使用的小數位數，類似於 ERC-20 的 decimals。",
+  "fn.valueDecimals.returns.decimals": "代幣價值的小數位數。",
+
+  "fn.valueOf.desc": "返回特定代幣 ID 持有的價值。這是半同質化代幣的量化、可轉移組成部分。",
+  "fn.valueOf.params.tokenId": "要查詢的代幣的唯一識別碼。",
+  "fn.valueOf.returns.value": "儲存在代幣中的量化價值。",
+
+  "fn.slotOf.desc": "返回特定代幣的插槽編號。代幣只能將價值轉移給同一插槽內的其他代幣。",
+  "fn.slotOf.params.tokenId": "要查詢的代幣的唯一識別碼。",
+  "fn.slotOf.returns.slot": "分類此代幣的插槽編號。",
+
+  "fn.approve.desc": "授權一個地址從特定代幣中轉移最多指定數量的價值。這是價值層級的授權（不同於 ERC-721 的代幣層級授權）。",
+  "fn.approve.params.tokenId": "要授權價值花費的代幣 ID。",
+  "fn.approve.params.to": "要授權進行價值轉移的地址。",
+  "fn.approve.params.value": "該地址可從此代幣轉移的最大價值數量。",
+
+  "fn.allowance.desc": "返回操作者被允許從特定代幣轉移的剩餘價值。",
+  "fn.allowance.params.tokenId": "要查詢授權額度的代幣 ID。",
+  "fn.allowance.params.operator": "要檢查價值授權額度的地址。",
+  "fn.allowance.returns.value": "操作者在此代幣上的剩餘價值授權額度。",
+
+  "fn.transferValueFrom.desc": "將價值從一個代幣轉移到另一個代幣。兩個代幣必須在同一插槽中。如果 toTokenId 為 0，則會向接收者鑄造一個新代幣。",
+  "fn.transferValueFrom.params.fromTokenId": "要從中轉移價值的代幣 ID。",
+  "fn.transferValueFrom.params.toTokenId": "要轉入價值的代幣 ID（0 表示鑄造新代幣）。",
+  "fn.transferValueFrom.params.value": "要轉移的價值數量。",
+
+  "fn.TransferValue.desc": "當價值在同一插槽內從一個代幣轉移到另一個代幣時觸發。",
+  "fn.TransferValue.params.fromTokenId": "價值轉出的代幣 ID。",
+  "fn.TransferValue.params.toTokenId": "價值轉入的代幣 ID。",
+  "fn.TransferValue.params.value": "轉移的價值數量。",
+
+  "fn.ApprovalValue.desc": "當為操作者在特定代幣上設定價值授權額度時觸發。",
+  "fn.ApprovalValue.params.tokenId": "授權所針對的代幣 ID。",
+  "fn.ApprovalValue.params.operator": "被授權轉移價值的地址。",
+  "fn.ApprovalValue.params.value": "授權的價值數量。",
+
+  "fn.SlotChanged.desc": "當代幣的插槽被變更時觸發。",
+  "fn.SlotChanged.params.tokenId": "插槽被變更的代幣 ID。",
+  "fn.SlotChanged.params.oldSlot": "先前的插槽編號。",
+  "fn.SlotChanged.params.newSlot": "新的插槽編號。",
+
+  "node.holder": "代幣持有者",
+  "node.contract": "ERC-3525 合約",
+  "node.recipient": "接收者",
+  "node.storageSlotValue": "插槽 & 價值儲存",
+  "node.slotValidator": "插槽驗證器",
+
+  "edge.callTransferValue": "調用 transferValueFrom()",
+  "edge.updateValues": "更新代幣價值",
+  "edge.validateSlot": "驗證相同插槽",
+  "edge.valueTransferred": "價值已轉移",
+  "edge.callApproveValue": "調用 approve(value)",
+  "edge.emitTransferValue": "觸發 TransferValue",
+  "edge.emitApprovalValue": "觸發 ApprovalValue",
+
+  "sim.valueTransfer.name": "代幣間價值轉移",
+  "sim.valueTransfer.desc": "在同一插槽內將價值從一個半同質化代幣轉移到另一個。",
+  "sim.valueTransfer.param.fromTokenId": "來源代幣 ID",
+  "sim.valueTransfer.param.toTokenId": "目標代幣 ID",
+  "sim.valueTransfer.param.value": "要轉移的價值（以 wei 為單位）",
+  "sim.valueTransfer.step.checkSlot": "在轉移之前，合約驗證兩個代幣都存在且屬於同一插槽。不同插槽的代幣無法交換價值。",
+  "sim.valueTransfer.step.checkSlot.mobile": "檢查相同插槽",
+  "sim.valueTransfer.step.call": "持有者調用 transferValueFrom(fromTokenId, toTokenId, value) 發起代幣間的價值轉移。",
+  "sim.valueTransfer.step.call.mobile": "調用 transferValueFrom()",
+  "sim.valueTransfer.step.validateAndUpdate": "合約驗證授權，檢查來源代幣中是否有足夠的價值，然後減少來源代幣的價值並增加目標代幣的價值。",
+  "sim.valueTransfer.step.validateAndUpdate.mobile": "驗證 & 更新價值",
+  "sim.valueTransfer.step.recipientUpdated": "目標代幣現在持有已轉移的價值。觸發 TransferValue 事件記錄價值移動。",
+  "sim.valueTransfer.step.recipientUpdated.mobile": "價值已送達",
+
+  "sim.valueApproval.name": "價值授權",
+  "sim.valueApproval.desc": "授權操作者從代幣中轉移特定數量的價值。",
+  "sim.valueApproval.param.tokenId": "代幣 ID",
+  "sim.valueApproval.param.operator": "操作者地址",
+  "sim.valueApproval.param.approvedValue": "授權價值數量（以 wei 為單位）",
+  "sim.valueApproval.step.approve": "代幣持有者調用 approve(tokenId, operator, value) 授權操作者花費最多指定數量的價值。",
+  "sim.valueApproval.step.storeAllowance": "合約將價值授權額度儲存在 _valueApprovals 映射中，對應給定的代幣 ID 和操作者地址。",
+  "sim.valueApproval.step.event": "觸發 ApprovalValue 事件，記錄代幣 ID、操作者和授權價值數量。"
+}

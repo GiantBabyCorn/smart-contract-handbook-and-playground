@@ -1,0 +1,83 @@
+{
+  "short": "대체 가능 토큰 표준",
+  "introduction": "ERC-20은 이더리움의 대체 가능 토큰을 위한 기초 토큰 표준으로, 공통 인터페이스를 정의합니다. 2015년 11월 Fabian Vogelsteller에 의해 제안되었으며 생태계에서 가장 널리 채택된 토큰 표준이 되었습니다. 모든 ERC-20 토큰은 동일하고 상호 교환 가능하며, 하나의 달러 지폐가 다른 달러 지폐와 동일한 것과 같습니다. 이 표준은 토큰 전송, 제3자의 지출 승인, 잔액 조회를 가능하게 하는 6개의 핵심 함수와 2개의 이벤트를 규정합니다.",
+  "designPurpose": "ERC-20은 모든 대체 가능 토큰을 지갑, 거래소, 기타 스마트 컨트랙트에서 일관된 방식으로 처리할 수 있는 통합 인터페이스를 만들기 위해 설계되었습니다. ERC-20 이전에는 각 토큰 컨트랙트가 고유한 커스텀 API를 가지고 있어 통합이 어렵고 오류가 발생하기 쉬웠습니다. 인터페이스를 표준화함으로써 ERC-20은 토큰 생태계와 조합 가능한 토큰 상호작용에 의존하는 DeFi 애플리케이션의 폭발적 성장을 가능하게 했습니다.",
+  "commonUsage": "ERC-20 토큰은 암호화폐, 스테이블코인(USDC, DAI, USDT), 거버넌스 토큰, 유틸리티 토큰, 래핑된 자산에 사용됩니다. 탈중앙화 거래소, 대출 프로토콜, 이자 농사 및 거의 모든 DeFi 애플리케이션의 기본 구성 요소 역할을 합니다. 이 표준은 일반적으로 발행, 소각, 허가 기반 승인(ERC-2612)과 같은 기능으로 확장됩니다.",
+
+  "fn.totalSupply.desc": "존재하는 토큰의 총 수량을 반환합니다. 이 값은 발행된 모든 토큰에서 소각된 토큰을 뺀 값을 나타냅니다.",
+  "fn.totalSupply.returns.supply": "최소 단위로 표현된 토큰의 총 공급량(예: 18자리 소수점 토큰의 경우 wei).",
+
+  "fn.balanceOf.desc": "특정 계정의 토큰 잔액을 반환합니다. 내부 _balances 매핑을 조회하여 해당 주소가 보유한 토큰 수를 가져옵니다.",
+  "fn.balanceOf.params.account": "잔액을 조회할 주소.",
+  "fn.balanceOf.returns.balance": "최소 단위로 계정이 보유한 토큰 수.",
+
+  "fn.transfer.desc": "호출자의 계정에서 수신자에게 토큰을 이동합니다. 호출자는 충분한 잔액을 보유해야 합니다. 성공 시 Transfer 이벤트를 발생시킵니다.",
+  "fn.transfer.params.to": "토큰을 받을 수신자의 주소.",
+  "fn.transfer.params.amount": "최소 단위로 전송할 토큰 수.",
+  "fn.transfer.returns.success": "전송이 성공하면 true를 반환하고, 그렇지 않으면 되돌립니다.",
+
+  "fn.approve.desc": "지출자가 호출자의 계정에서 전송할 수 있도록 허용량을 설정합니다. 기존 허용량을 대체합니다. Approval 이벤트를 발생시킵니다.",
+  "fn.approve.params.spender": "호출자를 대신하여 토큰을 지출할 수 있도록 권한을 부여받는 주소.",
+  "fn.approve.params.amount": "지출자가 전송할 수 있는 최대 토큰 수.",
+  "fn.approve.returns.success": "승인이 성공하면 true를 반환합니다.",
+
+  "fn.allowance.desc": "지출자가 소유자를 대신하여 전송할 수 있는 남은 토큰 수를 반환합니다. transferFrom이 호출되면 이 값이 감소합니다.",
+  "fn.allowance.params.owner": "토큰을 소유한 주소.",
+  "fn.allowance.params.spender": "소유자의 토큰을 지출할 수 있도록 권한을 부여받은 주소.",
+  "fn.allowance.returns.remaining": "지출자의 남은 허용량.",
+
+  "fn.transferFrom.desc": "허용량 메커니즘을 사용하여 한 계정에서 다른 계정으로 토큰을 이동합니다. 호출자는 'from' 주소로부터 전송 금액 이상의 승인을 받아야 합니다. 허용량은 그에 맞게 차감됩니다.",
+  "fn.transferFrom.params.from": "토큰을 전송할 출발 주소.",
+  "fn.transferFrom.params.to": "토큰을 전송할 도착 주소.",
+  "fn.transferFrom.params.amount": "전송할 토큰 수.",
+  "fn.transferFrom.returns.success": "전송이 성공하면 true를 반환합니다.",
+
+  "fn.Transfer.desc": "영값 전송을 포함하여 토큰이 한 계정에서 다른 계정으로 이동할 때 발생합니다. 발행(from = address(0)) 및 소각(to = address(0)) 시에도 발생합니다.",
+  "fn.Transfer.params.from": "토큰이 전송되는 출발 주소.",
+  "fn.Transfer.params.to": "토큰이 전송되는 도착 주소.",
+  "fn.Transfer.params.value": "전송된 토큰 수.",
+
+  "fn.Approval.desc": "approve 호출에 의해 소유자에 대한 지출자의 허용량이 설정될 때 발생합니다. 값은 새 허용량입니다.",
+  "fn.Approval.params.owner": "지출을 승인한 주소.",
+  "fn.Approval.params.spender": "지출 승인을 받은 주소.",
+  "fn.Approval.params.value": "새 허용량.",
+
+  "node.user": "토큰 보유자",
+  "node.contract": "ERC-20 컨트랙트",
+  "node.recipient": "수신자",
+  "node.spender": "승인된 지출자",
+  "node.storageBalances": "토큰 저장소",
+  "node.tokenFlow": "토큰 전송",
+
+  "edge.callTransfer": "transfer() 호출",
+  "edge.updateBalance": "잔액 업데이트",
+  "edge.tokensMove": "토큰 이동됨",
+  "edge.callApprove": "approve() 호출",
+  "edge.allowanceGranted": "허용량 부여됨",
+  "edge.callTransferFrom": "transferFrom() 호출",
+  "edge.emitTransfer": "Transfer 이벤트 발생",
+
+  "sim.basicTransfer.name": "기본 토큰 전송",
+  "sim.basicTransfer.desc": "transfer() 함수를 사용하여 한 주소에서 다른 주소로 ERC-20 토큰을 직접 전송합니다.",
+  "sim.basicTransfer.param.sender": "발신자 주소",
+  "sim.basicTransfer.param.recipient": "수신자 주소",
+  "sim.basicTransfer.param.amount": "수량 (wei)",
+  "sim.basicTransfer.step.call": "발신자가 ERC-20 컨트랙트에서 transfer(to, amount)를 호출하여 직접 토큰 전송을 시작합니다.",
+  "sim.basicTransfer.step.call.mobile": "발신자가 transfer() 호출",
+  "sim.basicTransfer.step.validate": "컨트랙트가 발신자의 잔액이 충분한지 검증한 후, _balances 매핑을 업데이트합니다: 발신자를 차감하고 수신자를 증가시킵니다.",
+  "sim.basicTransfer.step.validate.mobile": "검증 및 잔액 업데이트",
+  "sim.basicTransfer.step.tokenflow": "토큰이 발신자의 잔액에서 수신자의 잔액으로 이동됩니다. 수신자가 이제 전송된 금액을 보유합니다.",
+  "sim.basicTransfer.step.tokenflow.mobile": "토큰 전달 완료",
+  "sim.basicTransfer.step.event": "컨트랙트가 Transfer(from, to, value) 이벤트를 발생시켜 오프체인 서비스가 전송을 추적할 수 있게 합니다.",
+  "sim.basicTransfer.step.event.mobile": "Transfer 이벤트 발생",
+
+  "sim.approveAndTransfer.name": "승인 및 TransferFrom",
+  "sim.approveAndTransfer.desc": "DEX와 DeFi 프로토콜이 사용자를 대신하여 토큰을 지출하는 2단계 approve + transferFrom 패턴을 시연합니다.",
+  "sim.approveAndTransfer.param.owner": "토큰 소유자",
+  "sim.approveAndTransfer.param.spender": "승인된 지출자",
+  "sim.approveAndTransfer.param.allowanceAmount": "허용량 (wei)",
+  "sim.approveAndTransfer.step.approve": "토큰 소유자가 approve(spender, amount)를 호출하여 지출자가 지정된 금액까지 전송할 수 있도록 권한을 부여합니다.",
+  "sim.approveAndTransfer.step.storageAllowance": "컨트랙트가 _allowances 매핑에 허용량을 저장합니다: _allowances[owner][spender] = amount.",
+  "sim.approveAndTransfer.step.grant": "지출자가 이제 권한을 부여받았습니다. 언제든지 transferFrom을 호출하여 소유자의 잔액에서 토큰을 이동할 수 있습니다.",
+  "sim.approveAndTransfer.step.transferFrom": "지출자가 transferFrom(owner, recipient, amount)을 호출합니다. 컨트랙트가 허용량을 확인하고, 금액을 차감하고, 토큰을 수신자에게 이동합니다."
+}

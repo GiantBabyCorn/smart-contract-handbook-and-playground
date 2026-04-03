@@ -1,0 +1,70 @@
+{
+  "short": "鑽石標準（多切面代理）",
+  "introduction": "ERC-2535，又稱鑽石標準，定義了一種多切面代理架構，其中單一代理合約可以根據函式選擇器將呼叫委託給多個實作合約（稱為切面）。與指向單一實作的傳統代理不同，鑽石將每個函式選擇器映射到不同的切面地址。這使合約能夠突破 24KB 大小限制，並提供函式級別的細粒度可升級性。",
+  "designPurpose": "ERC-2535 旨在解決單一實作代理的多項限制。它透過將邏輯分散到多個切面來消除 24KB 合約大小限制，允許在不重新部署整個實作的情況下添加或替換個別函式，並提供標準化的自省機制（DiamondLoupe）來發現鑽石支援哪些切面和函式。它還允許在多個鑽石之間共享切面。",
+  "commonUsage": "ERC-2535 被需要模組化、可升級架構的複雜協議所使用，如 Aavegotchi、Beanstalk 和各種 DeFi 系統。當專案需要頻繁添加新功能、邏輯超出合約大小限制，或希望在多個代理合約之間共享通用功能時特別有用。該標準包含用於升級的 DiamondCut 和用於自省的 DiamondLoupe。",
+
+  "fn.diamondCut.desc": "透過更新選擇器到切面的映射來添加、替換或移除鑽石中的函式。可選擇在切割後執行初始化函式呼叫。",
+  "fn.diamondCut.params.diamondCut": "FacetCut 結構陣列，每個包含切面地址、操作（Add/Replace/Remove）和函式選擇器陣列。",
+  "fn.diamondCut.params.init": "切割後用於委託呼叫初始化的合約地址。使用 address(0) 表示不初始化。",
+  "fn.diamondCut.params.calldata": "在應用鑽石切割後於 init 地址上執行的編碼函式呼叫。",
+
+  "fn.facets.desc": "回傳所有切面地址及其關聯的函式選擇器。屬於 DiamondLoupe 自省介面的一部分。",
+  "fn.facets.returns.facets": "Facet 結構陣列，每個包含切面地址及其已註冊的函式選擇器。",
+
+  "fn.facetFunctionSelectors.desc": "回傳特定切面地址已註冊的所有函式選擇器。",
+  "fn.facetFunctionSelectors.params.facet": "要查詢選擇器的切面地址。",
+  "fn.facetFunctionSelectors.returns.selectors": "與切面關聯的 bytes4 函式選擇器陣列。",
+
+  "fn.facetAddresses.desc": "回傳至少有一個已註冊函式選擇器的所有切面地址。",
+  "fn.facetAddresses.returns.addresses": "所有活躍切面地址的陣列。",
+
+  "fn.facetAddress.desc": "回傳處理特定函式選擇器的切面地址。",
+  "fn.facetAddress.params.selector": "要查找的 4 位元組函式選擇器。",
+  "fn.facetAddress.returns.facet": "實作給定函式選擇器的切面地址。",
+
+  "fn.DiamondCut.desc": "當 diamondCut 操作修改鑽石的函式選擇器和切面映射時觸發。",
+  "fn.DiamondCut.params.diamondCut": "描述所做變更的 FacetCut 結構陣列。",
+  "fn.DiamondCut.params.init": "切割後使用的初始化合約地址。",
+  "fn.DiamondCut.params.calldata": "傳遞給 init 合約的 calldata。",
+
+  "node.user": "使用者 / 呼叫者",
+  "node.diamondProxy": "鑽石代理",
+  "node.facetA": "切面 A（代幣）",
+  "node.facetB": "切面 B（質押）",
+  "node.facetC": "切面 C（治理）",
+  "node.diamondStorage": "鑽石儲存",
+  "node.diamondCutFacet": "DiamondCut 切面",
+
+  "edge.callWithSelector": "使用函式選擇器呼叫",
+  "edge.lookupSelector": "查找選擇器 → 切面",
+  "edge.delegateToFacetA": "delegatecall 至切面 A",
+  "edge.delegateToFacetB": "delegatecall 至切面 B",
+  "edge.delegateToFacetC": "delegatecall 至切面 C",
+  "edge.callDiamondCut": "呼叫 diamondCut()",
+  "edge.updateMappings": "更新選擇器映射",
+
+  "sim.functionCallRouting.name": "函式呼叫路由",
+  "sim.functionCallRouting.desc": "觀察鑽石代理如何根據函式選擇器將函式呼叫路由到不同的切面。",
+  "sim.functionCallRouting.param.caller": "呼叫者地址",
+  "sim.functionCallRouting.param.selector": "函式選擇器",
+  "sim.functionCallRouting.step.call": "使用者以特定函式選擇器（例如 transfer()）呼叫鑽石代理。代理的 fallback 函式被觸發。",
+  "sim.functionCallRouting.step.call.mobile": "以選擇器呼叫鑽石",
+  "sim.functionCallRouting.step.lookup": "鑽石在鑽石儲存中的 selectorToFacet 映射中查找函式選擇器，以找到哪個切面處理此函式。",
+  "sim.functionCallRouting.step.lookup.mobile": "查找選擇器的切面",
+  "sim.functionCallRouting.step.delegate": "鑽石對已解析的切面執行 delegatecall。切面程式碼在鑽石的儲存上下文中執行。",
+  "sim.functionCallRouting.step.delegate.mobile": "delegatecall 至切面",
+
+  "sim.diamondCutAddFacet.name": "鑽石切割：添加切面",
+  "sim.diamondCutAddFacet.desc": "向鑽石添加新切面，註冊新的函式選擇器並可選擇執行初始化函式。",
+  "sim.diamondCutAddFacet.param.admin": "管理員 / 擁有者",
+  "sim.diamondCutAddFacet.param.newFacet": "新切面地址",
+  "sim.diamondCutAddFacet.step.prepareCut": "管理員準備一個 diamondCut 呼叫，包含新切面地址、操作類型 'Add' 和要註冊的函式選擇器陣列。",
+  "sim.diamondCutAddFacet.step.prepareCut.mobile": "準備鑽石切割",
+  "sim.diamondCutAddFacet.step.validateFacet": "鑽石驗證切面包含程式碼、選擇器尚未註冊，並更新 selectorToFacet 映射和 facetAddresses 陣列。",
+  "sim.diamondCutAddFacet.step.validateFacet.mobile": "驗證並註冊切面",
+  "sim.diamondCutAddFacet.step.initCall": "如果提供了 init 地址，鑽石會執行 delegatecall 來執行新切面上的初始化函式。",
+  "sim.diamondCutAddFacet.step.initCall.mobile": "執行初始化函式",
+  "sim.diamondCutAddFacet.step.emitEvent": "觸發 DiamondCut 事件記錄所有變更。新切面的函式現在可透過鑽石代理存取。",
+  "sim.diamondCutAddFacet.step.emitEvent.mobile": "觸發 DiamondCut 事件"
+}

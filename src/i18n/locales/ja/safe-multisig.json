@@ -1,0 +1,87 @@
+{
+  "short": "トランザクション実行にN人中M人のオーナー承認を必要とするマルチシグスマートコントラクトウォレット",
+  "introduction": "Safe（旧Gnosis Safe）は、Ethereumエコシステムで最も広く使用されているマルチシグウォレットであり、数十億ドルの資産を保護しています。トランザクションが実行される前に、設定可能な閾値のオーナー署名を必要とし、単一障害点に対する堅牢な保護を提供します。Safeはモジュール、ガード、フォールバックハンドラーによる拡張をサポートしており、プログラマブルなアカウント抽象化プリミティブとなっています。",
+  "designPurpose": "Safeは、すべてのトランザクションに複数の当事者の承認を求めることで、単一の秘密鍵の漏洩リスクを排除するために設計されました。モジュラーアーキテクチャにより、コアコントラクトを変更することなく、支出制限、ソーシャルリカバリ、自動トランザクションモジュールなどの拡張が可能です。プロキシベースのデプロイパターンにより、実戦で検証されたシングルトン実装を維持しながらガスコストを最小化します。",
+  "commonUsage": "DAOやチームは、マルチシグ承認要件でトレジャリー資金を管理するためにSafeを使用します。プロトコルは、コントラクトのアップグレードやパラメータ変更のための管理者キーを制御するためにSafeウォレットを使用します。個人は、ハードウェアウォレット署名者やソーシャルリカバリモジュールによる個人的なセキュリティのためにSafeを使用します。",
+
+  "fn.execTransaction.desc": "必要な数のオーナー署名を収集した後にトランザクションを実行します。署名の検証、ガードチェック、呼び出しの実行を行い、オプションでガスコストを払い戻します。",
+  "fn.execTransaction.params.to": "トランザクションの宛先アドレス。",
+  "fn.execTransaction.params.value": "トランザクションで送信するETH額。",
+  "fn.execTransaction.params.data": "トランザクションのcalldataペイロード。",
+  "fn.execTransaction.params.operation": "オペレーションタイプ：0はCall、1はDelegateCall。",
+  "fn.execTransaction.params.safeTxGas": "内部Safeトランザクション実行のガスリミット。",
+  "fn.execTransaction.params.baseGas": "ガス払い戻し計算のためのデータおよびトランザクションオーバーヘッドのガスコスト。",
+  "fn.execTransaction.params.gasPrice": "払い戻し計算に使用されるガス価格。0に設定すると払い戻しを無効化。",
+  "fn.execTransaction.params.gasToken": "ガス払い戻しに使用されるトークン（ETHの場合はaddress(0)）。",
+  "fn.execTransaction.params.refundReceiver": "ガス払い戻しを受け取るアドレス。tx.originの場合はaddress(0)を使用。",
+  "fn.execTransaction.params.signatures": "必要な数のオーナーからのパックされた署名バイト。",
+  "fn.execTransaction.returns.success": "内部トランザクションの実行が成功したかどうか。",
+
+  "fn.approveHash.desc": "トランザクションハッシュをオンチェーンで事前承認し、ECDSA署名なしでexecTransactionの署名としてカウントできるようにします。",
+  "fn.approveHash.params.hashToApprove": "承認するSafeトランザクションハッシュ。",
+
+  "fn.addOwnerWithThreshold.desc": "Safeに新しいオーナーを追加し、必要な署名閾値を更新します。execTransactionを通じてSafe自体からのみ呼び出し可能です。",
+  "fn.addOwnerWithThreshold.params.owner": "追加する新しいオーナーのアドレス。",
+  "fn.addOwnerWithThreshold.params.threshold": "オーナー追加後の新しい署名閾値。",
+
+  "fn.removeOwner.desc": "Safeのオーナーリンクリストからオーナーを削除し、閾値を更新します。Safe自体からのみ呼び出し可能です。",
+  "fn.removeOwner.params.prevOwner": "リンクリストで削除対象のオーナーを指すオーナー。",
+  "fn.removeOwner.params.owner": "削除するオーナーのアドレス。",
+  "fn.removeOwner.params.threshold": "オーナー削除後の新しい署名閾値。",
+
+  "fn.changeThreshold.desc": "トランザクション実行に必要なオーナー確認数を変更します。Safe自体からのみ呼び出し可能です。",
+  "fn.changeThreshold.params.threshold": "新しい署名閾値。最低1、最大でオーナー数まで。",
+
+  "fn.getOwners.desc": "現在のSafeオーナーの完全なリストを返します。",
+  "fn.getOwners.returns.owners": "オーナーアドレスの配列。",
+
+  "fn.getThreshold.desc": "トランザクション実行に必要な現在の確認数を返します。",
+  "fn.getThreshold.returns.threshold": "現在の署名閾値。",
+
+  "fn.isOwner.desc": "指定されたアドレスがSafeの登録オーナーであるかどうかを確認します。",
+  "fn.isOwner.params.owner": "オーナーシップを確認するアドレス。",
+  "fn.isOwner.returns.isOwner": "アドレスがオーナーであればtrue、そうでなければfalse。",
+
+  "fn.nonce.desc": "Safeの現在のトランザクションnonceを返します。実行されたトランザクションごとにこの値が増加し、リプレイを防止します。",
+  "fn.nonce.returns.nonce": "現在のnonce値。",
+
+  "node.owner-a": "オーナーA",
+  "node.owner-b": "オーナーB",
+  "node.owner-c": "オーナーC",
+  "node.safe-contract": "Safeコントラクト",
+  "node.guard": "トランザクションガード",
+  "node.module": "モジュール",
+  "node.fallback-handler": "フォールバックハンドラー",
+  "node.target-contract": "ターゲットコントラクト",
+
+  "edge.signTx": "トランザクションに署名",
+  "edge.approveHash": "approveHash()",
+  "edge.checkGuard": "checkTransaction()",
+  "edge.execCall": "呼び出しを実行",
+  "edge.moduleExec": "execTransactionFromModule()",
+  "edge.fallback": "Fallback / ERC-1271",
+
+  "sim.submit-confirm-multisig.name": "マルチシグTXの提出と確認",
+  "sim.submit-confirm-multisig.desc": "2-of-3マルチシグトランザクションをシミュレーションします：1人のオーナーが提案し、もう1人が確認し、ガード検証後にトランザクションが実行されます。",
+  "sim.submit-confirm-multisig.param.targetAddress": "ターゲットコントラクトアドレス",
+  "sim.submit-confirm-multisig.param.threshold": "必要な確認数",
+  "sim.submit-confirm-multisig.step.propose": "オーナーAがSafeトランザクションハッシュにオフチェーンで署名し、Safeサービスに送信して新しいトランザクションを提案します。",
+  "sim.submit-confirm-multisig.step.propose.mobile": "オーナーAがTXを提案",
+  "sim.submit-confirm-multisig.step.confirm": "オーナーBが同じトランザクションハッシュを確認・署名し、実行に必要な2-of-3の閾値に達します。",
+  "sim.submit-confirm-multisig.step.confirm.mobile": "オーナーBが確認",
+  "sim.submit-confirm-multisig.step.guardCheck": "トランザクションガードのcheckTransaction()関数が、実行前にトランザクションパラメータを検証します。",
+  "sim.submit-confirm-multisig.step.guardCheck.mobile": "ガードがTXを検証",
+  "sim.submit-confirm-multisig.step.execute": "Safeコントラクトがすべての署名を検証し、ターゲットコントラクトへの呼び出しを実行します。リプレイ防止のためnonceが増加されます。",
+  "sim.submit-confirm-multisig.step.execute.mobile": "トランザクションを実行",
+
+  "sim.add-new-owner.name": "新しいオーナーを追加",
+  "sim.add-new-owner.desc": "既存のオーナーの承認を必要として、Safeに新しいオーナーを追加し署名閾値を更新するシミュレーションです。",
+  "sim.add-new-owner.param.newOwner": "新しいオーナーアドレス",
+  "sim.add-new-owner.param.newThreshold": "新しい閾値",
+  "sim.add-new-owner.step.proposeAdd": "オーナーAが、新しい署名者を追加し閾値を3に引き上げるためのaddOwnerWithThreshold()トランザクションを提案します。",
+  "sim.add-new-owner.step.proposeAdd.mobile": "オーナー追加を提案",
+  "sim.add-new-owner.step.collectSigs": "オーナーBとオーナーCがトランザクションに署名し、現在の閾値を満たすのに十分な確認を提供します。",
+  "sim.add-new-owner.step.collectSigs.mobile": "署名を収集",
+  "sim.add-new-owner.step.addOwner": "SafeがaddOwnerWithThreshold()を実行し、新しいオーナーをリンクリストに追加して閾値を2から3に更新します。",
+  "sim.add-new-owner.step.addOwner.mobile": "オーナーを追加して閾値を更新"
+}

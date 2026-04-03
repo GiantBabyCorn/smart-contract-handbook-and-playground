@@ -1,0 +1,70 @@
+{
+  "short": "Protocolo de staking líquido que emite stETH, un token con rebase que representa ETH en staking",
+  "introduction": "Lido es el protocolo de staking líquido más grande de Ethereum, que permite a los usuarios hacer staking de ETH y recibir stETH a cambio. stETH es un token ERC-20 con rebase cuyo saldo aumenta automáticamente a diario para reflejar las recompensas de staking ganadas en la Beacon Chain. A diferencia del staking nativo de Ethereum, Lido elimina el requisito mínimo de 32 ETH y permite a los usuarios mantener liquidez mientras ganan rendimientos de staking.",
+  "designPurpose": "Lido fue diseñado para hacer el staking de Ethereum accesible a todos los usuarios independientemente de su cantidad de ETH o habilidad técnica. Al agrupar depósitos y distribuirlos entre operadores de nodos profesionales, Lido democratiza el staking manteniendo la descentralización. El token stETH con rebase puede ser utilizado en todo DeFi como colateral, en pools de liquidez o como activo base generador de rendimiento.",
+  "commonUsage": "Los usuarios envían ETH a Lido para ganar recompensas de staking sin ejecutar infraestructura de validadores. El stETH resultante se utiliza ampliamente como colateral en Aave y MakerDAO, emparejado en pools de Curve para trading, y depositado en EigenLayer para restaking. Los desarrolladores integran stETH como una primitiva generadora de rendimiento en productos estructurados y vaults.",
+
+  "fn.submit.desc": "Envía ETH al pool de staking de Lido a cambio de participaciones de stETH. El valor en ETH enviado (msg.value) se deposita y se acuña el stETH correspondiente.",
+  "fn.submit.params.referral": "Una dirección de referido opcional para rastreo de integraciones. Usar la dirección cero si no aplica.",
+  "fn.submit.returns.shares": "El número de participaciones de stETH acuñadas para el llamante.",
+
+  "fn.approve.desc": "Aprueba a un gastador para transferir stETH en nombre del llamante, siguiendo el patrón estándar de approve de ERC-20.",
+  "fn.approve.params.spender": "La dirección autorizada para gastar stETH.",
+  "fn.approve.params.amount": "La cantidad de stETH que el gastador puede transferir.",
+  "fn.approve.returns.success": "Devuelve true si la aprobación fue exitosa.",
+
+  "fn.transferShares.desc": "Transfiere participaciones de stETH directamente, evitando problemas de redondeo que pueden ocurrir con la transferencia basada en saldo con rebase. El receptor recibe participaciones que corresponden a una cantidad proporcional de ETH en el pool.",
+  "fn.transferShares.params.recipient": "La dirección que recibirá las participaciones de stETH.",
+  "fn.transferShares.params.sharesAmount": "El número de participaciones a transferir.",
+  "fn.transferShares.returns.tokensAmount": "La cantidad equivalente en tokens stETH de las participaciones transferidas a la tasa de cambio actual.",
+
+  "fn.getSharesByPooledEth.desc": "Convierte una cantidad de tokens stETH al número correspondiente de participaciones internas, basado en el total de ETH en el pool.",
+  "fn.getSharesByPooledEth.params.ethAmount": "La cantidad de tokens stETH a convertir.",
+  "fn.getSharesByPooledEth.returns.shares": "El número equivalente de participaciones.",
+
+  "fn.getPooledEthByShares.desc": "Convierte una cantidad de participaciones a la cantidad correspondiente de tokens stETH, basado en el total de ETH en el pool.",
+  "fn.getPooledEthByShares.params.sharesAmount": "El número de participaciones a convertir.",
+  "fn.getPooledEthByShares.returns.ethAmount": "La cantidad equivalente en tokens stETH de las participaciones dadas.",
+
+  "fn.getTotalPooledEther.desc": "Devuelve la cantidad total de ETH controlada por el protocolo Lido, incluyendo ETH depositado, recompensas de staking y cualquier penalización.",
+  "fn.getTotalPooledEther.returns.total": "La cantidad total de ETH en el pool en wei.",
+
+  "fn.Transfer.desc": "Se emite cuando se transfieren tokens stETH entre direcciones, incluyendo acuñación (desde la dirección cero) y quema (hacia la dirección cero).",
+  "fn.Transfer.params.from": "La dirección del remitente.",
+  "fn.Transfer.params.to": "La dirección del destinatario.",
+  "fn.Transfer.params.value": "La cantidad de tokens stETH transferidos.",
+
+  "fn.TransferShares.desc": "Se emite cuando se transfieren participaciones de stETH entre direcciones. Este evento proporciona la vista contable basada en participaciones de las transferencias.",
+  "fn.TransferShares.params.from": "La dirección del remitente.",
+  "fn.TransferShares.params.to": "La dirección del destinatario.",
+  "fn.TransferShares.params.sharesValue": "El número de participaciones transferidas.",
+
+  "node.staker": "Staker",
+  "node.lido-contract": "Contrato Lido",
+  "node.steth-token": "Token stETH",
+  "node.withdrawal-queue": "Cola de retiros",
+  "node.beacon-chain": "Beacon Chain",
+  "node.oracle": "Oráculo de Lido",
+  "node.node-operators": "Operadores de nodos",
+
+  "edge.submitEth": "submit() + ETH",
+  "edge.mintSteth": "Acuñar stETH",
+  "edge.depositEth": "Depositar ETH a validadores",
+  "edge.assignValidators": "Asignar validadores",
+  "edge.rebaseReport": "Reportar recompensas (rebase)",
+  "edge.requestWithdrawal": "Solicitar retiro",
+  "edge.processWithdrawal": "Procesar retiro",
+
+  "sim.stake-eth-receive-steth.name": "Hacer staking de ETH y recibir stETH",
+  "sim.stake-eth-receive-steth.desc": "Simula el flujo completo de staking: enviar ETH a Lido, recibir stETH, depositar en la Beacon Chain y el rebase diario que incrementa los saldos de stETH.",
+  "sim.stake-eth-receive-steth.param.ethAmount": "Cantidad de ETH (wei)",
+  "sim.stake-eth-receive-steth.param.referral": "Dirección de referido",
+  "sim.stake-eth-receive-steth.step.submit": "El staker llama a submit() con ETH adjunto. El ETH se almacena temporalmente en el contrato Lido esperando ser depositado en la Beacon Chain.",
+  "sim.stake-eth-receive-steth.step.submit.mobile": "Enviar ETH a Lido",
+  "sim.stake-eth-receive-steth.step.mintSteth": "Lido acuña stETH para el staker proporcional a su participación en el pool total. El staker ahora posee un recibo líquido y transferible de su stake.",
+  "sim.stake-eth-receive-steth.step.mintSteth.mobile": "Recibir stETH",
+  "sim.stake-eth-receive-steth.step.depositBeacon": "El ETH almacenado se deposita en la Beacon Chain en incrementos de 32 ETH a través de operadores de nodos seleccionados que ejecutan los validadores.",
+  "sim.stake-eth-receive-steth.step.depositBeacon.mobile": "Depositar en Beacon Chain",
+  "sim.stake-eth-receive-steth.step.rebase": "El oráculo de Lido reporta nuevas recompensas de staking. El total de ETH en el pool aumenta, causando que todos los saldos de stETH hagan rebase al alza automáticamente.",
+  "sim.stake-eth-receive-steth.step.rebase.mobile": "El rebase diario incrementa el saldo"
+}

@@ -1,0 +1,68 @@
+{
+  "short": "ステーブルコインおよびペグ資産スワップに最適化された最小スリッページのAMM",
+  "introduction": "Curve StableSwapは、ステーブルコインやラップドトークンなど、同等の価値を維持すべき資産のトレードに特化した自動マーケットメーカーです。定数和と定数積の公式を組み合わせたハイブリッド不変量を使用し、ペグ資産に対して従来のAMMよりも大幅に低いスリッページを実現します。CurveはDeFiにおけるステーブルコイン取引の最も深い流動性ソースの1つです。",
+  "designPurpose": "Curveは、同等価格の資産を取引する際にUniswapのような定数積AMMが持つ資本非効率性を解決するために設計されました。増幅パラメータAによって制御されるStableSwap不変量は、ペグ付近でほぼフラットな価格曲線を作成し、最小限の価格インパクトで大口取引を可能にします。この設計により、CurveはDeFi全体でステーブルコインスワップの最優先プラットフォームとなっています。",
+  "commonUsage": "トレーダーはCurveを使用して、ステーブルコイン（DAI、USDC、USDT）間を最小限のスリッページと手数料でスワップします。流動性プロバイダーはステーブルコインを預け入れて取引手数料とゲージシステムを通じたCRVトークン報酬を獲得します。Curveは1inchなどのアグリゲーターにも広く使用され、最良の約定でステーブルコイン取引をルーティングしています。",
+
+  "fn.exchange.desc": "StableSwap不変量を使用してプール内で1つのトークンを別のトークンにスワップします。手数料が差し引かれ、流動性プロバイダーに分配されます。",
+  "fn.exchange.params.i": "プール内の入力トークンのインデックス。",
+  "fn.exchange.params.j": "プール内の出力トークンのインデックス。",
+  "fn.exchange.params.dx": "スワップする入力トークンの数量。",
+  "fn.exchange.params.min_dy": "受け取る出力トークンの最小量。満たされない場合リバートします（スリッページ保護）。",
+  "fn.exchange.returns.dy": "実際に受け取った出力トークンの数量。",
+
+  "fn.add_liquidity.desc": "LPトークンと引き換えにプールにトークンを預け入れます。トークンは任意の比率で追加できますが、不均衡な預け入れには少額の手数料が発生します。",
+  "fn.add_liquidity.params.amounts": "預け入れるトークン量の配列（プールトークンごとに1つ）。",
+  "fn.add_liquidity.params.min_mint_amount": "発行するLPトークンの最小数。満たされない場合リバートします。",
+  "fn.add_liquidity.returns.lpAmount": "預け入れ者に発行されたLPトークンの数量。",
+
+  "fn.remove_liquidity.desc": "LPトークンをバーンし、現在のプール残高に比例してすべての基礎トークンを引き出します。",
+  "fn.remove_liquidity.params._amount": "バーンするLPトークンの数量。",
+  "fn.remove_liquidity.params.min_amounts": "各基礎トークンの最小受取量。",
+  "fn.remove_liquidity.returns.amounts": "引き出した各基礎トークンの実際の数量。",
+
+  "fn.remove_liquidity_one_coin.desc": "LPトークンをバーンし、単一の基礎トークンを引き出します。引き出し量は手数料とStableSwap不変量を考慮します。",
+  "fn.remove_liquidity_one_coin.params._token_amount": "バーンするLPトークンの数量。",
+  "fn.remove_liquidity_one_coin.params.i": "引き出すトークンのインデックス。",
+  "fn.remove_liquidity_one_coin.params._min_amount": "受け取るトークンの最小量。",
+  "fn.remove_liquidity_one_coin.returns.coinAmount": "実際に引き出したトークンの数量。",
+
+  "fn.get_dy.desc": "スワップを実行せずに、指定されたスワップの期待出力量を計算します。オフチェーンでの価格見積もりに有用です。",
+  "fn.get_dy.params.i": "入力トークンのインデックス。",
+  "fn.get_dy.params.j": "出力トークンのインデックス。",
+  "fn.get_dy.params.dx": "シミュレートする入力量。",
+  "fn.get_dy.returns.dy": "手数料控除後の期待出力量。",
+
+  "fn.get_virtual_price.desc": "LPトークンの仮想価格を返します。基礎資産の観点から1 LPトークンの価値を表します。プールの成長の検出に使用されます。",
+  "fn.get_virtual_price.returns.price": "18桁にスケーリングされた仮想価格。",
+
+  "node.trader": "トレーダー",
+  "node.stableswapPool": "StableSwapプール",
+  "node.tokenA": "トークンA（DAI）",
+  "node.tokenB": "トークンB（USDC）",
+  "node.lpToken": "LPトークン（3CRV）",
+  "node.gauge": "流動性ゲージ",
+  "node.crvRewards": "CRV報酬",
+
+  "edge.exchange": "exchange(i, j, dx)",
+  "edge.tokenIn": "トークン入力",
+  "edge.tokenOut": "トークン出力",
+  "edge.mintLP": "LPトークンを発行",
+  "edge.stakeLP": "LPをゲージにステーク",
+  "edge.crvEmissions": "CRVエミッション",
+  "edge.claimCRV": "CRV報酬を請求",
+
+  "sim.stablecoinSwap.name": "ステーブルコインスワップ",
+  "sim.stablecoinSwap.desc": "3Poolを通じたDAIからUSDCへのスワップをシミュレートし、ペグ資産に対するStableSwap不変量のほぼゼロのスリッページを実演します。",
+  "sim.stablecoinSwap.param.dx": "スワップ額（wei）",
+  "sim.stablecoinSwap.param.tokenIn": "入力トークン",
+  "sim.stablecoinSwap.param.tokenOut": "出力トークン",
+  "sim.stablecoinSwap.step.queryGetDy": "トレーダーがget_dy()を照会して期待出力をプレビューします。StableSwap不変量はバランスの取れたプールに対してほぼ1:1の価格を生成します。",
+  "sim.stablecoinSwap.step.queryGetDy.mobile": "期待出力を照会",
+  "sim.stablecoinSwap.step.transferTokenIn": "入力DAIがトレーダーからプールに転送され、プールのDAIリザーブが増加します。",
+  "sim.stablecoinSwap.step.transferTokenIn.mobile": "DAIをプールに転送",
+  "sim.stablecoinSwap.step.stableswapInvariant": "プールが増幅ファクターAを使用したStableSwap不変量で再計算を行い、ほぼ線形の価格曲線に沿って出力量を決定します。",
+  "sim.stablecoinSwap.step.stableswapInvariant.mobile": "不変量で計算",
+  "sim.stablecoinSwap.step.receiveTokenOut": "プールがUSDCをトレーダーに転送します。少額の手数料（通常0.04%）が差し引かれ、LPホルダーのためにプールに保持されます。",
+  "sim.stablecoinSwap.step.receiveTokenOut.mobile": "USDC出力を受取"
+}

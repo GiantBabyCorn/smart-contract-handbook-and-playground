@@ -1,0 +1,70 @@
+{
+  "short": "发行 stETH（一种表示已质押 ETH 的变基代币）的流动性质押协议",
+  "introduction": "Lido 是以太坊上最大的流动性质押协议，允许用户质押 ETH 并获得 stETH 作为回报。stETH 是一种变基 ERC-20 代币，其余额每天自动增加以反映在信标链上获得的质押奖励。与原生以太坊质押不同，Lido 取消了 32 ETH 的最低要求，并让用户在赚取质押收益的同时保持流动性。",
+  "designPurpose": "Lido 旨在使以太坊质押对所有用户开放，无论其 ETH 持有量或技术能力如何。通过汇集存款并将其分配给专业节点运营商，Lido 在保持去中心化的同时实现了质押的民主化。变基的 stETH 代币可在整个 DeFi 中用作抵押品、流动性池资产或生息基础资产。",
+  "commonUsage": "用户向 Lido 提交 ETH 以赚取质押奖励，无需运行验证者基础设施。由此产生的 stETH 被广泛用作 Aave 和 MakerDAO 上的抵押品、在 Curve 池中配对交易，以及存入 EigenLayer 进行再质押。开发者将 stETH 集成为结构化产品和金库中的生息原语。",
+
+  "fn.submit.desc": "向 Lido 质押池提交 ETH 以换取 stETH 份额。发送的 ETH 值（msg.value）被存入，并铸造相应的 stETH。",
+  "fn.submit.params.referral": "用于跟踪集成的可选推荐地址。如不适用，使用零地址。",
+  "fn.submit.returns.shares": "铸造给调用者的 stETH 份额数量。",
+
+  "fn.approve.desc": "授权一个支出者代表调用者转移 stETH，遵循标准的 ERC-20 approve 模式。",
+  "fn.approve.params.spender": "被授权使用 stETH 的地址。",
+  "fn.approve.params.amount": "允许支出者转移的 stETH 数量。",
+  "fn.approve.returns.success": "如果授权成功则返回 true。",
+
+  "fn.transferShares.desc": "直接转移 stETH 份额，避免基于变基余额转移时可能出现的舍入问题。接收者收到的份额映射到池化 ETH 的相应比例。",
+  "fn.transferShares.params.recipient": "接收 stETH 份额的地址。",
+  "fn.transferShares.params.sharesAmount": "要转移的份额数量。",
+  "fn.transferShares.returns.tokensAmount": "按当前汇率计算的已转移份额等值 stETH 代币数量。",
+
+  "fn.getSharesByPooledEth.desc": "根据当前总池化 ETH，将 stETH 代币数量转换为相应的内部份额数。",
+  "fn.getSharesByPooledEth.params.ethAmount": "要转换的 stETH 代币数量。",
+  "fn.getSharesByPooledEth.returns.shares": "等值的份额数量。",
+
+  "fn.getPooledEthByShares.desc": "根据当前总池化 ETH，将份额数量转换为相应的 stETH 代币数量。",
+  "fn.getPooledEthByShares.params.sharesAmount": "要转换的份额数量。",
+  "fn.getPooledEthByShares.returns.ethAmount": "给定份额等值的 stETH 代币数量。",
+
+  "fn.getTotalPooledEther.desc": "返回 Lido 协议控制的 ETH 总量，包括已存入的 ETH、质押奖励和任何惩罚。",
+  "fn.getTotalPooledEther.returns.total": "总池化 ETH 数量，以 wei 为单位。",
+
+  "fn.Transfer.desc": "当 stETH 代币在地址之间转移时发出，包括铸造（从零地址）和销毁（到零地址）。",
+  "fn.Transfer.params.from": "发送者地址。",
+  "fn.Transfer.params.to": "接收者地址。",
+  "fn.Transfer.params.value": "转移的 stETH 代币数量。",
+
+  "fn.TransferShares.desc": "当 stETH 份额在地址之间转移时发出。此事件提供基于份额的记账视图。",
+  "fn.TransferShares.params.from": "发送者地址。",
+  "fn.TransferShares.params.to": "接收者地址。",
+  "fn.TransferShares.params.sharesValue": "转移的份额数量。",
+
+  "node.staker": "质押者",
+  "node.lido-contract": "Lido 合约",
+  "node.steth-token": "stETH 代币",
+  "node.withdrawal-queue": "提款队列",
+  "node.beacon-chain": "信标链",
+  "node.oracle": "Lido 预言机",
+  "node.node-operators": "节点运营商",
+
+  "edge.submitEth": "submit() + ETH",
+  "edge.mintSteth": "铸造 stETH",
+  "edge.depositEth": "将 ETH 存入验证者",
+  "edge.assignValidators": "分配验证者",
+  "edge.rebaseReport": "报告奖励（变基）",
+  "edge.requestWithdrawal": "请求提款",
+  "edge.processWithdrawal": "处理提款",
+
+  "sim.stake-eth-receive-steth.name": "质押 ETH 并接收 stETH",
+  "sim.stake-eth-receive-steth.desc": "模拟完整的质押流程：向 Lido 提交 ETH、接收 stETH、存入信标链以及每日变基增加 stETH 余额。",
+  "sim.stake-eth-receive-steth.param.ethAmount": "ETH 数量（wei）",
+  "sim.stake-eth-receive-steth.param.referral": "推荐地址",
+  "sim.stake-eth-receive-steth.step.submit": "质押者调用 submit() 并附带 ETH。ETH 被缓冲在 Lido 合约中，等待存入信标链。",
+  "sim.stake-eth-receive-steth.step.submit.mobile": "向 Lido 提交 ETH",
+  "sim.stake-eth-receive-steth.step.mintSteth": "Lido 按质押者在总池中的份额比例铸造 stETH。质押者现在持有其质押的流动性可转让凭证。",
+  "sim.stake-eth-receive-steth.step.mintSteth.mobile": "接收 stETH",
+  "sim.stake-eth-receive-steth.step.depositBeacon": "缓冲的 ETH 通过选定的运行验证者的节点运营商以 32 ETH 为增量存入信标链。",
+  "sim.stake-eth-receive-steth.step.depositBeacon.mobile": "存入信标链",
+  "sim.stake-eth-receive-steth.step.rebase": "Lido 预言机报告新的质押奖励。总池化 ETH 增加，导致所有 stETH 余额自动向上变基。",
+  "sim.stake-eth-receive-steth.step.rebase.mobile": "每日变基增加余额"
+}

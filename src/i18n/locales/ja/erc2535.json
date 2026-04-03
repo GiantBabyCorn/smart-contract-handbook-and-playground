@@ -1,0 +1,70 @@
+{
+  "short": "Diamond Standard（マルチファセットプロキシ）",
+  "introduction": "ERC-2535はDiamond Standardとして知られ、単一のプロキシコントラクトが関数セレクターに基づいて複数の実装コントラクト（ファセットと呼ばれる）にコールを委任できるマルチファセットプロキシアーキテクチャを定義しています。単一の実装を指す従来のプロキシとは異なり、Diamondは各関数セレクターを異なるファセットアドレスにマッピングします。これにより、コントラクトは24KBのサイズ制限を超えることができ、関数レベルでの細粒度のアップグレード性を提供します。",
+  "designPurpose": "ERC-2535は、単一実装プロキシのいくつかの制限を解決するために設計されました。ロジックを複数のファセットに分割することで24KBのコントラクトサイズ制限を排除し、実装全体を再デプロイすることなく個別の関数の追加や置換を可能にし、Diamondがサポートするファセットと関数を発見するための標準化されたイントロスペクションメカニズム（DiamondLoupe）を提供します。また、複数のDiamond間でファセットの共有も可能です。",
+  "commonUsage": "ERC-2535は、Aavegotchi、Beanstalk、および様々なDeFiシステムなど、モジュラーでアップグレード可能なアーキテクチャを必要とする複雑なプロトコルで使用されています。プロジェクトが頻繁に新機能を追加する必要がある場合、ロジックがコントラクトサイズ制限を超える場合、または複数のプロキシコントラクト間で共通機能を共有したい場合に特に有用です。この標準にはアップグレード用のDiamondCutとイントロスペクション用のDiamondLoupeが含まれています。",
+
+  "fn.diamondCut.desc": "セレクターからファセットへのマッピングを更新することで、Diamondの関数を追加、置換、または削除します。カット後にオプションで初期化関数呼び出しを実行できます。",
+  "fn.diamondCut.params.diamondCut": "FacetCut構造体の配列。各構造体にはファセットアドレス、アクション（Add/Replace/Remove）、関数セレクターの配列が含まれます。",
+  "fn.diamondCut.params.init": "カット後に初期化のためにdelegatecallするコントラクトのアドレス。初期化不要の場合はaddress(0)を使用。",
+  "fn.diamondCut.params.calldata": "ダイヤモンドカット適用後にinitアドレスで実行するエンコードされた関数呼び出し。",
+
+  "fn.facets.desc": "すべてのファセットアドレスとそれに関連付けられた関数セレクターを返します。イントロスペクション用のDiamondLoupeインターフェースの一部です。",
+  "fn.facets.returns.facets": "Facet構造体の配列。各構造体にはファセットアドレスと登録された関数セレクターが含まれます。",
+
+  "fn.facetFunctionSelectors.desc": "特定のファセットアドレスに登録されたすべての関数セレクターを返します。",
+  "fn.facetFunctionSelectors.params.facet": "セレクターを照会するファセットアドレス。",
+  "fn.facetFunctionSelectors.returns.selectors": "ファセットに関連付けられたbytes4関数セレクターの配列。",
+
+  "fn.facetAddresses.desc": "少なくとも1つの登録された関数セレクターを持つすべてのファセットアドレスを返します。",
+  "fn.facetAddresses.returns.addresses": "すべてのアクティブなファセットアドレスの配列。",
+
+  "fn.facetAddress.desc": "特定の関数セレクターを処理するファセットアドレスを返します。",
+  "fn.facetAddress.params.selector": "検索する4バイトの関数セレクター。",
+  "fn.facetAddress.returns.facet": "指定された関数セレクターを実装するファセットのアドレス。",
+
+  "fn.DiamondCut.desc": "diamondCut操作がDiamondの関数セレクターとファセットマッピングを変更した時に発行されます。",
+  "fn.DiamondCut.params.diamondCut": "行われた変更を記述するFacetCut構造体の配列。",
+  "fn.DiamondCut.params.init": "カット後に使用された初期化コントラクトアドレス。",
+  "fn.DiamondCut.params.calldata": "initコントラクトに渡されたcalldata。",
+
+  "node.user": "ユーザー / 呼び出し元",
+  "node.diamondProxy": "Diamondプロキシ",
+  "node.facetA": "ファセットA（トークン）",
+  "node.facetB": "ファセットB（ステーキング）",
+  "node.facetC": "ファセットC（ガバナンス）",
+  "node.diamondStorage": "Diamondストレージ",
+  "node.diamondCutFacet": "DiamondCutファセット",
+
+  "edge.callWithSelector": "関数セレクターで呼び出し",
+  "edge.lookupSelector": "セレクター → ファセットを検索",
+  "edge.delegateToFacetA": "ファセットAにdelegatecall",
+  "edge.delegateToFacetB": "ファセットBにdelegatecall",
+  "edge.delegateToFacetC": "ファセットCにdelegatecall",
+  "edge.callDiamondCut": "diamondCut()を呼び出し",
+  "edge.updateMappings": "セレクターマッピングを更新",
+
+  "sim.functionCallRouting.name": "関数呼び出しルーティング",
+  "sim.functionCallRouting.desc": "Diamondプロキシが関数セレクターに基づいて異なるファセットに関数呼び出しをルーティングする様子を観察します。",
+  "sim.functionCallRouting.param.caller": "呼び出し元アドレス",
+  "sim.functionCallRouting.param.selector": "関数セレクター",
+  "sim.functionCallRouting.step.call": "ユーザーが特定の関数セレクター（例：transfer()）でDiamondプロキシを呼び出します。プロキシのfallback関数がトリガーされます。",
+  "sim.functionCallRouting.step.call.mobile": "セレクターでDiamondを呼び出し",
+  "sim.functionCallRouting.step.lookup": "DiamondがDiamondストレージ内のselectorToFacetマッピングで関数セレクターを検索し、どのファセットがこの関数を処理するかを見つけます。",
+  "sim.functionCallRouting.step.lookup.mobile": "セレクターのファセットを検索",
+  "sim.functionCallRouting.step.delegate": "Diamondが解決されたファセットにdelegatecallを実行します。ファセットのコードはDiamondのストレージコンテキストを使用して実行されます。",
+  "sim.functionCallRouting.step.delegate.mobile": "ファセットにdelegatecall",
+
+  "sim.diamondCutAddFacet.name": "Diamond Cut：ファセットの追加",
+  "sim.diamondCutAddFacet.desc": "Diamondに新しいファセットを追加し、新しい関数セレクターを登録して、オプションで初期化関数を実行します。",
+  "sim.diamondCutAddFacet.param.admin": "管理者 / オーナー",
+  "sim.diamondCutAddFacet.param.newFacet": "新しいファセットアドレス",
+  "sim.diamondCutAddFacet.step.prepareCut": "管理者が新しいファセットアドレス、アクションタイプ「Add」、登録する関数セレクターの配列でdiamondCut呼び出しを準備します。",
+  "sim.diamondCutAddFacet.step.prepareCut.mobile": "ダイヤモンドカットを準備",
+  "sim.diamondCutAddFacet.step.validateFacet": "Diamondがファセットにコードがあることを検証し、セレクターがまだ登録されていないことを確認し、selectorToFacetマッピングとfacetAddresses配列を更新します。",
+  "sim.diamondCutAddFacet.step.validateFacet.mobile": "ファセットを検証・登録",
+  "sim.diamondCutAddFacet.step.initCall": "initアドレスが提供されている場合、Diamondが新しいファセットで初期化関数を実行するためにdelegatecallを実行します。",
+  "sim.diamondCutAddFacet.step.initCall.mobile": "init関数を実行",
+  "sim.diamondCutAddFacet.step.emitEvent": "すべての変更を記録するDiamondCutイベントが発行されます。新しいファセットの関数はDiamondプロキシを通じてアクセス可能になります。",
+  "sim.diamondCutAddFacet.step.emitEvent.mobile": "DiamondCutイベントを発行"
+}

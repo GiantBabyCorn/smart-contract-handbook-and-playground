@@ -1,0 +1,41 @@
+{
+  "short": "범용 업그레이드 가능 프록시 표준 (UUPS)",
+  "introduction": "ERC-1822는 업그레이드 로직이 프록시가 아닌 구현 컨트랙트에 존재하는 패턴인 범용 업그레이드 가능 프록시 표준(UUPS)을 정의합니다. 구현 컨트랙트는 특정 스토리지 슬롯을 반환하는 proxiableUUID 함수를 노출하며, 업그레이드 함수(upgradeTo, upgradeToAndCall)는 구현의 일부입니다. 이를 통해 프록시 컨트랙트를 최소화하고 가스 효율적으로 유지하면서 구현이 자체 업그레이드 경로를 제어할 수 있습니다.",
+  "designPurpose": "ERC-1822는 더 가스 효율적이고 안전한 프록시 업그레이드 패턴을 만들기 위해 설계되었습니다. 프록시 컨트랙트가 업그레이드를 관리하는 투명 프록시와 달리, UUPS는 업그레이드 로직을 구현에 배치합니다. 이로 인해 프록시가 더 작고 배포 비용이 저렴합니다. 또한 안전 메커니즘을 제공합니다: 새 구현도 proxiableUUID를 지원해야 하므로, 호환되지 않는 컨트랙트로의 우발적 업그레이드로 프록시가 사용 불능이 되는 것을 방지합니다.",
+  "commonUsage": "ERC-1822는 특히 OpenZeppelin의 UUPSUpgradeable 기본 컨트랙트와 함께 업그레이드 가능한 스마트 컨트랙트 배포에 사용됩니다. 배포 가스 비용을 낮추고 구현 제어 업그레이드를 선호하는 프로젝트에서 투명 프록시 대신 일반적으로 선택됩니다. 많은 DeFi 프로토콜, DAO, 토큰 컨트랙트가 업그레이드 가능성을 위해 UUPS 프록시를 사용합니다.",
+
+  "fn.proxiableUUID.desc": "구현이 구현 주소를 저장하는 데 사용하는 스토리지 슬롯을 반환합니다. UUPS 패턴과의 호환성을 검증하기 위해 'PROXIABLE'의 keccak256 해시를 반환해야 합니다.",
+  "fn.proxiableUUID.returns.slot": "bytes32 스토리지 슬롯 식별자로, 일반적으로 keccak256('PROXIABLE')입니다.",
+
+  "fn.upgradeTo.desc": "프록시를 새 구현 컨트랙트를 가리키도록 업그레이드합니다. 프록시 사용 불능을 방지하기 위해 새 구현도 proxiableUUID를 지원해야 합니다.",
+  "fn.upgradeTo.params.newImplementation": "새 구현 컨트랙트의 주소입니다.",
+
+  "fn.upgradeToAndCall.desc": "프록시를 새 구현으로 업그레이드하고 단일 트랜잭션으로 초기화 호출을 실행합니다. 업그레이드 후 상태를 재초기화하는 데 유용합니다.",
+  "fn.upgradeToAndCall.params.newImplementation": "새 구현 컨트랙트의 주소입니다.",
+  "fn.upgradeToAndCall.params.data": "업그레이드 후 새 구현에서 실행할 인코딩된 함수 호출입니다.",
+
+  "node.admin": "관리자 / 업그레이더",
+  "node.proxy": "UUPS 프록시",
+  "node.oldImplementation": "이전 구현",
+  "node.newImplementation": "새 구현",
+  "node.storage": "프록시 스토리지",
+
+  "edge.callUpgrade": "upgradeTo() 호출",
+  "edge.verifyProxiableUUID": "proxiableUUID 검증",
+  "edge.writeSlot": "구현 슬롯 쓰기",
+  "edge.pointToNew": "새 구현으로 포인팅",
+  "edge.emitUpgraded": "Upgraded 이벤트 발생",
+
+  "sim.uupsUpgrade.name": "UUPS 프록시 업그레이드",
+  "sim.uupsUpgrade.desc": "호환성을 검증하면서 UUPS 프록시를 새 구현 컨트랙트로 업그레이드합니다.",
+  "sim.uupsUpgrade.param.admin": "관리자 주소",
+  "sim.uupsUpgrade.param.newImpl": "새 구현 주소",
+  "sim.uupsUpgrade.step.callUpgrade": "관리자가 프록시에 upgradeTo(newImplementation)를 호출하면, 현재 구현의 업그레이드 로직으로 위임됩니다.",
+  "sim.uupsUpgrade.step.callUpgrade.mobile": "upgradeTo() 호출",
+  "sim.uupsUpgrade.step.verifyUUID": "현재 구현이 새 구현에 proxiableUUID()를 호출하여 올바른 스토리지 슬롯을 반환하는지 확인하고 업그레이드 호환성을 보장합니다.",
+  "sim.uupsUpgrade.step.verifyUUID.mobile": "proxiableUUID() 검증",
+  "sim.uupsUpgrade.step.writeSlot": "PROXIABLE_SLOT에 저장된 구현 주소가 이전 구현에서 새 구현으로 업데이트됩니다.",
+  "sim.uupsUpgrade.step.writeSlot.mobile": "구현 슬롯 업데이트",
+  "sim.uupsUpgrade.step.pointNew": "프록시가 이제 새 구현을 가리킵니다. Upgraded 이벤트가 발생합니다. 이후 모든 호출은 새 컨트랙트로 위임됩니다.",
+  "sim.uupsUpgrade.step.pointNew.mobile": "프록시 업그레이드 완료"
+}

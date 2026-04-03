@@ -1,0 +1,59 @@
+{
+  "short": "스마트 컨트랙트에 변조 방지 가격 피드를 제공하는 탈중앙화 오라클 네트워크",
+  "introduction": "Chainlink는 가장 널리 채택된 탈중앙화 오라클 네트워크로, 신뢰할 수 있는 오프체인 데이터를 온체인 스마트 컨트랙트에 제공합니다. 가격 피드 애그리게이터는 대출 청산, 파생상품 정산, 스테이블코인 페깅 등 주요 DeFi 프로토콜의 핵심 운영에 사용되는 변조 방지 자산 가격을 전달합니다. 이 네트워크는 독립적으로 데이터를 가져오고, 검증하고, 집계하는 탈중앙화된 오라클 노드 집합을 사용합니다.",
+  "designPurpose": "Chainlink는 오라클 문제, 즉 실세계 데이터를 신뢰 없이 블록체인에 가져오는 근본적인 과제를 해결하기 위해 설계되었습니다. LINK 토큰을 스테이킹하는 독립적인 노드 운영자들의 탈중앙화 네트워크를 사용하여, 단일 주체가 가격 데이터를 조작할 수 없도록 보장합니다. 애그리게이터 컨트랙트는 여러 노드 제출값의 중앙값을 취하여 이상치 및 조작에 대한 강력한 저항성을 제공합니다.",
+  "commonUsage": "Aave와 Compound 같은 DeFi 대출 프로토콜은 Chainlink 가격 피드를 사용하여 담보 가치를 결정하고 청산을 트리거합니다. DEX와 파생상품 플랫폼은 정산 가격과 시가 평가 계산에 사용합니다. 스테이블코인 프로토콜은 Chainlink 오라클에 의존하여 페그를 유지하고 리스크 파라미터를 관리합니다.",
+
+  "fn.latestRoundData.desc": "애그리게이터에서 가격, 라운드 ID, 타임스탬프를 포함한 최신 가격 데이터를 반환합니다. DeFi 프로토콜이 현재 자산 가격을 가져오는 데 사용하는 주요 함수입니다.",
+  "fn.latestRoundData.returns.roundId": "현재 집계 라운드의 고유 식별자입니다.",
+  "fn.latestRoundData.returns.answer": "피드의 소수점 자릿수(일반적으로 USD 쌍의 경우 8자리)로 스케일링된 집계 가격 응답입니다.",
+  "fn.latestRoundData.returns.startedAt": "라운드가 시작된 Unix 타임스탬프입니다.",
+  "fn.latestRoundData.returns.updatedAt": "응답이 마지막으로 업데이트된 Unix 타임스탬프입니다. 오래된 데이터를 확인하는 데 사용됩니다.",
+  "fn.latestRoundData.returns.answeredInRound": "응답이 계산된 라운드 ID입니다. 최신 데이터의 경우 roundId와 일치해야 합니다.",
+
+  "fn.getRoundData.desc": "특정 과거 라운드의 가격 데이터를 반환합니다. 과거 가격 확인이나 시간 가중 평균 구축에 유용합니다.",
+  "fn.getRoundData.params.roundId": "과거 데이터를 조회할 라운드 ID입니다.",
+  "fn.getRoundData.returns.roundId": "조회된 데이터의 라운드 ID입니다.",
+  "fn.getRoundData.returns.answer": "조회된 라운드의 가격 응답입니다.",
+  "fn.getRoundData.returns.startedAt": "조회된 라운드가 시작된 Unix 타임스탬프입니다.",
+  "fn.getRoundData.returns.updatedAt": "조회된 라운드가 마지막으로 업데이트된 Unix 타임스탬프입니다.",
+  "fn.getRoundData.returns.answeredInRound": "응답이 계산된 라운드입니다.",
+
+  "fn.decimals.desc": "가격 피드 응답의 소수점 자릿수를 반환합니다. 대부분의 USD 기반 피드는 8자리 소수점을 사용합니다.",
+  "fn.decimals.returns.decimals": "소수점 자릿수입니다 (예: USD 가격 피드의 경우 8).",
+
+  "fn.description.desc": "'ETH / USD'와 같이 가격 피드에 대한 사람이 읽을 수 있는 설명을 반환합니다.",
+  "fn.description.returns.description": "가격 피드 설명 문자열입니다.",
+
+  "fn.AnswerUpdated.desc": "애그리게이터가 오라클 네트워크로부터 새로운 응답을 받을 때 발생합니다. 오프체인 시스템이 실시간으로 가격 업데이트를 모니터링하는 데 사용됩니다.",
+  "fn.AnswerUpdated.params.current": "새로운 집계 가격 응답입니다.",
+  "fn.AnswerUpdated.params.roundId": "이 응답 업데이트의 라운드 ID입니다.",
+  "fn.AnswerUpdated.params.updatedAt": "업데이트의 Unix 타임스탬프입니다.",
+
+  "node.consumer-contract": "소비자 컨트랙트 (DeFi 프로토콜)",
+  "node.aggregator-proxy": "애그리게이터 프록시",
+  "node.aggregator": "오프체인 애그리게이터",
+  "node.oracle-nodes": "오라클 노드 네트워크 (DON)",
+  "node.off-chain-data": "오프체인 데이터 소스",
+  "node.round-storage": "라운드 데이터 스토리지",
+
+  "edge.requestPrice": "latestRoundData()",
+  "edge.delegate": "애그리게이터에 위임",
+  "edge.readRound": "라운드 데이터 읽기",
+  "edge.fetchData": "시장 데이터 가져오기",
+  "edge.submitAnswer": "오라클 응답 제출",
+  "edge.returnPrice": "가격 데이터 반환",
+  "edge.priceData": "소비자에게 가격 전달",
+
+  "sim.price-feed-request.name": "가격 피드 요청",
+  "sim.price-feed-request.desc": "Chainlink 가격 업데이트의 전체 수명주기를 시뮬레이션합니다: 오라클 노드에 의한 오프체인 데이터 집계, 온체인 제출, 소비자 컨트랙트의 가격 읽기.",
+  "sim.price-feed-request.param.consumerAddress": "소비자 컨트랙트 주소",
+  "sim.price-feed-request.step.offChainFetch": "탈중앙화 오라클 네트워크(DON)의 오라클 노드가 여러 오프체인 데이터 소스에서 독립적으로 ETH/USD 가격을 가져옵니다.",
+  "sim.price-feed-request.step.offChainFetch.mobile": "노드가 오프체인 가격 가져오기",
+  "sim.price-feed-request.step.submit": "오라클 노드가 개별 응답을 애그리게이터 컨트랙트에 제출하고, 컨트랙트가 중앙값을 계산하여 최신 라운드 데이터로 저장합니다.",
+  "sim.price-feed-request.step.submit.mobile": "집계된 응답 제출",
+  "sim.price-feed-request.step.consumerCall": "DeFi 프로토콜의 소비자 컨트랙트가 애그리게이터 프록시에서 latestRoundData()를 호출하여 현재 ETH/USD 가격을 가져옵니다.",
+  "sim.price-feed-request.step.consumerCall.mobile": "소비자가 latestRoundData() 호출",
+  "sim.price-feed-request.step.proxyDelegate": "프록시가 현재 애그리게이터 구현체에 호출을 위임하고, 스토리지에서 최신 라운드를 읽어 소비자에게 가격 데이터를 반환합니다.",
+  "sim.price-feed-request.step.proxyDelegate.mobile": "프록시가 가격 데이터 반환"
+}

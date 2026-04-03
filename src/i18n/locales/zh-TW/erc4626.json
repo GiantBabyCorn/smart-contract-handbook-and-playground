@@ -1,0 +1,97 @@
+{
+  "short": "代幣化金庫標準",
+  "introduction": "ERC-4626 是代幣化金庫的標準介面，金庫是接受底層 ERC-20 代幣存款並發行代表金庫資產按比例請求權的份額的智能合約。該標準定義了完整的存款/提款生命週期，包含資產與份額之間的轉換函式、操作預覽和存款/提款限額查詢。它擴展了 ERC-20，因此金庫份額本身就是可轉移的代幣。",
+  "designPurpose": "ERC-4626 的設計目的是標準化 DeFi 中使用的收益型金庫模式。在此標準之前，每個借貸協議、收益聚合器和質押合約都有自己不相容的存款和提款介面。這種碎片化使得構建可組合的 DeFi 策略變得困難。ERC-4626 提供了統一的介面，使任何金庫都能無縫整合到聚合器、路由器和其他協議中。",
+  "commonUsage": "ERC-4626 被收益聚合器（Yearn）、借貸協議（Aave、Compound）、流動性質押（Lido）以及任何管理存入資產的協議所使用。它實現了標準化的金庫可組合性：收益聚合器可以使用相同的介面存入任何 ERC-4626 金庫。該標準也用於收據代幣、變基代幣包裝器和結構化 DeFi 產品。",
+
+  "fn.asset.desc": "返回金庫接受存款和提款時返回的底層 ERC-20 代幣的地址。",
+  "fn.asset.returns.address": "底層資產代幣合約的地址。",
+
+  "fn.totalAssets.desc": "返回金庫管理的底層資產總量，包括任何已累計的收益。",
+  "fn.totalAssets.returns.total": "金庫持有和管理的底層資產總量。",
+
+  "fn.convertToShares.desc": "根據目前匯率，返回給定資產數量將會鑄造的金庫份額數量。",
+  "fn.convertToShares.params.assets": "要轉換的底層資產數量。",
+  "fn.convertToShares.returns.shares": "等值的金庫份額數量。",
+
+  "fn.convertToAssets.desc": "根據目前匯率，返回給定份額數量等值的底層資產數量。",
+  "fn.convertToAssets.params.shares": "要轉換的金庫份額數量。",
+  "fn.convertToAssets.returns.assets": "等值的底層資產數量。",
+
+  "fn.maxDeposit.desc": "返回給定接收者可存入的最大資產數量，考慮任何金庫特定的限額。",
+  "fn.maxDeposit.params.receiver": "將接收鑄造份額的地址。",
+  "fn.maxDeposit.returns.maxAssets": "最大可存入資產數量。",
+
+  "fn.previewDeposit.desc": "模擬存款並返回將會鑄造的份額數量，包含任何費用。適用於 UI 預覽。",
+  "fn.previewDeposit.params.assets": "要模擬存入的資產數量。",
+  "fn.previewDeposit.returns.shares": "將會鑄造的份額數量。",
+
+  "fn.deposit.desc": "將底層資產存入金庫並向接收者鑄造份額。調用者必須已授權金庫花費其資產。",
+  "fn.deposit.params.assets": "要存入的底層資產數量。",
+  "fn.deposit.params.receiver": "將接收鑄造的金庫份額的地址。",
+  "fn.deposit.returns.shares": "向接收者鑄造的金庫份額數量。",
+
+  "fn.mint.desc": "透過存入所需數量的底層資產來鑄造確切數量的金庫份額。",
+  "fn.mint.params.shares": "要鑄造的確切金庫份額數量。",
+  "fn.mint.params.receiver": "將接收鑄造份額的地址。",
+  "fn.mint.returns.assets": "存入的底層資產數量。",
+
+  "fn.maxWithdraw.desc": "返回擁有者可提取的最大底層資產數量，考慮金庫限額和可用流動性。",
+  "fn.maxWithdraw.params.owner": "擁有金庫份額的地址。",
+  "fn.maxWithdraw.returns.maxAssets": "最大可提取資產數量。",
+
+  "fn.previewRedeem.desc": "模擬贖回並返回給定份額數量將會返回的資產數量。",
+  "fn.previewRedeem.params.shares": "要模擬贖回的份額數量。",
+  "fn.previewRedeem.returns.assets": "將會返回的底層資產數量。",
+
+  "fn.withdraw.desc": "透過銷毀必要的金庫份額來提取特定數量的底層資產。可由擁有者或被授權的花費者調用。",
+  "fn.withdraw.params.assets": "要提取的底層資產數量。",
+  "fn.withdraw.params.receiver": "將接收提取資產的地址。",
+  "fn.withdraw.params.owner": "擁有要銷毀的份額的地址。",
+  "fn.withdraw.returns.shares": "被銷毀的金庫份額數量。",
+
+  "fn.redeem.desc": "銷毀特定數量的金庫份額並將相應數量的底層資產返回給接收者。",
+  "fn.redeem.params.shares": "要銷毀的金庫份額數量。",
+  "fn.redeem.params.receiver": "將接收底層資產的地址。",
+  "fn.redeem.params.owner": "擁有要銷毀的份額的地址。",
+  "fn.redeem.returns.assets": "返回的底層資產數量。",
+
+  "node.depositor": "存款者",
+  "node.vault": "ERC-4626 金庫",
+  "node.underlyingAsset": "底層資產（ERC-20）",
+  "node.storageShares": "份額 & 資產儲存",
+  "node.shareToken": "金庫份額代幣",
+  "node.yieldStrategy": "收益策略",
+
+  "edge.callDeposit": "調用 deposit()",
+  "edge.transferAssets": "轉移底層資產",
+  "edge.assetsHeld": "金庫持有的資產",
+  "edge.mintShares": "鑄造金庫份額",
+  "edge.sharesIssued": "份額已發行",
+  "edge.deployCapital": "將資金部署至策略",
+  "edge.callRedeem": "調用 redeem()",
+  "edge.emitDeposit": "觸發 Deposit 事件",
+  "edge.emitWithdraw": "觸發 Withdraw 事件",
+
+  "sim.depositMintShares.name": "存入資產 & 鑄造份額",
+  "sim.depositMintShares.desc": "將底層資產存入 ERC-4626 金庫並接收代表您按比例請求權的金庫份額。",
+  "sim.depositMintShares.param.assets": "存入資產數量（以 wei 為單位）",
+  "sim.depositMintShares.param.receiver": "份額接收者地址",
+  "sim.depositMintShares.step.preview": "存款者調用 previewDeposit 查看其資產數量將獲得多少份額，考慮任何金庫費用。",
+  "sim.depositMintShares.step.preview.mobile": "預覽存款",
+  "sim.depositMintShares.step.transferAssets": "存款者調用 deposit()。金庫透過 transferFrom 從存款者轉移底層資產。金庫現在持有這些資產。",
+  "sim.depositMintShares.step.transferAssets.mobile": "轉移資產至金庫",
+  "sim.depositMintShares.step.mintShares": "金庫按存入資產的比例鑄造份額並記入接收者帳戶。份額/資產匯率決定了數量。",
+  "sim.depositMintShares.step.mintShares.mobile": "鑄造金庫份額",
+  "sim.depositMintShares.step.deploy": "金庫可能會將存入的資產部署到收益策略中，為份額持有者產生回報。",
+  "sim.depositMintShares.step.event": "觸發 Deposit 事件，記錄發送者、接收者、資產數量和鑄造的份額。",
+
+  "sim.redeemShares.name": "贖回份額換取資產",
+  "sim.redeemShares.desc": "銷毀金庫份額以提取底層資產，包括任何已累計的收益。",
+  "sim.redeemShares.param.shares": "要贖回的份額（以 wei 為單位）",
+  "sim.redeemShares.param.receiver": "資產接收者地址",
+  "sim.redeemShares.step.previewRedeem": "存款者調用 previewRedeem 查看將會獲得多少資產。如果已累計收益，份額的價值可能高於原始存款。",
+  "sim.redeemShares.step.burnShares": "存款者調用 redeem()。金庫從擁有者的餘額中銷毀指定的份額並計算相應的資產數量。",
+  "sim.redeemShares.step.returnAssets": "金庫將底層資產轉回給接收者。數量包括持有份額期間賺取的任何收益。",
+  "sim.redeemShares.step.event": "觸發 Withdraw 事件，記錄發送者、接收者、擁有者、資產數量和銷毀的份額。"
+}

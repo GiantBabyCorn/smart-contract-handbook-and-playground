@@ -1,0 +1,40 @@
+{
+  "short": "EIP-712 도메인 탐색",
+  "introduction": "ERC-5267은 스마트 컨트랙트가 EIP-712 도메인 구분자 구성을 노출하는 표준 방법을 제공합니다. 도메인 구분자를 구성하는 데 사용되는 모든 필드(이름, 버전, 체인 ID, 검증 컨트랙트 주소, 솔트, 실제 사용되는 필드)를 반환하는 단일 함수 eip712Domain()을 정의합니다. 이를 통해 dApp과 지갑이 EIP-712 타입 데이터 서명을 위한 올바른 도메인 매개변수를 하드코딩 없이 동적으로 탐색할 수 있습니다.",
+  "designPurpose": "ERC-5267은 EIP-712 서명을 위한 도메인 구분자 탐색 문제를 해결하기 위해 설계되었습니다. 이 표준이 등장하기 전에는 dApp이 도메인 매개변수를 하드코딩하거나 오프체인 레지스트리를 사용하여 컨트랙트의 올바른 도메인 구분자를 구성해야 했습니다. 이는 체인 포크나 컨트랙트 마이그레이션 후 특히 오류가 발생하기 쉬웠습니다. ERC-5267은 도메인 정보를 자기 설명적으로 만들어 지갑이 컨트랙트에서 직접 조회할 수 있게 합니다.",
+  "commonUsage": "ERC-5267은 ERC-2612(permit), 거버넌스 컨트랙트, 오더북 DEX를 포함하여 EIP-712 구조화된 데이터 서명을 구현하는 모든 컨트랙트에서 사용됩니다. MetaMask 같은 지갑은 eip712Domain()을 호출하여 올바른 서명 매개변수를 탐색할 수 있습니다. OpenZeppelin의 EIP712 기본 컨트랙트는 이 표준을 자동으로 구현합니다.",
+
+  "fn.eip712Domain.desc": "이 컨트랙트가 사용하는 EIP-712 도메인 필드를 반환합니다. fields 비트마스크는 반환된 값 중 도메인 구분자 계산에 실제로 사용되는 값을 나타냅니다.",
+  "fn.eip712Domain.returns.fields": "사용되는 도메인 필드를 나타내는 비트마스크입니다 (비트 0 = name, 비트 1 = version, 비트 2 = chainId, 비트 3 = verifyingContract, 비트 4 = salt).",
+  "fn.eip712Domain.returns.name": "서명 도메인의 사람이 읽을 수 있는 이름입니다 (예: 토큰 이름).",
+  "fn.eip712Domain.returns.version": "서명 도메인의 현재 주 버전입니다 (예: '1').",
+  "fn.eip712Domain.returns.chainId": "컨트랙트가 배포된 체인 ID입니다.",
+  "fn.eip712Domain.returns.verifyingContract": "서명을 검증할 컨트랙트의 주소입니다.",
+  "fn.eip712Domain.returns.salt": "도메인을 구분하기 위한 선택적 솔트입니다.",
+  "fn.eip712Domain.returns.extensions": "도메인 구분자 로직에 대한 확장을 위한 EIP 번호 배열입니다.",
+
+  "fn.EIP712DomainChanged.desc": "도메인 매개변수가 변경될 때 발생하며, 캐시된 도메인 구분자를 무효화해야 함을 알립니다. 컨트랙트 업그레이드나 체인 포크 후에 발생할 수 있습니다.",
+
+  "node.dapp": "DApp / 지갑",
+  "node.contract": "ERC-5267 컨트랙트",
+  "node.domainInfo": "도메인 정보",
+  "node.eip712Context": "EIP-712 도메인 구분자",
+
+  "edge.discoverDomain": "eip712Domain() 호출",
+  "edge.readDomainFields": "도메인 필드 읽기",
+  "edge.buildDomainSeparator": "DOMAIN_SEPARATOR 구성",
+  "edge.domainReturned": "도메인 정보 반환됨",
+  "edge.emitChanged": "EIP712DomainChanged 발생",
+
+  "sim.domainDiscovery.name": "EIP-712 도메인 탐색",
+  "sim.domainDiscovery.desc": "eip712Domain() 함수를 호출하여 컨트랙트의 EIP-712 도메인 구성을 탐색합니다.",
+  "sim.domainDiscovery.param.contractAddress": "조회할 컨트랙트 주소",
+  "sim.domainDiscovery.step.call": "dApp 또는 지갑이 대상 컨트랙트에 eip712Domain()을 호출하여 EIP-712 서명 매개변수를 탐색합니다.",
+  "sim.domainDiscovery.step.call.mobile": "eip712Domain() 호출",
+  "sim.domainDiscovery.step.read": "컨트랙트가 저장된 도메인 필드(이름, 버전, 체인 ID)를 읽습니다. 이 값들은 일반적으로 컨트랙트 초기화 시 설정됩니다.",
+  "sim.domainDiscovery.step.read.mobile": "도메인 필드 읽기",
+  "sim.domainDiscovery.step.build": "컨트랙트가 타입 해시와 도메인 필드를 keccak256으로 해싱하여 전체 도메인 구분자를 조립합니다.",
+  "sim.domainDiscovery.step.build.mobile": "도메인 구분자 구성",
+  "sim.domainDiscovery.step.return": "도메인 정보가 dApp에 반환됩니다. 지갑은 이제 서명을 위한 올바른 EIP-712 타입 데이터를 구성할 수 있습니다.",
+  "sim.domainDiscovery.step.return.mobile": "도메인 정보 반환됨"
+}

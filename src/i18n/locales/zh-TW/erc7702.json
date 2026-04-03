@@ -1,0 +1,48 @@
+{
+  "short": "EOA 程式碼委派",
+  "introduction": "ERC-7702 引入了一種新的交易類型，允許外部擁有帳戶 (EOA) 暫時將其程式碼執行委派給智能合約。透過簽署授權元組，EOA 可以將其程式碼設定為指向委派合約，有效地在單一交易中賦予 EOA 智能合約的能力。這使 EOA 能夠使用批次交易、Gas 贊助和自訂驗證等功能，而無需永久轉換為智能合約帳戶。",
+  "designPurpose": "ERC-7702 旨在從協議層級彌合 EOA 與智能合約帳戶之間的差距。雖然 ERC-4337 透過更高層級的系統提供帳戶抽象化，但 ERC-7702 在交易層級運作，允許任何 EOA 暫時表現得像智能合約。這提供了一條平滑的遷移路徑，讓現有的 EOA 能夠逐步採用智能帳戶功能，而無需更改其地址或永久改變其帳戶類型。",
+  "commonUsage": "ERC-7702 用於賦予 EOA 智能帳戶的超能力：批次交易（在一筆交易中完成 approve + swap）、第三方 Gas 贊助和自訂簽章方案。它在生態系從 EOA 過渡到智能帳戶的過渡期間特別有用。錢包提供商使用它為現有的 EOA 使用者提供增強的使用者體驗功能，而無需帳戶遷移。",
+
+  "fn.authorize.desc": "建立一個已簽署的授權元組，將 EOA 的程式碼執行委派給指定的合約。授權包含鏈 ID、委派地址和隨機數。",
+  "fn.authorize.params.delegation": "要委派程式碼執行的智能合約地址。",
+  "fn.authorize.returns.authorization": "包含 chainId、地址、隨機數和 ECDSA 簽章的已簽署授權元組。",
+
+  "fn.execute.desc": "代表 EOA 透過委派合約執行呼叫。EOA 的程式碼現在指向委派合約，由其處理呼叫。",
+  "fn.execute.params.to": "要呼叫的目標地址。",
+  "fn.execute.params.value": "隨呼叫發送的 ETH 數量。",
+  "fn.execute.params.data": "要執行的編碼 calldata。",
+  "fn.execute.returns.result": "已執行呼叫的回傳資料。",
+
+  "fn.executeBatch.desc": "透過委派合約在單一交易中執行多個呼叫。從 EOA 實現原子批次操作。",
+  "fn.executeBatch.params.calls": "Call 結構體陣列，每個包含目標地址、數量和 calldata。",
+  "fn.executeBatch.returns.results": "每個已執行呼叫的回傳資料陣列。",
+
+  "node.eoa": "EOA（使用者錢包）",
+  "node.authorizationTuple": "授權元組",
+  "node.validator": "簽章驗證器",
+  "node.delegationContract": "委派合約",
+  "node.target": "目標合約",
+  "node.storage": "EOA 程式碼儲存",
+
+  "edge.signAuthorization": "簽署授權元組",
+  "edge.verifySignature": "驗證簽章",
+  "edge.setCode": "設定 EOA 程式碼指標",
+  "edge.storeDelegation": "儲存委派",
+  "edge.callExecute": "呼叫 execute()",
+  "edge.execute": "在目標上執行",
+
+  "sim.eoaDelegation.name": "EOA 程式碼委派",
+  "sim.eoaDelegation.desc": "將 EOA 的程式碼委派給智能合約實作，啟用智能帳戶功能。",
+  "sim.eoaDelegation.param.eoaAddress": "EOA 地址",
+  "sim.eoaDelegation.param.delegationImpl": "委派實作",
+  "sim.eoaDelegation.param.targetContract": "目標合約",
+  "sim.eoaDelegation.step.signAuth": "EOA 簽署一個包含鏈 ID、委派合約地址和當前隨機數的授權元組。這授權了程式碼委派。",
+  "sim.eoaDelegation.step.signAuth.mobile": "簽署授權",
+  "sim.eoaDelegation.step.verify": "驗證授權簽章以確保其由 EOA 擁有者簽署且隨機數有效。",
+  "sim.eoaDelegation.step.verify.mobile": "驗證簽章",
+  "sim.eoaDelegation.step.setCode": "EOA 的程式碼被設定為指向智能合約實作的委派標誌（0xEF0100...）。EOA 現在表現得像智能合約。",
+  "sim.eoaDelegation.step.setCode.mobile": "設定 EOA 程式碼指標",
+  "sim.eoaDelegation.step.execute": "EOA 現在可以透過委派合約執行呼叫，啟用批次交易、Gas 贊助和其他智能帳戶功能。",
+  "sim.eoaDelegation.step.execute.mobile": "透過委派執行"
+}

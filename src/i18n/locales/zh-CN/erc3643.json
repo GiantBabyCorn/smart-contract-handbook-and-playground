@@ -1,0 +1,54 @@
+{
+  "short": "证券型代币标准 (T-REX)",
+  "introduction": "ERC-3643，也称为 T-REX（Token for Regulated EXchanges，受监管交易所代币），是一个全面的证券型代币标准，在链上强制执行监管合规。它在 ERC-20 的基础上扩展了身份验证、合规规则和管理控制。每笔转账在执行前都会根据身份注册表和合规模块进行验证，确保只有经过验证的投资者才能持有和交易代币。该标准兼容 ISO 20022，专为现实世界的受监管证券而设计。",
+  "designPurpose": "ERC-3643 旨在将传统证券引入区块链，同时保持完全的监管合规。证券法规要求了解你的客户 (KYC) 验证、基于司法管辖区的转账限制、投资者资质认证以及冻结或暂停转账的能力。ERC-3643 将所有这些控制直接嵌入代币合约，使得无法将代币转移到未经验证的地址。",
+  "commonUsage": "ERC-3643 用于代币化证券、房地产代币、股权代币以及任何需要链上合规的受监管金融工具。Tokeny Solutions 等公司使用该标准发行受监管的数字证券。该标准支持通过链上声明发行者进行身份验证、基于国家的转账限制、投资者限额以及冻结账户和强制转账等管理操作。",
+
+  "fn.transfer.desc": "将证券型代币转账给接收方，但仅在通过身份注册表验证双方并检查合规规则后执行。如果合规检查失败则回滚。",
+  "fn.transfer.params.to": "接收方地址。必须在身份注册表中已验证。",
+  "fn.transfer.params.amount": "要转账的代币数量。",
+  "fn.transfer.returns.success": "如果合规转账成功则返回 true。",
+
+  "fn.isVerified.desc": "检查投资者地址是否在身份注册表中已验证。验证需要来自受信任发行者的有效声明。",
+  "fn.isVerified.params.investor": "要检查验证状态的投资者地址。",
+  "fn.isVerified.returns.verified": "如果投资者拥有来自受信任发行者的有效身份声明则为 true。",
+
+  "fn.identityRegistry.desc": "返回管理投资者身份和验证状态的身份注册表合约的地址。",
+  "fn.identityRegistry.returns.registry": "关联的身份注册表合约的地址。",
+
+  "fn.compliance.desc": "返回执行转账规则（如国家限制、投资者限额）的合规模块合约的地址。",
+  "fn.compliance.returns.complianceModule": "合规模块合约的地址。",
+
+  "fn.pause.desc": "暂停所有代币转账。只能由授权代理调用。暂停后，在取消暂停之前不能进行任何转账。",
+
+  "fn.freeze.desc": "冻结特定用户的代币，阻止其发送或接收转账。用于监管执法行动。",
+  "fn.freeze.params.userAddress": "要冻结的地址。该投资者将无法转移代币。",
+
+  "node.investor": "投资者",
+  "node.tokenContract": "T-REX 代币合约",
+  "node.identityRegistry": "身份注册表",
+  "node.complianceModule": "合规模块",
+  "node.trustedIssuer": "受信任声明发行者",
+  "node.claimRegistry": "声明注册表 (ONCHAINID)",
+
+  "edge.transfer": "调用 transfer()",
+  "edge.checkIdentity": "检查身份验证",
+  "edge.checkCompliance": "检查合规规则",
+  "edge.verifyIssuer": "验证受信任发行者",
+  "edge.fetchClaim": "获取身份声明",
+  "edge.approveTransfer": "合规已批准",
+
+  "sim.compliantTransfer.name": "合规证券型代币转账",
+  "sim.compliantTransfer.desc": "使用完整的身份验证和合规检查转移受监管的证券型代币。",
+  "sim.compliantTransfer.param.sender": "发送方（投资者）",
+  "sim.compliantTransfer.param.recipient": "接收方（投资者）",
+  "sim.compliantTransfer.param.amount": "转账金额",
+  "sim.compliantTransfer.step.initiate": "投资者发起证券型代币转账。代币合约在执行前开始合规验证流程。",
+  "sim.compliantTransfer.step.initiate.mobile": "发起转账",
+  "sim.compliantTransfer.step.identityCheck": "代币合约查询身份注册表以验证发送方和接收方。注册表通过 ONCHAINID 检查来自受信任发行者的声明。",
+  "sim.compliantTransfer.step.identityCheck.mobile": "验证身份",
+  "sim.compliantTransfer.step.complianceCheck": "合规模块检查转账规则：国家限制、最大持有者限额、转账量限制以及其他任何监管约束。",
+  "sim.compliantTransfer.step.complianceCheck.mobile": "检查合规规则",
+  "sim.compliantTransfer.step.settle": "所有检查通过。转账执行，更新余额。双方投资者在整个过程中保持已验证和合规状态。",
+  "sim.compliantTransfer.step.settle.mobile": "执行转账"
+}

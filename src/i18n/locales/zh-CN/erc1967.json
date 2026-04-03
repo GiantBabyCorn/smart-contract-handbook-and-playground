@@ -1,0 +1,45 @@
+{
+  "short": "代理存储槽标准",
+  "introduction": "ERC-1967 标准化了代理合约用于存储实现地址、管理员地址和信标地址的存储槽。这些槽通过对已知字符串进行 keccak256 哈希再减 1 来计算，将它们放置在伪随机位置，极不可能与实现合约的存储发生冲突。该标准使区块浏览器和工具能够可靠地检测代理合约并显示其实现地址。",
+  "designPurpose": "ERC-1967 旨在解决代理合约中的存储冲突问题，并使代理合约可被发现。在此标准之前，不同的代理实现使用不同的存储槽，使工具无法可靠地检测代理。通过标准化存储槽位置和相关事件，ERC-1967 使 Etherscan 和其他浏览器能够识别代理并链接到其实现源代码。",
+  "commonUsage": "ERC-1967 被以太坊生态系统中几乎所有代理合约使用，包括 OpenZeppelin 的 TransparentUpgradeableProxy 和 UUPS 代理。Etherscan 等区块浏览器读取这些标准化槽来显示实现合约详情。该标准定义了三个槽：用于逻辑合约的 IMPLEMENTATION_SLOT、用于升级管理员的 ADMIN_SLOT 和用于信标代理模式的 BEACON_SLOT。",
+
+  "fn.implementation.desc": "返回存储在标准化 ERC-1967 实现槽中的当前逻辑/实现合约的地址。",
+  "fn.implementation.returns.impl": "当前实现合约的地址。",
+
+  "fn.admin.desc": "返回存储在标准化 ERC-1967 管理员槽中的代理管理员地址。管理员通常有权限升级代理。",
+  "fn.admin.returns.admin": "当前代理管理员的地址。",
+
+  "fn.Upgraded.desc": "当实现地址被更改时触发。工具和索引器监听此事件以跟踪代理升级。",
+  "fn.Upgraded.params.implementation": "新实现合约的地址。",
+
+  "fn.AdminChanged.desc": "当代理管理员地址被更改时触发。",
+  "fn.AdminChanged.params.previousAdmin": "前管理员的地址。",
+  "fn.AdminChanged.params.newAdmin": "新管理员的地址。",
+
+  "node.user": "用户 / 调用者",
+  "node.proxy": "ERC-1967 代理",
+  "node.implementation": "实现合约",
+  "node.admin": "代理管理员",
+  "node.storageSlots": "标准存储槽",
+
+  "edge.callProxy": "调用代理",
+  "edge.delegatecall": "delegatecall",
+  "edge.readSlot": "读取存储槽",
+  "edge.upgrade": "升级实现",
+  "edge.emitUpgraded": "触发 Upgraded 事件",
+  "edge.emitAdminChanged": "触发 AdminChanged 事件",
+
+  "sim.delegatecallProxy.name": "代理 Delegatecall 流程",
+  "sim.delegatecallProxy.desc": "观察用户的调用如何通过 ERC-1967 代理经由 delegatecall 流向实现合约。",
+  "sim.delegatecallProxy.param.caller": "调用者地址",
+  "sim.delegatecallProxy.param.proxyAddress": "代理地址",
+  "sim.delegatecallProxy.step.callProxy": "用户向代理合约地址发送交易。代理的 fallback 函数被触发。",
+  "sim.delegatecallProxy.step.callProxy.mobile": "调用代理",
+  "sim.delegatecallProxy.step.readSlot": "代理从标准化的 ERC-1967 存储槽 (keccak256('eip1967.proxy.implementation') - 1) 读取实现地址。",
+  "sim.delegatecallProxy.step.readSlot.mobile": "读取实现槽",
+  "sim.delegatecallProxy.step.delegatecall": "代理对实现合约执行 delegatecall。代码在代理的上下文中运行，使用代理的存储和 msg.sender。",
+  "sim.delegatecallProxy.step.delegatecall.mobile": "delegatecall 到实现合约",
+  "sim.delegatecallProxy.step.return": "实现合约执行函数逻辑并通过代理将结果返回给原始调用者。",
+  "sim.delegatecallProxy.step.return.mobile": "将结果返回给调用者"
+}

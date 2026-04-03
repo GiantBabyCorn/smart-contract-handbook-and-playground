@@ -1,0 +1,69 @@
+{
+  "short": "단일 자산 대출 프로토콜로 격리된 시장과 흡수 기반의 효율적 청산 제공",
+  "introduction": "Comet이라고도 알려진 Compound V3는 전작과 근본적으로 다른 접근 방식을 취하는 간소화된 대출 프로토콜입니다. 각 Comet 배포는 여러 담보 자산과 함께 단일 차입 가능 기본 자산(예: USDC)을 관리하여 리스크 관리를 단순화합니다. cToken의 필요성을 제거하고 내부 잔액 회계를 대신 사용합니다.",
+  "designPurpose": "Compound V3는 각 시장을 하나의 기본 자산에 집중시켜 다중 자산 대출 풀의 복잡성과 공격 표면을 줄이기 위해 설계되었습니다. 이 단일 차입 자산 아키텍처는 리스크 격리를 개선하고 프로토콜을 더 쉽게 분석할 수 있게 합니다. 흡수 기반 청산 메커니즘은 레거시 close-factor 모델을 대체하여 더 효율적인 부실 채권 사회화를 가능하게 합니다.",
+  "commonUsage": "사용자는 일반적으로 WETH나 WBTC 같은 담보 자산을 공급하여 변동 금리로 USDC를 차입합니다. 기본 자산 공급자는 프로토콜의 내부 회계를 통해 자동으로 이자를 얻습니다. Compound V3는 또한 단순하고 감사 가능한 대출 프리미티브 위에 구축하려는 프로토콜에서도 사용됩니다.",
+
+  "fn.supply.desc": "Comet 시장에 자산을 공급합니다. 기본 토큰인 경우 이자를 얻고, 담보 토큰인 경우 차입 용량을 뒷받침합니다.",
+  "fn.supply.params.asset": "공급할 토큰의 주소입니다 (기본 토큰 또는 담보).",
+  "fn.supply.params.amount": "공급할 금액으로, 토큰의 네이티브 소수점 단위입니다.",
+
+  "fn.withdraw.desc": "이전에 공급한 자산을 Comet 시장에서 출금합니다.",
+  "fn.withdraw.params.asset": "출금할 토큰의 주소입니다.",
+  "fn.withdraw.params.amount": "출금할 금액으로, 토큰의 네이티브 소수점 단위입니다.",
+
+  "fn.borrow.desc": "Comet 시장에서 기본 자산을 차입합니다. 사용자에게 기본 잔액이 없을 때 기본 토큰 주소로 withdraw 함수를 내부적으로 사용합니다.",
+  "fn.borrow.params.asset": "차입할 기본 토큰의 주소입니다 (예: USDC).",
+  "fn.borrow.params.amount": "차입할 기본 토큰의 금액입니다.",
+
+  "fn.repay.desc": "기본 자산 차입을 상환합니다. supply 함수를 내부적으로 사용하여 기본 토큰을 프로토콜에 반환합니다.",
+  "fn.repay.params.asset": "상환하는 기본 토큰의 주소입니다.",
+  "fn.repay.params.amount": "상환할 기본 토큰의 금액입니다.",
+
+  "fn.absorb.desc": "하나 이상의 담보 부족 계정을 흡수하여 청산을 트리거합니다. 프로토콜이 담보를 압류하고 부실 채권을 기본 공급자 간에 사회화합니다.",
+  "fn.absorb.params.absorber": "보상을 받을 수 있는 흡수를 개시하는 주소입니다.",
+  "fn.absorb.params.accounts": "흡수할 담보 부족 계정 주소 배열입니다.",
+
+  "fn.buyCollateral.desc": "흡수 이벤트 후 프로토콜에서 압류된 담보를 할인 가격으로 구매합니다. 청산된 담보가 시장에 반환되는 방식입니다.",
+  "fn.buyCollateral.params.asset": "구매할 담보 토큰의 주소입니다.",
+  "fn.buyCollateral.params.minAmount": "받을 최소 담보 수량입니다.",
+  "fn.buyCollateral.params.baseAmount": "담보 구매에 지출할 기본 토큰의 금액입니다.",
+  "fn.buyCollateral.params.recipient": "구매한 담보를 받을 주소입니다.",
+
+  "fn.getUtilization.desc": "이자율 모델을 통해 이자율을 결정하는 시장의 현재 활용률을 반환합니다.",
+  "fn.getUtilization.returns.utilization": "18자리 소수점으로 스케일링된 현재 활용률입니다 (예: 0.8e18 = 80%).",
+
+  "fn.getSupplyRate.desc": "주어진 활용률 수준에 대한 초당 공급 이자율을 반환합니다.",
+  "fn.getSupplyRate.params.utilization": "조회할 활용률로, 18자리 소수점으로 스케일링됩니다.",
+  "fn.getSupplyRate.returns.supplyRate": "18자리 소수점으로 스케일링된 초당 공급 이자율입니다.",
+
+  "node.supplier": "기본 공급자",
+  "node.borrower": "차입자",
+  "node.cometContract": "Comet 컨트랙트",
+  "node.baseToken": "기본 토큰 (USDC)",
+  "node.collateralToken": "담보 토큰 (WETH)",
+  "node.priceFeed": "Chainlink 가격 피드",
+  "node.absorber": "흡수자 / 청산자",
+
+  "edge.supplyBase": "supply(USDC)",
+  "edge.baseTokenBalance": "기본 잔액 추적",
+  "edge.supplyCollateral": "supply(WETH 담보)",
+  "edge.collateralHeld": "담보 보유",
+  "edge.assetPrice": "자산 가격 조회",
+  "edge.borrowedUSDC": "USDC 차입",
+  "edge.absorb": "absorb(accounts)",
+  "edge.absorberReward": "흡수 보상",
+
+  "sim.supplyAndBorrowComet.name": "담보 공급 및 차입",
+  "sim.supplyAndBorrowComet.desc": "WETH 담보를 공급하고 Comet 시장에서 USDC를 차입하는 것을 시뮬레이션하여 단일 자산 차입 모델을 보여줍니다.",
+  "sim.supplyAndBorrowComet.param.collateralAmount": "담보 금액 (wei)",
+  "sim.supplyAndBorrowComet.param.borrowAmount": "차입 금액 (USDC 기본 단위)",
+  "sim.supplyAndBorrowComet.step.supplyCollateral": "차입자가 WETH를 담보로 Comet 컨트랙트에 공급합니다. 담보는 기본 토큰 풀과 별도로 보관됩니다.",
+  "sim.supplyAndBorrowComet.step.supplyCollateral.mobile": "WETH 담보 공급",
+  "sim.supplyAndBorrowComet.step.checkPrice": "Comet 컨트랙트가 Chainlink 가격 피드를 조회하여 담보를 평가하고 LTV 비율에 따른 최대 차입 용량을 계산합니다.",
+  "sim.supplyAndBorrowComet.step.checkPrice.mobile": "담보 가격 확인",
+  "sim.supplyAndBorrowComet.step.borrowBase": "차입자가 USDC로 withdraw()를 호출하여 차입합니다. 프로토콜이 차입 잔액을 내부적으로 추적하고 차입자에게 USDC를 전송합니다.",
+  "sim.supplyAndBorrowComet.step.borrowBase.mobile": "USDC 차입",
+  "sim.supplyAndBorrowComet.step.utilization": "시장 활용률이 증가하여 이자율 모델이 차입 및 공급 이자율을 조정합니다. 기본 공급자는 더 높은 수익률을 얻습니다.",
+  "sim.supplyAndBorrowComet.step.utilization.mobile": "활용률 및 이자율 조정"
+}
