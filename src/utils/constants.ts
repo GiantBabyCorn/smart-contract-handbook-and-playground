@@ -1,5 +1,5 @@
 export const SITE_NAME = 'Smart Contract Handbook';
-export const SITE_URL = 'https://erc-explorer.example.com';
+export const SITE_URL = 'https://smart-contract-handbook.giantbabycorn.finance';
 
 export const CATEGORY_ORDER: string[] = [
   'token',

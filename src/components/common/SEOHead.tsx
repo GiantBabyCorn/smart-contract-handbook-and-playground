@@ -13,7 +13,9 @@ interface SEOHeadProps {
 export default function SEOHead({ title, description, slug }: SEOHeadProps) {
   const fullTitle = `${title} — Smart Contract Handbook`;
   const url = slug ? `${SITE_URL}/${slug}` : SITE_URL;
-  const image = slug ? `/og/${slug}.png` : '/og-image.png';
+  const image = slug
+    ? `${SITE_URL}/og/${slug}.png`
+    : `${SITE_URL}/og-image.png`;
 
   return (
     <>
