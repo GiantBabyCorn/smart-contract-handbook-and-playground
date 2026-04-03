@@ -352,7 +352,7 @@ function FlowDiagramSection({
   tCommon: (key: string) => string;
 }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [height, setHeight] = useState(500);
+  const [height, setHeight] = useState(620);
   const dragging = useRef(false);
   const startY = useRef(0);
   const startH = useRef(0);
@@ -480,57 +480,12 @@ function FlowDiagramSection({
 }
 
 // ---------------------------------------------------------------------------
-// Simulation — Bottom panel (desktop lg+)
+// Simulation — Right drawer (all screen sizes)
 // ---------------------------------------------------------------------------
 
-function SimulationBottomPanel({
-  entry,
-  sim,
-  tCommon,
-}: {
-  entry: ERCEntry;
-  sim: ReturnType<typeof useSimulation>;
-  tCommon: (key: string) => string;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.15 }}
-      className={cn(
-        'rounded-2xl border border-[var(--erc-color-border)]',
-        'bg-[var(--erc-color-bg-secondary)]',
-        'overflow-hidden',
-      )}
-    >
-      <div className="px-4 py-3.5 border-b border-[var(--erc-color-border)]">
-        <h2 className="text-sm font-semibold text-[var(--erc-color-text-primary)]">
-          Simulation
-        </h2>
-        <p className="text-xs text-[var(--erc-color-text-muted)] mt-0.5">
-          {tCommon('a11y.simulationPanel')}
-        </p>
-      </div>
-      <Suspense
-        fallback={
-          <div className="p-4 flex flex-col gap-3">
-            {[0, 1, 2].map((i) => (
-              <div key={i} className="h-10 rounded-lg bg-[var(--erc-color-bg-tertiary)] animate-pulse" />
-            ))}
-          </div>
-        }
-      >
-        <SimulationPanel {...simPanelProps(entry, sim)} />
-      </Suspense>
-    </motion.div>
-  );
-}
+const SIM_TOOLTIP_KEY = 'sim-tooltip-dismissed';
 
-// ---------------------------------------------------------------------------
-// Simulation — Right drawer (mobile <lg)
-// ---------------------------------------------------------------------------
-
-function SimulationMobileDrawer({
+function SimulationDrawer({
   entry,
   sim,
   tCommon,
@@ -540,27 +495,78 @@ function SimulationMobileDrawer({
   tCommon: (key: string) => string;
 }) {
   const [open, setOpen] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(() => {
+    try {
+      return !localStorage.getItem(SIM_TOOLTIP_KEY);
+    } catch {
+      return false;
+    }
+  });
+
+  const dismissTooltip = useCallback(() => {
+    setShowTooltip(false);
+    try {
+      localStorage.setItem(SIM_TOOLTIP_KEY, '1');
+    } catch { /* ignore */ }
+  }, []);
+
+  const handleToggle = useCallback(() => {
+    dismissTooltip();
+    setOpen((v) => !v);
+  }, [dismissTooltip]);
 
   return (
-    <div className="lg:hidden">
+    <>
       {/* Toggle button — fixed at bottom-right */}
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className={cn(
-          'fixed bottom-4 right-4 z-40',
-          'flex items-center gap-2 px-4 py-2.5 rounded-full shadow-lg',
-          'bg-[var(--erc-color-accent)] text-white text-sm font-medium',
-          'hover:opacity-90 transition-opacity',
+      <div className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2">
+        {/* First-time tooltip bubble */}
+        {showTooltip && !open && (
+          <motion.div
+            initial={{ opacity: 0, y: 8, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.4, delay: 1.2 }}
+            className={cn(
+              'relative px-3.5 py-2.5 rounded-xl shadow-lg max-w-[220px]',
+              'bg-[var(--erc-color-bg-secondary)] border border-[var(--erc-color-accent)]/40',
+              'text-xs text-[var(--erc-color-text-secondary)] leading-snug',
+            )}
+          >
+            <button
+              type="button"
+              onClick={dismissTooltip}
+              className="absolute top-1 right-1.5 text-[var(--erc-color-text-muted)] hover:text-[var(--erc-color-text-primary)] transition-colors"
+              aria-label="Dismiss tooltip"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+            <span className="pr-3">
+              Try the <strong className="text-[var(--erc-color-accent)]">Simulation</strong> to see how data flows through the contract!
+            </span>
+            {/* Arrow pointing down towards button */}
+            <div className="absolute -bottom-1.5 right-6 w-3 h-3 rotate-45 bg-[var(--erc-color-bg-secondary)] border-r border-b border-[var(--erc-color-accent)]/40" />
+          </motion.div>
         )}
-        aria-label={open ? 'Close simulation panel' : 'Open simulation panel'}
-      >
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.25" />
-          <path d="M5.5 4.5l4 2.5-4 2.5V4.5z" fill="currentColor" />
-        </svg>
-        {open ? 'Close' : 'Simulation'}
-      </button>
+        <button
+          type="button"
+          onClick={handleToggle}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2.5 rounded-full shadow-lg',
+            'bg-[var(--erc-color-accent)] text-white text-sm font-medium',
+            'hover:opacity-90 transition-opacity',
+            showTooltip && !open && 'animate-pulse',
+          )}
+          aria-label={open ? 'Close simulation panel' : 'Open simulation panel'}
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.25" />
+            <path d="M5.5 4.5l4 2.5-4 2.5V4.5z" fill="currentColor" />
+          </svg>
+          {open ? 'Close' : 'Simulation'}
+        </button>
+      </div>
 
       {/* Backdrop */}
       {open && (
@@ -574,7 +580,7 @@ function SimulationMobileDrawer({
       {/* Drawer sliding in from the right */}
       <div
         className={cn(
-          'fixed top-0 bottom-0 right-0 z-50 w-[320px] max-w-[85vw]',
+          'fixed top-0 bottom-0 right-0 z-50 w-[360px] max-w-[85vw]',
           'border-l border-[var(--erc-color-border)]',
           'bg-[var(--erc-color-bg-secondary)]',
           'transition-transform duration-300 ease-in-out overflow-auto',
@@ -614,7 +620,7 @@ function SimulationMobileDrawer({
           <SimulationPanel {...simPanelProps(entry, sim)} />
         </Suspense>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -687,6 +693,40 @@ function EntryContent({ entry }: { entry: ERCEntry }) {
             {description}
           </p>
 
+          {/* Quick info — inline metadata */}
+          <dl className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--erc-color-text-muted)]">
+            <div className="flex items-center gap-1.5">
+              <dt>Type:</dt>
+              <dd className="font-medium text-[var(--erc-color-text-secondary)] capitalize">{entry.entryType}</dd>
+            </div>
+            <span aria-hidden="true" className="text-[var(--erc-color-border)]">·</span>
+            <div className="flex items-center gap-1.5">
+              <dt>Category:</dt>
+              <dd className="font-medium text-[var(--erc-color-text-secondary)] capitalize">{entry.category}</dd>
+            </div>
+            {entry.entryType === 'standard' && (entry as { eipNumber?: number }).eipNumber && (
+              <>
+                <span aria-hidden="true" className="text-[var(--erc-color-border)]">·</span>
+                <div className="flex items-center gap-1.5">
+                  <dt>EIP:</dt>
+                  <dd className="font-medium text-[var(--erc-color-text-secondary)]">
+                    {(entry as { eipNumber: number }).eipNumber}
+                  </dd>
+                </div>
+              </>
+            )}
+            <span aria-hidden="true" className="text-[var(--erc-color-border)]">·</span>
+            <div className="flex items-center gap-1.5">
+              <dt>Functions:</dt>
+              <dd className="font-medium text-[var(--erc-color-text-secondary)]">{entry.functions.length}</dd>
+            </div>
+            <span aria-hidden="true" className="text-[var(--erc-color-border)]">·</span>
+            <div className="flex items-center gap-1.5">
+              <dt>Simulations:</dt>
+              <dd className="font-medium text-[var(--erc-color-text-secondary)]">{entry.simulations.length}</dd>
+            </div>
+          </dl>
+
           {/* Action links */}
           <div className="flex flex-wrap items-center gap-3 mt-1">
             <ExternalLink
@@ -699,125 +739,72 @@ function EntryContent({ entry }: { entry: ERCEntry }) {
           </div>
         </motion.header>
 
-        {/* ── Two-column layout ───────────────────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          {/* Main column */}
-          <div className="lg:col-span-2 flex flex-col gap-5">
-            {/* Introduction */}
-            <Section id="introduction" title="Introduction" collapsible defaultExpanded>
+        {/* ── Full-width content ─────────────────────────────── */}
+        <div className="flex flex-col gap-5">
+          {/* Introduction */}
+          <Section id="introduction" title="Introduction" collapsible defaultExpanded>
+            <p className="text-sm text-[var(--erc-color-text-secondary)] leading-relaxed whitespace-pre-line">
+              {tEntry('introduction', { defaultValue: entry.introduction })}
+            </p>
+          </Section>
+
+          {/* Design Purpose */}
+          <LazySection height={100}>
+            <Section id="design-purpose" title="Design Purpose" collapsible defaultExpanded>
               <p className="text-sm text-[var(--erc-color-text-secondary)] leading-relaxed whitespace-pre-line">
-                {tEntry('introduction', { defaultValue: entry.introduction })}
+                {tEntry('designPurpose', { defaultValue: entry.designPurpose })}
               </p>
             </Section>
+          </LazySection>
 
-            {/* Design Purpose */}
-            <LazySection height={100}>
-              <Section id="design-purpose" title="Design Purpose" collapsible defaultExpanded>
-                <p className="text-sm text-[var(--erc-color-text-secondary)] leading-relaxed whitespace-pre-line">
-                  {tEntry('designPurpose', { defaultValue: entry.designPurpose })}
-                </p>
+          {/* Common Usage */}
+          <LazySection height={100}>
+            <Section id="common-usage" title="Common Usage" collapsible defaultExpanded>
+              <p className="text-sm text-[var(--erc-color-text-secondary)] leading-relaxed whitespace-pre-line">
+                {tEntry('commonUsage', { defaultValue: entry.commonUsage })}
+              </p>
+            </Section>
+          </LazySection>
+
+          {/* Flow diagram — Resizable + Fullscreen */}
+          {entry.flowNodes.length > 0 && (
+            <LazySection height={620}>
+              <FlowDiagramSection
+                entry={entry}
+                sim={sim}
+                tCommon={tCommon}
+              />
+            </LazySection>
+          )}
+
+          {/* Functions list */}
+          {entry.functions.length > 0 && (
+            <LazySection height={200}>
+              <Section id="functions" title={`Functions & Events (${entry.functions.length})`}>
+                <div className="flex flex-col gap-2">
+                  {entry.functions.map((fn) => (
+                    <FunctionCard
+                      key={fn.signature}
+                      fn={fn}
+                      tFn={(key) => tEntry(key, { defaultValue: key })}
+                    />
+                  ))}
+                </div>
               </Section>
             </LazySection>
+          )}
 
-            {/* Common Usage */}
-            <LazySection height={100}>
-              <Section id="common-usage" title="Common Usage" collapsible defaultExpanded>
-                <p className="text-sm text-[var(--erc-color-text-secondary)] leading-relaxed whitespace-pre-line">
-                  {tEntry('commonUsage', { defaultValue: entry.commonUsage })}
-                </p>
-              </Section>
-            </LazySection>
-
-            {/* Flow diagram — Resizable + Fullscreen */}
-            {entry.flowNodes.length > 0 && (
-              <LazySection height={500}>
-                <FlowDiagramSection
-                  entry={entry}
-                  sim={sim}
-                  tCommon={tCommon}
-                />
-              </LazySection>
-            )}
-
-            {/* Simulation — Bottom panel (desktop only, lg+) */}
-            {entry.simulations.length > 0 && (
-              <div className="hidden lg:block">
-                <SimulationBottomPanel entry={entry} sim={sim} tCommon={tCommon} />
-              </div>
-            )}
-
-            {/* Functions list */}
-            {entry.functions.length > 0 && (
-              <LazySection height={200}>
-                <Section id="functions" title={`Functions & Events (${entry.functions.length})`}>
-                  <div className="flex flex-col gap-2">
-                    {entry.functions.map((fn) => (
-                      <FunctionCard
-                        key={fn.signature}
-                        fn={fn}
-                        tFn={(key) => tEntry(key, { defaultValue: key })}
-                      />
-                    ))}
-                  </div>
-                </Section>
-              </LazySection>
-            )}
-          </div>
-
-          {/* Right sidebar column */}
-          <div className="flex flex-col gap-4">
-            {/* Quick info card */}
-            <motion.div
-              initial={{ opacity: 0, x: 16 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-              className={cn(
-                'rounded-2xl border border-[var(--erc-color-border)]',
-                'bg-[var(--erc-color-bg-secondary)] p-4',
-                'flex flex-col gap-3',
-              )}
-            >
-              <h2 className="text-sm font-semibold text-[var(--erc-color-text-primary)]">
-                Quick Info
-              </h2>
-              <dl className="flex flex-col gap-2 text-sm">
-                <div className="flex justify-between gap-2">
-                  <dt className="text-[var(--erc-color-text-muted)]">Type</dt>
-                  <dd className="font-medium text-[var(--erc-color-text-secondary)] capitalize">{entry.entryType}</dd>
-                </div>
-                <div className="flex justify-between gap-2">
-                  <dt className="text-[var(--erc-color-text-muted)]">Category</dt>
-                  <dd className="font-medium text-[var(--erc-color-text-secondary)] capitalize">{entry.category}</dd>
-                </div>
-                {entry.entryType === 'standard' && (entry as { eipNumber?: number }).eipNumber && (
-                  <div className="flex justify-between gap-2">
-                    <dt className="text-[var(--erc-color-text-muted)]">EIP Number</dt>
-                    <dd className="font-medium text-[var(--erc-color-text-secondary)]">
-                      {(entry as { eipNumber: number }).eipNumber}
-                    </dd>
-                  </div>
-                )}
-                <div className="flex justify-between gap-2">
-                  <dt className="text-[var(--erc-color-text-muted)]">Functions</dt>
-                  <dd className="font-medium text-[var(--erc-color-text-secondary)]">{entry.functions.length}</dd>
-                </div>
-                <div className="flex justify-between gap-2">
-                  <dt className="text-[var(--erc-color-text-muted)]">Simulations</dt>
-                  <dd className="font-medium text-[var(--erc-color-text-secondary)]">{entry.simulations.length}</dd>
-                </div>
-              </dl>
-            </motion.div>
-
-            {/* Related entries */}
-            {entry.relatedSlugs.length > 0 && (
+          {/* Related entries — always at the bottom */}
+          {entry.relatedSlugs.length > 0 && (
+            <LazySection height={80}>
               <RelatedEntries slugs={entry.relatedSlugs} />
-            )}
-          </div>
+            </LazySection>
+          )}
         </div>
 
-        {/* ── Simulation — Right drawer (mobile only, <lg) ──── */}
+        {/* ── Simulation — Slide-out drawer (all screens) ──── */}
         {entry.simulations.length > 0 && (
-          <SimulationMobileDrawer entry={entry} sim={sim} tCommon={tCommon} />
+          <SimulationDrawer entry={entry} sim={sim} tCommon={tCommon} />
         )}
       </div>
     </>
