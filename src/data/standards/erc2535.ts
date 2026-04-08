@@ -104,11 +104,19 @@ export const entry: StandardEntry = {
       layoutHint: 'source',
     },
     {
+      id: 'diamond-group',
+      type: 'group',
+      label: 'erc2535.node.diamondGroup',
+      data: { style: 'dashed' },
+      layoutHint: 'center',
+    },
+    {
       id: 'diamond-proxy',
       type: 'proxy',
       label: 'erc2535.node.diamondProxy',
       data: { implementation: 'selector routing' },
       layoutHint: 'center',
+      parentId: 'diamond-group',
     },
     {
       id: 'facet-a',
@@ -143,6 +151,7 @@ export const entry: StandardEntry = {
         ],
       },
       layoutHint: 'storage',
+      parentId: 'diamond-group',
     },
     {
       id: 'diamond-cut-facet',

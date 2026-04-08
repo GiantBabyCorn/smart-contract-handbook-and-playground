@@ -18,7 +18,8 @@
   },
   "nav": {
     "home": "首頁",
-    "backToHome": "返回首頁"
+    "backToHome": "返回首頁",
+    "playground": "實驗場"
   },
   "theme": {
     "switchToLight": "切換至淺色主題",
@@ -42,6 +43,9 @@
     "goHome": "返回首頁"
   },
   "loading": "載入中...",
+  "sim": { "scenarios": "場景", "interactive": "互動式", "play": "播放", "pause": "暫停", "stepForward": "下一步", "stepBack": "上一步", "reset": "重置" },
+  "interactive": { "selectFunction": "選擇函式", "parameters": "參數", "execute": "執行" },
+  "playground": { "title": "實驗場", "subtitle": "組合合約並測試互動", "addContract": "新增", "remove": "移除", "clearAll": "清除全部", "autoLayout": "自動排版", "searchContracts": "搜尋合約...", "empty": "從左側面板新增合約開始" },
   "a11y": {
     "flowDiagram": "說明合約元件之間互動的流程圖",
     "simulationPanel": "用於逐步執行的互動式模擬面板"

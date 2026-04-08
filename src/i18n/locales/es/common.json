@@ -18,7 +18,8 @@
   },
   "nav": {
     "home": "Inicio",
-    "backToHome": "Volver al Inicio"
+    "backToHome": "Volver al Inicio",
+    "playground": "Laboratorio"
   },
   "theme": {
     "switchToLight": "Cambiar al tema claro",
@@ -42,6 +43,9 @@
     "goHome": "Ir al inicio"
   },
   "loading": "Cargando...",
+  "sim": { "scenarios": "Escenarios", "interactive": "Interactivo", "play": "Reproducir", "pause": "Pausar", "stepForward": "Paso adelante", "stepBack": "Paso atrás", "reset": "Reiniciar" },
+  "interactive": { "selectFunction": "Seleccionar función", "parameters": "Parámetros", "execute": "Ejecutar" },
+  "playground": { "title": "Laboratorio", "subtitle": "Componer contratos y probar interacciones", "addContract": "Agregar", "remove": "Eliminar", "clearAll": "Limpiar todo", "autoLayout": "Auto-diseño", "searchContracts": "Buscar contratos...", "empty": "Agregue contratos desde la paleta para comenzar" },
   "a11y": {
     "flowDiagram": "Diagrama de flujo que ilustra la interacción entre los componentes del contrato",
     "simulationPanel": "Panel de simulación interactivo para ejecución paso a paso"

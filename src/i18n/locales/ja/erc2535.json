@@ -34,6 +34,7 @@
   "node.facetB": "ファセットB（ステーキング）",
   "node.facetC": "ファセットC（ガバナンス）",
   "node.diamondStorage": "Diamondストレージ",
+  "node.diamondGroup": "Diamondプロキシシステム",
   "node.diamondCutFacet": "DiamondCutファセット",
 
   "edge.callWithSelector": "関数セレクターで呼び出し",

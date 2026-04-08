@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/utils/cn';
 import type { ERCMeta } from '@/data/types';
+import { prefetchEntry } from '@/data/registry';
 
 interface SidebarMenuItemProps {
   item: ERCMeta;
@@ -31,6 +32,8 @@ export default function SidebarMenuItem({ item, onNavigate }: SidebarMenuItemPro
     <NavLink
       to={`/${item.slug}`}
       onClick={onNavigate}
+      onMouseEnter={() => prefetchEntry(item.slug)}
+      onFocus={() => prefetchEntry(item.slug)}
       aria-label={`${item.name}${shortDesc ? ` — ${shortDesc}` : ''}`}
       title={shortDesc || item.name}
       className={({ isActive }) =>

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { SimulationScenario } from '@/data/types';
+import type { SimulationScenario, ContractFunction } from '@/data/types';
 
 interface SimulationStore {
   // ─── State ───────────────────────────────────────────────────────────────────
@@ -15,6 +15,10 @@ interface SimulationStore {
   highlightedNodes: string[];
   highlightedEdges: string[];
   error: string | null;
+  /** Current simulation mode: scenario-based or interactive. */
+  mode: 'scenario' | 'interactive';
+  /** The function selected for interactive simulation. */
+  selectedFunction: ContractFunction | null;
 
   // ─── Actions ─────────────────────────────────────────────────────────────────
   setScenario: (scenario: SimulationScenario) => void;
@@ -25,6 +29,8 @@ interface SimulationStore {
   setHighlights: (nodes: string[], edges: string[]) => void;
   addStepResult: (stepId: string, changes: Record<string, string>) => void;
   setError: (error: string | null) => void;
+  setMode: (mode: 'scenario' | 'interactive') => void;
+  setSelectedFunction: (fn: ContractFunction | null) => void;
   reset: () => void;
 }
 
@@ -39,6 +45,8 @@ export const useSimulationStore = create<SimulationStore>((set) => ({
   highlightedNodes: [],
   highlightedEdges: [],
   error: null,
+  mode: 'scenario',
+  selectedFunction: null,
 
   // ─── Mutators ─────────────────────────────────────────────────────────────────
 
@@ -78,6 +86,10 @@ export const useSimulationStore = create<SimulationStore>((set) => ({
     })),
 
   setError: (error) => set({ error }),
+
+  setMode: (mode) => set({ mode }),
+
+  setSelectedFunction: (fn) => set({ selectedFunction: fn }),
 
   reset: () =>
     set({

@@ -1,8 +1,8 @@
-import { useEffect, useState, useCallback, useRef, Suspense, lazy } from 'react';
+import { useEffect, useState, useCallback, useRef, useTransition, Suspense, lazy } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
-import { getEntryBySlug } from '@/data/registry';
+import { getEntryBySlug, prefetchEntry } from '@/data/registry';
 import { allMeta } from '@/data/allMeta';
 import type { ERCEntry, ContractFunction } from '@/data/types';
 import SEOHead from '@/components/common/SEOHead';
@@ -16,6 +16,7 @@ import NotFoundPage from './NotFoundPage';
 // Lazy-load heavy components
 const FlowCanvas = lazy(() => import('@/components/flow/FlowCanvas'));
 const SimulationPanel = lazy(() => import('@/components/flow/panels/SimulationPanel'));
+const InteractivePanel = lazy(() => import('@/components/flow/panels/InteractivePanel'));
 
 // ---------------------------------------------------------------------------
 // Category badge colour map
@@ -495,6 +496,7 @@ function SimulationDrawer({
   tCommon: (key: string) => string;
 }) {
   const [open, setOpen] = useState(false);
+  const [drawerMode, setDrawerMode] = useState<'scenario' | 'interactive'>('scenario');
   const [showTooltip, setShowTooltip] = useState(() => {
     try {
       return !localStorage.getItem(SIM_TOOLTIP_KEY);
@@ -587,26 +589,55 @@ function SimulationDrawer({
           open ? 'translate-x-0' : 'translate-x-full',
         )}
       >
-        <div className="px-4 py-3.5 border-b border-[var(--erc-color-border)] flex items-center justify-between gap-2 sticky top-0 bg-[var(--erc-color-bg-secondary)] z-10">
-          <div>
-            <h2 className="text-sm font-semibold text-[var(--erc-color-text-primary)]">
-              Simulation
-            </h2>
-            <p className="text-xs text-[var(--erc-color-text-muted)] mt-0.5">
-              {tCommon('a11y.simulationPanel')}
-            </p>
+        <div className="px-4 py-3.5 border-b border-[var(--erc-color-border)] flex flex-col gap-2 sticky top-0 bg-[var(--erc-color-bg-secondary)] z-10">
+          <div className="flex items-center justify-between gap-2">
+            <div>
+              <h2 className="text-sm font-semibold text-[var(--erc-color-text-primary)]">
+                Simulation
+              </h2>
+              <p className="text-xs text-[var(--erc-color-text-muted)] mt-0.5">
+                {tCommon('a11y.simulationPanel')}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="p-1 text-[var(--erc-color-text-secondary)] hover:text-[var(--erc-color-text-primary)] transition-colors"
+              aria-label="Close simulation drawer"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={() => setOpen(false)}
-            className="p-1 text-[var(--erc-color-text-secondary)] hover:text-[var(--erc-color-text-primary)] transition-colors"
-            aria-label="Close simulation drawer"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
+          {/* Mode toggle: Scenarios | Interactive */}
+          <div className="flex rounded-lg border border-[var(--erc-color-border)] overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setDrawerMode('scenario')}
+              className={cn(
+                'flex-1 px-3 py-1.5 text-xs font-medium transition-colors',
+                drawerMode === 'scenario'
+                  ? 'bg-[var(--erc-color-accent)] text-white'
+                  : 'bg-[var(--erc-color-bg-tertiary)] text-[var(--erc-color-text-secondary)] hover:text-[var(--erc-color-text-primary)]',
+              )}
+            >
+              {tCommon('sim.scenarios')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setDrawerMode('interactive')}
+              className={cn(
+                'flex-1 px-3 py-1.5 text-xs font-medium transition-colors',
+                drawerMode === 'interactive'
+                  ? 'bg-[var(--erc-color-accent)] text-white'
+                  : 'bg-[var(--erc-color-bg-tertiary)] text-[var(--erc-color-text-secondary)] hover:text-[var(--erc-color-text-primary)]',
+              )}
+            >
+              {tCommon('sim.interactive')}
+            </button>
+          </div>
         </div>
         <Suspense
           fallback={
@@ -617,7 +648,24 @@ function SimulationDrawer({
             </div>
           }
         >
-          <SimulationPanel {...simPanelProps(entry, sim)} />
+          {drawerMode === 'scenario' ? (
+            <SimulationPanel {...simPanelProps(entry, sim)} />
+          ) : (
+            <InteractivePanel
+              functions={entry.functions}
+              flowNodes={entry.flowNodes}
+              flowEdges={entry.flowEdges}
+              onExecute={(scenario) => sim.loadScenario(scenario)}
+              currentStep={sim.currentStepIndex}
+              totalSteps={sim.totalSteps}
+              isPlaying={sim.isPlaying}
+              onPlay={sim.play}
+              onPause={sim.pause}
+              onStepForward={sim.stepForward}
+              onStepBack={sim.stepBack}
+              onReset={sim.reset}
+            />
+          )}
         </Suspense>
       </div>
     </>
@@ -818,6 +866,7 @@ function EntryContent({ entry }: { entry: ERCEntry }) {
 export default function DetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const [entry, setEntry] = useState<ERCEntry | null | undefined>(undefined);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     if (!slug) {
@@ -827,18 +876,29 @@ export default function DetailPage() {
     }
 
     let cancelled = false;
-    setEntry(undefined); // reset to loading state
 
     getEntryBySlug(slug).then((result) => {
-      if (!cancelled) setEntry(result);
+      if (cancelled) return;
+      // Use startTransition to keep the previous entry visible while the new
+      // one loads — avoids a skeleton flash on every navigation.
+      startTransition(() => {
+        setEntry(result);
+      });
     });
 
     return () => {
       cancelled = true;
     };
-  }, [slug]);
+  }, [slug, startTransition]);
 
-  // Loading
+  // Prefetch related entries in the background once we have data
+  useEffect(() => {
+    if (entry) {
+      entry.relatedSlugs.forEach(prefetchEntry);
+    }
+  }, [entry]);
+
+  // Cold start — no previous entry to show
   if (entry === undefined) {
     return <SkeletonBlock type="detail" />;
   }
@@ -848,5 +908,9 @@ export default function DetailPage() {
     return <NotFoundPage />;
   }
 
-  return <EntryContent entry={entry} />;
+  return (
+    <div className={isPending ? 'opacity-60 transition-opacity duration-200' : ''}>
+      <EntryContent entry={entry} />
+    </div>
+  );
 }

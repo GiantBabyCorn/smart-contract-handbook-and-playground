@@ -18,7 +18,8 @@
   },
   "nav": {
     "home": "홈",
-    "backToHome": "홈으로 돌아가기"
+    "backToHome": "홈으로 돌아가기",
+    "playground": "플레이그라운드"
   },
   "theme": {
     "switchToLight": "라이트 테마로 전환",
@@ -42,6 +43,9 @@
     "goHome": "홈으로 이동"
   },
   "loading": "로딩 중...",
+  "sim": { "scenarios": "시나리오", "interactive": "인터랙티브", "play": "재생", "pause": "일시정지", "stepForward": "다음 단계", "stepBack": "이전 단계", "reset": "초기화" },
+  "interactive": { "selectFunction": "함수 선택", "parameters": "파라미터", "execute": "실행" },
+  "playground": { "title": "플레이그라운드", "subtitle": "컨트랙트를 조합하고 상호작용 테스트", "addContract": "추가", "remove": "제거", "clearAll": "전체 삭제", "autoLayout": "자동 레이아웃", "searchContracts": "컨트랙트 검색...", "empty": "팔레트에서 컨트랙트를 추가하여 시작하세요" },
   "a11y": {
     "flowDiagram": "컨트랙트 구성 요소 간의 상호작용을 나타내는 흐름도",
     "simulationPanel": "단계별 실행을 위한 인터랙티브 시뮬레이션 패널"

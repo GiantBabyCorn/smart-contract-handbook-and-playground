@@ -34,6 +34,7 @@
   "node.facetB": "切面 B（質押）",
   "node.facetC": "切面 C（治理）",
   "node.diamondStorage": "鑽石儲存",
+  "node.diamondGroup": "鑽石代理系統",
   "node.diamondCutFacet": "DiamondCut 切面",
 
   "edge.callWithSelector": "使用函式選擇器呼叫",

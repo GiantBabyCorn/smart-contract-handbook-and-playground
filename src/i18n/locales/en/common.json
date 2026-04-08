@@ -18,7 +18,8 @@
   },
   "nav": {
     "home": "Home",
-    "backToHome": "Back to Home"
+    "backToHome": "Back to Home",
+    "playground": "Playground"
   },
   "theme": {
     "switchToLight": "Switch to light theme",
@@ -42,6 +43,30 @@
     "goHome": "Go to Home"
   },
   "loading": "Loading...",
+  "sim": {
+    "scenarios": "Scenarios",
+    "interactive": "Interactive",
+    "play": "Play",
+    "pause": "Pause",
+    "stepForward": "Step forward",
+    "stepBack": "Step back",
+    "reset": "Reset"
+  },
+  "interactive": {
+    "selectFunction": "Select Function",
+    "parameters": "Parameters",
+    "execute": "Execute"
+  },
+  "playground": {
+    "title": "Playground",
+    "subtitle": "Compose contracts & test interactions",
+    "addContract": "Add",
+    "remove": "Remove",
+    "clearAll": "Clear all",
+    "autoLayout": "Auto-layout",
+    "searchContracts": "Search contracts...",
+    "empty": "Add contracts from the palette to get started"
+  },
   "a11y": {
     "flowDiagram": "Flow diagram illustrating the interaction between contract components",
     "simulationPanel": "Interactive simulation panel for step-by-step execution"

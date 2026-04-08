@@ -18,7 +18,8 @@
   },
   "nav": {
     "home": "首页",
-    "backToHome": "返回首页"
+    "backToHome": "返回首页",
+    "playground": "实验场"
   },
   "theme": {
     "switchToLight": "切换到浅色主题",
@@ -42,6 +43,9 @@
     "goHome": "返回首页"
   },
   "loading": "加载中...",
+  "sim": { "scenarios": "场景", "interactive": "交互式", "play": "播放", "pause": "暂停", "stepForward": "下一步", "stepBack": "上一步", "reset": "重置" },
+  "interactive": { "selectFunction": "选择函数", "parameters": "参数", "execute": "执行" },
+  "playground": { "title": "实验场", "subtitle": "组合合约并测试交互", "addContract": "添加", "remove": "移除", "clearAll": "清除全部", "autoLayout": "自动布局", "searchContracts": "搜索合约...", "empty": "从左侧面板添加合约开始" },
   "a11y": {
     "flowDiagram": "说明合约组件之间交互的流程图",
     "simulationPanel": "用于逐步执行的交互式模拟面板"

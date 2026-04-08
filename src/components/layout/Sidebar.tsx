@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { allMeta } from '@/data/allMeta';
 import { CATEGORY_ORDER, CATEGORY_LABELS } from '@/utils/constants';
@@ -56,6 +56,32 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
         >
           Smart Contract Handbook
         </Link>
+      </div>
+
+      {/* ── Playground CTA ─────────────────────────────────────── */}
+      <div className="shrink-0 px-2 pt-2">
+        <NavLink
+          to="/playground"
+          onClick={onNavigate}
+          className={({ isActive }) =>
+            cn(
+              'flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm font-medium transition-all',
+              'border',
+              isActive
+                ? 'bg-[var(--erc-color-accent)]/10 border-[var(--erc-color-accent)]/30 text-[var(--erc-color-accent)]'
+                : 'border-[var(--erc-color-border)] text-[var(--erc-color-text-secondary)] hover:bg-[var(--erc-color-bg-tertiary)] hover:text-[var(--erc-color-text-primary)]',
+            )
+          }
+        >
+          {/* Grid/compose icon */}
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <rect x="1" y="1" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.25" />
+            <rect x="8" y="1" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.25" />
+            <rect x="1" y="8" width="5" height="5" rx="1" stroke="currentColor" strokeWidth="1.25" />
+            <path d="M10.5 8.5v4M8.5 10.5h4" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" />
+          </svg>
+          {t('nav.playground', 'Playground')}
+        </NavLink>
       </div>
 
       {/* ── Sticky search ───────────────────────────────────────── */}

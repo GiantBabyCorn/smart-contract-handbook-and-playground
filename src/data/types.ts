@@ -14,6 +14,9 @@ export interface ContractFunction {
   returns?: FunctionParam[];
   description: string;
   defaultSimValues?: Record<string, string>;
+  /** Optional pre-authored call path for interactive simulation.
+   *  When provided, the interactive engine uses it directly instead of auto-tracing. */
+  callPath?: Array<{ highlightNodes: string[]; highlightEdges: string[]; description: string }>;
 }
 
 export interface FunctionParam {
@@ -29,14 +32,16 @@ interface UserNodeData { address?: string; balance?: string; }
 interface ProxyNodeData { implementation?: string; }
 interface StorageNodeData { slots?: Array<{ key: string; label: string }>; }
 interface TokenFlowNodeData { symbol?: string; amount?: string; }
+interface GroupNodeData { style?: 'default' | 'dashed'; }
 
 export type FlowNodeDef =
-  | { id: string; type: 'contract'; label: string; data: ContractNodeData; layoutHint?: string }
-  | { id: string; type: 'function'; label: string; data: FunctionNodeData; layoutHint?: string }
-  | { id: string; type: 'user'; label: string; data: UserNodeData; layoutHint?: string }
-  | { id: string; type: 'proxy'; label: string; data: ProxyNodeData; layoutHint?: string }
-  | { id: string; type: 'storage'; label: string; data: StorageNodeData; layoutHint?: string }
-  | { id: string; type: 'tokenFlow'; label: string; data: TokenFlowNodeData; layoutHint?: string };
+  | { id: string; type: 'contract'; label: string; data: ContractNodeData; layoutHint?: string; parentId?: string }
+  | { id: string; type: 'function'; label: string; data: FunctionNodeData; layoutHint?: string; parentId?: string }
+  | { id: string; type: 'user'; label: string; data: UserNodeData; layoutHint?: string; parentId?: string }
+  | { id: string; type: 'proxy'; label: string; data: ProxyNodeData; layoutHint?: string; parentId?: string }
+  | { id: string; type: 'storage'; label: string; data: StorageNodeData; layoutHint?: string; parentId?: string }
+  | { id: string; type: 'tokenFlow'; label: string; data: TokenFlowNodeData; layoutHint?: string; parentId?: string }
+  | { id: string; type: 'group'; label: string; data: GroupNodeData; layoutHint?: string };
 
 export interface FlowEdgeDef {
   id: string;

@@ -18,7 +18,8 @@
   },
   "nav": {
     "home": "ホーム",
-    "backToHome": "ホームに戻る"
+    "backToHome": "ホームに戻る",
+    "playground": "プレイグラウンド"
   },
   "theme": {
     "switchToLight": "ライトテーマに切り替え",
@@ -42,6 +43,9 @@
     "goHome": "ホームに戻る"
   },
   "loading": "読み込み中...",
+  "sim": { "scenarios": "シナリオ", "interactive": "インタラクティブ", "play": "再生", "pause": "一時停止", "stepForward": "次のステップ", "stepBack": "前のステップ", "reset": "リセット" },
+  "interactive": { "selectFunction": "関数を選択", "parameters": "パラメータ", "execute": "実行" },
+  "playground": { "title": "プレイグラウンド", "subtitle": "コントラクトを組み合わせてインタラクションをテスト", "addContract": "追加", "remove": "削除", "clearAll": "すべてクリア", "autoLayout": "自動レイアウト", "searchContracts": "コントラクトを検索...", "empty": "パレットからコントラクトを追加して始めましょう" },
   "a11y": {
     "flowDiagram": "コントラクトコンポーネント間のインタラクションを示すフロー図",
     "simulationPanel": "ステップごとの実行のためのインタラクティブシミュレーションパネル"

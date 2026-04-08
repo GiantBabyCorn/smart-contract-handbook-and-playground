@@ -34,6 +34,7 @@
   "node.facetB": "파셋 B (스테이킹)",
   "node.facetC": "파셋 C (거버넌스)",
   "node.diamondStorage": "다이아몬드 스토리지",
+  "node.diamondGroup": "다이아몬드 프록시 시스템",
   "node.diamondCutFacet": "DiamondCut 파셋",
 
   "edge.callWithSelector": "함수 셀렉터로 호출",

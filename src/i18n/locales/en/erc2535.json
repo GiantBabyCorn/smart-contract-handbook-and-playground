@@ -34,6 +34,7 @@
   "node.facetB": "Facet B (Staking)",
   "node.facetC": "Facet C (Governance)",
   "node.diamondStorage": "Diamond Storage",
+  "node.diamondGroup": "Diamond Proxy System",
   "node.diamondCutFacet": "DiamondCut Facet",
 
   "edge.callWithSelector": "Call with function selector",

@@ -25,6 +25,7 @@ import UserNode from './nodes/UserNode';
 import ProxyNode from './nodes/ProxyNode';
 import StorageNode from './nodes/StorageNode';
 import TokenFlowNode from './nodes/TokenFlowNode';
+import GroupNode from './nodes/GroupNode';
 import AnimatedEdge from './edges/AnimatedEdge';
 import LabeledEdge from './edges/LabeledEdge';
 import FundFlowEdge from './edges/FundFlowEdge';
@@ -38,6 +39,7 @@ const NODE_TYPES = {
   proxy: ProxyNode,
   storage: StorageNode,
   tokenFlow: TokenFlowNode,
+  group: GroupNode,
 } as const;
 
 const EDGE_TYPES = {
@@ -199,6 +201,8 @@ function FlowCanvasInner({
                 return 'var(--erc-color-category-defi)';
               case 'tokenFlow':
                 return 'var(--erc-color-category-token)';
+              case 'group':
+                return 'var(--erc-color-border)';
               default:
                 return 'var(--erc-color-node-border)';
             }

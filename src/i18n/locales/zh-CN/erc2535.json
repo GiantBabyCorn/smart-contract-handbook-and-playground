@@ -34,6 +34,7 @@
   "node.facetB": "切面 B（质押）",
   "node.facetC": "切面 C（治理）",
   "node.diamondStorage": "钻石存储",
+  "node.diamondGroup": "钻石代理系统",
   "node.diamondCutFacet": "DiamondCut 切面",
 
   "edge.callWithSelector": "使用函数选择器调用",

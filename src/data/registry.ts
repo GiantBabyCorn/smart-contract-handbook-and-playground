@@ -14,3 +14,9 @@ export async function getEntryBySlug(slug: string): Promise<ERCEntry | null> {
   fullCache.set(slug, mod.entry);
   return mod.entry;
 }
+
+/** Fire-and-forget prefetch that warms the cache for a given slug. */
+export function prefetchEntry(slug: string): void {
+  if (fullCache.has(slug)) return;
+  void getEntryBySlug(slug);
+}

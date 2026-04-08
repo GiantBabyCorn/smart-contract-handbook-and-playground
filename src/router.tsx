@@ -6,6 +6,7 @@ import SkeletonBlock from './components/common/SkeletonBlock';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const DetailPage = lazy(() => import('./pages/DetailPage'));
+const PlaygroundPage = lazy(() => import('./pages/PlaygroundPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 export const router = createBrowserRouter([
@@ -21,6 +22,14 @@ export const router = createBrowserRouter([
         ),
       },
 {
+        path: '/playground',
+        element: (
+          <Suspense fallback={<SkeletonBlock type="home" />}>
+            <PlaygroundPage />
+          </Suspense>
+        ),
+      },
+      {
         path: '/:slug',
         element: (
           <Suspense fallback={<SkeletonBlock type="detail" />}>
