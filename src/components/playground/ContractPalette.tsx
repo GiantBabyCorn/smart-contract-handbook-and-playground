@@ -2,12 +2,18 @@ import { useMemo, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { allMeta } from '@/data/allMeta';
 import { CATEGORY_ORDER, CATEGORY_LABELS } from '@/utils/constants';
+import { SLUG_DND_TYPE } from './constants';
 import { cn } from '@/utils/cn';
 
 interface ContractPaletteProps {
   addedSlugs: string[];
   onAdd: (slug: string) => void;
   onRemove: (slug: string) => void;
+  /** Distinguishes the desktop sidebar instance from the mobile sheet so
+   *  test ids stay unique when both are mounted. */
+  testIdPrefix?: string;
+  /** Optional helper line under the search box (drag hint / tap hint). */
+  hint?: string;
 }
 
 const CATEGORY_BADGE_COLORS: Record<string, string> = {
@@ -22,6 +28,8 @@ export default function ContractPalette({
   addedSlugs,
   onAdd,
   onRemove,
+  testIdPrefix = 'palette',
+  hint,
 }: ContractPaletteProps) {
   const { t } = useTranslation('common');
   const [search, setSearch] = useState('');
@@ -53,6 +61,15 @@ export default function ContractPalette({
     [onAdd],
   );
 
+  const handleDragStart = useCallback(
+    (event: React.DragEvent<HTMLDivElement>, slug: string) => {
+      event.dataTransfer.setData(SLUG_DND_TYPE, slug);
+      event.dataTransfer.setData('text/plain', slug);
+      event.dataTransfer.effectAllowed = 'copy';
+    },
+    [],
+  );
+
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Search */}
@@ -69,6 +86,11 @@ export default function ContractPalette({
             'outline-none focus:border-[var(--erc-color-accent)] focus:ring-1 focus:ring-[var(--erc-color-accent)]',
           )}
         />
+        {hint && (
+          <p className="mt-1.5 text-[10px] leading-snug text-[var(--erc-color-text-muted)]">
+            {hint}
+          </p>
+        )}
       </div>
 
       {/* Category groups */}
@@ -84,12 +106,15 @@ export default function ContractPalette({
                 return (
                   <div
                     key={item.slug}
+                    data-testid={`${testIdPrefix}-item-${item.slug}`}
+                    draggable={!isAdded}
+                    onDragStart={(e) => handleDragStart(e, item.slug)}
                     className={cn(
                       'flex items-center gap-2 px-2 py-1.5 rounded-lg',
                       'border border-transparent',
                       isAdded
                         ? 'bg-[var(--erc-color-accent)]/5 border-[var(--erc-color-accent)]/20'
-                        : 'hover:bg-[var(--erc-color-bg-tertiary)]',
+                        : 'hover:bg-[var(--erc-color-bg-tertiary)] md:cursor-grab',
                     )}
                   >
                     <span
@@ -107,7 +132,9 @@ export default function ContractPalette({
                     {isAdded ? (
                       <button
                         type="button"
+                        data-testid={`${testIdPrefix}-remove-${item.slug}`}
                         onClick={() => onRemove(item.slug)}
+                        aria-label={`${t('playground.remove', 'Remove')} ${item.name}`}
                         className="shrink-0 text-[10px] px-1.5 py-0.5 rounded text-[var(--erc-color-text-muted)] hover:text-red-400 border border-[var(--erc-color-border)] transition-colors"
                       >
                         {t('playground.remove', 'Remove')}
@@ -115,7 +142,9 @@ export default function ContractPalette({
                     ) : (
                       <button
                         type="button"
+                        data-testid={`${testIdPrefix}-add-${item.slug}`}
                         onClick={() => handleAdd(item.slug)}
+                        aria-label={`${t('playground.addContract', 'Add')} ${item.name}`}
                         className="shrink-0 text-[10px] px-1.5 py-0.5 rounded text-[var(--erc-color-accent)] hover:bg-[var(--erc-color-accent)]/10 border border-[var(--erc-color-accent)]/30 transition-colors"
                       >
                         {t('playground.addContract', 'Add')}

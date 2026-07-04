@@ -9,13 +9,25 @@ import { useState, useEffect, useRef } from 'react';
  *
  * Uses IntersectionObserver with a configurable rootMargin to pre-load
  * slightly before the section scrolls into view.
+ *
+ * `force` bypasses the observer entirely (used for hash deep-links and TOC
+ * jumps, where every section must be mounted so anchors exist and offsets
+ * are final). Once forced, the section stays mounted like a normal trigger.
  */
-export function useLazySection(rootMargin = '200px'): {
+export function useLazySection(
+  rootMargin = '200px',
+  force = false,
+): {
   ref: React.RefObject<HTMLDivElement | null>;
   isVisible: boolean;
 } {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(force);
+
+  // A `force` that turns on after mount must also reveal the section.
+  useEffect(() => {
+    if (force) setIsVisible(true); // eslint-disable-line react-hooks/set-state-in-effect
+  }, [force]);
 
   useEffect(() => {
     const el = ref.current;

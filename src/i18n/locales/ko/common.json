@@ -14,12 +14,15 @@
       "governance": "거버넌스",
       "crossChain": "크로스체인",
       "rwa": "실물 자산"
-    }
+    },
+    "viewAll": "전체 {{count}}개 보기 →",
+    "footerCounts": "표준 {{standards}}개 · 프로토콜 {{protocols}}개"
   },
   "nav": {
     "home": "홈",
     "backToHome": "홈으로 돌아가기",
-    "playground": "플레이그라운드"
+    "playground": "플레이그라운드",
+    "catalog": "카탈로그"
   },
   "theme": {
     "switchToLight": "라이트 테마로 전환",
@@ -43,11 +46,147 @@
     "goHome": "홈으로 이동"
   },
   "loading": "로딩 중...",
-  "sim": { "scenarios": "시나리오", "interactive": "인터랙티브", "play": "재생", "pause": "일시정지", "stepForward": "다음 단계", "stepBack": "이전 단계", "reset": "초기화" },
-  "interactive": { "selectFunction": "함수 선택", "parameters": "파라미터", "execute": "실행" },
-  "playground": { "title": "플레이그라운드", "subtitle": "컨트랙트를 조합하고 상호작용 테스트", "addContract": "추가", "remove": "제거", "clearAll": "전체 삭제", "autoLayout": "자동 레이아웃", "searchContracts": "컨트랙트 검색...", "empty": "팔레트에서 컨트랙트를 추가하여 시작하세요" },
+  "sim": {
+    "scenarios": "시나리오",
+    "interactive": "인터랙티브",
+    "play": "재생",
+    "pause": "일시정지",
+    "stepForward": "다음 단계",
+    "stepBack": "이전 단계",
+    "reset": "초기화"
+  },
+  "interactive": {
+    "selectFunction": "함수 선택",
+    "parameters": "파라미터",
+    "execute": "실행",
+    "entryPoint": "시작점",
+    "filterFunctions": "함수 필터링...",
+    "noFunctions": "필터와 일치하는 함수가 없습니다",
+    "currentStep": "현재 단계",
+    "stepFrom": "{{label}}에서 시작",
+    "stepCall": "호출이 {{label}}에 도달",
+    "stepStorage": "스토리지 업데이트: {{label}}",
+    "stepEvent": "이벤트 발생: {{label}}",
+    "stepInteract": "{{label}}와 상호작용"
+  },
+  "playground": {
+    "title": "플레이그라운드",
+    "subtitle": "컨트랙트를 조합하고 상호작용 테스트",
+    "addContract": "추가",
+    "remove": "제거",
+    "clearAll": "전체 삭제",
+    "autoLayout": "자동 레이아웃",
+    "searchContracts": "컨트랙트 검색...",
+    "empty": "팔레트에서 컨트랙트를 추가하여 시작하세요",
+    "share": "공유",
+    "linkCopied": "링크가 클립보드에 복사되었습니다",
+    "shareFailed": "링크를 복사할 수 없습니다",
+    "simulate": "시뮬레이션",
+    "close": "닫기",
+    "openPalette": "컨트랙트 추가",
+    "tapToPlace": "캔버스를 탭하여 {{name}} 배치",
+    "cancel": "취소",
+    "dragHint": "항목을 캔버스로 드래그하거나 '추가'를 클릭하세요",
+    "tapHint": "항목을 탭한 후 캔버스를 탭하여 배치하세요",
+    "onboardingTitle": "3단계로 시작하기",
+    "step1Title": "컨트랙트 추가",
+    "step1Desc": "팔레트에서 표준을 캔버스로 드래그하거나 '추가'를 클릭",
+    "step2Title": "함수 선택",
+    "step2Desc": "오른쪽 패널에서 함수를 선택하고 파라미터 입력",
+    "step3Title": "시뮬레이션 실행",
+    "step3Desc": "실행하고 컨트랙트 간 호출 흐름을 관찰",
+    "presetsTitle": "또는 프리셋 조합으로 시작",
+    "presetPermit": "가스리스 승인(permit)",
+    "presetSwap": "토큰 스왑 플로우",
+    "presetRoyalty": "로열티가 있는 NFT",
+    "presetAa": "모듈형 스마트 계정",
+    "presetUups": "업그레이드 가능 프록시(UUPS)"
+  },
   "a11y": {
     "flowDiagram": "컨트랙트 구성 요소 간의 상호작용을 나타내는 흐름도",
-    "simulationPanel": "단계별 실행을 위한 인터랙티브 시뮬레이션 패널"
+    "simulationPanel": "단계별 실행을 위한 인터랙티브 시뮬레이션 패널",
+    "skipToContent": "본문으로 건너뛰기"
+  },
+  "search": {
+    "button": "검색",
+    "placeholder": "표준, 프로토콜, 함수 검색...",
+    "noResults": "결과가 없습니다",
+    "recent": "최근 본 항목",
+    "loading": "검색 인덱스 로딩 중..."
+  },
+  "catalogUi": {
+    "title": "카탈로그",
+    "description": "게시된 모든 ERC 표준과 DeFi 프로토콜을 카테고리, 상태, 유형별로 살펴보세요.",
+    "summary": "전체 {{total}}개 중 {{shown}}개 표시",
+    "searchLabel": "이름 또는 EIP 번호로 필터링",
+    "searchPlaceholder": "이름 또는 EIP 번호...",
+    "eip": "EIP 번호",
+    "name": "이름",
+    "category": "카테고리",
+    "status": "상태",
+    "type": "유형",
+    "tier": "티어",
+    "availability": "게시 상태",
+    "live": "게시됨",
+    "allCategories": "모든 카테고리",
+    "allStatuses": "모든 상태",
+    "allTypes": "모든 유형",
+    "standard": "표준",
+    "protocol": "프로토콜",
+    "unofficial": "비공식",
+    "noMatches": "현재 필터와 일치하는 항목이 없습니다"
+  },
+  "detailUi": {
+    "toc": "목차",
+    "copyLink": "이 섹션 링크 복사",
+    "linkCopied": "링크가 복사되었습니다!",
+    "prev": "이전 항목",
+    "next": "다음 항목",
+    "entryNav": "이전/다음 항목 탐색",
+    "officialSpec": "공식 명세",
+    "officialSpecFor": "{{name}} 공식 명세",
+    "meta": {
+      "eip": "EIP",
+      "functions": "함수",
+      "simulations": "시뮬레이션",
+      "requires": "의존성"
+    },
+    "sections": {
+      "introduction": "소개",
+      "designPurpose": "설계 목적",
+      "commonUsage": "일반적인 사용처",
+      "functions": "함수 및 이벤트",
+      "security": "보안 고려 사항",
+      "codeExamples": "코드 예제",
+      "errors": "오류 및 리버트",
+      "gas": "가스 참고 사항",
+      "composition": "구성 표준",
+      "references": "참고 자료",
+      "related": "관련 표준 및 프로토콜"
+    },
+    "severity": {
+      "critical": "치명적",
+      "high": "높음",
+      "medium": "중간",
+      "info": "정보"
+    },
+    "security": {
+      "mitigation": "완화 방안:",
+      "source": "출처"
+    },
+    "refKind": {
+      "spec": "명세",
+      "impl": "참조 구현",
+      "audit": "감사",
+      "article": "아티클"
+    },
+    "errorsTable": {
+      "name": "오류",
+      "condition": "리버트 조건"
+    },
+    "fn": {
+      "parameters": "파라미터",
+      "returns": "반환값"
+    }
   }
 }

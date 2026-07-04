@@ -100,5 +100,9 @@
   "sim.addLiquidity.step.transferToPair": "The Router transfers both tokens from the provider to the pair contract in the correct proportion.",
   "sim.addLiquidity.step.transferToPair.mobile": "Transfer tokens to pair",
   "sim.addLiquidity.step.mintLP": "The pair contract mints LP tokens proportional to the geometric mean of the deposited amounts relative to existing reserves.",
-  "sim.addLiquidity.step.mintLP.mobile": "Mint LP tokens"
+  "sim.addLiquidity.step.mintLP.mobile": "Mint LP tokens",
+
+  "compose.erc20.role": "Each pair contract holds reserves of two ERC-20 tokens and mints its liquidity shares as an ERC-20 LP token (UNI-V2).",
+  "compose.erc2612.role": "The LP token implements EIP-2612-style permit, so pool-token approvals can be granted by signature instead of a separate approve transaction.",
+  "compose.erc712.role": "Permit approvals are signed as EIP-712 typed data against each pair's own domain separator, keeping meta-approvals wallet-readable and replay-safe."
 }

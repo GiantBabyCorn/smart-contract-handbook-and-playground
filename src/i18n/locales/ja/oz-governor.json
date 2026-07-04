@@ -105,5 +105,9 @@
   "sim.proposal-execution.step.callExecute": "呼び出し者がGovernorのexecute()を呼び出し、実行リクエストをタイムロックコントローラーに転送します。",
   "sim.proposal-execution.step.callExecute.mobile": "execute()を呼び出し",
   "sim.proposal-execution.step.dispatch": "タイムロックコントローラーがターゲットコントラクトへの呼び出しを送信し、提案のエンコードされたアクションを実行します。提案状態がExecutedになります。",
-  "sim.proposal-execution.step.dispatch.mobile": "ターゲットに送信"
+  "sim.proposal-execution.step.dispatch.mobile": "ターゲットに送信",
+
+  "compose.erc20.role": "投票権は通常、ERC20Votesチェックポイント拡張を備えたERC-20ガバナンストークンに由来し、GovernorはIVotes/IERC5805インターフェースを通じて参照します。",
+  "compose.erc721.role": "ERC721VotesによりNFTコレクションも投票資産にでき、OpenZeppelin Contractsに用意されたもう一つの投票権ソースです。",
+  "compose.erc712.role": "castVoteBySigはEIP-712型付きデータ（BALLOT_TYPEHASH）で署名された投票を受け付け、ERC-1271のコントラクト署名にも対応するため、ガスレス投票が可能です。"
 }

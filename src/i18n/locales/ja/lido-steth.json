@@ -66,5 +66,9 @@
   "sim.stake-eth-receive-steth.step.depositBeacon": "バッファリングされたETHは、バリデーターを運用する選定されたノードオペレーターを通じて、32 ETH単位でBeacon Chainに預け入れられます。",
   "sim.stake-eth-receive-steth.step.depositBeacon.mobile": "Beacon Chainに預け入れ",
   "sim.stake-eth-receive-steth.step.rebase": "Lidoオラクルが新しいステーキング報酬を報告します。合計プールETHが増加し、すべてのstETH残高が自動的に上方にリベースされます。",
-  "sim.stake-eth-receive-steth.step.rebase.mobile": "毎日のリベースで残高が増加"
+  "sim.stake-eth-receive-steth.step.rebase.mobile": "毎日のリベースで残高が増加",
+
+  "compose.erc20.role": "stETHはオラクルが報告するステーキング報酬に応じて残高が増えるリベース型ERC-20で、wstETHはそれを残高固定のERC-20にラップします（シェア型ラッパーであり、ERC-4626ボールトではありません）。",
+  "compose.erc2612.role": "メインネットのstETHとwstETHはどちらもEIP-2612のpermit拡張を実装しており、署名による承認が可能です。",
+  "compose.erc1271.role": "stETHのpermitはERC-1271のコントラクト署名も受け付けるため、Safeなどのスマートコントラクトウォレットでも承認に署名できます。"
 }

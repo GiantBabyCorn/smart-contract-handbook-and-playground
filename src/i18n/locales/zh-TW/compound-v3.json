@@ -65,5 +65,8 @@
   "sim.supplyAndBorrowComet.step.borrowBase": "借款人以 USDC 呼叫 withdraw() 進行借款。協議在內部追蹤借款餘額並將 USDC 轉移給借款人。",
   "sim.supplyAndBorrowComet.step.borrowBase.mobile": "借入 USDC",
   "sim.supplyAndBorrowComet.step.utilization": "市場利用率上升，導致利率模型調整借款和供應利率。基礎供應者獲得更高的收益。",
-  "sim.supplyAndBorrowComet.step.utilization.mobile": "利用率與利率調整"
+  "sim.supplyAndBorrowComet.step.utilization.mobile": "利用率與利率調整",
+
+  "compose.erc20.role": "Comet 合約本身就是基礎資產的完全相容 ERC-20 包裝——balanceOf 回報已供應本金加累積利息——抵押品也經由標準 ERC-20 授權存入。",
+  "compose.erc712.role": "allowBySig 以 EIP-712 離線簽章授權帳戶管理者，取代鏈上的 allow 交易。"
 }

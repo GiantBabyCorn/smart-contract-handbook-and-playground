@@ -24,5 +24,80 @@
     "running": "執行中",
     "completed": "已完成",
     "error": "錯誤"
+  },
+  "param": {
+    "invalidAddress": "請輸入完整的 0x… 位址（40 個十六進位字元）或示範別名，例如 0xAlice",
+    "invalidUint": "請輸入整數（僅限數字）",
+    "reset": "還原為預設值",
+    "unitToggle": "切換 wei 與 ETH 顯示",
+    "unitWei": "wei",
+    "unitEth": "ETH",
+    "boolTrue": "true",
+    "boolFalse": "false"
+  },
+  "state": {
+    "title": "狀態變化",
+    "empty": "執行一個步驟以查看狀態變化",
+    "summary": "初始 → 最終",
+    "reverted": "交易已回退",
+    "stepLabel": "步驟 {{n}}",
+    "increase": "增加",
+    "decrease": "減少",
+    "currentValue": "目前數值",
+    "announce": "已執行步驟 {{n}}：{{summary}}"
+  },
+  "revert": {
+    "insufficientBalance": "轉帳金額超過傳送者的餘額",
+    "insufficientAllowance": "轉帳金額超過已核准的授權額度"
+  },
+  "legend": {
+    "title": "圖例",
+    "nodes": "節點",
+    "edges": "連線",
+    "functions": "函式",
+    "contract": "合約",
+    "contractDesc": "智慧合約",
+    "function": "函式",
+    "functionDesc": "合約函式",
+    "user": "使用者",
+    "userDesc": "外部帳戶（EOA）",
+    "proxy": "代理",
+    "proxyDesc": "委派呼叫的代理合約",
+    "storage": "儲存",
+    "storageDesc": "鏈上儲存槽",
+    "tokenFlow": "代幣流",
+    "tokenFlowDesc": "代幣轉移事件",
+    "animated": "動態",
+    "animatedDesc": "動態呼叫流程",
+    "labeled": "標籤",
+    "labeledDesc": "帶標籤的連線",
+    "fundFlow": "資金流",
+    "fundFlowDesc": "代幣 / ETH 轉移",
+    "readDesc": "檢視 / 純函式（view / pure）",
+    "writeDesc": "變更狀態的函式",
+    "eventDesc": "發出的事件"
+  },
+  "flow": {
+    "title": "互動流程",
+    "fullscreen": "全螢幕",
+    "exitFullscreen": "離開全螢幕",
+    "resetView": "重設檢視",
+    "resize": "拖曳以調整流程圖高度",
+    "computing": "正在計算佈局…",
+    "renderError": "流程圖繪製失敗",
+    "renderErrorHint": "繪製圖表時發生未預期的錯誤。",
+    "retry": "再試一次"
+  },
+  "popover": {
+    "close": "關閉"
+  },
+  "drawer": {
+    "title": "模擬",
+    "open": "開啟模擬面板",
+    "close": "關閉模擬面板",
+    "expand": "展開模擬面板",
+    "collapse": "收合模擬面板",
+    "tooltip": "試試「模擬」功能，看看資料如何在合約中流動！",
+    "dismiss": "關閉提示"
   }
 }

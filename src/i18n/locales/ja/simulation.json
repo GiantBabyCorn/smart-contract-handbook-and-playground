@@ -24,5 +24,80 @@
     "running": "実行中",
     "completed": "完了",
     "error": "エラー"
+  },
+  "param": {
+    "invalidAddress": "完全な 0x… アドレス（16進数40文字）またはデモ用エイリアス（例: 0xAlice）を入力してください",
+    "invalidUint": "整数を入力してください（数字のみ）",
+    "reset": "デフォルトに戻す",
+    "unitToggle": "wei と ETH の表示を切り替え",
+    "unitWei": "wei",
+    "unitEth": "ETH",
+    "boolTrue": "true",
+    "boolFalse": "false"
+  },
+  "state": {
+    "title": "状態の変化",
+    "empty": "ステップを実行すると状態の変化が表示されます",
+    "summary": "初期 → 最終",
+    "reverted": "トランザクションがリバートしました",
+    "stepLabel": "ステップ {{n}}",
+    "increase": "増加",
+    "decrease": "減少",
+    "currentValue": "現在の値",
+    "announce": "ステップ {{n}} を実行: {{summary}}"
+  },
+  "revert": {
+    "insufficientBalance": "送金額が送信者の残高を超えています",
+    "insufficientAllowance": "送金額が承認済みのアローワンスを超えています"
+  },
+  "legend": {
+    "title": "凡例",
+    "nodes": "ノード",
+    "edges": "エッジ",
+    "functions": "関数",
+    "contract": "コントラクト",
+    "contractDesc": "スマートコントラクト",
+    "function": "関数",
+    "functionDesc": "コントラクトの関数",
+    "user": "ユーザー",
+    "userDesc": "外部アカウント（EOA）",
+    "proxy": "プロキシ",
+    "proxyDesc": "委任呼び出しを行うプロキシコントラクト",
+    "storage": "ストレージ",
+    "storageDesc": "オンチェーンのストレージスロット",
+    "tokenFlow": "トークンフロー",
+    "tokenFlowDesc": "トークン転送イベント",
+    "animated": "アニメーション",
+    "animatedDesc": "アニメーション付きの呼び出しフロー",
+    "labeled": "ラベル付き",
+    "labeledDesc": "ラベル付きのエッジ",
+    "fundFlow": "資金フロー",
+    "fundFlowDesc": "トークン / ETH の転送",
+    "readDesc": "view / pure 関数",
+    "writeDesc": "状態を変更する関数",
+    "eventDesc": "発行されるイベント"
+  },
+  "flow": {
+    "title": "インタラクションフロー",
+    "fullscreen": "全画面",
+    "exitFullscreen": "全画面を終了",
+    "resetView": "ビューをリセット",
+    "resize": "ドラッグでフロー図の高さを調整",
+    "computing": "レイアウトを計算中…",
+    "renderError": "フロー図の描画に失敗しました",
+    "renderErrorHint": "図の描画中に予期しないエラーが発生しました。",
+    "retry": "再試行"
+  },
+  "popover": {
+    "close": "閉じる"
+  },
+  "drawer": {
+    "title": "シミュレーション",
+    "open": "シミュレーションパネルを開く",
+    "close": "シミュレーションパネルを閉じる",
+    "expand": "シミュレーションパネルを展開",
+    "collapse": "シミュレーションパネルを折りたたむ",
+    "tooltip": "シミュレーションでコントラクト内のデータの流れを確認してみましょう！",
+    "dismiss": "ヒントを閉じる"
   }
 }

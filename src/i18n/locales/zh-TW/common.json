@@ -14,12 +14,15 @@
       "governance": "治理",
       "crossChain": "跨鏈",
       "rwa": "真實世界資產"
-    }
+    },
+    "viewAll": "查看全部 {{count}} 個 →",
+    "footerCounts": "{{standards}} 個標準 · {{protocols}} 個協議"
   },
   "nav": {
     "home": "首頁",
     "backToHome": "返回首頁",
-    "playground": "實驗場"
+    "playground": "實驗場",
+    "catalog": "目錄"
   },
   "theme": {
     "switchToLight": "切換至淺色主題",
@@ -43,11 +46,147 @@
     "goHome": "返回首頁"
   },
   "loading": "載入中...",
-  "sim": { "scenarios": "場景", "interactive": "互動式", "play": "播放", "pause": "暫停", "stepForward": "下一步", "stepBack": "上一步", "reset": "重置" },
-  "interactive": { "selectFunction": "選擇函式", "parameters": "參數", "execute": "執行" },
-  "playground": { "title": "實驗場", "subtitle": "組合合約並測試互動", "addContract": "新增", "remove": "移除", "clearAll": "清除全部", "autoLayout": "自動排版", "searchContracts": "搜尋合約...", "empty": "從左側面板新增合約開始" },
+  "sim": {
+    "scenarios": "場景",
+    "interactive": "互動式",
+    "play": "播放",
+    "pause": "暫停",
+    "stepForward": "下一步",
+    "stepBack": "上一步",
+    "reset": "重置"
+  },
+  "interactive": {
+    "selectFunction": "選擇函式",
+    "parameters": "參數",
+    "execute": "執行",
+    "entryPoint": "起點",
+    "filterFunctions": "篩選函式...",
+    "noFunctions": "沒有符合篩選的函式",
+    "currentStep": "目前步驟",
+    "stepFrom": "從 {{label}} 開始",
+    "stepCall": "呼叫到達 {{label}}",
+    "stepStorage": "更新儲存：{{label}}",
+    "stepEvent": "觸發事件：{{label}}",
+    "stepInteract": "與 {{label}} 互動"
+  },
+  "playground": {
+    "title": "實驗場",
+    "subtitle": "組合合約並測試互動",
+    "addContract": "新增",
+    "remove": "移除",
+    "clearAll": "清除全部",
+    "autoLayout": "自動排版",
+    "searchContracts": "搜尋合約...",
+    "empty": "從左側面板新增合約開始",
+    "share": "分享",
+    "linkCopied": "連結已複製到剪貼簿",
+    "shareFailed": "無法複製連結",
+    "simulate": "模擬",
+    "close": "關閉",
+    "openPalette": "新增合約",
+    "tapToPlace": "點擊畫布以放置 {{name}}",
+    "cancel": "取消",
+    "dragHint": "將項目拖曳到畫布，或點擊「新增」",
+    "tapHint": "先點選項目，再點擊畫布放置",
+    "onboardingTitle": "三步驟快速上手",
+    "step1Title": "加入合約",
+    "step1Desc": "從清單將標準拖曳到畫布，或點擊「新增」",
+    "step2Title": "選擇函式",
+    "step2Desc": "在右側面板選擇函式並填入參數",
+    "step3Title": "執行模擬",
+    "step3Desc": "執行並觀察呼叫在合約之間的流動",
+    "presetsTitle": "或從預設組合開始",
+    "presetPermit": "免 gas 授權（permit）",
+    "presetSwap": "代幣兌換流程",
+    "presetRoyalty": "含版稅的 NFT",
+    "presetAa": "模組化智能帳戶",
+    "presetUups": "可升級代理（UUPS）"
+  },
   "a11y": {
     "flowDiagram": "說明合約元件之間互動的流程圖",
-    "simulationPanel": "用於逐步執行的互動式模擬面板"
+    "simulationPanel": "用於逐步執行的互動式模擬面板",
+    "skipToContent": "跳至主內容"
+  },
+  "search": {
+    "button": "搜尋",
+    "placeholder": "搜尋標準、協議、函式...",
+    "noResults": "找不到結果",
+    "recent": "最近瀏覽",
+    "loading": "正在載入搜尋索引..."
+  },
+  "catalogUi": {
+    "title": "目錄",
+    "description": "瀏覽所有已發佈的 ERC 標準與 DeFi 協議——可依分類、狀態與類型篩選。",
+    "summary": "顯示 {{shown}} / {{total}} 個條目",
+    "searchLabel": "依名稱或 EIP 編號篩選",
+    "searchPlaceholder": "名稱或 EIP 編號...",
+    "eip": "EIP 編號",
+    "name": "名稱",
+    "category": "分類",
+    "status": "狀態",
+    "type": "類型",
+    "tier": "層級",
+    "availability": "上線狀態",
+    "live": "已上線",
+    "allCategories": "全部分類",
+    "allStatuses": "全部狀態",
+    "allTypes": "全部類型",
+    "standard": "標準",
+    "protocol": "協議",
+    "unofficial": "非官方",
+    "noMatches": "沒有符合目前篩選條件的條目"
+  },
+  "detailUi": {
+    "toc": "目錄",
+    "copyLink": "複製本節連結",
+    "linkCopied": "連結已複製！",
+    "prev": "上一篇",
+    "next": "下一篇",
+    "entryNav": "上一篇／下一篇條目",
+    "officialSpec": "官方規格",
+    "officialSpecFor": "{{name}} 的官方規格",
+    "meta": {
+      "eip": "EIP",
+      "functions": "函式",
+      "simulations": "模擬",
+      "requires": "依賴"
+    },
+    "sections": {
+      "introduction": "簡介",
+      "designPurpose": "設計目的",
+      "commonUsage": "常見用途",
+      "functions": "函式與事件",
+      "security": "安全性考量",
+      "codeExamples": "程式碼範例",
+      "errors": "錯誤與回退",
+      "gas": "Gas 說明",
+      "composition": "組成標準",
+      "references": "參考資料",
+      "related": "相關標準與協議"
+    },
+    "severity": {
+      "critical": "嚴重",
+      "high": "高風險",
+      "medium": "中風險",
+      "info": "提示"
+    },
+    "security": {
+      "mitigation": "緩解措施：",
+      "source": "來源"
+    },
+    "refKind": {
+      "spec": "規格",
+      "impl": "參考實作",
+      "audit": "安全稽核",
+      "article": "文章"
+    },
+    "errorsTable": {
+      "name": "錯誤",
+      "condition": "回退條件"
+    },
+    "fn": {
+      "parameters": "參數",
+      "returns": "回傳值"
+    }
   }
 }

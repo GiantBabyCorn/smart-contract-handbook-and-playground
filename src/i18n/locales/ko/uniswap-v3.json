@@ -109,5 +109,9 @@
   "sim.provideConcentratedLiquidity.step.mintPosition": "공급자가 틱 범위를 지정하여 NonfungiblePositionManager에서 mint()를 호출합니다. 포지션을 나타내는 고유한 NFT가 발행됩니다.",
   "sim.provideConcentratedLiquidity.step.mintPosition.mobile": "포지션 NFT 발행",
   "sim.provideConcentratedLiquidity.step.updateTicks": "풀이 지정된 범위에 대한 틱 비트맵과 유동성을 업데이트합니다. 범위 대비 현재 가격에 따라 양 토큰이 비례적으로 예치됩니다.",
-  "sim.provideConcentratedLiquidity.step.updateTicks.mobile": "틱 유동성 업데이트"
+  "sim.provideConcentratedLiquidity.step.updateTicks.mobile": "틱 유동성 업데이트",
+
+  "compose.erc721.role": "각 집중 유동성 포지션은 NonfungiblePositionManager가 ERC-721 NFT로 발행하며 tokenId로 식별됩니다.",
+  "compose.erc20.role": "각 풀은 ERC-20 토큰 쌍을 거래하며, 스왑 수수료도 이 두 토큰으로 포지션에 누적됩니다.",
+  "compose.erc712.role": "포지션 매니저의 ERC721Permit 확장(Uniswap 자체 구현으로 확정된 ERC는 아님)은 EIP-712 서명 permit으로 포지션 NFT의 오퍼레이터를 승인합니다."
 }

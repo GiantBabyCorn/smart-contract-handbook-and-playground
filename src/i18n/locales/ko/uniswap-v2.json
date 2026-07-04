@@ -100,5 +100,9 @@
   "sim.addLiquidity.step.transferToPair": "Router가 공급자로부터 올바른 비율로 양 토큰을 Pair 컨트랙트로 전송합니다.",
   "sim.addLiquidity.step.transferToPair.mobile": "Pair로 토큰 전송",
   "sim.addLiquidity.step.mintLP": "Pair 컨트랙트가 기존 리저브 대비 예치된 금액의 기하 평균에 비례하여 LP 토큰을 발행합니다.",
-  "sim.addLiquidity.step.mintLP.mobile": "LP 토큰 발행"
+  "sim.addLiquidity.step.mintLP.mobile": "LP 토큰 발행",
+
+  "compose.erc20.role": "각 페어 컨트랙트는 두 가지 ERC-20 토큰의 준비금을 보유하며, 유동성 지분을 ERC-20 LP 토큰(UNI-V2)으로 발행합니다.",
+  "compose.erc2612.role": "LP 토큰은 EIP-2612 스타일의 permit을 구현하여, 별도의 approve 트랜잭션 없이 서명만으로 풀 토큰 승인을 부여할 수 있습니다.",
+  "compose.erc712.role": "permit 승인은 각 페어 고유의 domain separator에 대해 EIP-712 타입 데이터로 서명되므로 지갑에서 내용을 읽을 수 있고 재사용 공격도 방지됩니다."
 }

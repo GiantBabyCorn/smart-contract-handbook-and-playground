@@ -64,5 +64,8 @@
   "sim.stablecoinSwap.step.stableswapInvariant": "풀이 증폭 계수 A를 사용하여 StableSwap 불변량으로 재계산하여, 거의 선형적인 가격 곡선을 따라 출력 수량을 결정합니다.",
   "sim.stablecoinSwap.step.stableswapInvariant.mobile": "불변량을 통한 계산",
   "sim.stablecoinSwap.step.receiveTokenOut": "풀이 트레이더에게 USDC를 전송합니다. 소액의 수수료(일반적으로 0.04%)가 차감되어 LP 보유자를 위해 풀에 유지됩니다.",
-  "sim.stablecoinSwap.step.receiveTokenOut.mobile": "USDC 출력 수령"
+  "sim.stablecoinSwap.step.receiveTokenOut.mobile": "USDC 출력 수령",
+
+  "compose.erc20.role": "유동성 지분은 ERC-20 LP 토큰으로 표현됩니다. 구형 풀은 별도의 LP 토큰 컨트랙트를 배포하고, stableswap-ng 풀은 풀 컨트랙트 자체가 ERC-20을 구현합니다.",
+  "compose.erc2612.role": "stableswap-ng LP 토큰은 EIP-712 domain separator를 갖춘 EIP-2612 permit을 구현하여 서명 기반 승인을 지원합니다."
 }

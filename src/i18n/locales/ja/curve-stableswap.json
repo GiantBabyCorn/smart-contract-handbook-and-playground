@@ -64,5 +64,8 @@
   "sim.stablecoinSwap.step.stableswapInvariant": "プールが増幅ファクターAを使用したStableSwap不変量で再計算を行い、ほぼ線形の価格曲線に沿って出力量を決定します。",
   "sim.stablecoinSwap.step.stableswapInvariant.mobile": "不変量で計算",
   "sim.stablecoinSwap.step.receiveTokenOut": "プールがUSDCをトレーダーに転送します。少額の手数料（通常0.04%）が差し引かれ、LPホルダーのためにプールに保持されます。",
-  "sim.stablecoinSwap.step.receiveTokenOut.mobile": "USDC出力を受取"
+  "sim.stablecoinSwap.step.receiveTokenOut.mobile": "USDC出力を受取",
+
+  "compose.erc20.role": "流動性シェアはERC-20のLPトークンで表されます。旧世代プールは独立したLPトークンコントラクトをデプロイし、stableswap-ngではプールコントラクト自体がERC-20を実装します。",
+  "compose.erc2612.role": "stableswap-ngのLPトークンはEIP-712のdomain separatorを備えたEIP-2612のpermitを実装しており、署名による承認に対応します。"
 }

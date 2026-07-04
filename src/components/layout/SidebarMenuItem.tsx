@@ -25,8 +25,11 @@ const CATEGORY_BADGE_COLORS: Record<string, string> = {
 };
 
 export default function SidebarMenuItem({ item, onNavigate }: SidebarMenuItemProps) {
-  const { t } = useTranslation(item.slug);
-  const shortDesc = t('short', { defaultValue: '' });
+  // Short descriptions come from the resident generated 'catalog' namespace
+  // (flat "<slug>.short" keys — scripts/gen_catalog_ns.py). Reading the
+  // per-entry namespace here would trigger one JSON request per menu item.
+  const { t } = useTranslation('catalog');
+  const shortDesc = t(`${item.slug}.short`, { defaultValue: '' });
 
   return (
     <NavLink
@@ -60,9 +63,7 @@ export default function SidebarMenuItem({ item, onNavigate }: SidebarMenuItemPro
 
       {/* Name + short description */}
       <span className="flex-1 min-w-0 flex flex-col">
-        <span className="text-sm font-medium leading-snug truncate">
-          {item.name}
-        </span>
+        <span className="text-sm font-medium leading-snug truncate">{item.name}</span>
         {shortDesc && (
           <span className="text-[11px] leading-tight text-[var(--erc-color-text-muted)] truncate">
             {shortDesc}

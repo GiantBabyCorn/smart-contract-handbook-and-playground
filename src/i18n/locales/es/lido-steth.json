@@ -66,5 +66,9 @@
   "sim.stake-eth-receive-steth.step.depositBeacon": "El ETH almacenado se deposita en la Beacon Chain en incrementos de 32 ETH a través de operadores de nodos seleccionados que ejecutan los validadores.",
   "sim.stake-eth-receive-steth.step.depositBeacon.mobile": "Depositar en Beacon Chain",
   "sim.stake-eth-receive-steth.step.rebase": "El oráculo de Lido reporta nuevas recompensas de staking. El total de ETH en el pool aumenta, causando que todos los saldos de stETH hagan rebase al alza automáticamente.",
-  "sim.stake-eth-receive-steth.step.rebase.mobile": "El rebase diario incrementa el saldo"
+  "sim.stake-eth-receive-steth.step.rebase.mobile": "El rebase diario incrementa el saldo",
+
+  "compose.erc20.role": "stETH es un ERC-20 con rebase cuyo saldo crece con las recompensas de staking reportadas por el oráculo, mientras que wstETH lo envuelve en un ERC-20 de saldo estático (un envoltorio de participaciones, no una bóveda ERC-4626).",
+  "compose.erc2612.role": "Tanto stETH como wstETH en mainnet implementan la extensión permit de EIP-2612, habilitando aprobaciones basadas en firmas.",
+  "compose.erc1271.role": "El permit de stETH también acepta firmas de contrato ERC-1271, de modo que billeteras de contrato inteligente como Safe pueden firmar aprobaciones."
 }

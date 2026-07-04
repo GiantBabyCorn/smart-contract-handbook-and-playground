@@ -109,5 +109,9 @@
   "sim.provideConcentratedLiquidity.step.mintPosition": "プロバイダーがNonfungiblePositionManagerのmint()を呼び出し、ティック範囲を指定します。ポジションを表すユニークなNFTがミントされます。",
   "sim.provideConcentratedLiquidity.step.mintPosition.mobile": "ポジションNFTをミント",
   "sim.provideConcentratedLiquidity.step.updateTicks": "プールが指定された範囲のティックビットマップと流動性を更新します。範囲に対する現在の価格に基づいて、両方のトークンが比例的に預入されます。",
-  "sim.provideConcentratedLiquidity.step.updateTicks.mobile": "ティック流動性を更新"
+  "sim.provideConcentratedLiquidity.step.updateTicks.mobile": "ティック流動性を更新",
+
+  "compose.erc721.role": "各集中流動性ポジションはNonfungiblePositionManagerによってERC-721 NFTとして発行され、tokenIdで識別されます。",
+  "compose.erc20.role": "各プールはERC-20トークンのペアを取引し、スワップ手数料もその2つのトークンでポジションに蓄積されます。",
+  "compose.erc712.role": "ポジションマネージャーのERC721Permit拡張（Uniswap独自実装で確定済みERCではありません）は、EIP-712署名のpermitでポジションNFTのオペレーターを承認します。"
 }

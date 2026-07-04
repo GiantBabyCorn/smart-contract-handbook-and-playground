@@ -89,5 +89,8 @@
   "sim.customHookExecution.step.modifyPosition": "流动性提供者向新池添加集中流动性。代币被存入并通过闪电记账进行追踪。",
   "sim.customHookExecution.step.modifyPosition.mobile": "添加流动性",
   "sim.customHookExecution.step.hookCallback": "Hook 合约执行其自定义逻辑（例如应用动态费用层级）。闪电记账的变化量被解析为零。",
-  "sim.customHookExecution.step.hookCallback.mobile": "Hook 自定义逻辑"
+  "sim.customHookExecution.step.hookCallback.mobile": "Hook 自定义逻辑",
+
+  "compose.erc6909.role": "单例 PoolManager 为保留在其内部的余额铸造 ERC-6909 claim 代币，之后支付时直接销毁——比外部 ERC-20 转账更省 gas。",
+  "compose.erc20.role": "池的币种是由单例 PoolManager 托管的 ERC-20 代币；高频交易者可将代币留在合约内，改用 claim 结算而非转账。"
 }

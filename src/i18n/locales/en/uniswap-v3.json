@@ -109,5 +109,9 @@
   "sim.provideConcentratedLiquidity.step.mintPosition": "The provider calls mint() on the NonfungiblePositionManager, specifying the tick range. A unique NFT representing the position is minted.",
   "sim.provideConcentratedLiquidity.step.mintPosition.mobile": "Mint position NFT",
   "sim.provideConcentratedLiquidity.step.updateTicks": "The pool updates the tick bitmap and liquidity for the specified range. Both tokens are deposited proportionally based on the current price relative to the range.",
-  "sim.provideConcentratedLiquidity.step.updateTicks.mobile": "Update tick liquidity"
+  "sim.provideConcentratedLiquidity.step.updateTicks.mobile": "Update tick liquidity",
+
+  "compose.erc721.role": "Each concentrated-liquidity position is minted by the NonfungiblePositionManager as an ERC-721 NFT identified by its tokenId.",
+  "compose.erc20.role": "Every pool trades a pair of ERC-20 tokens, and swap fees accrue to positions denominated in those two tokens.",
+  "compose.erc712.role": "The position manager's ERC721Permit extension (Uniswap's own, not a finalized ERC) authorizes position-NFT operators via EIP-712 signed permits."
 }

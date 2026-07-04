@@ -5,6 +5,8 @@ import {
   getSmoothStepPath,
   type EdgeProps,
 } from '@xyflow/react';
+import { useSimulationStore } from '@/stores/useSimulationStore';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 /**
  * FundFlowEdge
@@ -12,15 +14,32 @@ import {
  * A thicker, green-coloured edge that communicates the transfer of funds or
  * tokens between nodes. Features:
  * - Bold stroke to imply value/weight
- * - An animated marching-dot overlay that flows in the direction of the arrow,
- *   reinforcing directionality
+ * - An animated marching-dot overlay that flows in the direction of the arrow
+ *   (edges are authored in the direction tokens move), reinforcing
+ *   directionality
  * - An optional amount pill rendered mid-edge via EdgeLabelRenderer
+ *
+ * Simulation integration (plan §5.3): while a scenario run is in progress,
+ * only the edges highlighted by the current step keep their particles moving
+ * (the rest pause), and the step's computed token movement — when the compute
+ * binding can identify one — overrides the pill label with the live amount.
+ *
+ * Reduced motion: when `prefers-reduced-motion: reduce` is set, the infinite
+ * particle animation is skipped (hook drops the class; the injected `@media`
+ * rule guards the class as belt-and-braces). The static dot pattern, the
+ * highlight/selected colour states and the paused-edge dimming remain.
  */
 
-// CSS keyframe for the flowing dots — injected once on first mount
+// CSS keyframes for the flowing dots — injected once on first mount
 const KEYFRAMES = `
 @keyframes erc-fund-flow {
   to { stroke-dashoffset: -20; }
+}
+.erc-fund-flow {
+  animation: erc-fund-flow 0.5s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .erc-fund-flow { animation: none; }
 }
 `;
 
@@ -52,6 +71,7 @@ function FundFlowEdge({
   markerEnd,
 }: EdgeProps) {
   ensureKeyframes();
+  const reducedMotion = useReducedMotion();
 
   const [edgePath, labelX, labelY] = getSmoothStepPath({
     sourceX,
@@ -64,9 +84,23 @@ function FundFlowEdge({
   });
 
   const fundData = (data ?? {}) as FundFlowData & { highlighted?: boolean };
-  // Prefer explicit data.amount over the generic edge label
-  const displayAmount = fundData.amount ?? (typeof label === 'string' ? label : undefined);
   const isHighlighted = fundData.highlighted === true;
+
+  // Simulation state: while a run is in progress only highlighted fund-flow
+  // edges animate, and the current step's computed token movement (if any)
+  // labels the highlighted edge.
+  const simRunning = useSimulationStore(
+    (s) => s.scenario !== null && s.currentStepIndex >= 0,
+  );
+  const stepFlowLabel = useSimulationStore((s) => s.flowLabel);
+
+  // Live computed movement wins on the active edge; otherwise prefer explicit
+  // data.amount over the generic edge label.
+  const displayAmount =
+    (isHighlighted && stepFlowLabel ? stepFlowLabel : undefined) ??
+    fundData.amount ??
+    (typeof label === 'string' ? label : undefined);
+  const particlesPaused = simRunning && !isHighlighted;
 
   const baseColor = isHighlighted || selected ? 'var(--erc-color-success)' : 'var(--erc-color-category-token)';
 
@@ -95,18 +129,20 @@ function FundFlowEdge({
         strokeOpacity={0.85}
       />
 
-      {/* Animated dots flowing in the direction of the arrow */}
+      {/* Dots flowing in the direction of the arrow — static when the user prefers reduced motion */}
       <path
         id={id}
         d={edgePath}
+        className={reducedMotion ? undefined : 'erc-fund-flow'}
         fill="none"
         stroke={baseColor}
         strokeWidth={selected ? 3 : 2.5}
         strokeDasharray="4 16"
         strokeLinecap="round"
         style={{
-          animation: 'erc-fund-flow 0.5s linear infinite',
-          opacity: 0.9,
+          animationPlayState: particlesPaused ? 'paused' : 'running',
+          opacity: particlesPaused ? 0.35 : 0.9,
+          transition: 'opacity 0.2s',
         }}
         aria-label="Fund flow edge"
       />

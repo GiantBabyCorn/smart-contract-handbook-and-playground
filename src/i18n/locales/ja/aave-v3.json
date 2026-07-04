@@ -97,5 +97,8 @@
   "sim.liquidation.step.liquidationCall": "清算人がliquidationCall()を呼び出し、借入者のUSDC債務の一部を返済します。対応するvariableDebtUSDCがバーンされます。",
   "sim.liquidation.step.liquidationCall.mobile": "清算人が債務を返済",
   "sim.liquidation.step.collateralSeized": "清算人は、プロトコルの支払い能力を維持した報酬として、借入者のWETH担保に加えて5%の清算ボーナスを受け取ります。",
-  "sim.liquidation.step.collateralSeized.mobile": "担保 + ボーナスを差し押さえ"
+  "sim.liquidation.step.collateralSeized.mobile": "担保 + ボーナスを差し押さえ",
+
+  "compose.erc20.role": "aTokenはEIP-20の全メソッドを実装した預金証明トークンで、残高は利息とともに増加します。一方、変動金利債務トークンはtransferとapproveが無効化されたERC-20バリアントです。",
+  "compose.erc2612.role": "aTokenはEIP-2612のpermitを実装しており、署名メッセージによる承認でガスレスかつ1トランザクションのフローを実現します。"
 }

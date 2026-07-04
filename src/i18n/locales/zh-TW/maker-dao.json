@@ -76,5 +76,8 @@
   "sim.liquidation-process.step.bite": "守護者對抵押不足的金庫調用 bite()。清算引擎扣押抵押品並啟動抵押品拍賣。",
   "sim.liquidation-process.step.bite.mobile": "觸發清算",
   "sim.liquidation-process.step.auction": "被扣押的抵押品被拍賣給競標者。所得款項用於償還金庫的 DAI 債務，剩餘的抵押品歸還給金庫擁有者。",
-  "sim.liquidation-process.step.auction.mobile": "拍賣抵押品以償還債務"
+  "sim.liquidation-process.step.auction.mobile": "拍賣抵押品以償還債務",
+
+  "compose.erc20.role": "DAI 本身就是面向使用者的 ERC-20 穩定幣（Dai.sol），由協議依金庫抵押品鑄造、還款時銷毀。",
+  "compose.erc712.role": "DAI 的 permit 是早於 EIP-2612 的 EIP-712 簽章授權變體，採用 (holder, nonce, expiry, bool allowed) 而非 value 與 deadline。"
 }

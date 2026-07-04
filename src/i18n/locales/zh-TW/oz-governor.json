@@ -105,5 +105,9 @@
   "sim.proposal-execution.step.callExecute": "呼叫者在 Governor 上調用 execute()，Governor 將執行請求轉發至時間鎖控制器。",
   "sim.proposal-execution.step.callExecute.mobile": "呼叫 execute()",
   "sim.proposal-execution.step.dispatch": "時間鎖控制器將呼叫分派至目標合約，執行提案的編碼操作。提案狀態變為已執行。",
-  "sim.proposal-execution.step.dispatch.mobile": "分派至目標"
+  "sim.proposal-execution.step.dispatch.mobile": "分派至目標",
+
+  "compose.erc20.role": "投票權通常來自採用 ERC20Votes 檢查點擴充的 ERC-20 治理代幣，Governor 透過 IVotes/IERC5805 介面讀取。",
+  "compose.erc721.role": "ERC721Votes 讓 NFT 收藏品也能作為投票資產，是 OpenZeppelin Contracts 內建的唯一另一種投票權來源。",
+  "compose.erc712.role": "castVoteBySig 接受以 EIP-712 型別化資料（BALLOT_TYPEHASH）簽署的選票，亦支援 ERC-1271 合約簽章，實現免 gas 投票。"
 }

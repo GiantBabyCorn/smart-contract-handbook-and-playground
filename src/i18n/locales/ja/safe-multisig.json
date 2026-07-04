@@ -83,5 +83,10 @@
   "sim.add-new-owner.step.collectSigs": "オーナーBとオーナーCがトランザクションに署名し、現在の閾値を満たすのに十分な確認を提供します。",
   "sim.add-new-owner.step.collectSigs.mobile": "署名を収集",
   "sim.add-new-owner.step.addOwner": "SafeがaddOwnerWithThreshold()を実行し、新しいオーナーをリンクリストに追加して閾値を2から3に更新します。",
-  "sim.add-new-owner.step.addOwner.mobile": "オーナーを追加して閾値を更新"
+  "sim.add-new-owner.step.addOwner.mobile": "オーナーを追加して閾値を更新",
+
+  "compose.erc1271.role": "SafeはisValidSignature（ERC-1271）によりコントラクトとして署名でき、オーナー署名や事前承認メッセージを検証します。実装はCompatibilityFallbackHandlerにあります。",
+  "compose.erc165.role": "ERC-165のインターフェース検出はCompatibilityFallbackHandler（TokenCallbackHandler経由）が提供し、Safeシングルトンのコア自体は実装していません。",
+  "compose.erc4337.role": "Safe4337Moduleはモジュールとfallback handlerを兼ねるオプションの拡張（Safe v1.4.1以降）で、SafeにERC-4337のアカウント抽象化対応を追加します。",
+  "compose.erc712.role": "すべてのSafeトランザクションはEIP-712型付きデータ（SAFE_TX_TYPEHASH）としてハッシュ化され、オーナーがこれに署名して承認しきい値を満たします。"
 }

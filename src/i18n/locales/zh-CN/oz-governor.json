@@ -105,5 +105,9 @@
   "sim.proposal-execution.step.callExecute": "调用者在 Governor 上调用 execute()，Governor 将执行请求转发给 Timelock 控制器。",
   "sim.proposal-execution.step.callExecute.mobile": "调用 execute()",
   "sim.proposal-execution.step.dispatch": "Timelock 控制器将调用分发到目标合约，执行提案编码的操作。提案状态变为 Executed。",
-  "sim.proposal-execution.step.dispatch.mobile": "分发到目标合约"
+  "sim.proposal-execution.step.dispatch.mobile": "分发到目标合约",
+
+  "compose.erc20.role": "投票权通常来自采用 ERC20Votes 检查点扩展的 ERC-20 治理代币，Governor 通过 IVotes/IERC5805 接口读取。",
+  "compose.erc721.role": "ERC721Votes 让 NFT 收藏品也能作为投票资产，是 OpenZeppelin Contracts 内置的唯一另一种投票权来源。",
+  "compose.erc712.role": "castVoteBySig 接受以 EIP-712 类型化数据（BALLOT_TYPEHASH）签名的选票，还支持 ERC-1271 合约签名，实现免 gas 投票。"
 }

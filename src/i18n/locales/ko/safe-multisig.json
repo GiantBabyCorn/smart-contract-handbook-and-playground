@@ -83,5 +83,10 @@
   "sim.add-new-owner.step.collectSigs": "소유자 B와 소유자 C가 트랜잭션에 서명하여 현재 임계값을 충족하는 충분한 확인을 제공합니다.",
   "sim.add-new-owner.step.collectSigs.mobile": "서명 수집",
   "sim.add-new-owner.step.addOwner": "Safe가 addOwnerWithThreshold()를 실행하여 연결 리스트에 새 소유자를 추가하고 임계값을 2에서 3으로 업데이트합니다.",
-  "sim.add-new-owner.step.addOwner.mobile": "소유자 추가 및 임계값 업데이트"
+  "sim.add-new-owner.step.addOwner.mobile": "소유자 추가 및 임계값 업데이트",
+
+  "compose.erc1271.role": "Safe는 isValidSignature(ERC-1271)로 컨트랙트로서 서명할 수 있으며 소유자 서명이나 사전 승인 메시지를 검증합니다. 구현은 CompatibilityFallbackHandler에 있습니다.",
+  "compose.erc165.role": "ERC-165 인터페이스 감지는 CompatibilityFallbackHandler(TokenCallbackHandler 경유)가 제공하며, Safe 싱글톤 코어 자체는 구현하지 않습니다.",
+  "compose.erc4337.role": "Safe4337Module은 모듈과 fallback handler를 겸하는 선택형 애드온(Safe v1.4.1 이상)으로, Safe에 ERC-4337 계정 추상화 지원을 추가합니다.",
+  "compose.erc712.role": "모든 Safe 트랜잭션은 EIP-712 타입 데이터(SAFE_TX_TYPEHASH)로 해시되며, 소유자들이 여기에 서명하여 확인 임계값을 충족합니다."
 }

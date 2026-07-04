@@ -89,5 +89,8 @@
   "sim.customHookExecution.step.modifyPosition": "流動性提供者が新しいプールに集中流動性を追加します。トークンはフラッシュアカウンティングを介して預入・追跡されます。",
   "sim.customHookExecution.step.modifyPosition.mobile": "流動性を追加",
   "sim.customHookExecution.step.hookCallback": "フックコントラクトがカスタムロジック（例：動的手数料ティアの適用）を実行します。フラッシュアカウンティングのデルタがゼロに解決されます。",
-  "sim.customHookExecution.step.hookCallback.mobile": "フックのカスタムロジック"
+  "sim.customHookExecution.step.hookCallback.mobile": "フックのカスタムロジック",
+
+  "compose.erc6909.role": "シングルトンのPoolManagerは内部に残した残高に対してERC-6909クレームトークンを発行し、後の支払い時にバーンします。外部へのERC-20転送よりガス効率に優れます。",
+  "compose.erc20.role": "プールの通貨はシングルトンのPoolManagerが保管するERC-20トークンで、頻繁に取引するユーザーはトークンを内部に残しクレームで決済できます。"
 }

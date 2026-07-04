@@ -89,5 +89,8 @@
   "sim.customHookExecution.step.modifyPosition": "Un proveedor de liquidez añade liquidez concentrada al nuevo pool. Los tokens se depositan y rastrean mediante contabilidad flash.",
   "sim.customHookExecution.step.modifyPosition.mobile": "Añadir liquidez",
   "sim.customHookExecution.step.hookCallback": "El contrato hook ejecuta su lógica personalizada (por ejemplo, aplicar niveles de comisiones dinámicas). Los deltas de contabilidad flash se resuelven a cero.",
-  "sim.customHookExecution.step.hookCallback.mobile": "Lógica personalizada del hook"
+  "sim.customHookExecution.step.hookCallback.mobile": "Lógica personalizada del hook",
+
+  "compose.erc6909.role": "El singleton PoolManager acuña tokens de reclamo ERC-6909 por los saldos que permanecen en su interior y los quema al pagar después, más barato que las transferencias ERC-20 externas.",
+  "compose.erc20.role": "Las monedas del pool son tokens ERC-20 custodiados por el PoolManager singleton; los traders frecuentes pueden dejarlos dentro y liquidar con reclamos en lugar de transferencias."
 }

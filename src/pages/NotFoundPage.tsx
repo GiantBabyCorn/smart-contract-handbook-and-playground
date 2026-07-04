@@ -16,6 +16,7 @@ export default function NotFoundPage() {
       <div className="flex min-h-[calc(100vh-3.5rem)] flex-col items-center justify-center gap-8 px-6 py-16 text-center">
         {/* Large 404 */}
         <div aria-hidden="true" className="relative select-none">
+          {/* eslint-disable react/jsx-no-literals -- "404" is a numeral, identical in every locale */}
           <span
             className={cn(
               'text-[120px] sm:text-[180px] font-black leading-none',
@@ -24,6 +25,7 @@ export default function NotFoundPage() {
           >
             404
           </span>
+          {/* eslint-enable react/jsx-no-literals */}
           <div className="absolute inset-0 flex items-center justify-center">
             <img
               src="/logo.svg"

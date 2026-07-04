@@ -8,6 +8,14 @@
   "fn.supportsInterface.params.interfaceId": "ERC-165에서 정의된 4바이트 인터페이스 식별자입니다. 인터페이스 내 모든 함수 선택자의 XOR로 계산됩니다.",
   "fn.supportsInterface.returns.supported": "컨트랙트가 조회된 인터페이스를 구현하면 true, 그렇지 않으면 false를 반환합니다.",
 
+  "sec.trust.title": "인터페이스 지원은 컨트랙트의 자체 신고",
+  "sec.trust.desc": "supportsInterface의 응답은 조회 대상 컨트랙트가 직접 반환하므로, 악의적이거나 결함이 있는 컨트랙트는 구현하지 않은 인터페이스를 지원한다고 주장하거나 모든 조회에 true를 반환할 수 있습니다.",
+  "sec.trust.mitigation": "응답을 증명이 아닌 힌트로 취급하세요. 명세에 따라 준수 컨트랙트는 0xffffffff에 대해 false를 반환해야 하므로, 이 조회로 무조건 true를 반환하는 컨트랙트를 걸러내고 실제 호출 동작도 계속 검증하세요.",
+
+  "code.iface.title": "ERC-165 표준 인터페이스 정의",
+
+  "gas.notes": "명세는 supportsInterface가 30,000 가스 미만으로 실행되도록 요구합니다. 구현은 상한 없는 연산을 피하고, 사전 등록된 mapping이나 하드코딩된 비교 같은 상수 시간 조회로 응답해야 합니다.",
+
   "node.caller": "호출자 / DApp",
   "node.contract": "ERC-165 컨트랙트",
   "node.interfaceRegistry": "인터페이스 레지스트리",

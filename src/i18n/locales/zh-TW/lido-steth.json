@@ -66,5 +66,9 @@
   "sim.stake-eth-receive-steth.step.depositBeacon": "暫存的 ETH 以 32 ETH 為增量，透過選定的節點運營商存入信標鏈，由運營商運行驗證者。",
   "sim.stake-eth-receive-steth.step.depositBeacon.mobile": "存入信標鏈",
   "sim.stake-eth-receive-steth.step.rebase": "Lido 預言機報告新的質押獎勵。總質押池 ETH 增加，導致所有 stETH 餘額自動向上變基。",
-  "sim.stake-eth-receive-steth.step.rebase.mobile": "每日變基增加餘額"
+  "sim.stake-eth-receive-steth.step.rebase.mobile": "每日變基增加餘額",
+
+  "compose.erc20.role": "stETH 是變基 ERC-20，餘額隨預言機回報的質押獎勵增長；wstETH 則把它包裝成餘額固定的 ERC-20（份額包裝器，並非 ERC-4626 金庫）。",
+  "compose.erc2612.role": "主網上的 stETH 與 wstETH 皆實作 EIP-2612 permit 擴充，支援以簽章完成授權。",
+  "compose.erc1271.role": "stETH 的 permit 也接受 ERC-1271 合約簽章，Safe 等智能合約錢包同樣能簽署授權。"
 }

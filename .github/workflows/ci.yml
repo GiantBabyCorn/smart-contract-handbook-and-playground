@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint, build, unit tests & data gates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: Type-check & build
+        run: npm run build
+
+      - name: Prerender routes (template injection)
+        run: node scripts/prerender.mjs
+
+      - name: Assert prerendered SEO tags
+        run: |
+          grep -q '<meta property="og:title" content="ERC-20 ' dist/erc20/index.html
+          grep -q '<link rel="canonical" href=".*/erc20"' dist/erc20/index.html
+          grep -q '<meta property="og:title" content="Catalog ' dist/catalog/index.html
+          grep -q 'og/catalog.png' dist/catalog/index.html
+          grep -q 'erc-explorer-theme' dist/erc20/index.html
+          echo "prerender assertions passed"
+
+      - name: Unit tests (Vitest)
+        run: npm test
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate registry
+        run: python scripts/validate_registry.py
+
+      - name: Lint i18n keys (parity + identical-ratio gate)
+        run: python scripts/lint_i18n_keys.py --max-identical-ratio 0.08 --report
+
+      - name: Bundle size gate (main entry <= 250 KB, total initial <= 200 KB gzip)
+        run: python scripts/check_bundle_size.py --budget-kb 250 --total-budget-kb 200
+
+  e2e:
+    name: E2E tests (Playwright)
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Resolve Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+
+      - name: Install Playwright chromium (+ system deps)
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright system deps (browsers restored from cache)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Run Playwright tests
+        run: npx playwright test
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

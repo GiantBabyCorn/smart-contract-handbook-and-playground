@@ -14,12 +14,15 @@
       "governance": "治理",
       "crossChain": "跨链",
       "rwa": "现实世界资产"
-    }
+    },
+    "viewAll": "查看全部 {{count}} 个 →",
+    "footerCounts": "{{standards}} 个标准 · {{protocols}} 个协议"
   },
   "nav": {
     "home": "首页",
     "backToHome": "返回首页",
-    "playground": "实验场"
+    "playground": "实验场",
+    "catalog": "目录"
   },
   "theme": {
     "switchToLight": "切换到浅色主题",
@@ -43,11 +46,147 @@
     "goHome": "返回首页"
   },
   "loading": "加载中...",
-  "sim": { "scenarios": "场景", "interactive": "交互式", "play": "播放", "pause": "暂停", "stepForward": "下一步", "stepBack": "上一步", "reset": "重置" },
-  "interactive": { "selectFunction": "选择函数", "parameters": "参数", "execute": "执行" },
-  "playground": { "title": "实验场", "subtitle": "组合合约并测试交互", "addContract": "添加", "remove": "移除", "clearAll": "清除全部", "autoLayout": "自动布局", "searchContracts": "搜索合约...", "empty": "从左侧面板添加合约开始" },
+  "sim": {
+    "scenarios": "场景",
+    "interactive": "交互式",
+    "play": "播放",
+    "pause": "暂停",
+    "stepForward": "下一步",
+    "stepBack": "上一步",
+    "reset": "重置"
+  },
+  "interactive": {
+    "selectFunction": "选择函数",
+    "parameters": "参数",
+    "execute": "执行",
+    "entryPoint": "起点",
+    "filterFunctions": "筛选函数...",
+    "noFunctions": "没有符合筛选的函数",
+    "currentStep": "当前步骤",
+    "stepFrom": "从 {{label}} 开始",
+    "stepCall": "调用到达 {{label}}",
+    "stepStorage": "更新存储：{{label}}",
+    "stepEvent": "触发事件：{{label}}",
+    "stepInteract": "与 {{label}} 交互"
+  },
+  "playground": {
+    "title": "实验场",
+    "subtitle": "组合合约并测试交互",
+    "addContract": "添加",
+    "remove": "移除",
+    "clearAll": "清除全部",
+    "autoLayout": "自动布局",
+    "searchContracts": "搜索合约...",
+    "empty": "从左侧面板添加合约开始",
+    "share": "分享",
+    "linkCopied": "链接已复制到剪贴板",
+    "shareFailed": "无法复制链接",
+    "simulate": "模拟",
+    "close": "关闭",
+    "openPalette": "添加合约",
+    "tapToPlace": "点击画布以放置 {{name}}",
+    "cancel": "取消",
+    "dragHint": "将条目拖到画布，或点击「添加」",
+    "tapHint": "先点选条目，再点击画布放置",
+    "onboardingTitle": "三步快速上手",
+    "step1Title": "添加合约",
+    "step1Desc": "从列表将标准拖到画布，或点击「添加」",
+    "step2Title": "选择函数",
+    "step2Desc": "在右侧面板选择函数并填写参数",
+    "step3Title": "运行模拟",
+    "step3Desc": "执行并观察调用在合约之间的流动",
+    "presetsTitle": "或从预设组合开始",
+    "presetPermit": "免 gas 授权（permit）",
+    "presetSwap": "代币兑换流程",
+    "presetRoyalty": "含版税的 NFT",
+    "presetAa": "模块化智能账户",
+    "presetUups": "可升级代理（UUPS）"
+  },
   "a11y": {
     "flowDiagram": "说明合约组件之间交互的流程图",
-    "simulationPanel": "用于逐步执行的交互式模拟面板"
+    "simulationPanel": "用于逐步执行的交互式模拟面板",
+    "skipToContent": "跳至主内容"
+  },
+  "search": {
+    "button": "搜索",
+    "placeholder": "搜索标准、协议、函数...",
+    "noResults": "未找到结果",
+    "recent": "最近浏览",
+    "loading": "正在加载搜索索引..."
+  },
+  "catalogUi": {
+    "title": "目录",
+    "description": "浏览所有已发布的 ERC 标准与 DeFi 协议——可按分类、状态与类型筛选。",
+    "summary": "显示 {{shown}} / {{total}} 个条目",
+    "searchLabel": "按名称或 EIP 编号筛选",
+    "searchPlaceholder": "名称或 EIP 编号...",
+    "eip": "EIP 编号",
+    "name": "名称",
+    "category": "分类",
+    "status": "状态",
+    "type": "类型",
+    "tier": "层级",
+    "availability": "上线状态",
+    "live": "已上线",
+    "allCategories": "全部分类",
+    "allStatuses": "全部状态",
+    "allTypes": "全部类型",
+    "standard": "标准",
+    "protocol": "协议",
+    "unofficial": "非官方",
+    "noMatches": "没有符合当前筛选条件的条目"
+  },
+  "detailUi": {
+    "toc": "目录",
+    "copyLink": "复制本节链接",
+    "linkCopied": "链接已复制！",
+    "prev": "上一篇",
+    "next": "下一篇",
+    "entryNav": "上一篇／下一篇条目",
+    "officialSpec": "官方规范",
+    "officialSpecFor": "{{name}} 的官方规范",
+    "meta": {
+      "eip": "EIP",
+      "functions": "函数",
+      "simulations": "模拟",
+      "requires": "依赖"
+    },
+    "sections": {
+      "introduction": "简介",
+      "designPurpose": "设计目的",
+      "commonUsage": "常见用途",
+      "functions": "函数与事件",
+      "security": "安全注意事项",
+      "codeExamples": "代码示例",
+      "errors": "错误与回滚",
+      "gas": "Gas 说明",
+      "composition": "组成标准",
+      "references": "参考资料",
+      "related": "相关标准与协议"
+    },
+    "severity": {
+      "critical": "严重",
+      "high": "高风险",
+      "medium": "中风险",
+      "info": "提示"
+    },
+    "security": {
+      "mitigation": "缓解措施：",
+      "source": "来源"
+    },
+    "refKind": {
+      "spec": "规范",
+      "impl": "参考实现",
+      "audit": "安全审计",
+      "article": "文章"
+    },
+    "errorsTable": {
+      "name": "错误",
+      "condition": "回滚条件"
+    },
+    "fn": {
+      "parameters": "参数",
+      "returns": "返回值"
+    }
   }
 }

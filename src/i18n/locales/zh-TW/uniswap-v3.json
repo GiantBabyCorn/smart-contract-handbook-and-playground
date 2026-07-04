@@ -109,5 +109,9 @@
   "sim.provideConcentratedLiquidity.step.mintPosition": "提供者在 NonfungiblePositionManager 上呼叫 mint()，指定 tick 範圍。一個代表倉位的唯一 NFT 被鑄造。",
   "sim.provideConcentratedLiquidity.step.mintPosition.mobile": "鑄造倉位 NFT",
   "sim.provideConcentratedLiquidity.step.updateTicks": "資金池更新指定範圍的 tick 位圖和流動性。根據當前價格相對於範圍的位置，按比例存入兩種代幣。",
-  "sim.provideConcentratedLiquidity.step.updateTicks.mobile": "更新 tick 流動性"
+  "sim.provideConcentratedLiquidity.step.updateTicks.mobile": "更新 tick 流動性",
+
+  "compose.erc721.role": "每個集中流動性部位都由 NonfungiblePositionManager 鑄造成 ERC-721 NFT，以 tokenId 識別。",
+  "compose.erc20.role": "每個池交易一對 ERC-20 代幣，交易手續費也以這兩種代幣累積到部位上。",
+  "compose.erc712.role": "部位管理合約的 ERC721Permit 擴充（Uniswap 自家設計，非定案 ERC）透過 EIP-712 簽章授權部位 NFT 的操作者。"
 }

@@ -89,5 +89,8 @@
   "sim.customHookExecution.step.modifyPosition": "유동성 공급자가 새 풀에 집중 유동성을 추가합니다. 토큰이 입금되고 플래시 어카운팅을 통해 추적됩니다.",
   "sim.customHookExecution.step.modifyPosition.mobile": "유동성 추가",
   "sim.customHookExecution.step.hookCallback": "Hook 컨트랙트가 커스텀 로직(예: 동적 수수료 티어 적용)을 실행합니다. 플래시 어카운팅 델타가 0으로 정산됩니다.",
-  "sim.customHookExecution.step.hookCallback.mobile": "Hook 커스텀 로직"
+  "sim.customHookExecution.step.hookCallback.mobile": "Hook 커스텀 로직",
+
+  "compose.erc6909.role": "싱글톤 PoolManager는 내부에 남겨 둔 잔액에 대해 ERC-6909 클레임 토큰을 발행하고 이후 지불 시 소각합니다. 외부 ERC-20 전송보다 가스 효율이 높습니다.",
+  "compose.erc20.role": "풀의 통화는 싱글톤 PoolManager가 보관하는 ERC-20 토큰이며, 자주 거래하는 사용자는 토큰을 내부에 두고 전송 대신 클레임으로 정산할 수 있습니다."
 }

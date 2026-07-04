@@ -105,5 +105,9 @@
   "sim.proposal-execution.step.callExecute": "호출자가 Governor에서 execute()를 호출하며, Governor가 실행 요청을 Timelock 컨트롤러로 전달합니다.",
   "sim.proposal-execution.step.callExecute.mobile": "execute() 호출",
   "sim.proposal-execution.step.dispatch": "Timelock 컨트롤러가 대상 컨트랙트에 호출을 전달하여 제안의 인코딩된 액션을 실행합니다. 제안 상태가 Executed로 변경됩니다.",
-  "sim.proposal-execution.step.dispatch.mobile": "대상에 전달"
+  "sim.proposal-execution.step.dispatch.mobile": "대상에 전달",
+
+  "compose.erc20.role": "투표권은 보통 ERC20Votes 체크포인트 확장을 사용하는 ERC-20 거버넌스 토큰에서 나오며, Governor는 IVotes/IERC5805 인터페이스를 통해 조회합니다.",
+  "compose.erc721.role": "ERC721Votes를 사용하면 NFT 컬렉션도 투표 자산이 될 수 있으며, OpenZeppelin Contracts가 제공하는 유일한 대체 투표권 소스입니다.",
+  "compose.erc712.role": "castVoteBySig는 EIP-712 타입 데이터(BALLOT_TYPEHASH)로 서명된 투표를 받아들이고 ERC-1271 컨트랙트 서명도 지원하여 가스 없는 투표를 가능하게 합니다."
 }

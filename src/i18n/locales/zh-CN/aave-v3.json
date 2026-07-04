@@ -97,5 +97,8 @@
   "sim.liquidation.step.liquidationCall": "清算人调用 liquidationCall()，偿还借款人的部分 USDC 债务。对应的 variableDebtUSDC 被销毁。",
   "sim.liquidation.step.liquidationCall.mobile": "清算人偿还债务",
   "sim.liquidation.step.collateralSeized": "清算人获得借款人的 WETH 抵押品以及 5% 的清算奖励，作为维护协议偿付能力的报酬。",
-  "sim.liquidation.step.collateralSeized.mobile": "扣押抵押品 + 奖励"
+  "sim.liquidation.step.collateralSeized.mobile": "扣押抵押品 + 奖励",
+
+  "compose.erc20.role": "aToken 是实现全部 EIP-20 方法的存款凭证，余额随利息累积增长；浮动利率债务代币则是禁用 transfer 和 approve 的 ERC-20 变体。",
+  "compose.erc2612.role": "aToken 实现了 EIP-2612 permit，用户可以通过签名消息授权额度，实现免 gas、单笔交易完成的流程。"
 }

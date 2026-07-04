@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/utils/cn';
 
 // ---------------------------------------------------------------------------
@@ -21,8 +22,13 @@ function Pulse({ className }: { className?: string }) {
 // ---------------------------------------------------------------------------
 
 function HomeSkeleton() {
+  // Rendered as a Suspense fallback (router.tsx), so it must never suspend
+  // itself: useSuspense: false + defaultValue cover the instant before the
+  // common namespace has loaded.
+  const { t } = useTranslation('common', { useSuspense: false });
+  const loading = t('loading', 'Loading…');
   return (
-    <div className="flex flex-col gap-10 p-8 max-w-5xl mx-auto w-full" role="status" aria-label="Loading home page">
+    <div className="flex flex-col gap-10 p-8 max-w-5xl mx-auto w-full" role="status" aria-label={loading}>
       {/* Hero */}
       <div className="flex flex-col items-center gap-4 pt-12">
         <Pulse className="h-10 w-64 rounded-full" />
@@ -57,7 +63,7 @@ function HomeSkeleton() {
         ))}
       </div>
 
-      <span className="sr-only">Loading…</span>
+      <span className="sr-only">{loading}</span>
     </div>
   );
 }
@@ -67,8 +73,11 @@ function HomeSkeleton() {
 // ---------------------------------------------------------------------------
 
 function DetailSkeleton() {
+  // Suspense fallback — same non-suspending constraint as HomeSkeleton.
+  const { t } = useTranslation('common', { useSuspense: false });
+  const loading = t('loading', 'Loading…');
   return (
-    <div className="flex flex-col gap-6 p-6 w-full" role="status" aria-label="Loading detail page">
+    <div className="flex flex-col gap-6 p-6 w-full" role="status" aria-label={loading}>
       {/* Header */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-3">
@@ -140,7 +149,7 @@ function DetailSkeleton() {
         </div>
       </div>
 
-      <span className="sr-only">Loading…</span>
+      <span className="sr-only">{loading}</span>
     </div>
   );
 }

@@ -24,5 +24,80 @@
     "running": "실행 중",
     "completed": "완료됨",
     "error": "오류"
+  },
+  "param": {
+    "invalidAddress": "전체 0x… 주소(16진수 40자) 또는 데모 별칭(예: 0xAlice)을 입력하세요",
+    "invalidUint": "정수를 입력하세요(숫자만 허용)",
+    "reset": "기본값으로 재설정",
+    "unitToggle": "wei와 ETH 표시 전환",
+    "unitWei": "wei",
+    "unitEth": "ETH",
+    "boolTrue": "true",
+    "boolFalse": "false"
+  },
+  "state": {
+    "title": "상태 변화",
+    "empty": "단계를 실행하면 상태 변화가 표시됩니다",
+    "summary": "초기 → 최종",
+    "reverted": "트랜잭션이 리버트되었습니다",
+    "stepLabel": "단계 {{n}}",
+    "increase": "증가",
+    "decrease": "감소",
+    "currentValue": "현재 값",
+    "announce": "단계 {{n}} 실행됨: {{summary}}"
+  },
+  "revert": {
+    "insufficientBalance": "전송 금액이 보내는 사람의 잔액을 초과합니다",
+    "insufficientAllowance": "전송 금액이 승인된 허용량을 초과합니다"
+  },
+  "legend": {
+    "title": "범례",
+    "nodes": "노드",
+    "edges": "엣지",
+    "functions": "함수",
+    "contract": "컨트랙트",
+    "contractDesc": "스마트 컨트랙트",
+    "function": "함수",
+    "functionDesc": "컨트랙트 함수",
+    "user": "사용자",
+    "userDesc": "외부 계정(EOA)",
+    "proxy": "프록시",
+    "proxyDesc": "위임 호출 프록시 컨트랙트",
+    "storage": "스토리지",
+    "storageDesc": "온체인 스토리지 슬롯",
+    "tokenFlow": "토큰 흐름",
+    "tokenFlowDesc": "토큰 전송 이벤트",
+    "animated": "애니메이션",
+    "animatedDesc": "애니메이션 호출 흐름",
+    "labeled": "라벨",
+    "labeledDesc": "라벨이 있는 엣지",
+    "fundFlow": "자금 흐름",
+    "fundFlowDesc": "토큰 / ETH 전송",
+    "readDesc": "view / pure 함수",
+    "writeDesc": "상태를 변경하는 함수",
+    "eventDesc": "발생하는 이벤트"
+  },
+  "flow": {
+    "title": "상호작용 흐름",
+    "fullscreen": "전체 화면",
+    "exitFullscreen": "전체 화면 종료",
+    "resetView": "보기 재설정",
+    "resize": "드래그하여 플로우 다이어그램 높이 조절",
+    "computing": "레이아웃 계산 중…",
+    "renderError": "플로우 다이어그램 렌더링 실패",
+    "renderErrorHint": "다이어그램을 그리는 중 예기치 않은 오류가 발생했습니다.",
+    "retry": "다시 시도"
+  },
+  "popover": {
+    "close": "닫기"
+  },
+  "drawer": {
+    "title": "시뮬레이션",
+    "open": "시뮬레이션 패널 열기",
+    "close": "시뮬레이션 패널 닫기",
+    "expand": "시뮬레이션 패널 펼치기",
+    "collapse": "시뮬레이션 패널 접기",
+    "tooltip": "시뮬레이션으로 컨트랙트 안에서 데이터가 어떻게 흐르는지 확인해 보세요!",
+    "dismiss": "팁 닫기"
   }
 }

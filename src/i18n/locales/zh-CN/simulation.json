@@ -24,5 +24,80 @@
     "running": "运行中",
     "completed": "已完成",
     "error": "错误"
+  },
+  "param": {
+    "invalidAddress": "请输入完整的 0x… 地址（40 个十六进制字符）或示例别名，例如 0xAlice",
+    "invalidUint": "请输入整数（仅限数字）",
+    "reset": "恢复默认值",
+    "unitToggle": "切换 wei 与 ETH 显示",
+    "unitWei": "wei",
+    "unitEth": "ETH",
+    "boolTrue": "true",
+    "boolFalse": "false"
+  },
+  "state": {
+    "title": "状态变化",
+    "empty": "执行一个步骤以查看状态变化",
+    "summary": "初始 → 最终",
+    "reverted": "交易已回滚",
+    "stepLabel": "步骤 {{n}}",
+    "increase": "增加",
+    "decrease": "减少",
+    "currentValue": "当前数值",
+    "announce": "已执行步骤 {{n}}：{{summary}}"
+  },
+  "revert": {
+    "insufficientBalance": "转账金额超过发送者的余额",
+    "insufficientAllowance": "转账金额超过已批准的授权额度"
+  },
+  "legend": {
+    "title": "图例",
+    "nodes": "节点",
+    "edges": "连线",
+    "functions": "函数",
+    "contract": "合约",
+    "contractDesc": "智能合约",
+    "function": "函数",
+    "functionDesc": "合约函数",
+    "user": "用户",
+    "userDesc": "外部账户（EOA）",
+    "proxy": "代理",
+    "proxyDesc": "委托调用的代理合约",
+    "storage": "存储",
+    "storageDesc": "链上存储槽",
+    "tokenFlow": "代币流",
+    "tokenFlowDesc": "代币转移事件",
+    "animated": "动态",
+    "animatedDesc": "动态调用流程",
+    "labeled": "标签",
+    "labeledDesc": "带标签的连线",
+    "fundFlow": "资金流",
+    "fundFlowDesc": "代币 / ETH 转移",
+    "readDesc": "视图 / 纯函数（view / pure）",
+    "writeDesc": "更改状态的函数",
+    "eventDesc": "发出的事件"
+  },
+  "flow": {
+    "title": "交互流程",
+    "fullscreen": "全屏",
+    "exitFullscreen": "退出全屏",
+    "resetView": "重置视图",
+    "resize": "拖动以调整流程图高度",
+    "computing": "正在计算布局…",
+    "renderError": "流程图绘制失败",
+    "renderErrorHint": "绘制图表时发生意外错误。",
+    "retry": "重试"
+  },
+  "popover": {
+    "close": "关闭"
+  },
+  "drawer": {
+    "title": "模拟",
+    "open": "打开模拟面板",
+    "close": "关闭模拟面板",
+    "expand": "展开模拟面板",
+    "collapse": "折叠模拟面板",
+    "tooltip": "试试“模拟”功能，看看数据如何在合约中流动！",
+    "dismiss": "关闭提示"
   }
 }

@@ -83,5 +83,10 @@
   "sim.add-new-owner.step.collectSigs": "所有者 B 和所有者 C 签署该交易，提供足够的确认以满足当前阈值。",
   "sim.add-new-owner.step.collectSigs.mobile": "收集签名",
   "sim.add-new-owner.step.addOwner": "Safe 执行 addOwnerWithThreshold()，将新所有者添加到链表中并将阈值从 2 更新为 3。",
-  "sim.add-new-owner.step.addOwner.mobile": "添加所有者并更新阈值"
+  "sim.add-new-owner.step.addOwner.mobile": "添加所有者并更新阈值",
+
+  "compose.erc1271.role": "Safe 能以合约身份签名：isValidSignature（ERC-1271）验证所有者签名或预先批准的消息，实现位于 CompatibilityFallbackHandler。",
+  "compose.erc165.role": "ERC-165 接口检测由 CompatibilityFallbackHandler（经 TokenCallbackHandler）提供，而非 Safe 单例核心本身。",
+  "compose.erc4337.role": "Safe4337Module 是可选模块（同时充当模块与 fallback handler，需 Safe v1.4.1+），为 Safe 添加 ERC-4337 账户抽象支持。",
+  "compose.erc712.role": "每笔 Safe 交易都以 EIP-712 类型化数据（SAFE_TX_TYPEHASH）计算哈希，所有者对其签名以凑齐确认阈值。"
 }

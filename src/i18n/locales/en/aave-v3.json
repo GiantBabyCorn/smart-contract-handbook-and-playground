@@ -97,5 +97,8 @@
   "sim.liquidation.step.liquidationCall": "A liquidator calls liquidationCall(), repaying part of the borrower's USDC debt. The corresponding variableDebtUSDC is burned.",
   "sim.liquidation.step.liquidationCall.mobile": "Liquidator repays debt",
   "sim.liquidation.step.collateralSeized": "The liquidator receives the borrower's WETH collateral plus a 5% liquidation bonus as a reward for maintaining protocol solvency.",
-  "sim.liquidation.step.collateralSeized.mobile": "Seize collateral + bonus"
+  "sim.liquidation.step.collateralSeized.mobile": "Seize collateral + bonus",
+
+  "compose.erc20.role": "aTokens are deposit receipts implementing all EIP-20 methods with balances that grow as interest accrues, while variable debt tokens are ERC-20 variants whose transfer and approve are disabled.",
+  "compose.erc2612.role": "aTokens implement EIP-2612 permit, letting users grant allowances with a signed message for gasless, single-transaction flows."
 }

@@ -89,5 +89,8 @@
   "sim.customHookExecution.step.modifyPosition": "流動性提供者向新資金池添加集中流動性。代幣透過閃電記帳存入並追蹤。",
   "sim.customHookExecution.step.modifyPosition.mobile": "添加流動性",
   "sim.customHookExecution.step.hookCallback": "Hook 合約執行其自訂邏輯（例如套用動態手續費等級）。閃電記帳差額歸零結算。",
-  "sim.customHookExecution.step.hookCallback.mobile": "Hook 自訂邏輯"
+  "sim.customHookExecution.step.hookCallback.mobile": "Hook 自訂邏輯",
+
+  "compose.erc6909.role": "單例 PoolManager 為留存於其內部的餘額鑄造 ERC-6909 claim 代幣，之後支付時直接銷毀——比外部 ERC-20 轉帳更省 gas。",
+  "compose.erc20.role": "池的幣種是由單例 PoolManager 保管的 ERC-20 代幣；高頻交易者可將代幣留在合約內，改以 claim 結算而非轉帳。"
 }

@@ -97,5 +97,8 @@
   "sim.liquidation.step.liquidationCall": "Un liquidador llama a liquidationCall(), repagando parte de la deuda en USDC del prestatario. Los variableDebtUSDC correspondientes se queman.",
   "sim.liquidation.step.liquidationCall.mobile": "El liquidador repaga la deuda",
   "sim.liquidation.step.collateralSeized": "El liquidador recibe el colateral WETH del prestatario más una bonificación de liquidación del 5% como recompensa por mantener la solvencia del protocolo.",
-  "sim.liquidation.step.collateralSeized.mobile": "Confiscar colateral + bonificación"
+  "sim.liquidation.step.collateralSeized.mobile": "Confiscar colateral + bonificación",
+
+  "compose.erc20.role": "Los aTokens son recibos de depósito que implementan todos los métodos EIP-20 con saldos que crecen al acumularse intereses, mientras que los tokens de deuda variable son variantes ERC-20 con transfer y approve deshabilitados.",
+  "compose.erc2612.role": "Los aTokens implementan permit de EIP-2612, lo que permite otorgar autorizaciones con un mensaje firmado para flujos sin gas y de una sola transacción."
 }

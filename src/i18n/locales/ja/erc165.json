@@ -8,6 +8,14 @@
   "fn.supportsInterface.params.interfaceId": "ERC-165で定義された、問い合わせる4バイトのインターフェース識別子。インターフェース内のすべての関数セレクタのXORとして計算されます。",
   "fn.supportsInterface.returns.supported": "コントラクトが問い合わせたインターフェースを実装している場合はtrue、それ以外はfalse。",
 
+  "sec.trust.title": "インターフェース対応は自己申告制",
+  "sec.trust.desc": "supportsInterfaceの回答は照会先のコントラクト自身が返すため、悪意のある、またはバグのあるコントラクトは、実装していないインターフェースへの対応を偽ったり、あらゆる照会にtrueを返したりする可能性があります。",
+  "sec.trust.mitigation": "回答は証明ではなくヒントとして扱ってください。仕様上、準拠コントラクトは0xffffffffに対してfalseを返す必要があります。この照会で無条件にtrueを返すコントラクトを除外し、実際の呼び出し動作の検証も続けてください。",
+
+  "code.iface.title": "ERC-165の標準インターフェース定義",
+
+  "gas.notes": "仕様ではsupportsInterfaceは30,000ガス未満で応答しなければなりません。実装は上限のない計算を避け、事前登録したmappingやハードコードされた比較などの定数時間の照会で応答すべきです。",
+
   "node.caller": "呼び出し元 / DApp",
   "node.contract": "ERC-165コントラクト",
   "node.interfaceRegistry": "インターフェースレジストリ",

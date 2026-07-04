@@ -66,5 +66,9 @@
   "sim.stake-eth-receive-steth.step.depositBeacon": "버퍼링된 ETH는 검증자를 운영하는 선별된 노드 운영자를 통해 32 ETH 단위로 비콘 체인에 예치됩니다.",
   "sim.stake-eth-receive-steth.step.depositBeacon.mobile": "비콘 체인에 예치",
   "sim.stake-eth-receive-steth.step.rebase": "Lido 오라클이 새로운 스테이킹 보상을 보고합니다. 총 풀링된 ETH가 증가하여 모든 stETH 잔액이 자동으로 상향 리베이스됩니다.",
-  "sim.stake-eth-receive-steth.step.rebase.mobile": "일일 리베이스로 잔액 증가"
+  "sim.stake-eth-receive-steth.step.rebase.mobile": "일일 리베이스로 잔액 증가",
+
+  "compose.erc20.role": "stETH는 오라클이 보고한 스테이킹 보상에 따라 잔액이 늘어나는 리베이싱 ERC-20이며, wstETH는 이를 잔액이 고정된 ERC-20으로 감쌉니다(지분형 래퍼이며 ERC-4626 볼트가 아닙니다).",
+  "compose.erc2612.role": "메인넷의 stETH와 wstETH는 모두 EIP-2612 permit 확장을 구현하여 서명 기반 승인을 지원합니다.",
+  "compose.erc1271.role": "stETH의 permit은 ERC-1271 컨트랙트 서명도 받아들이므로 Safe 같은 스마트 컨트랙트 지갑도 승인에 서명할 수 있습니다."
 }

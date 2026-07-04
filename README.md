@@ -49,6 +49,7 @@ npm run preview
 ```bash
 npm run dev          # Start development server with HMR
 npm run build        # Type-check + production build
+npm run prerender    # Build + inject per-route SEO tags into dist/ (see "Prerendering")
 npm run preview      # Preview production build locally
 npm run lint         # Run ESLint
 npm run format       # Format code with Prettier
@@ -144,6 +145,54 @@ You can also use the Claude Code skill:
 Each entry has its own i18n namespace matching its slug. The `DetailPage` loads translations via `useTranslation(entry.slug)`, which dynamically imports `src/i18n/locales/{lang}/{slug}.json`.
 
 Supported languages: `en`, `zh-CN`, `zh-TW`, `ja`, `ko`, `es`
+
+## CI & Deployment
+
+GitHub Actions (`.github/workflows/ci.yml`) gates every push and pull request:
+
+1. **quality** -- ESLint, `tsc -b` + Vite build, `prerender.mjs` (+ injected-tag
+   assertions on `/erc20` and `/catalog`), Vitest, `validate_registry.py`,
+   `lint_i18n_keys.py --max-identical-ratio 0.08`, and
+   `check_bundle_size.py --budget-kb 250 --total-budget-kb 200`
+   (main entry chunk under 250 KB gzip; total initial JS under 200 KB gzip).
+2. **e2e** -- Playwright (chromium) against the dev server, including
+   `e2e/i18n-guard.spec.ts`, which fails if any raw i18n key (`slug.fn.*`, `slug.node.*`,
+   `slug.edge.*`, `slug.sim.*`) or `TODO:` placeholder is visible in any tested locale.
+
+The `--max-identical-ratio` gate flags locales that copy too many English values verbatim
+(i.e. untranslated content). Genuine identical values (code snippets, proper nouns) sit
+around 2-3%; the CI threshold is 8%. Run with `--report` to print per-locale ratios.
+
+Deployment target is **Vercel**: `vercel.json` rewrites all paths to `/index.html` so SPA
+deep links work, and serves `/assets/*` with immutable cache headers. Vercel matches real
+static files before applying rewrites, so hashed assets are unaffected.
+
+## Prerendering (SEO)
+
+`scripts/prerender.mjs` is a **template-injection prerenderer** (no headless browser,
+ADR: plan §10.1). After `vite build` it copies `dist/index.html` to
+`dist/<route>/index.html` for every route — `/`, `/catalog`, `/playground`, and one
+`/:slug` per published entry — and injects route-specific `<title>`, meta description,
+canonical URL, Open Graph / Twitter tags (per-entry `/og/<slug>.png` card) and a
+`<noscript>` summary paragraph for crawlers. The pre-paint theme script and the rest of
+the built head are preserved untouched; the script is idempotent and completes in tens
+of milliseconds for ~40 routes (it scales linearly to 350+).
+
+```bash
+npm run prerender      # = npm run build && node scripts/prerender.mjs
+node scripts/prerender.mjs   # dist/ already built
+```
+
+Route + content sources: `src/data/catalog.json` (published rows), `src/data/allMeta.ts`
+/ `src/data/protocolsMeta.ts` (display names), `src/i18n/locales/en/*` (descriptions),
+`src/utils/constants.ts` (`SITE_URL`). v1 is English-only; static `/:lng/` locale routes
+are a deferred one-time URL decision.
+
+Because prerendered routes exist as real files, Vercel serves them directly
+(filesystem-first) and the `vercel.json` SPA rewrite only kicks in for paths without a
+prerendered file — e.g. not-yet-prerendered entries still load the SPA shell. CI runs
+the prerenderer after the build and asserts the injected tags on `/erc20` and
+`/catalog`.
 
 ## Brand Icons
 

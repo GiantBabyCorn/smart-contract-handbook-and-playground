@@ -8,6 +8,14 @@
   "fn.supportsInterface.params.interfaceId": "要查詢的 4 位元組介面識別碼，定義於 ERC-165。計算為介面中所有函式選擇器的 XOR。",
   "fn.supportsInterface.returns.supported": "如果合約實作了查詢的介面則為 true，否則為 false。",
 
+  "sec.trust.title": "介面支援為合約自行申報",
+  "sec.trust.desc": "supportsInterface 的回答來自被查詢的合約本身，惡意或有缺陷的合約可能謊稱支援未實作的介面，甚至對所有查詢一律回傳 true。",
+  "sec.trust.mitigation": "把查詢結果當作提示而非證明。依規格，合規合約對 0xffffffff 必須回傳 false——可用此查詢過濾一律回傳 true 的合約，並持續驗證實際的呼叫行為。",
+
+  "code.iface.title": "ERC-165 標準介面定義",
+
+  "gas.notes": "規格要求 supportsInterface 必須在 30,000 gas 以內完成。實作應以常數時間查詢（預先註冊的 mapping 或硬編碼比較）回答，避免任何無上限的運算。",
+
   "node.caller": "呼叫者 / DApp",
   "node.contract": "ERC-165 合約",
   "node.interfaceRegistry": "介面註冊表",

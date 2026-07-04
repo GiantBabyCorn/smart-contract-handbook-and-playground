@@ -1,13 +1,35 @@
-import { useReducedMotion as useMotionReducedMotion } from 'motion/react';
+import { useSyncExternalStore } from 'react';
+
+const QUERY = '(prefers-reduced-motion: reduce)';
+
+function subscribe(onChange: () => void): () => void {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+    return () => {};
+  }
+  const mql = window.matchMedia(QUERY);
+  mql.addEventListener('change', onChange);
+  return () => mql.removeEventListener('change', onChange);
+}
+
+function getSnapshot(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia(QUERY).matches
+  );
+}
 
 /**
  * Returns `true` when the user has requested reduced motion via the OS
- * `prefers-reduced-motion: reduce` media query.
+ * `prefers-reduced-motion: reduce` media query, and re-renders when the
+ * preference changes.
  *
- * Delegates to Motion's `useReducedMotion` hook and normalises the
- * nullable return value to a plain boolean so callers don't need to
- * handle `null` (which is returned server-side / before the media query
- * is evaluated).
+ * Implemented directly on `matchMedia` + `useSyncExternalStore` (instead of
+ * delegating to Motion's `useReducedMotion`) so that non-Motion consumers —
+ * the React Flow edge components, whose chunks do not otherwise include the
+ * motion runtime — can use it without pulling `motion-vendor` into their
+ * bundle. For `motion.*` components, `<MotionConfig reducedMotion="user">`
+ * reads the same media query, so both mechanisms stay in sync.
  *
  * Usage:
  * ```ts
@@ -16,5 +38,5 @@ import { useReducedMotion as useMotionReducedMotion } from 'motion/react';
  * ```
  */
 export function useReducedMotion(): boolean {
-  return useMotionReducedMotion() ?? false;
+  return useSyncExternalStore(subscribe, getSnapshot, () => false);
 }

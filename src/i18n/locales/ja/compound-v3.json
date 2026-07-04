@@ -65,5 +65,8 @@
   "sim.supplyAndBorrowComet.step.borrowBase": "借入者がUSDCでwithdraw()を呼び出して借入します。プロトコルは内部的に借入残高を追跡し、USDCを借入者に転送します。",
   "sim.supplyAndBorrowComet.step.borrowBase.mobile": "USDCを借入",
   "sim.supplyAndBorrowComet.step.utilization": "マーケットの利用率が上昇し、金利モデルが借入金利と供給金利を調整します。ベース供給者はより高い利回りを獲得します。",
-  "sim.supplyAndBorrowComet.step.utilization.mobile": "利用率と金利が調整"
+  "sim.supplyAndBorrowComet.step.utilization.mobile": "利用率と金利が調整",
+
+  "compose.erc20.role": "Cometコントラクト自体がベース資産の完全互換ERC-20ラッパーで、balanceOfは供給元本と累積利息を返します。担保も標準的なERC-20のapproveを通じて供給します。",
+  "compose.erc712.role": "allowBySigはオンチェーンのallowトランザクションの代わりに、EIP-712オフライン署名でアカウントマネージャーを承認します。"
 }

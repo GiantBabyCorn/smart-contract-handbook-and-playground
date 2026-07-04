@@ -64,5 +64,8 @@
   "sim.stablecoinSwap.step.stableswapInvariant": "池使用带放大系数 A 的 StableSwap 不变量重新计算，沿近线性价格曲线确定输出数量。",
   "sim.stablecoinSwap.step.stableswapInvariant.mobile": "通过不变量计算",
   "sim.stablecoinSwap.step.receiveTokenOut": "池将 USDC 转给交易者。扣除少量手续费（通常为 0.04%），留在池中分配给 LP 持有者。",
-  "sim.stablecoinSwap.step.receiveTokenOut.mobile": "接收 USDC 输出"
+  "sim.stablecoinSwap.step.receiveTokenOut.mobile": "接收 USDC 输出",
+
+  "compose.erc20.role": "流动性份额以 ERC-20 LP 代币表示——旧版池部署独立的 LP 代币合约，stableswap-ng 池则由池合约本身实现 ERC-20。",
+  "compose.erc2612.role": "stableswap-ng 的 LP 代币实现了 EIP-2612 permit，并带有 EIP-712 domain separator，支持签名授权。"
 }

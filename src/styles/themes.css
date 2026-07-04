@@ -71,6 +71,12 @@
   --erc-color-category-proxy: #a855f7;
   --erc-color-category-defi: #3b82f6;
   --erc-color-category-account: #ec4899;
+  --erc-color-category-utility: #84cc16;
+  --erc-color-category-identity: #d946ef;
+  --erc-color-category-oracle: #f97316;
+  --erc-color-category-governance: #0ea5e9;
+  --erc-color-category-cross-chain: #06b6d4;
+  --erc-color-category-rwa: #14b8a6;
 
   /* ---------------------------------------------------------------------------
      Typography
@@ -93,7 +99,8 @@
   /* Text */
   --erc-color-text-primary: #0f172a;
   --erc-color-text-secondary: #475569;
-  --erc-color-text-muted: #94a3b8;
+  /* WCAG AA: 5.97:1 on #ffffff, 5.45:1 on #f1f5f9 (was #94a3b8 at 2.56:1). */
+  --erc-color-text-muted: #5b6474;
 
   /* Accent — slightly deeper for WCAG contrast on white */
   --erc-color-accent: #4f46e5;
@@ -117,4 +124,12 @@
 
   /* Semantic — only override values that diverge from the re-mapped primitives */
   --erc-color-fn-event: #7c3aed;
+
+  /* Category hues — darker shades so badge text keeps >= 4.5:1 on white */
+  --erc-color-category-utility: #4d7c0f;
+  --erc-color-category-identity: #a21caf;
+  --erc-color-category-oracle: #c2410c;
+  --erc-color-category-governance: #0369a1;
+  --erc-color-category-cross-chain: #0e7490;
+  --erc-color-category-rwa: #0f766e;
 }

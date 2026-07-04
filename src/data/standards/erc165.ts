@@ -11,6 +11,7 @@ export const entry: StandardEntry = {
   officialUrl: 'https://eips.ethereum.org/EIPS/eip-165',
   relatedSlugs: ['erc173', 'erc721', 'erc1155'],
   sortOrder: 600,
+  eipStatus: 'Final',
 
   // ─── ERCContent ───
   introduction: 'erc165.introduction',
@@ -30,6 +31,44 @@ export const entry: StandardEntry = {
       ],
       description: 'erc165.fn.supportsInterface.desc',
       defaultSimValues: { interfaceId: '0x80ac58cd' },
+    },
+  ],
+
+  // ─── Schema v2 content sections ───
+  security: [
+    {
+      severity: 'medium',
+      title: 'erc165.sec.trust.title',
+      desc: 'erc165.sec.trust.desc',
+      mitigation: 'erc165.sec.trust.mitigation',
+      source: 'https://eips.ethereum.org/EIPS/eip-165',
+    },
+  ],
+
+  codeExamples: [
+    {
+      title: 'erc165.code.iface.title',
+      lang: 'solidity',
+      // Canonical interface from the EIP-165 specification (CC0).
+      code: `interface ERC165 {
+    /// @notice Query if a contract implements an interface
+    /// @param interfaceID The interface identifier, as specified in ERC-165
+    /// @dev Interface identification is specified in ERC-165. This function
+    ///  uses less than 30,000 gas.
+    /// @return \`true\` if the contract implements \`interfaceID\` and
+    ///  \`interfaceID\` is not 0xffffffff, \`false\` otherwise
+    function supportsInterface(bytes4 interfaceID) external view returns (bool);
+}`,
+    },
+  ],
+
+  gasNotes: 'erc165.gas.notes',
+
+  references: [
+    {
+      label: 'OpenZeppelin ERC165 implementation',
+      url: 'https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/introspection/ERC165.sol',
+      kind: 'impl',
     },
   ],
 

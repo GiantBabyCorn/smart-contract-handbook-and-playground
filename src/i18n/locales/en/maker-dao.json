@@ -76,5 +76,8 @@
   "sim.liquidation-process.step.bite": "A keeper calls bite() on the undercollateralized vault. The liquidation engine seizes the collateral and initiates a collateral auction.",
   "sim.liquidation-process.step.bite.mobile": "Trigger liquidation",
   "sim.liquidation-process.step.auction": "The seized collateral is auctioned off to bidders. Proceeds repay the vault's DAI debt and any remaining collateral is returned to the vault owner.",
-  "sim.liquidation-process.step.auction.mobile": "Auction collateral to repay debt"
+  "sim.liquidation-process.step.auction.mobile": "Auction collateral to repay debt",
+
+  "compose.erc20.role": "DAI itself is the user-facing ERC-20 stablecoin (Dai.sol) that the protocol mints against vault collateral and burns on repayment.",
+  "compose.erc712.role": "DAI's permit is an EIP-712-signed approval that predates EIP-2612, using (holder, nonce, expiry, bool allowed) instead of value and deadline."
 }

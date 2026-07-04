@@ -66,5 +66,9 @@
   "sim.stake-eth-receive-steth.step.depositBeacon": "Buffered ETH is deposited to the Beacon Chain in 32 ETH increments via selected node operators who run the validators.",
   "sim.stake-eth-receive-steth.step.depositBeacon.mobile": "Deposit to Beacon Chain",
   "sim.stake-eth-receive-steth.step.rebase": "The Lido oracle reports new staking rewards. The total pooled ETH increases, causing all stETH balances to rebase upward automatically.",
-  "sim.stake-eth-receive-steth.step.rebase.mobile": "Daily rebase increases balance"
+  "sim.stake-eth-receive-steth.step.rebase.mobile": "Daily rebase increases balance",
+
+  "compose.erc20.role": "stETH is a rebasing ERC-20 whose balances grow with oracle-reported staking rewards, while wstETH wraps it into a static-balance ERC-20 (a share wrapper, not an ERC-4626 vault).",
+  "compose.erc2612.role": "Both stETH and wstETH on mainnet implement the EIP-2612 permit extension, enabling signature-based approvals.",
+  "compose.erc1271.role": "stETH's permit also accepts ERC-1271 contract signatures, so smart-contract wallets like Safe can sign approvals."
 }

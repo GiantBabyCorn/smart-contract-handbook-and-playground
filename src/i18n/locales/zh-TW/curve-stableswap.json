@@ -64,5 +64,8 @@
   "sim.stablecoinSwap.step.stableswapInvariant": "池使用帶有放大係數 A 的 StableSwap 不變量重新計算，沿近線性價格曲線確定輸出金額。",
   "sim.stablecoinSwap.step.stableswapInvariant.mobile": "透過不變量計算",
   "sim.stablecoinSwap.step.receiveTokenOut": "池將 USDC 轉移給交易者。扣除小額手續費（通常為 0.04%）並由池保留給 LP 持有者。",
-  "sim.stablecoinSwap.step.receiveTokenOut.mobile": "接收 USDC 輸出"
+  "sim.stablecoinSwap.step.receiveTokenOut.mobile": "接收 USDC 輸出",
+
+  "compose.erc20.role": "流動性份額以 ERC-20 LP 代幣表示——舊版池部署獨立的 LP 代幣合約，stableswap-ng 池則由池合約本身實作 ERC-20。",
+  "compose.erc2612.role": "stableswap-ng 的 LP 代幣實作 EIP-2612 permit，並附 EIP-712 domain separator，支援簽章授權。"
 }

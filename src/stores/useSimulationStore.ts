@@ -1,6 +1,11 @@
 import { create } from 'zustand';
 import type { SimulationScenario, ContractFunction } from '@/data/types';
 
+export interface StepMeta {
+  isRevert?: boolean;
+  revertReason?: string;
+}
+
 interface SimulationStore {
   // ─── State ───────────────────────────────────────────────────────────────────
   scenario: SimulationScenario | null;
@@ -10,8 +15,14 @@ interface SimulationStore {
   speed: number;
   /** User-editable simulation parameter values keyed by param id. */
   params: Record<string, string>;
-  /** stepId → { label: value } map of computed / declared value changes per step. */
+  /** stepId → { key: value } map of computed / declared value changes per step. */
   stepResults: Record<string, Record<string, string>>;
+  /** stepId → engine-computed revert info (authored reverts live on the step). */
+  stepMeta: Record<string, StepMeta>;
+  /** nodeId → variable → current display value (storage-node badges). */
+  nodeValues: Record<string, Record<string, string>>;
+  /** Token-movement label for the current step's highlighted fundFlow edges. */
+  flowLabel: string | null;
   highlightedNodes: string[];
   highlightedEdges: string[];
   error: string | null;
@@ -28,6 +39,9 @@ interface SimulationStore {
   setParam: (id: string, value: string) => void;
   setHighlights: (nodes: string[], edges: string[]) => void;
   addStepResult: (stepId: string, changes: Record<string, string>) => void;
+  addStepMeta: (stepId: string, meta: StepMeta) => void;
+  setNodeValues: (values: Record<string, Record<string, string>>) => void;
+  setFlowLabel: (label: string | null) => void;
   setError: (error: string | null) => void;
   setMode: (mode: 'scenario' | 'interactive') => void;
   setSelectedFunction: (fn: ContractFunction | null) => void;
@@ -42,6 +56,9 @@ export const useSimulationStore = create<SimulationStore>((set) => ({
   speed: 1,
   params: {},
   stepResults: {},
+  stepMeta: {},
+  nodeValues: {},
+  flowLabel: null,
   highlightedNodes: [],
   highlightedEdges: [],
   error: null,
@@ -62,6 +79,9 @@ export const useSimulationStore = create<SimulationStore>((set) => ({
       currentStepIndex: -1,
       isPlaying: false,
       stepResults: {},
+      stepMeta: {},
+      nodeValues: {},
+      flowLabel: null,
       highlightedNodes: [],
       highlightedEdges: [],
       error: null,
@@ -85,6 +105,15 @@ export const useSimulationStore = create<SimulationStore>((set) => ({
       stepResults: { ...s.stepResults, [stepId]: changes },
     })),
 
+  addStepMeta: (stepId, meta) =>
+    set((s) => ({
+      stepMeta: { ...s.stepMeta, [stepId]: meta },
+    })),
+
+  setNodeValues: (values) => set({ nodeValues: values }),
+
+  setFlowLabel: (label) => set({ flowLabel: label }),
+
   setError: (error) => set({ error }),
 
   setMode: (mode) => set({ mode }),
@@ -96,6 +125,9 @@ export const useSimulationStore = create<SimulationStore>((set) => ({
       currentStepIndex: -1,
       isPlaying: false,
       stepResults: {},
+      stepMeta: {},
+      nodeValues: {},
+      flowLabel: null,
       highlightedNodes: [],
       highlightedEdges: [],
       error: null,

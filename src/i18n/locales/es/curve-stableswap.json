@@ -64,5 +64,8 @@
   "sim.stablecoinSwap.step.stableswapInvariant": "El pool recalcula usando la invariante StableSwap con el factor de amplificación A, determinando la cantidad de salida a lo largo de la curva de precios casi lineal.",
   "sim.stablecoinSwap.step.stableswapInvariant.mobile": "Calcular vía invariante",
   "sim.stablecoinSwap.step.receiveTokenOut": "El pool transfiere USDC al trader. Se deduce una pequeña comisión (típicamente 0.04%) que se retiene en el pool para los poseedores de LP.",
-  "sim.stablecoinSwap.step.receiveTokenOut.mobile": "Recibir salida de USDC"
+  "sim.stablecoinSwap.step.receiveTokenOut.mobile": "Recibir salida de USDC",
+
+  "compose.erc20.role": "Las participaciones de liquidez son tokens LP ERC-20: los pools antiguos despliegan un contrato de token LP separado, mientras que en stableswap-ng el propio contrato del pool implementa ERC-20.",
+  "compose.erc2612.role": "Los tokens LP de stableswap-ng implementan permit de EIP-2612 con un domain separator EIP-712 para aprobaciones basadas en firmas."
 }

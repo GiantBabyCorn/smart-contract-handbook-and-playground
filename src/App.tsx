@@ -1,5 +1,6 @@
 import { RouterProvider } from 'react-router-dom';
 import { Suspense, Component, type ReactNode, type ErrorInfo } from 'react';
+import { MotionConfig } from 'motion/react';
 import { router } from './router';
 import { useThemeSync } from '@/hooks/useThemeSync';
 import ErrorFallback from '@/components/common/ErrorFallback';
@@ -42,9 +43,13 @@ function AppInner() {
 export default function App() {
   return (
     <ErrorBoundary>
-      <Suspense fallback={<div className="flex items-center justify-center h-screen bg-[var(--erc-color-bg-primary)] text-[var(--erc-color-text-muted)]">Loading...</div>}>
-        <AppInner />
-      </Suspense>
+      {/* reducedMotion="user": every motion.* animation in the app honours the
+          OS prefers-reduced-motion setting; inert for everyone else. */}
+      <MotionConfig reducedMotion="user">
+        <Suspense fallback={<div className="flex items-center justify-center h-screen bg-[var(--erc-color-bg-primary)] text-[var(--erc-color-text-muted)]">Loading...</div>}>
+          <AppInner />
+        </Suspense>
+      </MotionConfig>
     </ErrorBoundary>
   );
 }

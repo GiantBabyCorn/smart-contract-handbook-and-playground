@@ -1,26 +1,40 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { SimulationScenario } from '@/data/types';
+import type { StepMeta } from '@/stores/useSimulationStore';
+import { stripEntryPrefix } from '@/i18n/entryText';
+import { validateParam } from '@/features/simulation/units';
 import { cn } from '@/utils/cn';
 import ParamField from './ParamField';
+import StateChangesPanel from './StateChangesPanel';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 export interface SimulationPanelProps {
   /** Available scenarios for this ERC entry */
   scenarios: SimulationScenario[];
+  /** Entry slug — i18n namespace for scenario names, steps and param labels */
+  slug?: string;
   /** Currently active scenario id, or null if none selected */
   activeScenarioId?: string | null;
   /** Current step index within the active scenario (0-based) */
   currentStep?: number;
   /** Whether the simulation is currently auto-playing */
   isPlaying?: boolean;
+  /** Playback speed multiplier (1 = 2 s per step) */
+  speed?: number;
   /** Callback: user selected a scenario */
   onScenarioChange?: (scenarioId: string) => void;
   /** Callback: user changed a parameter value */
   onParamChange?: (paramId: string, value: string) => void;
+  /** Callback: user picked a playback speed */
+  onSpeedChange?: (speed: number) => void;
   /** Current parameter values keyed by paramId */
   paramValues?: Record<string, string>;
+  /** Effective per-step results (computed or authored) for StateChangesPanel */
+  stepResults?: Record<string, Record<string, string>>;
+  /** Engine-computed revert info per step */
+  stepMeta?: Record<string, StepMeta>;
   /** Playback controls */
   onPlay?: () => void;
   onPause?: () => void;
@@ -28,6 +42,13 @@ export interface SimulationPanelProps {
   onStepBack?: () => void;
   onReset?: () => void;
 }
+
+/** Speed selector options — labels come from simulation.json controls.speed.*. */
+const SPEED_OPTIONS = [
+  { value: 0.5, labelKey: 'controls.speed.slow' },
+  { value: 1, labelKey: 'controls.speed.normal' },
+  { value: 2, labelKey: 'controls.speed.fast' },
+] as const;
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -75,12 +96,17 @@ function ControlButton({
  */
 export default function SimulationPanel({
   scenarios,
+  slug,
   activeScenarioId = null,
   currentStep = 0,
   isPlaying = false,
+  speed = 1,
   onScenarioChange,
   onParamChange,
+  onSpeedChange,
   paramValues = {},
+  stepResults = {},
+  stepMeta = {},
   onPlay,
   onPause,
   onStepForward,
@@ -88,6 +114,15 @@ export default function SimulationPanel({
   onReset,
 }: SimulationPanelProps) {
   const { t } = useTranslation('simulation');
+  // Entry namespace for scenario/step/param text authored as
+  // slug-prefixed keys in the data files (flat keys in the locale files).
+  const { t: tEntry } = useTranslation(slug ?? 'simulation');
+
+  const resolveText = useCallback(
+    (key: string): string =>
+      slug ? tEntry(stripEntryPrefix(slug, key), { defaultValue: key }) : key,
+    [slug, tEntry],
+  );
 
   const [collapsed, setCollapsed] = useState(false);
 
@@ -98,6 +133,14 @@ export default function SimulationPanel({
   const hasStarted = currentStep >= 0;
   const currentStepData = hasStarted ? (activeScenario?.steps[displayStep] ?? null) : null;
   const progressPct = hasStarted && totalSteps > 0 ? ((displayStep + 1) / totalSteps) * 100 : 0;
+  const isAtLastStep = hasStarted && totalSteps > 0 && displayStep >= totalSteps - 1;
+
+  // Invalid parameter values block Run/Step until fixed (fields show the error).
+  const paramsValid =
+    !activeScenario ||
+    activeScenario.params.every(
+      (p) => validateParam(p.type, paramValues[p.id] ?? p.defaultValue).ok,
+    );
 
   const handleParamChange = useCallback(
     (id: string, val: string) => {
@@ -131,7 +174,8 @@ export default function SimulationPanel({
         <button
           type="button"
           onClick={() => setCollapsed((c) => !c)}
-          aria-label={collapsed ? 'Expand simulation panel' : 'Collapse simulation panel'}
+          aria-expanded={!collapsed}
+          aria-label={collapsed ? t('drawer.expand') : t('drawer.collapse')}
           className="p-0.5 text-[var(--erc-color-text-secondary)] hover:text-[var(--erc-color-text-primary)] transition-colors"
         >
           <svg
@@ -171,7 +215,7 @@ export default function SimulationPanel({
               >
                 <option value="" disabled>{t('panel.noScenario')}</option>
                 {scenarios.map((s) => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
+                  <option key={s.id} value={s.id}>{resolveText(s.name)}</option>
                 ))}
               </select>
             )}
@@ -186,7 +230,7 @@ export default function SimulationPanel({
               {activeScenario.params.map((param) => (
                 <ParamField
                   key={param.id}
-                  param={param}
+                  param={{ ...param, label: resolveText(param.label) }}
                   value={paramValues[param.id] ?? param.defaultValue}
                   onChange={handleParamChange}
                 />
@@ -207,9 +251,9 @@ export default function SimulationPanel({
                 {currentStepData && (
                   <span
                     className="text-[10px] text-[var(--erc-color-text-muted)] truncate max-w-[160px]"
-                    title={currentStepData.description}
+                    title={resolveText(currentStepData.description)}
                   >
-                    {currentStepData.description}
+                    {resolveText(currentStepData.description)}
                   </span>
                 )}
               </div>
@@ -220,7 +264,10 @@ export default function SimulationPanel({
                 aria-valuenow={hasStarted ? displayStep + 1 : 0}
                 aria-valuemin={0}
                 aria-valuemax={totalSteps}
-                aria-label={`Simulation progress: step ${hasStarted ? displayStep + 1 : 0} of ${totalSteps}`}
+                aria-label={t('panel.step', {
+                  current: hasStarted ? displayStep + 1 : 0,
+                  total: totalSteps,
+                })}
                 className="h-1 rounded-full bg-[var(--erc-color-border)] overflow-hidden"
               >
                 <div
@@ -267,14 +314,25 @@ export default function SimulationPanel({
                     </svg>
                   </ControlButton>
                 ) : (
-                  <ControlButton onClick={onPlay} disabled={totalSteps === 0} ariaLabel={t('controls.play')} accent>
+                  // Play is disabled at the last step until Reset (and while
+                  // any parameter is invalid).
+                  <ControlButton
+                    onClick={onPlay}
+                    disabled={totalSteps === 0 || isAtLastStep || !paramsValid}
+                    ariaLabel={t('controls.play')}
+                    accent
+                  >
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                       <path d="M3 2l7 4-7 4V2z" fill="currentColor" />
                     </svg>
                   </ControlButton>
                 )}
 
-                <ControlButton onClick={onStepForward} disabled={(!hasStarted && totalSteps === 0) || (hasStarted && displayStep >= totalSteps - 1) || isPlaying} ariaLabel={t('controls.stepForward')}>
+                <ControlButton
+                  onClick={onStepForward}
+                  disabled={totalSteps === 0 || isAtLastStep || isPlaying || !paramsValid}
+                  ariaLabel={t('controls.stepForward')}
+                >
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                     <path d="M3 2l5 4-5 4V2z" fill="currentColor" />
                     <line x1="10" y1="2" x2="10" y2="10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -287,8 +345,38 @@ export default function SimulationPanel({
                     <path d="M2 9.5V6.5h3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                   </svg>
                 </ControlButton>
+
+                {/* Speed selector */}
+                <select
+                  value={String(speed)}
+                  onChange={(e) => onSpeedChange?.(Number(e.target.value))}
+                  aria-label={t('controls.speed')}
+                  className={cn(
+                    'ml-auto rounded-md text-[11px] px-1.5 py-1.5 shrink-0',
+                    'bg-[var(--erc-color-bg-primary)] border border-[var(--erc-color-border)]',
+                    'text-[var(--erc-color-text-primary)]',
+                    'focus:border-[var(--erc-color-accent)] focus:ring-1 focus:ring-[var(--erc-color-accent)] outline-none',
+                  )}
+                >
+                  {SPEED_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={String(opt.value)}>
+                      {t(opt.labelKey)}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
+          )}
+
+          {/* ── Per-step state changes ── */}
+          {activeScenario && (
+            <StateChangesPanel
+              scenario={activeScenario}
+              currentStepIndex={currentStep}
+              stepResults={stepResults}
+              stepMeta={stepMeta}
+              resolveText={resolveText}
+            />
           )}
 
           {/* ── Status badge ── */}

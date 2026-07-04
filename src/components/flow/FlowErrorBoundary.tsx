@@ -1,4 +1,20 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
+import i18next from 'i18next';
+
+/**
+ * Class components cannot use the useTranslation hook; read from the shared
+ * i18next singleton with an English default so the boundary still renders
+ * meaningfully before init (or in tests without i18n).
+ */
+function tr(key: string, defaultValue: string): string {
+  try {
+    return i18next.isInitialized
+      ? i18next.t(key, { ns: 'simulation', defaultValue })
+      : defaultValue;
+  } catch {
+    return defaultValue;
+  }
+}
 
 interface Props {
   children: ReactNode;
@@ -94,7 +110,7 @@ export default class FlowErrorBoundary extends Component<Props, State> {
               color: 'var(--erc-color-text-primary)',
             }}
           >
-            Failed to render flow diagram
+            {tr('flow.renderError', 'Failed to render flow diagram')}
           </p>
           <p
             style={{
@@ -104,7 +120,8 @@ export default class FlowErrorBoundary extends Component<Props, State> {
               maxWidth: '480px',
             }}
           >
-            {error?.message ?? 'An unexpected error occurred while drawing the diagram.'}
+            {error?.message ??
+              tr('flow.renderErrorHint', 'An unexpected error occurred while drawing the diagram.')}
           </p>
         </div>
 
@@ -123,9 +140,9 @@ export default class FlowErrorBoundary extends Component<Props, State> {
             fontWeight: 500,
             cursor: 'pointer',
           }}
-          aria-label="Retry rendering the flow diagram"
+          aria-label={tr('flow.retry', 'Try again')}
         >
-          Try again
+          {tr('flow.retry', 'Try again')}
         </button>
       </div>
     );

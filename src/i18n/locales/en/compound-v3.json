@@ -65,5 +65,8 @@
   "sim.supplyAndBorrowComet.step.borrowBase": "The borrower calls withdraw() with USDC to borrow. The protocol tracks the borrow balance internally and transfers USDC to the borrower.",
   "sim.supplyAndBorrowComet.step.borrowBase.mobile": "Borrow USDC",
   "sim.supplyAndBorrowComet.step.utilization": "The market utilization increases, causing the interest rate model to adjust the borrow and supply rates. Base suppliers earn higher yields.",
-  "sim.supplyAndBorrowComet.step.utilization.mobile": "Utilization & rates adjust"
+  "sim.supplyAndBorrowComet.step.utilization.mobile": "Utilization & rates adjust",
+
+  "compose.erc20.role": "The Comet contract is itself a fully compatible ERC-20 wrapper for the base asset — balanceOf reports supplied principal plus accrued interest — and collateral is supplied via standard ERC-20 approvals.",
+  "compose.erc712.role": "allowBySig authorizes an account manager with an EIP-712 offline signature instead of an on-chain allow transaction."
 }

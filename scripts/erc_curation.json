@@ -1,0 +1,2382 @@
+{
+  "_readme": [
+    "Human-editable curation for scripts/ingest_ercs.py.",
+    "draft_include / stagnant_include: EIP numbers force-included in the catalog.",
+    "exclude: EIP numbers or slugs force-excluded (existing site entries can never be excluded).",
+    "The three lists above are PRESERVED across runs; edit them freely.",
+    "draft_ranked / stagnant_ranked are informational (in-degree desc, created asc) and are REGENERATED on every run."
+  ],
+  "draft_include": [
+    7579,
+    6944,
+    8004,
+    3009,
+    7562,
+    8119,
+    725,
+    3770,
+    6860,
+    7572,
+    7700,
+    7710,
+    8023,
+    8048,
+    8049,
+    8086,
+    8127,
+    8179,
+    998,
+    838,
+    5573,
+    4883,
+    4972,
+    5173,
+    5115,
+    5189,
+    7390,
+    5604,
+    5630,
+    5700,
+    5727,
+    5791,
+    6123,
+    6170,
+    6229,
+    6327,
+    6604,
+    6662,
+    6682,
+    7595,
+    6785,
+    6786,
+    6787,
+    6823,
+    6806,
+    6821,
+    6864,
+    6865,
+    6900,
+    6932,
+    6981,
+    6960,
+    7085,
+    7721,
+    7087,
+    7093,
+    7444,
+    7196,
+    7204,
+    7729,
+    7254,
+    7425,
+    7272,
+    7280,
+    7303,
+    7406,
+    7405,
+    7410,
+    7412,
+    7496
+  ],
+  "stagnant_include": [
+    1066,
+    634,
+    1900,
+    1996,
+    2304,
+    1077,
+    1577,
+    831,
+    926,
+    1062,
+    1261,
+    2018,
+    2009,
+    2019,
+    2021,
+    2157,
+    5218,
+    205,
+    801,
+    823
+  ],
+  "exclude": [],
+  "draft_ranked": [
+    {
+      "eip": 7579,
+      "inDegree": 4,
+      "created": "2023-12-14",
+      "title": "Minimal Modular Smart Accounts"
+    },
+    {
+      "eip": 6944,
+      "inDegree": 3,
+      "created": "2023-04-27",
+      "title": "ERC-5219 Resolve Mode"
+    },
+    {
+      "eip": 8004,
+      "inDegree": 3,
+      "created": "2025-08-13",
+      "title": "Trustless Agents"
+    },
+    {
+      "eip": 3009,
+      "inDegree": 2,
+      "created": "2020-09-28",
+      "title": "Transfer With Authorization"
+    },
+    {
+      "eip": 7562,
+      "inDegree": 2,
+      "created": "2023-09-01",
+      "title": "Account Abstraction Validation Scope Rules"
+    },
+    {
+      "eip": 8119,
+      "inDegree": 2,
+      "created": "2025-01-06",
+      "title": "Parameterized Storage Keys"
+    },
+    {
+      "eip": 725,
+      "inDegree": 1,
+      "created": "2017-10-02",
+      "title": "General data key/value store and execution"
+    },
+    {
+      "eip": 3770,
+      "inDegree": 1,
+      "created": "2021-08-26",
+      "title": "Chain-specific addresses"
+    },
+    {
+      "eip": 6860,
+      "inDegree": 1,
+      "created": "2023-09-29",
+      "title": "Web3 URL to EVM Call Message Translation"
+    },
+    {
+      "eip": 7572,
+      "inDegree": 1,
+      "created": "2023-12-06",
+      "title": "Contract-level metadata via `contractURI()`"
+    },
+    {
+      "eip": 7700,
+      "inDegree": 1,
+      "created": "2024-04-30",
+      "title": "Cross-chain Storage Router Protocol"
+    },
+    {
+      "eip": 7710,
+      "inDegree": 1,
+      "created": "2024-05-20",
+      "title": "Smart Contract Delegation"
+    },
+    {
+      "eip": 8023,
+      "inDegree": 1,
+      "created": "2025-09-16",
+      "title": "Multi-step Contract Ownership"
+    },
+    {
+      "eip": 8048,
+      "inDegree": 1,
+      "created": "2025-09-30",
+      "title": "Onchain Metadata for Token Registries"
+    },
+    {
+      "eip": 8049,
+      "inDegree": 1,
+      "created": "2025-10-10",
+      "title": "Contract-Level Onchain Metadata"
+    },
+    {
+      "eip": 8086,
+      "inDegree": 1,
+      "created": "2025-11-19",
+      "title": "Privacy Token"
+    },
+    {
+      "eip": 8127,
+      "inDegree": 1,
+      "created": "2026-01-14",
+      "title": "Human Readable Token Identifiers"
+    },
+    {
+      "eip": 8179,
+      "inDegree": 1,
+      "created": "2026-02-08",
+      "title": "Blob Space Segments"
+    },
+    {
+      "eip": 998,
+      "inDegree": 0,
+      "created": "2018-07-07",
+      "title": "Composable Non-Fungible Token"
+    },
+    {
+      "eip": 838,
+      "inDegree": 0,
+      "created": "2020-08-20",
+      "title": "ABI specification for REVERT reason string"
+    },
+    {
+      "eip": 5573,
+      "inDegree": 0,
+      "created": "2021-07-20",
+      "title": "Sign-In with Ethereum Capabilities, ReCaps"
+    },
+    {
+      "eip": 4883,
+      "inDegree": 0,
+      "created": "2022-03-08",
+      "title": "Composable SVG NFT"
+    },
+    {
+      "eip": 4972,
+      "inDegree": 0,
+      "created": "2022-04-04",
+      "title": "Name-Owned Account"
+    },
+    {
+      "eip": 5173,
+      "inDegree": 0,
+      "created": "2022-05-08",
+      "title": "NFT Future Rewards (nFR)"
+    },
+    {
+      "eip": 5115,
+      "inDegree": 0,
+      "created": "2022-05-30",
+      "title": "SY Token"
+    },
+    {
+      "eip": 5189,
+      "inDegree": 0,
+      "created": "2022-06-29",
+      "title": "Account Abstraction via Endorsed Operations"
+    },
+    {
+      "eip": 7390,
+      "inDegree": 0,
+      "created": "2022-09-02",
+      "title": "Vanilla Options for ERC-20 Tokens"
+    },
+    {
+      "eip": 5604,
+      "inDegree": 0,
+      "created": "2022-09-05",
+      "title": "NFT Lien"
+    },
+    {
+      "eip": 5630,
+      "inDegree": 0,
+      "created": "2022-09-07",
+      "title": "New approach for encryption / decryption"
+    },
+    {
+      "eip": 5700,
+      "inDegree": 0,
+      "created": "2022-09-22",
+      "title": "Bindable Token Interface"
+    },
+    {
+      "eip": 5727,
+      "inDegree": 0,
+      "created": "2022-09-28",
+      "title": "Semi-Fungible Soulbound Token"
+    },
+    {
+      "eip": 5791,
+      "inDegree": 0,
+      "created": "2022-10-17",
+      "title": "Physical Backed Tokens"
+    },
+    {
+      "eip": 6123,
+      "inDegree": 0,
+      "created": "2022-12-13",
+      "title": "Smart Derivative Contract"
+    },
+    {
+      "eip": 6170,
+      "inDegree": 0,
+      "created": "2022-12-19",
+      "title": "Cross-Chain Messaging Interface"
+    },
+    {
+      "eip": 6229,
+      "inDegree": 0,
+      "created": "2022-12-21",
+      "title": "Tokenized Vaults with Lock-in Period"
+    },
+    {
+      "eip": 6327,
+      "inDegree": 0,
+      "created": "2023-01-13",
+      "title": "Elastic Signature"
+    },
+    {
+      "eip": 6604,
+      "inDegree": 0,
+      "created": "2023-03-03",
+      "title": "Abstract Token"
+    },
+    {
+      "eip": 6662,
+      "inDegree": 0,
+      "created": "2023-03-09",
+      "title": "AA Account Metadata For Authentication"
+    },
+    {
+      "eip": 6682,
+      "inDegree": 0,
+      "created": "2023-03-12",
+      "title": "NFT Flashloans"
+    },
+    {
+      "eip": 7595,
+      "inDegree": 0,
+      "created": "2023-03-13",
+      "title": "Collateralized NFT"
+    },
+    {
+      "eip": 6785,
+      "inDegree": 0,
+      "created": "2023-03-27",
+      "title": "ERC-721 Utilities Information Extension"
+    },
+    {
+      "eip": 6786,
+      "inDegree": 0,
+      "created": "2023-03-27",
+      "title": "Registry for royalties payment for NFTs"
+    },
+    {
+      "eip": 6787,
+      "inDegree": 0,
+      "created": "2023-03-27",
+      "title": "Order Book DEX with Two Phase Withdrawal"
+    },
+    {
+      "eip": 6823,
+      "inDegree": 0,
+      "created": "2023-03-29",
+      "title": "Token Mapping Slot Retrieval Extension"
+    },
+    {
+      "eip": 6806,
+      "inDegree": 0,
+      "created": "2023-03-30",
+      "title": "ERC-721 Holding Time Tracking"
+    },
+    {
+      "eip": 6821,
+      "inDegree": 0,
+      "created": "2023-04-02",
+      "title": "Support ENS Name for Web3 URL"
+    },
+    {
+      "eip": 6864,
+      "inDegree": 0,
+      "created": "2023-04-05",
+      "title": "Upgradable Fungible Token"
+    },
+    {
+      "eip": 6865,
+      "inDegree": 0,
+      "created": "2023-04-10",
+      "title": "On-Chain EIP-712 Visualization"
+    },
+    {
+      "eip": 6900,
+      "inDegree": 0,
+      "created": "2023-04-18",
+      "title": "Modular Smart Contract Accounts"
+    },
+    {
+      "eip": 6932,
+      "inDegree": 0,
+      "created": "2023-04-25",
+      "title": "Subscription-Based Token"
+    },
+    {
+      "eip": 6981,
+      "inDegree": 0,
+      "created": "2023-04-25",
+      "title": "Reserved Ownership Accounts"
+    },
+    {
+      "eip": 6960,
+      "inDegree": 0,
+      "created": "2023-04-30",
+      "title": "Dual Layer Token"
+    },
+    {
+      "eip": 7085,
+      "inDegree": 0,
+      "created": "2023-05-02",
+      "title": "NFT Relationship Enhancement"
+    },
+    {
+      "eip": 7721,
+      "inDegree": 0,
+      "created": "2023-05-25",
+      "title": "Lockable Extension for ERC-1155"
+    },
+    {
+      "eip": 7087,
+      "inDegree": 0,
+      "created": "2023-05-28",
+      "title": "MIME type for Web3 URL in Auto Mode"
+    },
+    {
+      "eip": 7093,
+      "inDegree": 0,
+      "created": "2023-05-29",
+      "title": "Social Recovery Interface"
+    },
+    {
+      "eip": 7444,
+      "inDegree": 0,
+      "created": "2023-06-05",
+      "title": "Time Locks Maturity"
+    },
+    {
+      "eip": 7196,
+      "inDegree": 0,
+      "created": "2023-06-21",
+      "title": "Simple token, Simplified ERC-20"
+    },
+    {
+      "eip": 7204,
+      "inDegree": 0,
+      "created": "2023-06-21",
+      "title": "Contract wallet management token"
+    },
+    {
+      "eip": 7729,
+      "inDegree": 0,
+      "created": "2023-06-24",
+      "title": "Token with Metadata"
+    },
+    {
+      "eip": 7254,
+      "inDegree": 0,
+      "created": "2023-06-29",
+      "title": "Token Revenue Sharing"
+    },
+    {
+      "eip": 7425,
+      "inDegree": 0,
+      "created": "2023-06-30",
+      "title": "Tokenized Reserve"
+    },
+    {
+      "eip": 7272,
+      "inDegree": 0,
+      "created": "2023-07-03",
+      "title": "Ethereum Access Token"
+    },
+    {
+      "eip": 7280,
+      "inDegree": 0,
+      "created": "2023-07-04",
+      "title": "NFT Metadata Extension like JSON-LD"
+    },
+    {
+      "eip": 7303,
+      "inDegree": 0,
+      "created": "2023-07-09",
+      "title": "Token-Controlled Token Circulation"
+    },
+    {
+      "eip": 7406,
+      "inDegree": 0,
+      "created": "2023-07-23",
+      "title": "Multi-Namespace Onchain Registry"
+    },
+    {
+      "eip": 7405,
+      "inDegree": 0,
+      "created": "2023-07-26",
+      "title": "Portable Smart Contract Accounts"
+    },
+    {
+      "eip": 7410,
+      "inDegree": 0,
+      "created": "2023-07-26",
+      "title": "ERC-20 Update Allowance By Spender"
+    },
+    {
+      "eip": 7412,
+      "inDegree": 0,
+      "created": "2023-07-26",
+      "title": "On-Demand Off-Chain Data Retrieval"
+    },
+    {
+      "eip": 7496,
+      "inDegree": 0,
+      "created": "2023-07-28",
+      "title": "NFT Dynamic Traits"
+    },
+    {
+      "eip": 7498,
+      "inDegree": 0,
+      "created": "2023-07-28",
+      "title": "NFT Redeemables"
+    },
+    {
+      "eip": 7484,
+      "inDegree": 0,
+      "created": "2023-08-14",
+      "title": "Registry Extension for ERC-7579"
+    },
+    {
+      "eip": 7508,
+      "inDegree": 0,
+      "created": "2023-08-15",
+      "title": "Dynamic On-Chain Token Attributes Repository"
+    },
+    {
+      "eip": 7507,
+      "inDegree": 0,
+      "created": "2023-08-24",
+      "title": "Multi-User NFT Extension"
+    },
+    {
+      "eip": 7510,
+      "inDegree": 0,
+      "created": "2023-08-24",
+      "title": "Cross-Contract Hierarchical NFT"
+    },
+    {
+      "eip": 7506,
+      "inDegree": 0,
+      "created": "2023-08-31",
+      "title": "Trusted Hint Registry"
+    },
+    {
+      "eip": 7527,
+      "inDegree": 0,
+      "created": "2023-09-03",
+      "title": "Token Bound Function Oracle AMM"
+    },
+    {
+      "eip": 7511,
+      "inDegree": 0,
+      "created": "2023-09-04",
+      "title": "Minimal Proxy Contract with PUSH0"
+    },
+    {
+      "eip": 7509,
+      "inDegree": 0,
+      "created": "2023-09-05",
+      "title": "Entity Component System"
+    },
+    {
+      "eip": 7512,
+      "inDegree": 0,
+      "created": "2023-09-05",
+      "title": "Onchain Representation for Audits"
+    },
+    {
+      "eip": 7513,
+      "inDegree": 0,
+      "created": "2023-09-06",
+      "title": "Smart NFT - A Component for Intent-Centric"
+    },
+    {
+      "eip": 7517,
+      "inDegree": 0,
+      "created": "2023-09-12",
+      "title": "Content Consent for AI/ML Data Mining"
+    },
+    {
+      "eip": 7521,
+      "inDegree": 0,
+      "created": "2023-09-19",
+      "title": "General Intents for Smart Contract Wallets"
+    },
+    {
+      "eip": 7522,
+      "inDegree": 0,
+      "created": "2023-09-20",
+      "title": "OIDC ZK Verifier for AA Account"
+    },
+    {
+      "eip": 7524,
+      "inDegree": 0,
+      "created": "2023-09-24",
+      "title": "PLUME Signature in Wallets"
+    },
+    {
+      "eip": 7529,
+      "inDegree": 0,
+      "created": "2023-09-30",
+      "title": "Contract Discovery and eTLD+1 Association"
+    },
+    {
+      "eip": 7533,
+      "inDegree": 0,
+      "created": "2023-10-11",
+      "title": "Public Cross Port"
+    },
+    {
+      "eip": 7538,
+      "inDegree": 0,
+      "created": "2023-10-18",
+      "title": "Multiplicative Tokens"
+    },
+    {
+      "eip": 7546,
+      "inDegree": 0,
+      "created": "2023-10-25",
+      "title": "Upgradeable Clone for Scalable Contracts"
+    },
+    {
+      "eip": 7561,
+      "inDegree": 0,
+      "created": "2023-10-29",
+      "title": "Simple NFT, Simplified ERC-721"
+    },
+    {
+      "eip": 7548,
+      "inDegree": 0,
+      "created": "2023-10-31",
+      "title": "Open IP Protocol built on NFTs"
+    },
+    {
+      "eip": 7574,
+      "inDegree": 0,
+      "created": "2023-11-02",
+      "title": "Authentication SBT using Credential"
+    },
+    {
+      "eip": 7555,
+      "inDegree": 0,
+      "created": "2023-11-10",
+      "title": "Single Sign-On for Account Discovery"
+    },
+    {
+      "eip": 7564,
+      "inDegree": 0,
+      "created": "2023-11-21",
+      "title": "Contract wallet management NFT"
+    },
+    {
+      "eip": 7565,
+      "inDegree": 0,
+      "created": "2023-11-27",
+      "title": "Perpetual Contract NFTs as Collateral"
+    },
+    {
+      "eip": 7566,
+      "inDegree": 0,
+      "created": "2023-11-28",
+      "title": "Multiplayer Game Communication"
+    },
+    {
+      "eip": 7573,
+      "inDegree": 0,
+      "created": "2023-12-05",
+      "title": "Conditional-upon-Transfer-Decryption for DvP"
+    },
+    {
+      "eip": 7580,
+      "inDegree": 0,
+      "created": "2023-12-13",
+      "title": "Advertisement Tracking Interface"
+    },
+    {
+      "eip": 7582,
+      "inDegree": 0,
+      "created": "2023-12-25",
+      "title": "Modular Accounts with Delegated Validation"
+    },
+    {
+      "eip": 7585,
+      "inDegree": 0,
+      "created": "2023-12-27",
+      "title": "MixHash and Public Data Storage Proofs"
+    },
+    {
+      "eip": 7589,
+      "inDegree": 0,
+      "created": "2023-12-28",
+      "title": "Semi-Fungible Token Roles"
+    },
+    {
+      "eip": 7597,
+      "inDegree": 0,
+      "created": "2024-01-15",
+      "title": "Signature Validation Extension for Permit"
+    },
+    {
+      "eip": 7598,
+      "inDegree": 0,
+      "created": "2024-01-15",
+      "title": "Use contract signature for signed transfer"
+    },
+    {
+      "eip": 7603,
+      "inDegree": 0,
+      "created": "2024-01-25",
+      "title": "ERC-1155 Multi-Asset extension"
+    },
+    {
+      "eip": 7604,
+      "inDegree": 0,
+      "created": "2024-01-27",
+      "title": "ERC-1155 Permit Approvals"
+    },
+    {
+      "eip": 7871,
+      "inDegree": 0,
+      "created": "2024-01-29",
+      "title": "Wallet Signing API"
+    },
+    {
+      "eip": 7615,
+      "inDegree": 0,
+      "created": "2024-02-03",
+      "title": "Atomic Push-based Data Feed Among Contracts"
+    },
+    {
+      "eip": 7613,
+      "inDegree": 0,
+      "created": "2024-02-04",
+      "title": "Puppet Proxy Contract"
+    },
+    {
+      "eip": 7730,
+      "inDegree": 0,
+      "created": "2024-02-07",
+      "title": "Structured Data Clear Signing Format"
+    },
+    {
+      "eip": 7617,
+      "inDegree": 0,
+      "created": "2024-02-08",
+      "title": "Chunk support for ERC-5219 mode in Web3 URL"
+    },
+    {
+      "eip": 7618,
+      "inDegree": 0,
+      "created": "2024-02-08",
+      "title": "Content encoding in ERC-5219 mode Web3 URL"
+    },
+    {
+      "eip": 7632,
+      "inDegree": 0,
+      "created": "2024-02-08",
+      "title": "Interfaces for Named Token"
+    },
+    {
+      "eip": 7621,
+      "inDegree": 0,
+      "created": "2024-02-11",
+      "title": "Basket Token"
+    },
+    {
+      "eip": 7629,
+      "inDegree": 0,
+      "created": "2024-02-18",
+      "title": "ERC-20/ERC-721 Unified Token Interface"
+    },
+    {
+      "eip": 7638,
+      "inDegree": 0,
+      "created": "2024-02-26",
+      "title": "Batch Calls Encoding in SCA"
+    },
+    {
+      "eip": 7641,
+      "inDegree": 0,
+      "created": "2024-02-28",
+      "title": "Intrinsic RevShare Token"
+    },
+    {
+      "eip": 7649,
+      "inDegree": 0,
+      "created": "2024-02-28",
+      "title": "Bonding curve-embedded liquidity for NFTs"
+    },
+    {
+      "eip": 7644,
+      "inDegree": 0,
+      "created": "2024-03-01",
+      "title": "ERC-721 Name Registry Extension"
+    },
+    {
+      "eip": 7651,
+      "inDegree": 0,
+      "created": "2024-03-05",
+      "title": "Fractionally Represented Non-Fungible Token"
+    },
+    {
+      "eip": 7652,
+      "inDegree": 0,
+      "created": "2024-03-10",
+      "title": "ERC-721 Guarantee Extension"
+    },
+    {
+      "eip": 7654,
+      "inDegree": 0,
+      "created": "2024-03-13",
+      "title": "Request Method Types"
+    },
+    {
+      "eip": 7662,
+      "inDegree": 0,
+      "created": "2024-03-26",
+      "title": "AI Agent NFTs"
+    },
+    {
+      "eip": 7695,
+      "inDegree": 0,
+      "created": "2024-04-02",
+      "title": "Ownership Delegation and Context for ERC-721"
+    },
+    {
+      "eip": 7679,
+      "inDegree": 0,
+      "created": "2024-04-05",
+      "title": "UserOperation Builder"
+    },
+    {
+      "eip": 7681,
+      "inDegree": 0,
+      "created": "2024-04-08",
+      "title": "Dual Nature Multi Token Protocol"
+    },
+    {
+      "eip": 7682,
+      "inDegree": 0,
+      "created": "2024-04-09",
+      "title": "Auxiliary Funds Capability"
+    },
+    {
+      "eip": 7683,
+      "inDegree": 0,
+      "created": "2024-04-11",
+      "title": "Cross Chain Intents"
+    },
+    {
+      "eip": 7694,
+      "inDegree": 0,
+      "created": "2024-04-18",
+      "title": "Solana Storage Router"
+    },
+    {
+      "eip": 7699,
+      "inDegree": 0,
+      "created": "2024-04-26",
+      "title": "ERC-20 Transfer Reference Extension"
+    },
+    {
+      "eip": 7715,
+      "inDegree": 0,
+      "created": "2024-05-24",
+      "title": "Request Permissions from Wallets"
+    },
+    {
+      "eip": 7739,
+      "inDegree": 0,
+      "created": "2024-05-28",
+      "title": "Readable Typed Signatures for Smart Accounts"
+    },
+    {
+      "eip": 7741,
+      "inDegree": 0,
+      "created": "2024-06-03",
+      "title": "Authorize Operator"
+    },
+    {
+      "eip": 7720,
+      "inDegree": 0,
+      "created": "2024-06-09",
+      "title": "Deferred Token Transfer"
+    },
+    {
+      "eip": 7722,
+      "inDegree": 0,
+      "created": "2024-06-09",
+      "title": "Opaque Token"
+    },
+    {
+      "eip": 7726,
+      "inDegree": 0,
+      "created": "2024-06-20",
+      "title": "Common Quote Oracle"
+    },
+    {
+      "eip": 7738,
+      "inDegree": 0,
+      "created": "2024-07-01",
+      "title": "Permissionless Script Registry"
+    },
+    {
+      "eip": 7985,
+      "inDegree": 0,
+      "created": "2024-07-04",
+      "title": "Gateway Attributes for Message Control"
+    },
+    {
+      "eip": 7754,
+      "inDegree": 0,
+      "created": "2024-07-29",
+      "title": "Tamperproof Extension Wallets API (TWIST)"
+    },
+    {
+      "eip": 7760,
+      "inDegree": 0,
+      "created": "2024-08-19",
+      "title": "Minimal Upgradeable Proxies"
+    },
+    {
+      "eip": 7765,
+      "inDegree": 0,
+      "created": "2024-08-20",
+      "title": "Privileged Non-Fungible Tokens Tied To RWA"
+    },
+    {
+      "eip": 7769,
+      "inDegree": 0,
+      "created": "2024-08-23",
+      "title": "JSON-RPC API for ERC-4337"
+    },
+    {
+      "eip": 7831,
+      "inDegree": 0,
+      "created": "2024-08-30",
+      "title": "Multi-Chain Addressing"
+    },
+    {
+      "eip": 7770,
+      "inDegree": 0,
+      "created": "2024-09-17",
+      "title": "Fractional Reserve Token"
+    },
+    {
+      "eip": 7774,
+      "inDegree": 0,
+      "created": "2024-09-20",
+      "title": "Cache invalidation in ERC-5219 mode Web3 URL"
+    },
+    {
+      "eip": 7785,
+      "inDegree": 0,
+      "created": "2024-09-26",
+      "title": "Onchain registration of chain identifiers"
+    },
+    {
+      "eip": 7780,
+      "inDegree": 0,
+      "created": "2024-10-01",
+      "title": "Validation Module Extension for ERC-7579"
+    },
+    {
+      "eip": 7779,
+      "inDegree": 0,
+      "created": "2024-10-02",
+      "title": "Interoperable Delegated Accounts"
+    },
+    {
+      "eip": 7803,
+      "inDegree": 0,
+      "created": "2024-10-08",
+      "title": "EIP-712 Extensions for Account Abstraction"
+    },
+    {
+      "eip": 7787,
+      "inDegree": 0,
+      "created": "2024-10-15",
+      "title": "Soulbound Degradable Governance"
+    },
+    {
+      "eip": 7794,
+      "inDegree": 0,
+      "created": "2024-10-22",
+      "title": "Grant Registry"
+    },
+    {
+      "eip": 7795,
+      "inDegree": 0,
+      "created": "2024-10-22",
+      "title": "Wallet Call Token Capabilities"
+    },
+    {
+      "eip": 7802,
+      "inDegree": 0,
+      "created": "2024-10-30",
+      "title": "Token With Mint/Burn Access Across Chains"
+    },
+    {
+      "eip": 7806,
+      "inDegree": 0,
+      "created": "2024-11-02",
+      "title": "Minimal intent-centric EOA smart account"
+    },
+    {
+      "eip": 7811,
+      "inDegree": 0,
+      "created": "2024-11-07",
+      "title": "Wallet Asset Discovery"
+    },
+    {
+      "eip": 7827,
+      "inDegree": 0,
+      "created": "2024-11-07",
+      "title": "JSON Contract with Value Version Control"
+    },
+    {
+      "eip": 7845,
+      "inDegree": 0,
+      "created": "2024-11-07",
+      "title": "Universal Orchestrator RPC"
+    },
+    {
+      "eip": 7821,
+      "inDegree": 0,
+      "created": "2024-11-21",
+      "title": "Minimal Batch Executor Interface"
+    },
+    {
+      "eip": 7836,
+      "inDegree": 0,
+      "created": "2024-12-06",
+      "title": "Wallet Call Preparation API"
+    },
+    {
+      "eip": 7841,
+      "inDegree": 0,
+      "created": "2024-12-12",
+      "title": "Cross-chain Message Format and Mailbox"
+    },
+    {
+      "eip": 7846,
+      "inDegree": 0,
+      "created": "2024-12-15",
+      "title": "Wallet Connection API"
+    },
+    {
+      "eip": 7847,
+      "inDegree": 0,
+      "created": "2024-12-18",
+      "title": "Social Media NFTs"
+    },
+    {
+      "eip": 7856,
+      "inDegree": 0,
+      "created": "2025-01-01",
+      "title": "Chain-Specific Payment Requests"
+    },
+    {
+      "eip": 7876,
+      "inDegree": 0,
+      "created": "2025-01-03",
+      "title": "Ethereum Network Configuration for DApps"
+    },
+    {
+      "eip": 7861,
+      "inDegree": 0,
+      "created": "2025-01-14",
+      "title": "ERC-721 Verifiable Credential Extension"
+    },
+    {
+      "eip": 7884,
+      "inDegree": 0,
+      "created": "2025-01-23",
+      "title": "Operation Router"
+    },
+    {
+      "eip": 7891,
+      "inDegree": 0,
+      "created": "2025-02-15",
+      "title": "Splitting and Merging of NFTs"
+    },
+    {
+      "eip": 7887,
+      "inDegree": 0,
+      "created": "2025-02-18",
+      "title": "Cancelation for ERC-7540 Tokenized Vaults"
+    },
+    {
+      "eip": 7888,
+      "inDegree": 0,
+      "created": "2025-02-18",
+      "title": "Crosschain Broadcaster"
+    },
+    {
+      "eip": 7895,
+      "inDegree": 0,
+      "created": "2025-02-18",
+      "title": "API for Hierarchical Accounts"
+    },
+    {
+      "eip": 7902,
+      "inDegree": 0,
+      "created": "2025-03-01",
+      "title": "Wallet Capabilities for Account Abstraction"
+    },
+    {
+      "eip": 7920,
+      "inDegree": 0,
+      "created": "2025-03-20",
+      "title": "Composite EIP-712 Signatures"
+    },
+    {
+      "eip": 7929,
+      "inDegree": 0,
+      "created": "2025-04-01",
+      "title": "PermaLink Asset Bound Token"
+    },
+    {
+      "eip": 7947,
+      "inDegree": 0,
+      "created": "2025-05-07",
+      "title": "Account Abstraction Recovery Interface"
+    },
+    {
+      "eip": 7946,
+      "inDegree": 0,
+      "created": "2025-05-10",
+      "title": "Unidirectional Wallet Uplink aka UWULink"
+    },
+    {
+      "eip": 7955,
+      "inDegree": 0,
+      "created": "2025-05-15",
+      "title": "Permissionless CREATE2 Factory"
+    },
+    {
+      "eip": 7962,
+      "inDegree": 0,
+      "created": "2025-05-16",
+      "title": "Key Hash Based Tokens"
+    },
+    {
+      "eip": 8273,
+      "inDegree": 0,
+      "created": "2025-05-26",
+      "title": "Attestation-Gated Agentic Actions"
+    },
+    {
+      "eip": 7964,
+      "inDegree": 0,
+      "created": "2025-06-05",
+      "title": "Crosschain EIP-712 Signatures"
+    },
+    {
+      "eip": 7965,
+      "inDegree": 0,
+      "created": "2025-06-06",
+      "title": "Proof-based Broadcast in ERC-7786 Gateways"
+    },
+    {
+      "eip": 7968,
+      "inDegree": 0,
+      "created": "2025-06-11",
+      "title": "Owner-Authorized Token Transfer Protocol"
+    },
+    {
+      "eip": 7969,
+      "inDegree": 0,
+      "created": "2025-06-11",
+      "title": "DomainKeys Identified Mail (DKIM) Registry"
+    },
+    {
+      "eip": 8000,
+      "inDegree": 0,
+      "created": "2025-07-02",
+      "title": "Operator contract for non delegated EOAs"
+    },
+    {
+      "eip": 7984,
+      "inDegree": 0,
+      "created": "2025-07-03",
+      "title": "Confidential Fungible Token"
+    },
+    {
+      "eip": 7996,
+      "inDegree": 0,
+      "created": "2025-07-07",
+      "title": "Contract Feature Detection"
+    },
+    {
+      "eip": 7988,
+      "inDegree": 0,
+      "created": "2025-07-08",
+      "title": "Minimal Avatar Smart Wallet (MASW)"
+    },
+    {
+      "eip": 7992,
+      "inDegree": 0,
+      "created": "2025-07-23",
+      "title": "Verifiable ML Model Inference (ZKML)"
+    },
+    {
+      "eip": 8002,
+      "inDegree": 0,
+      "created": "2025-08-07",
+      "title": "Simplified Payment Verification Gateway"
+    },
+    {
+      "eip": 8017,
+      "inDegree": 0,
+      "created": "2025-08-31",
+      "title": "Payout Race"
+    },
+    {
+      "eip": 8040,
+      "inDegree": 0,
+      "created": "2025-09-06",
+      "title": "ESG Tokenization Protocol"
+    },
+    {
+      "eip": 8033,
+      "inDegree": 0,
+      "created": "2025-09-28",
+      "title": "Agent Council Oracles"
+    },
+    {
+      "eip": 8054,
+      "inDegree": 0,
+      "created": "2025-10-10",
+      "title": "Forkable ERC-20 Token"
+    },
+    {
+      "eip": 8041,
+      "inDegree": 0,
+      "created": "2025-10-11",
+      "title": "Fixed-Supply Agent NFT Collections"
+    },
+    {
+      "eip": 8047,
+      "inDegree": 0,
+      "created": "2025-10-15",
+      "title": "Forensic Token (Forest)"
+    },
+    {
+      "eip": 8065,
+      "inDegree": 0,
+      "created": "2025-10-18",
+      "title": "Zero Knowledge Token Wrapper"
+    },
+    {
+      "eip": 8056,
+      "inDegree": 0,
+      "created": "2025-10-20",
+      "title": "Scaled UI Amount Extension for ERC-20 Tokens"
+    },
+    {
+      "eip": 8074,
+      "inDegree": 0,
+      "created": "2025-10-30",
+      "title": "Self-Describing Bytes via EIP-712 Selectors"
+    },
+    {
+      "eip": 8084,
+      "inDegree": 0,
+      "created": "2025-11-10",
+      "title": "Zero-knowledge proof metadata"
+    },
+    {
+      "eip": 8085,
+      "inDegree": 0,
+      "created": "2025-11-15",
+      "title": "Dual-Mode Fungible Tokens"
+    },
+    {
+      "eip": 8092,
+      "inDegree": 0,
+      "created": "2025-11-25",
+      "title": "Associated Accounts"
+    },
+    {
+      "eip": 8100,
+      "inDegree": 0,
+      "created": "2025-12-01",
+      "title": "Representable Contract State"
+    },
+    {
+      "eip": 8121,
+      "inDegree": 0,
+      "created": "2025-12-12",
+      "title": "Cross-Chain Function Calls via Hooks"
+    },
+    {
+      "eip": 8106,
+      "inDegree": 0,
+      "created": "2025-12-16",
+      "title": "RWA Event-based Compliance Framework"
+    },
+    {
+      "eip": 8107,
+      "inDegree": 0,
+      "created": "2025-12-16",
+      "title": "ENS Trust Registry for Agent Coordination"
+    },
+    {
+      "eip": 8122,
+      "inDegree": 0,
+      "created": "2025-12-17",
+      "title": "Minimal Agent Registry"
+    },
+    {
+      "eip": 8110,
+      "inDegree": 0,
+      "created": "2025-12-20",
+      "title": "Domain Architecture for Diamonds"
+    },
+    {
+      "eip": 8113,
+      "inDegree": 0,
+      "created": "2025-12-25",
+      "title": "Series Accounting for Incentivized Vaults"
+    },
+    {
+      "eip": 8117,
+      "inDegree": 0,
+      "created": "2025-12-30",
+      "title": "Anti-Poisoning Compact EVM Address Format"
+    },
+    {
+      "eip": 8153,
+      "inDegree": 0,
+      "created": "2026-02-07",
+      "title": "Facet-Based Diamonds"
+    },
+    {
+      "eip": 8180,
+      "inDegree": 0,
+      "created": "2026-02-21",
+      "title": "Blob Authenticated Messaging"
+    },
+    {
+      "eip": 8183,
+      "inDegree": 0,
+      "created": "2026-02-25",
+      "title": "Agentic Commerce"
+    },
+    {
+      "eip": 8199,
+      "inDegree": 0,
+      "created": "2026-03-19",
+      "title": "Sandboxed Smart Wallet"
+    },
+    {
+      "eip": 8217,
+      "inDegree": 0,
+      "created": "2026-04-05",
+      "title": "Agent NFT Identity Bindings"
+    },
+    {
+      "eip": 8226,
+      "inDegree": 0,
+      "created": "2026-04-12",
+      "title": "Regulated Agent Mandate"
+    },
+    {
+      "eip": 8257,
+      "inDegree": 0,
+      "created": "2026-04-17",
+      "title": "Agent Tool Registry"
+    },
+    {
+      "eip": 8255,
+      "inDegree": 0,
+      "created": "2026-05-06",
+      "title": "Expiring Token Approvals"
+    },
+    {
+      "eip": 8290,
+      "inDegree": 0,
+      "created": "2026-06-05",
+      "title": "Shielded Note Teleportation"
+    }
+  ],
+  "stagnant_ranked": [
+    {
+      "eip": 1066,
+      "inDegree": 5,
+      "created": "2018-05-05",
+      "title": "Status Codes"
+    },
+    {
+      "eip": 634,
+      "inDegree": 3,
+      "created": "2017-05-17",
+      "title": "Storage of text records in ENS"
+    },
+    {
+      "eip": 1900,
+      "inDegree": 3,
+      "created": "2019-03-28",
+      "title": "dType - Decentralized Type System for EVM"
+    },
+    {
+      "eip": 1996,
+      "inDegree": 3,
+      "created": "2019-04-10",
+      "title": "Holdable Token"
+    },
+    {
+      "eip": 2304,
+      "inDegree": 3,
+      "created": "2019-09-09",
+      "title": "Multichain address resolution for ENS"
+    },
+    {
+      "eip": 1077,
+      "inDegree": 2,
+      "created": "2018-05-04",
+      "title": "Gas relay for contract calls"
+    },
+    {
+      "eip": 1577,
+      "inDegree": 2,
+      "created": "2018-11-13",
+      "title": "contenthash field for ENS"
+    },
+    {
+      "eip": 831,
+      "inDegree": 1,
+      "created": "2018-01-15",
+      "title": "URI Format for Ethereum"
+    },
+    {
+      "eip": 926,
+      "inDegree": 1,
+      "created": "2018-03-12",
+      "title": "Address metadata registry"
+    },
+    {
+      "eip": 1062,
+      "inDegree": 1,
+      "created": "2018-05-02",
+      "title": "Formalize IPFS hash into ENS(Ethereum Name Service) resolver"
+    },
+    {
+      "eip": 1261,
+      "inDegree": 1,
+      "created": "2018-07-14",
+      "title": "Membership Verification Token (MVT)"
+    },
+    {
+      "eip": 2018,
+      "inDegree": 1,
+      "created": "2019-04-30",
+      "title": "Clearable Token"
+    },
+    {
+      "eip": 2009,
+      "inDegree": 1,
+      "created": "2019-05-09",
+      "title": "Compliance Service"
+    },
+    {
+      "eip": 2019,
+      "inDegree": 1,
+      "created": "2019-05-10",
+      "title": "Fundable Token"
+    },
+    {
+      "eip": 2021,
+      "inDegree": 1,
+      "created": "2019-05-10",
+      "title": "Payoutable Token"
+    },
+    {
+      "eip": 2157,
+      "inDegree": 1,
+      "created": "2019-06-28",
+      "title": "dType Storage Extension - Decentralized Type System for EVM"
+    },
+    {
+      "eip": 5218,
+      "inDegree": 1,
+      "created": "2022-07-11",
+      "title": "NFT Rights Management"
+    },
+    {
+      "eip": 205,
+      "inDegree": 0,
+      "created": "2017-02-06",
+      "title": "ENS support for contract ABIs"
+    },
+    {
+      "eip": 801,
+      "inDegree": 0,
+      "created": "2017-12-16",
+      "title": "Canary Standard"
+    },
+    {
+      "eip": 823,
+      "inDegree": 0,
+      "created": "2018-01-06",
+      "title": "Token Exchange Standard"
+    },
+    {
+      "eip": 884,
+      "inDegree": 0,
+      "created": "2018-02-14",
+      "title": "DGCL Token"
+    },
+    {
+      "eip": 902,
+      "inDegree": 0,
+      "created": "2018-02-14",
+      "title": "Token Validation"
+    },
+    {
+      "eip": 897,
+      "inDegree": 0,
+      "created": "2018-02-21",
+      "title": "DelegateProxy"
+    },
+    {
+      "eip": 900,
+      "inDegree": 0,
+      "created": "2018-02-22",
+      "title": "Simple Staking Interface"
+    },
+    {
+      "eip": 918,
+      "inDegree": 0,
+      "created": "2018-03-07",
+      "title": "Mineable Token Standard"
+    },
+    {
+      "eip": 927,
+      "inDegree": 0,
+      "created": "2018-03-12",
+      "title": "Generalised authorisations"
+    },
+    {
+      "eip": 1080,
+      "inDegree": 0,
+      "created": "2018-05-02",
+      "title": "Recoverable Token"
+    },
+    {
+      "eip": 1056,
+      "inDegree": 0,
+      "created": "2018-05-03",
+      "title": "Ethereum Lightweight Identity"
+    },
+    {
+      "eip": 1078,
+      "inDegree": 0,
+      "created": "2018-05-04",
+      "title": "Universal login / signup using ENS subdomains"
+    },
+    {
+      "eip": 1081,
+      "inDegree": 0,
+      "created": "2018-05-14",
+      "title": "Standard Bounties"
+    },
+    {
+      "eip": 1129,
+      "inDegree": 0,
+      "created": "2018-05-31",
+      "title": "Standardised DAPP announcements"
+    },
+    {
+      "eip": 1132,
+      "inDegree": 0,
+      "created": "2018-06-03",
+      "title": "Extending ERC20 with token locking capability"
+    },
+    {
+      "eip": 1175,
+      "inDegree": 0,
+      "created": "2018-06-21",
+      "title": "Wallet & shop standard for all tokens (erc20)"
+    },
+    {
+      "eip": 1178,
+      "inDegree": 0,
+      "created": "2018-06-22",
+      "title": "Multi-class Token Standard"
+    },
+    {
+      "eip": 1203,
+      "inDegree": 0,
+      "created": "2018-07-01",
+      "title": "ERC-1203 Multi-Class Token Standard (ERC-20 Extension)"
+    },
+    {
+      "eip": 1207,
+      "inDegree": 0,
+      "created": "2018-07-10",
+      "title": "DAuth Access Delegation Standard"
+    },
+    {
+      "eip": 1337,
+      "inDegree": 0,
+      "created": "2018-08-01",
+      "title": "Subscriptions on the blockchain"
+    },
+    {
+      "eip": 1319,
+      "inDegree": 0,
+      "created": "2018-08-13",
+      "title": "Smart Contract Package Registry Interface"
+    },
+    {
+      "eip": 1386,
+      "inDegree": 0,
+      "created": "2018-09-08",
+      "title": "Attestation management contract"
+    },
+    {
+      "eip": 1387,
+      "inDegree": 0,
+      "created": "2018-09-08",
+      "title": "Merkle Tree Attestations with Privacy enabled"
+    },
+    {
+      "eip": 1388,
+      "inDegree": 0,
+      "created": "2018-09-08",
+      "title": "Attestation Issuers Management List"
+    },
+    {
+      "eip": 1922,
+      "inDegree": 0,
+      "created": "2018-09-14",
+      "title": "zk-SNARK Verifier Standard"
+    },
+    {
+      "eip": 1417,
+      "inDegree": 0,
+      "created": "2018-09-16",
+      "title": "Poll Standard"
+    },
+    {
+      "eip": 1438,
+      "inDegree": 0,
+      "created": "2018-09-21",
+      "title": "dApp Components (avatar) & Universal Wallet"
+    },
+    {
+      "eip": 1444,
+      "inDegree": 0,
+      "created": "2018-09-23",
+      "title": "Localized Messaging with Signal-to-Text"
+    },
+    {
+      "eip": 1462,
+      "inDegree": 0,
+      "created": "2018-10-01",
+      "title": "Base Security Token"
+    },
+    {
+      "eip": 1523,
+      "inDegree": 0,
+      "created": "2018-10-10",
+      "title": "Standard for Insurance Policies as ERC-721 Non Fungible Tokens"
+    },
+    {
+      "eip": 1484,
+      "inDegree": 0,
+      "created": "2018-10-12",
+      "title": "Digital Identity Aggregator"
+    },
+    {
+      "eip": 1491,
+      "inDegree": 0,
+      "created": "2018-10-12",
+      "title": "Human Cost Accounting Standard (Like Gas but for humans)"
+    },
+    {
+      "eip": 1504,
+      "inDegree": 0,
+      "created": "2018-10-17",
+      "title": "Upgradable Smart Contract"
+    },
+    {
+      "eip": 1592,
+      "inDegree": 0,
+      "created": "2018-11-09",
+      "title": "Address and ERC20-compliant transfer rules"
+    },
+    {
+      "eip": 1581,
+      "inDegree": 0,
+      "created": "2018-11-13",
+      "title": "Non-wallet usage of keys derived from BIP-32 trees"
+    },
+    {
+      "eip": 1613,
+      "inDegree": 0,
+      "created": "2018-11-18",
+      "title": "Gas stations network"
+    },
+    {
+      "eip": 1633,
+      "inDegree": 0,
+      "created": "2018-11-18",
+      "title": "Re-Fungible Token Standard (RFT)"
+    },
+    {
+      "eip": 1616,
+      "inDegree": 0,
+      "created": "2018-11-23",
+      "title": "Attribute Registry Standard"
+    },
+    {
+      "eip": 1620,
+      "inDegree": 0,
+      "created": "2018-11-24",
+      "title": "Money Streaming"
+    },
+    {
+      "eip": 1923,
+      "inDegree": 0,
+      "created": "2018-12-22",
+      "title": "zk-SNARK Verifier Registry Standard"
+    },
+    {
+      "eip": 1710,
+      "inDegree": 0,
+      "created": "2019-01-13",
+      "title": "URL Format for Web3 Browsers"
+    },
+    {
+      "eip": 1753,
+      "inDegree": 0,
+      "created": "2019-02-06",
+      "title": "Smart Contract Interface for Licences"
+    },
+    {
+      "eip": 1761,
+      "inDegree": 0,
+      "created": "2019-02-18",
+      "title": "Scoped Approval Interface"
+    },
+    {
+      "eip": 1775,
+      "inDegree": 0,
+      "created": "2019-02-20",
+      "title": "App Keys, application specific wallet accounts"
+    },
+    {
+      "eip": 1812,
+      "inDegree": 0,
+      "created": "2019-03-03",
+      "title": "Ethereum Verifiable Claims"
+    },
+    {
+      "eip": 1822,
+      "inDegree": 0,
+      "created": "2019-03-04",
+      "title": "Universal Upgradeable Proxy Standard (UUPS)"
+    },
+    {
+      "eip": 1844,
+      "inDegree": 0,
+      "created": "2019-03-15",
+      "title": "ENS Interface Discovery"
+    },
+    {
+      "eip": 1973,
+      "inDegree": 0,
+      "created": "2019-04-01",
+      "title": "Scalable Rewards"
+    },
+    {
+      "eip": 1921,
+      "inDegree": 0,
+      "created": "2019-04-06",
+      "title": "dType Functions Extension"
+    },
+    {
+      "eip": 1948,
+      "inDegree": 0,
+      "created": "2019-04-18",
+      "title": "Non-fungible Data Token"
+    },
+    {
+      "eip": 2020,
+      "inDegree": 0,
+      "created": "2019-05-10",
+      "title": "E-Money Standard Token"
+    },
+    {
+      "eip": 2193,
+      "inDegree": 0,
+      "created": "2019-07-16",
+      "title": "dType Alias Extension - Decentralized Type System"
+    },
+    {
+      "eip": 2400,
+      "inDegree": 0,
+      "created": "2019-11-05",
+      "title": "Transaction Receipt URI"
+    },
+    {
+      "eip": 2390,
+      "inDegree": 0,
+      "created": "2019-11-15",
+      "title": "Geo-ENS"
+    },
+    {
+      "eip": 2386,
+      "inDegree": 0,
+      "created": "2019-11-21",
+      "title": "Ethereum 2 Hierarchical Deterministic Walletstore"
+    },
+    {
+      "eip": 2477,
+      "inDegree": 0,
+      "created": "2020-01-02",
+      "title": "Token Metadata Integrity"
+    },
+    {
+      "eip": 2470,
+      "inDegree": 0,
+      "created": "2020-01-15",
+      "title": "Singleton Factory"
+    },
+    {
+      "eip": 2494,
+      "inDegree": 0,
+      "created": "2020-01-29",
+      "title": "Baby Jubjub Elliptic Curve"
+    },
+    {
+      "eip": 2520,
+      "inDegree": 0,
+      "created": "2020-02-18",
+      "title": "Multiple contenthash records for ENS"
+    },
+    {
+      "eip": 2525,
+      "inDegree": 0,
+      "created": "2020-02-19",
+      "title": "ENSLogin"
+    },
+    {
+      "eip": 2544,
+      "inDegree": 0,
+      "created": "2020-02-28",
+      "title": "ENS Wildcard Resolution"
+    },
+    {
+      "eip": 2569,
+      "inDegree": 0,
+      "created": "2020-03-28",
+      "title": "Saving and Displaying Image Onchain for Universal Tokens"
+    },
+    {
+      "eip": 2615,
+      "inDegree": 0,
+      "created": "2020-04-25",
+      "title": "Non-Fungible Token with mortgage and rental functions"
+    },
+    {
+      "eip": 2645,
+      "inDegree": 0,
+      "created": "2020-05-13",
+      "title": "Hierarchical Deterministic Wallet for Layer-2"
+    },
+    {
+      "eip": 2680,
+      "inDegree": 0,
+      "created": "2020-05-29",
+      "title": "Ethereum 2 wallet layout"
+    },
+    {
+      "eip": 2746,
+      "inDegree": 0,
+      "created": "2020-06-20",
+      "title": "Rules Engine Standard"
+    },
+    {
+      "eip": 2767,
+      "inDegree": 0,
+      "created": "2020-07-04",
+      "title": "Contract Ownership Governance"
+    },
+    {
+      "eip": 2848,
+      "inDegree": 0,
+      "created": "2020-08-02",
+      "title": "My Own Messages (MOM)"
+    },
+    {
+      "eip": 3135,
+      "inDegree": 0,
+      "created": "2020-08-10",
+      "title": "Exclusive Claimable Token"
+    },
+    {
+      "eip": 2876,
+      "inDegree": 0,
+      "created": "2020-08-13",
+      "title": "Deposit contract and address standard"
+    },
+    {
+      "eip": 2917,
+      "inDegree": 0,
+      "created": "2020-08-28",
+      "title": "Staking Reward Calculation"
+    },
+    {
+      "eip": 2942,
+      "inDegree": 0,
+      "created": "2020-09-04",
+      "title": "EthPM URI Specification"
+    },
+    {
+      "eip": 2980,
+      "inDegree": 0,
+      "created": "2020-09-08",
+      "title": "Swiss Compliant Asset Token"
+    },
+    {
+      "eip": 3000,
+      "inDegree": 0,
+      "created": "2020-09-24",
+      "title": "Optimistic enactment governance standard"
+    },
+    {
+      "eip": 3005,
+      "inDegree": 0,
+      "created": "2020-09-25",
+      "title": "Batched meta transactions"
+    },
+    {
+      "eip": 3224,
+      "inDegree": 0,
+      "created": "2021-01-23",
+      "title": "Described Data"
+    },
+    {
+      "eip": 3234,
+      "inDegree": 0,
+      "created": "2021-01-31",
+      "title": "Batch Flash Loans"
+    },
+    {
+      "eip": 3386,
+      "inDegree": 0,
+      "created": "2021-03-12",
+      "title": "ERC-721 and ERC-1155 to ERC-20 Wrapper"
+    },
+    {
+      "eip": 3450,
+      "inDegree": 0,
+      "created": "2021-03-29",
+      "title": "Standardized Shamir Secret Sharing Scheme for BIP-39 Mnemonics"
+    },
+    {
+      "eip": 5050,
+      "inDegree": 0,
+      "created": "2021-04-18",
+      "title": "Interactive NFTs with Modular Environments"
+    },
+    {
+      "eip": 3440,
+      "inDegree": 0,
+      "created": "2021-04-20",
+      "title": "ERC-721 Editions Standard"
+    },
+    {
+      "eip": 3569,
+      "inDegree": 0,
+      "created": "2021-05-07",
+      "title": "Sealed NFT Metadata Standard"
+    },
+    {
+      "eip": 3561,
+      "inDegree": 0,
+      "created": "2021-05-09",
+      "title": "Trust Minimized Upgradeability Proxy"
+    },
+    {
+      "eip": 3589,
+      "inDegree": 0,
+      "created": "2021-05-24",
+      "title": "Assemble assets into NFTs"
+    },
+    {
+      "eip": 3722,
+      "inDegree": 0,
+      "created": "2021-07-31",
+      "title": "Poster"
+    },
+    {
+      "eip": 3754,
+      "inDegree": 0,
+      "created": "2021-08-21",
+      "title": "A Vanilla Non-Fungible Token Standard"
+    },
+    {
+      "eip": 3772,
+      "inDegree": 0,
+      "created": "2021-08-27",
+      "title": "Compressed Integers"
+    },
+    {
+      "eip": 4987,
+      "inDegree": 0,
+      "created": "2021-09-21",
+      "title": "Held token interface"
+    },
+    {
+      "eip": 4341,
+      "inDegree": 0,
+      "created": "2021-10-01",
+      "title": "Ordered NFT Batch Standard"
+    },
+    {
+      "eip": 4353,
+      "inDegree": 0,
+      "created": "2021-10-08",
+      "title": "Interface for Staked Tokens in NFTs"
+    },
+    {
+      "eip": 4393,
+      "inDegree": 0,
+      "created": "2021-10-24",
+      "title": "Micropayments for NFTs and Multi Tokens"
+    },
+    {
+      "eip": 4931,
+      "inDegree": 0,
+      "created": "2021-11-02",
+      "title": "Generic Token Upgrade Standard"
+    },
+    {
+      "eip": 4430,
+      "inDegree": 0,
+      "created": "2021-11-07",
+      "title": "Described Transactions"
+    },
+    {
+      "eip": 4494,
+      "inDegree": 0,
+      "created": "2021-11-25",
+      "title": "Permit for ERC-721 NFTs"
+    },
+    {
+      "eip": 4524,
+      "inDegree": 0,
+      "created": "2021-12-05",
+      "title": "Safer ERC-20"
+    },
+    {
+      "eip": 4527,
+      "inDegree": 0,
+      "created": "2021-12-07",
+      "title": "QR Code transmission protocol for wallets"
+    },
+    {
+      "eip": 4546,
+      "inDegree": 0,
+      "created": "2021-12-11",
+      "title": "Wrapped Deposits"
+    },
+    {
+      "eip": 4521,
+      "inDegree": 0,
+      "created": "2021-12-13",
+      "title": "721/20-compatible transfer"
+    },
+    {
+      "eip": 6268,
+      "inDegree": 0,
+      "created": "2022-01-06",
+      "title": "Untransferability Indicator for EIP-1155"
+    },
+    {
+      "eip": 4671,
+      "inDegree": 0,
+      "created": "2022-01-13",
+      "title": "Non-Tradable Tokens Standard"
+    },
+    {
+      "eip": 4675,
+      "inDegree": 0,
+      "created": "2022-01-13",
+      "title": "Multi-Fractional Non-Fungible Tokens"
+    },
+    {
+      "eip": 4799,
+      "inDegree": 0,
+      "created": "2022-02-13",
+      "title": "Non-Fungible Token Ownership Designation Standard"
+    },
+    {
+      "eip": 4885,
+      "inDegree": 0,
+      "created": "2022-03-08",
+      "title": "Subscription NFTs and Multi Tokens"
+    },
+    {
+      "eip": 4944,
+      "inDegree": 0,
+      "created": "2022-03-25",
+      "title": "Contract with Exactly One Non-fungible Token"
+    },
+    {
+      "eip": 4950,
+      "inDegree": 0,
+      "created": "2022-03-28",
+      "title": "Entangled Tokens"
+    },
+    {
+      "eip": 4974,
+      "inDegree": 0,
+      "created": "2022-04-02",
+      "title": "Ratings"
+    },
+    {
+      "eip": 5005,
+      "inDegree": 0,
+      "created": "2022-04-14",
+      "title": "Zodiac Modular Accounts"
+    },
+    {
+      "eip": 5187,
+      "inDegree": 0,
+      "created": "2022-04-17",
+      "title": "Extend EIP-1155 with rentable usage rights"
+    },
+    {
+      "eip": 5018,
+      "inDegree": 0,
+      "created": "2022-04-18",
+      "title": "Filesystem-like Interface for Contracts"
+    },
+    {
+      "eip": 5058,
+      "inDegree": 0,
+      "created": "2022-04-30",
+      "title": "Lockable Non-Fungible Tokens"
+    },
+    {
+      "eip": 5095,
+      "inDegree": 0,
+      "created": "2022-05-01",
+      "title": "Principal Token"
+    },
+    {
+      "eip": 5094,
+      "inDegree": 0,
+      "created": "2022-05-13",
+      "title": "URL Format for Ethereum Network Switching"
+    },
+    {
+      "eip": 6353,
+      "inDegree": 0,
+      "created": "2022-05-13",
+      "title": "Charity token"
+    },
+    {
+      "eip": 5131,
+      "inDegree": 0,
+      "created": "2022-06-03",
+      "title": "SAFE Authentication For ENS"
+    },
+    {
+      "eip": 5139,
+      "inDegree": 0,
+      "created": "2022-06-06",
+      "title": "Remote Procedure Call Provider Lists"
+    },
+    {
+      "eip": 5143,
+      "inDegree": 0,
+      "created": "2022-06-09",
+      "title": "Slippage Protection for Tokenized Vault"
+    },
+    {
+      "eip": 5559,
+      "inDegree": 0,
+      "created": "2022-06-23",
+      "title": "Cross Chain Write Deferral Protocol"
+    },
+    {
+      "eip": 5185,
+      "inDegree": 0,
+      "created": "2022-06-27",
+      "title": "NFT Updatable Metadata Extension"
+    },
+    {
+      "eip": 5252,
+      "inDegree": 0,
+      "created": "2022-06-29",
+      "title": "Account-bound Finance"
+    },
+    {
+      "eip": 5805,
+      "inDegree": 0,
+      "created": "2022-07-04",
+      "title": "Voting with delegation"
+    },
+    {
+      "eip": 5554,
+      "inDegree": 0,
+      "created": "2022-07-07",
+      "title": "NFT Legal Use, Repurposing, and Remixing"
+    },
+    {
+      "eip": 5298,
+      "inDegree": 0,
+      "created": "2022-07-12",
+      "title": "ENS Trust to hold NFTs under ENS name"
+    },
+    {
+      "eip": 5883,
+      "inDegree": 0,
+      "created": "2022-07-19",
+      "title": "Token Transfer by Social Recovery"
+    },
+    {
+      "eip": 5409,
+      "inDegree": 0,
+      "created": "2022-07-23",
+      "title": "EIP-1155 Non-Fungible Token extension"
+    },
+    {
+      "eip": 5334,
+      "inDegree": 0,
+      "created": "2022-07-25",
+      "title": "EIP-721 User And Expires And Level Extension"
+    },
+    {
+      "eip": 5437,
+      "inDegree": 0,
+      "created": "2022-08-09",
+      "title": "Security Contact Interface"
+    },
+    {
+      "eip": 5635,
+      "inDegree": 0,
+      "created": "2022-08-10",
+      "title": "NFT Licensing Agreements"
+    },
+    {
+      "eip": 5553,
+      "inDegree": 0,
+      "created": "2022-08-17",
+      "title": "Representing IP and its Royalty Structure"
+    },
+    {
+      "eip": 5501,
+      "inDegree": 0,
+      "created": "2022-08-18",
+      "title": "Rental & Delegation NFT - EIP-721 Extension"
+    },
+    {
+      "eip": 5505,
+      "inDegree": 0,
+      "created": "2022-08-18",
+      "title": "EIP-1155 asset backed NFT extension"
+    },
+    {
+      "eip": 5539,
+      "inDegree": 0,
+      "created": "2022-08-26",
+      "title": "Revocation List Registry"
+    },
+    {
+      "eip": 5560,
+      "inDegree": 0,
+      "created": "2022-08-30",
+      "title": "Redeemable NFTs"
+    },
+    {
+      "eip": 4886,
+      "inDegree": 0,
+      "created": "2022-09-03",
+      "title": "Proxy Ownership Register"
+    },
+    {
+      "eip": 5633,
+      "inDegree": 0,
+      "created": "2022-09-09",
+      "title": "Composable Soulbound NFT, EIP-1155 Extension"
+    },
+    {
+      "eip": 5643,
+      "inDegree": 0,
+      "created": "2022-09-10",
+      "title": "Subscription NFTs"
+    },
+    {
+      "eip": 5719,
+      "inDegree": 0,
+      "created": "2022-09-26",
+      "title": "Signature replacement interface"
+    },
+    {
+      "eip": 5744,
+      "inDegree": 0,
+      "created": "2022-09-29",
+      "title": "Latent Fungible Token"
+    },
+    {
+      "eip": 5753,
+      "inDegree": 0,
+      "created": "2022-10-05",
+      "title": "Lockable Extension for EIP-721"
+    },
+    {
+      "eip": 5851,
+      "inDegree": 0,
+      "created": "2022-10-18",
+      "title": "On-Chain Verifiable Credentials"
+    },
+    {
+      "eip": 5827,
+      "inDegree": 0,
+      "created": "2022-10-22",
+      "title": "Auto-renewable allowance extension"
+    },
+    {
+      "eip": 5850,
+      "inDegree": 0,
+      "created": "2022-10-29",
+      "title": "Complex Numbers stored in `bytes32` types"
+    },
+    {
+      "eip": 5902,
+      "inDegree": 0,
+      "created": "2022-11-09",
+      "title": "Smart Contract Event Hooks"
+    },
+    {
+      "eip": 6047,
+      "inDegree": 0,
+      "created": "2022-11-26",
+      "title": "ERC-721 Balance indexing via Transfer event"
+    },
+    {
+      "eip": 6384,
+      "inDegree": 0,
+      "created": "2023-01-08",
+      "title": "Human-readable offline signatures"
+    },
+    {
+      "eip": 6464,
+      "inDegree": 0,
+      "created": "2023-02-02",
+      "title": "Multi-operator, per-token ERC-721 approvals."
+    },
+    {
+      "eip": 6506,
+      "inDegree": 0,
+      "created": "2023-02-15",
+      "title": "P2P Escrowed Governance Incentives"
+    }
+  ]
+}

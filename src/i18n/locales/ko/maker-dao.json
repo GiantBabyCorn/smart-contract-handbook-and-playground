@@ -76,5 +76,8 @@
   "sim.liquidation-process.step.bite": "키퍼가 담보 부족 볼트에 대해 bite()를 호출합니다. 청산 엔진이 담보를 압류하고 담보 경매를 시작합니다.",
   "sim.liquidation-process.step.bite.mobile": "청산 실행",
   "sim.liquidation-process.step.auction": "압류된 담보가 입찰자에게 경매됩니다. 수익금은 볼트의 DAI 부채를 상환하며 남은 담보는 볼트 소유자에게 반환됩니다.",
-  "sim.liquidation-process.step.auction.mobile": "부채 상환을 위한 담보 경매"
+  "sim.liquidation-process.step.auction.mobile": "부채 상환을 위한 담보 경매",
+
+  "compose.erc20.role": "DAI 자체가 사용자 대상 ERC-20 스테이블코인(Dai.sol)으로, 프로토콜이 볼트 담보를 기반으로 발행하고 상환 시 소각합니다.",
+  "compose.erc712.role": "DAI의 permit은 EIP-2612보다 앞선 EIP-712 서명 승인 변형으로, value와 deadline 대신 (holder, nonce, expiry, bool allowed)를 사용합니다."
 }

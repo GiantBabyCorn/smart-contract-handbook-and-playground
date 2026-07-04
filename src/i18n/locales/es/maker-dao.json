@@ -76,5 +76,8 @@
   "sim.liquidation-process.step.bite": "Un keeper llama a bite() sobre el vault subcolateralizado. El motor de liquidación confisca el colateral e inicia una subasta de colateral.",
   "sim.liquidation-process.step.bite.mobile": "Activar liquidación",
   "sim.liquidation-process.step.auction": "El colateral confiscado se subasta a los postores. Los ingresos repagan la deuda de DAI del vault y cualquier colateral restante se devuelve al propietario del vault.",
-  "sim.liquidation-process.step.auction.mobile": "Subastar colateral para repagar deuda"
+  "sim.liquidation-process.step.auction.mobile": "Subastar colateral para repagar deuda",
+
+  "compose.erc20.role": "DAI es en sí la stablecoin ERC-20 orientada al usuario (Dai.sol) que el protocolo acuña contra el colateral de los vaults y quema al reembolsar.",
+  "compose.erc712.role": "El permit de DAI es una aprobación firmada con EIP-712 anterior a EIP-2612, que usa (holder, nonce, expiry, bool allowed) en lugar de value y deadline."
 }

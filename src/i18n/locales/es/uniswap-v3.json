@@ -109,5 +109,9 @@
   "sim.provideConcentratedLiquidity.step.mintPosition": "El proveedor llama a mint() en el NonfungiblePositionManager, especificando el rango de ticks. Se acuña un NFT único que representa la posición.",
   "sim.provideConcentratedLiquidity.step.mintPosition.mobile": "Acuñar NFT de posición",
   "sim.provideConcentratedLiquidity.step.updateTicks": "El pool actualiza el bitmap de ticks y la liquidez para el rango especificado. Ambos tokens se depositan proporcionalmente según el precio actual en relación con el rango.",
-  "sim.provideConcentratedLiquidity.step.updateTicks.mobile": "Actualizar liquidez de ticks"
+  "sim.provideConcentratedLiquidity.step.updateTicks.mobile": "Actualizar liquidez de ticks",
+
+  "compose.erc721.role": "Cada posición de liquidez concentrada es acuñada por el NonfungiblePositionManager como un NFT ERC-721 identificado por su tokenId.",
+  "compose.erc20.role": "Cada pool intercambia un par de tokens ERC-20, y las comisiones de swap se acumulan en la posición en esos dos tokens.",
+  "compose.erc712.role": "La extensión ERC721Permit del gestor de posiciones (propia de Uniswap, no un ERC finalizado) autoriza operadores del NFT de posición mediante permits firmados con EIP-712."
 }

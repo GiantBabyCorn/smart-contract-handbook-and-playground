@@ -8,6 +8,14 @@
   "fn.supportsInterface.params.interfaceId": "要查询的 4 字节接口标识符，如 ERC-165 中所定义。计算为接口中所有函数选择器的 XOR 值。",
   "fn.supportsInterface.returns.supported": "如果合约实现了查询的接口则返回 true，否则返回 false。",
 
+  "sec.trust.title": "接口支持由合约自行申报",
+  "sec.trust.desc": "supportsInterface 的回答来自被查询的合约本身，恶意或有缺陷的合约可能谎称支持未实现的接口，甚至对所有查询一律返回 true。",
+  "sec.trust.mitigation": "将查询结果视为提示而非证明。按照规范，合规合约对 0xffffffff 必须返回 false——可用该查询过滤一律返回 true 的合约，并持续验证实际的调用行为。",
+
+  "code.iface.title": "ERC-165 标准接口定义",
+
+  "gas.notes": "规范要求 supportsInterface 必须在 30,000 gas 以内完成。实现应以常数时间查询（预先注册的 mapping 或硬编码比较）作答，避免任何无上限的计算。",
+
   "node.caller": "调用者 / DApp",
   "node.contract": "ERC-165 合约",
   "node.interfaceRegistry": "接口注册表",

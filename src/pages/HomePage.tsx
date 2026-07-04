@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
 import SEOHead from '@/components/common/SEOHead';
 import { allMeta } from '@/data/allMeta';
+import { SITE_NAME } from '@/utils/constants';
 import { cn } from '@/utils/cn';
 
 // ---------------------------------------------------------------------------
@@ -95,7 +96,7 @@ const STATS = [
   },
   {
     value: `${allMeta.length}`,
-    labelKey: 'stats.simulations',
+    labelKey: 'stats.entries',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <polygon points="5 3 19 12 5 21 5 3" />
@@ -132,14 +133,16 @@ export default function HomePage() {
           >
             {/* Badge */}
             <motion.div variants={fadeInUp} transition={{ duration: 0.5 }}>
-              <span className={cn(
+              {/* Product name: deliberately English in every locale (SITE_NAME);
+                  translate="no" shields it from browser auto-translation. */}
+              <span translate="no" className={cn(
                 'inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5',
                 'text-xs font-semibold uppercase tracking-widest',
                 'bg-[var(--erc-color-accent)]/15 text-[var(--erc-color-accent)]',
                 'border border-[var(--erc-color-accent)]/25',
               )}>
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--erc-color-accent)] animate-pulse" aria-hidden="true" />
-                Smart Contract Handbook
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--erc-color-accent)] animate-pulse motion-reduce:animate-none" aria-hidden="true" />
+                {SITE_NAME}
               </span>
             </motion.div>
 
@@ -237,7 +240,7 @@ export default function HomePage() {
             id="features-heading"
             className="text-xl sm:text-2xl font-bold text-[var(--erc-color-text-primary)] text-center mb-8"
           >
-            Everything you need to understand Ethereum standards
+            {t('featuresHeading')}
           </motion.h2>
 
           <motion.div
@@ -297,7 +300,7 @@ export default function HomePage() {
             id="explore-heading"
             className="text-xl sm:text-2xl font-bold text-[var(--erc-color-text-primary)] text-center mb-8"
           >
-            Explore by standard
+            {t('exploreHeading')}
           </motion.h2>
 
           <motion.ul
@@ -335,6 +338,28 @@ export default function HomePage() {
                 </motion.li>
               ))}
           </motion.ul>
+
+          {/* Full catalog link (audit P2): the grid above only shows the
+              first 12 standards — point at the complete, filterable list. */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+            className="mt-8 text-center"
+          >
+            <Link
+              to="/catalog"
+              className={cn(
+                'inline-flex items-center gap-1.5 text-sm font-semibold',
+                'text-[var(--erc-color-accent)] hover:text-[var(--erc-color-accent-hover)]',
+                'transition-colors duration-150',
+                'focus-visible:ring-2 focus-visible:ring-[var(--erc-color-accent)] focus:outline-none rounded',
+              )}
+            >
+              {t('viewCatalog')}
+            </Link>
+          </motion.div>
         </section>
       </div>
     </>

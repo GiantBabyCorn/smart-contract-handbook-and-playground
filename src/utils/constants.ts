@@ -1,30 +1,7 @@
 export const SITE_NAME = 'Smart Contract Handbook';
 export const SITE_URL = 'https://smart-contract-handbook.giantbabycorn.finance';
 
-export const CATEGORY_ORDER: string[] = [
-  'token',
-  'nft',
-  'proxy',
-  'account',
-  'identity',
-  'utility',
-  'defi',
-  'oracle',
-  'governance',
-  'cross-chain',
-  'rwa',
-];
-
-export const CATEGORY_LABELS: Record<string, string> = {
-  token: 'sidebar.categories.token',
-  nft: 'sidebar.categories.nft',
-  proxy: 'sidebar.categories.proxy',
-  defi: 'sidebar.categories.defi',
-  account: 'sidebar.categories.account',
-  utility: 'sidebar.categories.utility',
-  identity: 'sidebar.categories.identity',
-  oracle: 'sidebar.categories.oracle',
-  governance: 'sidebar.categories.governance',
-  'cross-chain': 'sidebar.categories.crossChain',
-  rwa: 'sidebar.categories.rwa',
-};
+// Category order/labels now live in the single category registry
+// (src/data/categories.ts, plan.md §B1). Re-exported here so the many
+// existing `@/utils/constants` imports keep working unchanged.
+export { CATEGORY_ORDER, CATEGORY_LABELS } from '@/data/categories';

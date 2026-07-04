@@ -76,5 +76,8 @@
   "sim.liquidation-process.step.bite": "キーパーが担保不足のボールトに対してbite()を呼び出します。清算エンジンが担保を差し押さえ、担保オークションを開始します。",
   "sim.liquidation-process.step.bite.mobile": "清算をトリガー",
   "sim.liquidation-process.step.auction": "差し押さえられた担保が入札者にオークションにかけられます。収益はボールトのDAI負債の返済に充てられ、残余担保はボールト所有者に返却されます。",
-  "sim.liquidation-process.step.auction.mobile": "担保をオークションして負債を返済"
+  "sim.liquidation-process.step.auction.mobile": "担保をオークションして負債を返済",
+
+  "compose.erc20.role": "DAI自体がユーザー向けのERC-20ステーブルコイン（Dai.sol）で、プロトコルがVaultの担保に対して発行し、返済時にバーンします。",
+  "compose.erc712.role": "DAIのpermitはEIP-2612より前に生まれたEIP-712署名承認のバリアントで、valueとdeadlineの代わりに(holder, nonce, expiry, bool allowed)を用います。"
 }

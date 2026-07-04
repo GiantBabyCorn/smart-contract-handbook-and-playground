@@ -32,8 +32,11 @@ test.describe('Navigation', () => {
     await page.goto('/erc20');
     await expect(page.locator('body')).toBeVisible();
 
-    // Should show ERC-20 content
-    await expect(page.getByText('ERC-20')).toBeVisible({ timeout: 10000 });
+    // Should show ERC-20 content (scoped to main: the sidebar, mobile nav and
+    // breadcrumb title also contain the text "ERC-20").
+    await expect(page.locator('#main-content').getByText('ERC-20').first()).toBeVisible({
+      timeout: 10000,
+    });
 
     expect(errors).toEqual([]);
   });

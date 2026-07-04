@@ -24,5 +24,80 @@
     "running": "En ejecución",
     "completed": "Completado",
     "error": "Error"
+  },
+  "param": {
+    "invalidAddress": "Introduce una dirección 0x… completa (40 caracteres hexadecimales) o un alias de demostración como 0xAlice",
+    "invalidUint": "Introduce un número entero (solo dígitos)",
+    "reset": "Restablecer al valor predeterminado",
+    "unitToggle": "Alternar la visualización entre wei y ETH",
+    "unitWei": "wei",
+    "unitEth": "ETH",
+    "boolTrue": "true",
+    "boolFalse": "false"
+  },
+  "state": {
+    "title": "Cambios de estado",
+    "empty": "Ejecuta un paso para ver los cambios de estado",
+    "summary": "Inicial → Final",
+    "reverted": "Transacción revertida",
+    "stepLabel": "Paso {{n}}",
+    "increase": "aumentó",
+    "decrease": "disminuyó",
+    "currentValue": "valor actual",
+    "announce": "Paso {{n}} ejecutado: {{summary}}"
+  },
+  "revert": {
+    "insufficientBalance": "El importe de la transferencia supera el saldo del remitente",
+    "insufficientAllowance": "El importe de la transferencia supera la asignación aprobada"
+  },
+  "legend": {
+    "title": "Leyenda",
+    "nodes": "Nodos",
+    "edges": "Aristas",
+    "functions": "Funciones",
+    "contract": "Contrato",
+    "contractDesc": "Contrato inteligente",
+    "function": "Función",
+    "functionDesc": "Función del contrato",
+    "user": "Usuario",
+    "userDesc": "Cuenta externa (EOA)",
+    "proxy": "Proxy",
+    "proxyDesc": "Contrato proxy con delegación de llamadas",
+    "storage": "Almacenamiento",
+    "storageDesc": "Ranuras de almacenamiento en cadena",
+    "tokenFlow": "Flujo de tokens",
+    "tokenFlowDesc": "Evento de transferencia de tokens",
+    "animated": "Animada",
+    "animatedDesc": "Flujo de llamadas animado",
+    "labeled": "Etiquetada",
+    "labeledDesc": "Arista con etiqueta",
+    "fundFlow": "Flujo de fondos",
+    "fundFlowDesc": "Transferencia de tokens / ETH",
+    "readDesc": "Función view / pure",
+    "writeDesc": "Función que modifica el estado",
+    "eventDesc": "Evento emitido"
+  },
+  "flow": {
+    "title": "Flujo de interacción",
+    "fullscreen": "Pantalla completa",
+    "exitFullscreen": "Salir de pantalla completa",
+    "resetView": "Restablecer vista",
+    "resize": "Arrastra para ajustar la altura del diagrama",
+    "computing": "Calculando el diseño…",
+    "renderError": "No se pudo renderizar el diagrama de flujo",
+    "renderErrorHint": "Ocurrió un error inesperado al dibujar el diagrama.",
+    "retry": "Reintentar"
+  },
+  "popover": {
+    "close": "Cerrar"
+  },
+  "drawer": {
+    "title": "Simulación",
+    "open": "Abrir el panel de simulación",
+    "close": "Cerrar el panel de simulación",
+    "expand": "Expandir el panel de simulación",
+    "collapse": "Contraer el panel de simulación",
+    "tooltip": "¡Prueba la simulación para ver cómo fluyen los datos por el contrato!",
+    "dismiss": "Descartar el consejo"
   }
 }

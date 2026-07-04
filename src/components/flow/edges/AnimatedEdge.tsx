@@ -4,6 +4,7 @@ import {
   getSmoothStepPath,
   type EdgeProps,
 } from '@xyflow/react';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 /**
  * AnimatedEdge
@@ -14,11 +15,22 @@ import {
  *
  * The animation is a pure CSS keyframe injected once as a <style> tag so we
  * avoid runtime style recalculations on every frame.
+ *
+ * Reduced motion: when `prefers-reduced-motion: reduce` is set, the infinite
+ * march animation is skipped (useReducedMotion drops the class, and the
+ * injected `@media` rule guards the class itself as belt-and-braces). The
+ * static dashed stroke and the highlight/selected colour states remain.
  */
 
 const ANIM_KEYFRAMES = `
 @keyframes erc-edge-march {
   to { stroke-dashoffset: -24; }
+}
+.erc-edge-march {
+  animation: erc-edge-march 0.6s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .erc-edge-march { animation: none; }
 }
 `;
 
@@ -44,6 +56,7 @@ function AnimatedEdge({
   data,
 }: EdgeProps) {
   ensureKeyframes();
+  const reducedMotion = useReducedMotion();
 
   const isHighlighted = (data as { highlighted?: boolean } | undefined)?.highlighted === true;
 
@@ -76,18 +89,16 @@ function AnimatedEdge({
         markerEnd={markerEnd}
       />
 
-      {/* Animated dashed overlay */}
+      {/* Dashed overlay — marching animation unless the user prefers reduced motion */}
       <path
         id={id}
         d={edgePath}
+        className={reducedMotion ? undefined : 'erc-edge-march'}
         fill="none"
         stroke={color}
         strokeWidth={isHighlighted ? 3 : selected ? 2.5 : 2}
         strokeDasharray="8 8"
         strokeLinecap="round"
-        style={{
-          animation: 'erc-edge-march 0.6s linear infinite',
-        }}
         aria-label="Animated flow edge"
       />
     </>

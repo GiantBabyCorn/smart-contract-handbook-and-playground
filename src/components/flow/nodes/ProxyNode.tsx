@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 
 interface ProxyNodeData {
@@ -15,6 +16,10 @@ interface ProxyNodeData {
  * to visually communicate the delegation / indirection pattern.
  */
 function ProxyNode({ data, selected }: NodeProps) {
+  // Non-suspending: nodes render deep inside the React Flow canvas, where a
+  // suspend would blank the whole diagram; the legend key shares the badge's
+  // wording ("Proxy") and the defaultValue bridges the namespace load.
+  const { t } = useTranslation('simulation', { useSuspense: false });
   const { label, implementation, highlighted } = data as ProxyNodeData & { highlighted?: boolean };
   const isHighlighted = highlighted === true;
 
@@ -109,7 +114,7 @@ function ProxyNode({ data, selected }: NodeProps) {
             flexShrink: 0,
           }}
         >
-          proxy
+          {t('legend.proxy', 'proxy')}
         </span>
       </div>
 

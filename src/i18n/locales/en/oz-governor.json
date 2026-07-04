@@ -105,5 +105,9 @@
   "sim.proposal-execution.step.callExecute": "A caller invokes execute() on the Governor, which forwards the execution request to the Timelock Controller.",
   "sim.proposal-execution.step.callExecute.mobile": "Call execute()",
   "sim.proposal-execution.step.dispatch": "The Timelock Controller dispatches the call to the target contract, executing the proposal's encoded action. The proposal state becomes Executed.",
-  "sim.proposal-execution.step.dispatch.mobile": "Dispatch to target"
+  "sim.proposal-execution.step.dispatch.mobile": "Dispatch to target",
+
+  "compose.erc20.role": "Voting power typically comes from an ERC-20 governance token using the ERC20Votes checkpoint extension, read by Governor through the IVotes/IERC5805 interface.",
+  "compose.erc721.role": "ERC721Votes lets NFT collections serve as the voting asset — the only alternative voting-power source shipped in OpenZeppelin Contracts.",
+  "compose.erc712.role": "castVoteBySig accepts ballots signed as EIP-712 typed data (BALLOT_TYPEHASH), including ERC-1271 contract signatures, enabling gasless voting."
 }

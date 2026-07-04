@@ -6,62 +6,44 @@ import resourcesToBackend from 'i18next-resources-to-backend';
 i18n
   .use(
     resourcesToBackend(
-      (language: string, namespace: string) =>
-        import(`./locales/${language}/${namespace}.json`)
-    )
+      (language: string, namespace: string) => import(`./locales/${language}/${namespace}.json`),
+    ),
   )
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     fallbackLng: 'en',
     supportedLngs: ['en', 'zh-CN', 'zh-TW', 'ja', 'ko', 'es'],
-    ns: [
-      'common',
-      'home',
-      'simulation',
-      'aave-v3',
-      'chainlink-oracle',
-      'compound-v3',
-      'curve-stableswap',
-      'eigenlayer',
-      'erc1155',
-      'erc1271',
-      'erc165',
-      'erc173',
-      'erc1822',
-      'erc1967',
-      'erc20',
-      'erc2535',
-      'erc2612',
-      'erc2981',
-      'erc3525',
-      'erc3643',
-      'erc4337',
-      'erc4361',
-      'erc4626',
-      'erc5267',
-      'erc6551',
-      'erc6900',
-      'erc721',
-      'erc7579',
-      'erc7683',
-      'erc7702',
-      'lido-steth',
-      'maker-dao',
-      'oneinch-aggregator',
-      'oz-governor',
-      'safe-multisig',
-      'uniswap-v2',
-      'uniswap-v3',
-      'uniswap-v4',
-    ],
+    // Only app-shell namespaces are resident; per-entry namespaces are
+    // lazy-loaded on demand via resourcesToBackend + useTranslation(slug).
+    // 'catalog' is the generated per-locale short-description namespace
+    // (scripts/gen_catalog_ns.py) — list surfaces read it instead of loading
+    // one namespace per entry.
+    ns: ['common', 'home', 'simulation', 'catalog'],
     defaultNS: 'common',
     detection: {
-      order: ['navigator', 'htmlTag'],
+      // querystring (?lng=xx) enables shareable/e2e-testable URLs and wins
+      // over the persisted choice; localStorage persists the user's pick.
+      order: ['querystring', 'localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
     },
     interpolation: { escapeValue: false },
     react: { useSuspense: true },
   });
+
+// Keep <html lang> in sync with the active language (a11y / SEO).
+if (typeof document !== 'undefined') {
+  const syncHtmlLang = (lng: string) => {
+    document.documentElement.lang = lng;
+  };
+  i18n.on('languageChanged', syncHtmlLang);
+  // Also set it once for the initial language: language detection resolves
+  // asynchronously during init, so cover both possible orderings.
+  if (i18n.isInitialized) {
+    syncHtmlLang(i18n.language);
+  } else {
+    i18n.on('initialized', () => syncHtmlLang(i18n.language));
+  }
+}
 
 export default i18n;

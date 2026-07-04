@@ -65,5 +65,8 @@
   "sim.supplyAndBorrowComet.step.borrowBase": "차입자가 USDC로 withdraw()를 호출하여 차입합니다. 프로토콜이 차입 잔액을 내부적으로 추적하고 차입자에게 USDC를 전송합니다.",
   "sim.supplyAndBorrowComet.step.borrowBase.mobile": "USDC 차입",
   "sim.supplyAndBorrowComet.step.utilization": "시장 활용률이 증가하여 이자율 모델이 차입 및 공급 이자율을 조정합니다. 기본 공급자는 더 높은 수익률을 얻습니다.",
-  "sim.supplyAndBorrowComet.step.utilization.mobile": "활용률 및 이자율 조정"
+  "sim.supplyAndBorrowComet.step.utilization.mobile": "활용률 및 이자율 조정",
+
+  "compose.erc20.role": "Comet 컨트랙트 자체가 기초 자산의 완전 호환 ERC-20 래퍼로, balanceOf는 공급 원금과 누적 이자를 반환하며 담보 역시 표준 ERC-20 승인을 통해 공급합니다.",
+  "compose.erc712.role": "allowBySig는 온체인 allow 트랜잭션 대신 EIP-712 오프라인 서명으로 계정 관리자를 승인합니다."
 }

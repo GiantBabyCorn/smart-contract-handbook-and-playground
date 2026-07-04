@@ -14,12 +14,15 @@
       "governance": "Governance",
       "crossChain": "Cross-Chain",
       "rwa": "Real-World Assets"
-    }
+    },
+    "viewAll": "View all {{count}} →",
+    "footerCounts": "{{standards}} standards · {{protocols}} protocols"
   },
   "nav": {
     "home": "Home",
     "backToHome": "Back to Home",
-    "playground": "Playground"
+    "playground": "Playground",
+    "catalog": "Catalog"
   },
   "theme": {
     "switchToLight": "Switch to light theme",
@@ -55,7 +58,16 @@
   "interactive": {
     "selectFunction": "Select Function",
     "parameters": "Parameters",
-    "execute": "Execute"
+    "execute": "Execute",
+    "entryPoint": "Entry point",
+    "filterFunctions": "Filter functions...",
+    "noFunctions": "No functions match your filter",
+    "currentStep": "Current step",
+    "stepFrom": "Start from {{label}}",
+    "stepCall": "Call reaches {{label}}",
+    "stepStorage": "Update storage: {{label}}",
+    "stepEvent": "Emit event: {{label}}",
+    "stepInteract": "Interact with {{label}}"
   },
   "playground": {
     "title": "Playground",
@@ -65,10 +77,116 @@
     "clearAll": "Clear all",
     "autoLayout": "Auto-layout",
     "searchContracts": "Search contracts...",
-    "empty": "Add contracts from the palette to get started"
+    "empty": "Add contracts from the palette to get started",
+    "share": "Share",
+    "linkCopied": "Link copied to clipboard",
+    "shareFailed": "Could not copy the link",
+    "simulate": "Simulate",
+    "close": "Close",
+    "openPalette": "Add contracts",
+    "tapToPlace": "Tap the canvas to place {{name}}",
+    "cancel": "Cancel",
+    "dragHint": "Drag an item onto the canvas, or click Add",
+    "tapHint": "Tap an item, then tap the canvas to place it",
+    "onboardingTitle": "Get started in three steps",
+    "step1Title": "Add contracts",
+    "step1Desc": "Drag standards from the palette onto the canvas, or click Add",
+    "step2Title": "Pick a function",
+    "step2Desc": "Select a function in the right panel and fill in its parameters",
+    "step3Title": "Run the simulation",
+    "step3Desc": "Execute and watch the call flow across your contracts",
+    "presetsTitle": "Or start from a preset combo",
+    "presetPermit": "Gasless approvals (permit)",
+    "presetSwap": "Token swap flow",
+    "presetRoyalty": "NFT with royalties",
+    "presetAa": "Modular smart accounts",
+    "presetUups": "Upgradeable proxy (UUPS)"
   },
   "a11y": {
     "flowDiagram": "Flow diagram illustrating the interaction between contract components",
-    "simulationPanel": "Interactive simulation panel for step-by-step execution"
+    "simulationPanel": "Interactive simulation panel for step-by-step execution",
+    "skipToContent": "Skip to main content"
+  },
+  "search": {
+    "button": "Search",
+    "placeholder": "Search standards, protocols, functions...",
+    "noResults": "No results found",
+    "recent": "Recently viewed",
+    "loading": "Loading search index..."
+  },
+  "catalogUi": {
+    "title": "Catalog",
+    "description": "Browse every published ERC standard and DeFi protocol — filter by category, status, and type.",
+    "summary": "Showing {{shown}} of {{total}} entries",
+    "searchLabel": "Filter by name or EIP number",
+    "searchPlaceholder": "Name or EIP #...",
+    "eip": "EIP #",
+    "name": "Name",
+    "category": "Category",
+    "status": "Status",
+    "type": "Type",
+    "tier": "Tier",
+    "availability": "Availability",
+    "live": "Live",
+    "allCategories": "All categories",
+    "allStatuses": "All statuses",
+    "allTypes": "All types",
+    "standard": "Standard",
+    "protocol": "Protocol",
+    "unofficial": "Unofficial",
+    "noMatches": "No entries match the current filters"
+  },
+  "detailUi": {
+    "toc": "On this page",
+    "copyLink": "Copy link to this section",
+    "linkCopied": "Link copied!",
+    "prev": "Previous",
+    "next": "Next",
+    "entryNav": "Previous / next entry",
+    "officialSpec": "Official Specification",
+    "officialSpecFor": "Official specification for {{name}}",
+    "meta": {
+      "eip": "EIP",
+      "functions": "Functions",
+      "simulations": "Simulations",
+      "requires": "Requires"
+    },
+    "sections": {
+      "introduction": "Introduction",
+      "designPurpose": "Design Purpose",
+      "commonUsage": "Common Usage",
+      "functions": "Functions & Events",
+      "security": "Security Considerations",
+      "codeExamples": "Code Examples",
+      "errors": "Errors & Reverts",
+      "gas": "Gas Notes",
+      "composition": "Composed Standards",
+      "references": "References",
+      "related": "Related Standards & Protocols"
+    },
+    "severity": {
+      "critical": "Critical",
+      "high": "High",
+      "medium": "Medium",
+      "info": "Info"
+    },
+    "security": {
+      "mitigation": "Mitigation:",
+      "source": "Source"
+    },
+    "refKind": {
+      "spec": "Specification",
+      "impl": "Implementations",
+      "audit": "Audits",
+      "article": "Articles"
+    },
+    "errorsTable": {
+      "name": "Error",
+      "condition": "Revert condition"
+    },
+    "fn": {
+      "parameters": "Parameters",
+      "returns": "Returns"
+    }
   }
 }

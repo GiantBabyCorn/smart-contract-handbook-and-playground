@@ -83,5 +83,10 @@
   "sim.add-new-owner.step.collectSigs": "擁有者 B 和擁有者 C 簽署該交易，提供足夠的確認以滿足目前的門檻。",
   "sim.add-new-owner.step.collectSigs.mobile": "收集簽名",
   "sim.add-new-owner.step.addOwner": "Safe 執行 addOwnerWithThreshold()，將新擁有者加入鏈結串列並將門檻從 2 更新為 3。",
-  "sim.add-new-owner.step.addOwner.mobile": "新增擁有者 & 更新門檻"
+  "sim.add-new-owner.step.addOwner.mobile": "新增擁有者 & 更新門檻",
+
+  "compose.erc1271.role": "Safe 能以合約身分簽章：isValidSignature（ERC-1271）驗證所有者簽章或預先核准的訊息，實作位於 CompatibilityFallbackHandler。",
+  "compose.erc165.role": "ERC-165 介面偵測由 CompatibilityFallbackHandler（經 TokenCallbackHandler）提供，而非 Safe 單例核心本身。",
+  "compose.erc4337.role": "Safe4337Module 是選配模組（同時擔任模組與 fallback handler，需 Safe v1.4.1+），為 Safe 加上 ERC-4337 帳戶抽象支援。",
+  "compose.erc712.role": "每筆 Safe 交易都以 EIP-712 型別化資料（SAFE_TX_TYPEHASH）計算雜湊，所有者對其簽章以湊足確認門檻。"
 }

@@ -1,83 +1,38 @@
 import { useState } from 'react';
 import { Panel } from '@xyflow/react';
+import { useTranslation } from 'react-i18next';
 
 // ─── Legend data ──────────────────────────────────────────────────────────────
+// Labels/descriptions are simulation-namespace i18n keys; the same
+// legend.*Desc keys back the node-click popover's type descriptions.
 
 interface LegendItem {
   color: string;
-  label: string;
-  description?: string;
+  labelKey: string;
+  descKey: string;
 }
 
 const NODE_LEGEND: LegendItem[] = [
-  {
-    color: 'var(--erc-color-accent)',
-    label: 'Contract',
-    description: 'Smart contract',
-  },
-  {
-    color: 'var(--erc-color-text-secondary)',
-    label: 'Function',
-    description: 'Contract function',
-  },
-  {
-    color: 'var(--erc-color-category-account)',
-    label: 'User',
-    description: 'External account / EOA',
-  },
-  {
-    color: 'var(--erc-color-category-proxy)',
-    label: 'Proxy',
-    description: 'Delegating proxy contract',
-  },
-  {
-    color: 'var(--erc-color-category-defi)',
-    label: 'Storage',
-    description: 'On-chain storage slots',
-  },
-  {
-    color: 'var(--erc-color-category-token)',
-    label: 'Token Flow',
-    description: 'Token transfer event',
-  },
+  { color: 'var(--erc-color-accent)', labelKey: 'legend.contract', descKey: 'legend.contractDesc' },
+  { color: 'var(--erc-color-text-secondary)', labelKey: 'legend.function', descKey: 'legend.functionDesc' },
+  { color: 'var(--erc-color-category-account)', labelKey: 'legend.user', descKey: 'legend.userDesc' },
+  { color: 'var(--erc-color-category-proxy)', labelKey: 'legend.proxy', descKey: 'legend.proxyDesc' },
+  { color: 'var(--erc-color-category-defi)', labelKey: 'legend.storage', descKey: 'legend.storageDesc' },
+  { color: 'var(--erc-color-category-token)', labelKey: 'legend.tokenFlow', descKey: 'legend.tokenFlowDesc' },
 ];
 
 const EDGE_LEGEND: Array<LegendItem & { dashed?: boolean; thick?: boolean }> = [
-  {
-    color: 'var(--erc-color-edge-animated)',
-    label: 'Animated',
-    description: 'Animated call flow',
-    dashed: true,
-  },
-  {
-    color: 'var(--erc-color-border)',
-    label: 'Labeled',
-    description: 'Edge with a label',
-  },
-  {
-    color: 'var(--erc-color-category-token)',
-    label: 'Fund Flow',
-    description: 'Token / ETH transfer',
-    thick: true,
-  },
+  { color: 'var(--erc-color-edge-animated)', labelKey: 'legend.animated', descKey: 'legend.animatedDesc', dashed: true },
+  { color: 'var(--erc-color-border)', labelKey: 'legend.labeled', descKey: 'legend.labeledDesc' },
+  { color: 'var(--erc-color-category-token)', labelKey: 'legend.fundFlow', descKey: 'legend.fundFlowDesc', thick: true },
 ];
 
-const FN_TYPE_LEGEND: LegendItem[] = [
-  {
-    color: 'var(--erc-color-fn-read)',
-    label: 'read',
-    description: 'View / pure function',
-  },
-  {
-    color: 'var(--erc-color-fn-write)',
-    label: 'write',
-    description: 'State-mutating function',
-  },
-  {
-    color: 'var(--erc-color-fn-event)',
-    label: 'event',
-    description: 'Emitted event',
-  },
+// Badge text stays the literal Solidity-ish term (read/write/event) — code
+// vocabulary is not translated; only the description is.
+const FN_TYPE_LEGEND: Array<{ color: string; badge: string; descKey: string }> = [
+  { color: 'var(--erc-color-fn-read)', badge: 'read', descKey: 'legend.readDesc' },
+  { color: 'var(--erc-color-fn-write)', badge: 'write', descKey: 'legend.writeDesc' },
+  { color: 'var(--erc-color-fn-event)', badge: 'event', descKey: 'legend.eventDesc' },
 ];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -99,16 +54,11 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
-function NodeLegendRow({ item }: { item: LegendItem }) {
+function NodeLegendRow({ item, label, description }: { item: LegendItem; label: string; description: string }) {
   return (
     <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        padding: '0.15rem 0',
-      }}
-      title={item.description}
+      style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.15rem 0' }}
+      title={description}
     >
       {/* Colour swatch — small rounded square to represent a node */}
       <div
@@ -128,7 +78,7 @@ function NodeLegendRow({ item }: { item: LegendItem }) {
           whiteSpace: 'nowrap',
         }}
       >
-        {item.label}
+        {label}
       </span>
     </div>
   );
@@ -136,28 +86,20 @@ function NodeLegendRow({ item }: { item: LegendItem }) {
 
 function EdgeLegendRow({
   item,
+  label,
+  description,
 }: {
   item: LegendItem & { dashed?: boolean; thick?: boolean };
+  label: string;
+  description: string;
 }) {
   return (
     <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        padding: '0.15rem 0',
-      }}
-      title={item.description}
+      style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.15rem 0' }}
+      title={description}
     >
       {/* Miniature edge line */}
-      <svg
-        width="24"
-        height="8"
-        viewBox="0 0 24 8"
-        fill="none"
-        aria-hidden="true"
-        style={{ flexShrink: 0 }}
-      >
+      <svg width="24" height="8" viewBox="0 0 24 8" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
         <line
           x1="0"
           y1="4"
@@ -185,22 +127,17 @@ function EdgeLegendRow({
           whiteSpace: 'nowrap',
         }}
       >
-        {item.label}
+        {label}
       </span>
     </div>
   );
 }
 
-function FnTypeLegendRow({ item }: { item: LegendItem }) {
+function FnTypeLegendRow({ color, badge, description }: { color: string; badge: string; description: string }) {
   return (
     <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-        padding: '0.15rem 0',
-      }}
-      title={item.description}
+      style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.15rem 0' }}
+      title={description}
     >
       {/* Pill badge mirroring FunctionNode badge */}
       <span
@@ -209,8 +146,8 @@ function FnTypeLegendRow({ item }: { item: LegendItem }) {
           fontWeight: 700,
           letterSpacing: '0.05em',
           textTransform: 'uppercase',
-          color: item.color,
-          border: `1px solid ${item.color}`,
+          color,
+          border: `1px solid ${color}`,
           borderRadius: '0.2rem',
           padding: '0.05rem 0.3rem',
           lineHeight: 1.5,
@@ -218,7 +155,7 @@ function FnTypeLegendRow({ item }: { item: LegendItem }) {
         }}
         aria-hidden="true"
       >
-        {item.label}
+        {badge}
       </span>
       <span
         style={{
@@ -227,7 +164,7 @@ function FnTypeLegendRow({ item }: { item: LegendItem }) {
           whiteSpace: 'nowrap',
         }}
       >
-        {item.description}
+        {description}
       </span>
     </div>
   );
@@ -238,26 +175,30 @@ function FnTypeLegendRow({ item }: { item: LegendItem }) {
 /**
  * LegendPanel
  *
- * A collapsible React Flow Panel rendered in the bottom-right corner. Documents
- * all node types, edge types, and function type badges so users can interpret
- * the diagram without external documentation.
+ * A collapsible React Flow Panel (top-left, clear of Controls/MiniMap).
+ * Documents all node types, edge types, and function type badges so users can
+ * interpret the diagram without external documentation. Defaults to collapsed
+ * on <lg screens where canvas space is scarce.
  */
 export default function LegendPanel() {
-  const [collapsed, setCollapsed] = useState(false);
+  const { t } = useTranslation('simulation');
+  const [collapsed, setCollapsed] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth < 1024,
+  );
 
   return (
-    <Panel position="bottom-right" style={{ margin: '0.75rem' }}>
+    <Panel position="top-left" style={{ margin: '0.75rem' }}>
       <div
         role="complementary"
-        aria-label="Flow diagram legend"
+        aria-label={t('legend.title')}
         style={{
-          minWidth: '160px',
+          minWidth: collapsed ? undefined : '160px',
           background: 'var(--erc-color-bg-secondary)',
           border: '1px solid var(--erc-color-border)',
           borderRadius: '0.5rem',
           fontFamily: 'var(--erc-font-body)',
           overflow: 'hidden',
-          boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+          boxShadow: '0 4px 16px rgba(0,0,0,0.25)',
         }}
       >
         {/* Header */}
@@ -270,6 +211,7 @@ export default function LegendPanel() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            gap: '0.5rem',
             width: '100%',
             padding: '0.45rem 0.75rem',
             background: 'var(--erc-color-bg-tertiary)',
@@ -291,13 +233,7 @@ export default function LegendPanel() {
           >
             {/* Key icon */}
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-              <circle
-                cx="4.5"
-                cy="4.5"
-                r="3"
-                stroke="var(--erc-color-accent)"
-                strokeWidth="1.25"
-              />
+              <circle cx="4.5" cy="4.5" r="3" stroke="var(--erc-color-accent)" strokeWidth="1.25" />
               <path
                 d="M7 6.5l3.5 3.5M9 8.5l1 1"
                 stroke="var(--erc-color-accent)"
@@ -305,7 +241,7 @@ export default function LegendPanel() {
                 strokeLinecap="round"
               />
             </svg>
-            Legend
+            {t('legend.title')}
           </span>
 
           <svg
@@ -338,29 +274,46 @@ export default function LegendPanel() {
               display: 'flex',
               flexDirection: 'column',
               gap: '0.75rem',
+              maxHeight: '320px',
+              overflowY: 'auto',
             }}
           >
             {/* Node types */}
-            <section aria-label="Node types">
-              <SectionTitle>Nodes</SectionTitle>
+            <section aria-label={t('legend.nodes')}>
+              <SectionTitle>{t('legend.nodes')}</SectionTitle>
               {NODE_LEGEND.map((item) => (
-                <NodeLegendRow key={item.label} item={item} />
+                <NodeLegendRow
+                  key={item.labelKey}
+                  item={item}
+                  label={t(item.labelKey)}
+                  description={t(item.descKey)}
+                />
               ))}
             </section>
 
             {/* Edge types */}
-            <section aria-label="Edge types">
-              <SectionTitle>Edges</SectionTitle>
+            <section aria-label={t('legend.edges')}>
+              <SectionTitle>{t('legend.edges')}</SectionTitle>
               {EDGE_LEGEND.map((item) => (
-                <EdgeLegendRow key={item.label} item={item} />
+                <EdgeLegendRow
+                  key={item.labelKey}
+                  item={item}
+                  label={t(item.labelKey)}
+                  description={t(item.descKey)}
+                />
               ))}
             </section>
 
             {/* Function type badges */}
-            <section aria-label="Function types">
-              <SectionTitle>Functions</SectionTitle>
+            <section aria-label={t('legend.functions')}>
+              <SectionTitle>{t('legend.functions')}</SectionTitle>
               {FN_TYPE_LEGEND.map((item) => (
-                <FnTypeLegendRow key={item.label} item={item} />
+                <FnTypeLegendRow
+                  key={item.badge}
+                  color={item.color}
+                  badge={item.badge}
+                  description={t(item.descKey)}
+                />
               ))}
             </section>
           </div>

@@ -100,5 +100,9 @@
   "sim.addLiquidity.step.transferToPair": "Routerがプロバイダーから正しい比率で両方のトークンをペアコントラクトに転送します。",
   "sim.addLiquidity.step.transferToPair.mobile": "トークンをペアに転送",
   "sim.addLiquidity.step.mintLP": "ペアコントラクトが、既存のリザーブに対する預入量の幾何平均に比例したLPトークンをミントします。",
-  "sim.addLiquidity.step.mintLP.mobile": "LPトークンをミント"
+  "sim.addLiquidity.step.mintLP.mobile": "LPトークンをミント",
+
+  "compose.erc20.role": "各ペアコントラクトは2種類のERC-20トークンのリザーブを保有し、流動性シェアをERC-20のLPトークン（UNI-V2）として発行します。",
+  "compose.erc2612.role": "LPトークンはEIP-2612スタイルのpermitを実装しており、approveトランザクションを別途送信せずに署名だけでプールトークンの承認を付与できます。",
+  "compose.erc712.role": "permitの承認は各ペア固有のdomain separatorに対するEIP-712型付きデータとして署名されるため、ウォレットで内容を確認でき、リプレイも防止されます。"
 }

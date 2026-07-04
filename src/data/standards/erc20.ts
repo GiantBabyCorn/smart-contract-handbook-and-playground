@@ -273,6 +273,12 @@ export const entry: StandardEntry = {
       id: 'basic-transfer',
       name: 'erc20.sim.basicTransfer.name',
       description: 'erc20.sim.basicTransfer.desc',
+      // Live computation: worker computeTokenTransfer (transfer op) derives
+      // the per-step valueChanges below from the current user params.
+      compute: {
+        kind: 'tokenTransfer',
+        inputs: { sender: 'sender', recipient: 'recipient', amount: 'amount' },
+      },
       params: [
         {
           id: 'sender',
@@ -339,6 +345,12 @@ export const entry: StandardEntry = {
       id: 'approve-and-transfer',
       name: 'erc20.sim.approveAndTransfer.name',
       description: 'erc20.sim.approveAndTransfer.desc',
+      // Live computation: approve(allowanceAmount) then a demo transferFrom
+      // pulling 20% of the allowance (owner acts as the approving sender).
+      compute: {
+        kind: 'tokenTransfer',
+        inputs: { owner: 'sender', spender: 'spender', allowanceAmount: 'amount' },
+      },
       params: [
         {
           id: 'owner',

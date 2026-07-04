@@ -4,6 +4,25 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Pre-paint theme bootstrap. Mirrors useThemeStore exactly: zustand
+         persist key "erc-explorer-theme" ({"state":{"theme":...}}), default
+         "dark" (the store applies no prefers-color-scheme logic). Runs before
+         first paint so a persisted light theme never flashes dark. -->
+    <script>
+      (function () {
+        var theme = 'dark';
+        try {
+          var raw = localStorage.getItem('erc-explorer-theme');
+          if (raw) {
+            var persisted = JSON.parse(raw).state.theme;
+            if (persisted === 'light' || persisted === 'dark') theme = persisted;
+          }
+        } catch (e) {
+          /* unavailable or corrupted storage — keep the store default */
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

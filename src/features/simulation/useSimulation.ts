@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useSimulationStore } from '@/stores/useSimulationStore';
-import { SimulationEngine, type SimulationState } from './SimulationEngine';
+import { SimulationEngine, type EnginePatch } from './SimulationEngine';
 import { simWorker } from './workerApi';
 import type { SimulationScenario } from '@/data/types';
 
@@ -23,19 +23,28 @@ export function useSimulation() {
   // ─── Engine lifecycle ──────────────────────────────────────────────────────
 
   useEffect(() => {
-    const engine = new SimulationEngine((partial: Partial<SimulationState>) => {
+    const engine = new SimulationEngine((partial: EnginePatch) => {
+      const s = useSimulationStore.getState();
       // Translate engine partial-state patches into granular store actions.
+      if (partial.resetRun) {
+        s.reset();
+      }
       if ('scenario' in partial && partial.scenario != null) {
-        store.setScenario(partial.scenario);
+        s.setScenario(partial.scenario);
+      }
+      if ('params' in partial && partial.params !== undefined) {
+        for (const [id, value] of Object.entries(partial.params)) {
+          s.setParam(id, value);
+        }
       }
       if (
         'currentStepIndex' in partial &&
         partial.currentStepIndex !== undefined
       ) {
-        store.setCurrentStep(partial.currentStepIndex);
+        s.setCurrentStep(partial.currentStepIndex);
       }
       if ('isPlaying' in partial && partial.isPlaying !== undefined) {
-        store.setIsPlaying(partial.isPlaying);
+        s.setIsPlaying(partial.isPlaying);
       }
       if (
         'highlightedNodes' in partial &&
@@ -43,15 +52,26 @@ export function useSimulation() {
         'highlightedEdges' in partial &&
         partial.highlightedEdges !== undefined
       ) {
-        store.setHighlights(partial.highlightedNodes, partial.highlightedEdges);
+        s.setHighlights(partial.highlightedNodes, partial.highlightedEdges);
       }
       if ('stepResults' in partial && partial.stepResults !== undefined) {
         for (const [stepId, changes] of Object.entries(partial.stepResults)) {
-          store.addStepResult(stepId, changes);
+          s.addStepResult(stepId, changes);
         }
       }
+      if ('stepMeta' in partial && partial.stepMeta !== undefined) {
+        for (const [stepId, meta] of Object.entries(partial.stepMeta)) {
+          s.addStepMeta(stepId, meta);
+        }
+      }
+      if ('nodeValues' in partial && partial.nodeValues !== undefined) {
+        s.setNodeValues(partial.nodeValues);
+      }
+      if ('flowLabel' in partial) {
+        s.setFlowLabel(partial.flowLabel ?? null);
+      }
       if ('error' in partial) {
-        store.setError(partial.error ?? null);
+        s.setError(partial.error ?? null);
       }
     });
 
@@ -65,9 +85,8 @@ export function useSimulation() {
       engine.destroy();
       engineRef.current = null;
     };
-    // Store action methods are referentially stable across renders (Zustand
-    // guarantee), so this effect only needs to run on mount / unmount.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // The patch bridge reads store actions via getState(), so this effect
+    // only needs to run on mount / unmount.
   }, []);
 
   // ─── Action callbacks ──────────────────────────────────────────────────────
@@ -79,10 +98,10 @@ export function useSimulation() {
   }, []);
 
   const play = useCallback(() => {
-    const { scenario, currentStepIndex, speed } =
+    const { scenario, currentStepIndex, speed, params } =
       useSimulationStore.getState();
     if (scenario) {
-      engineRef.current?.play(scenario, currentStepIndex, speed);
+      engineRef.current?.play(scenario, currentStepIndex, speed, params);
     }
   }, []);
 
@@ -91,9 +110,10 @@ export function useSimulation() {
   }, []);
 
   const stepForward = useCallback(() => {
-    const { scenario, currentStepIndex } = useSimulationStore.getState();
+    const { scenario, currentStepIndex, params } =
+      useSimulationStore.getState();
     if (scenario) {
-      void engineRef.current?.stepForward(scenario, currentStepIndex);
+      void engineRef.current?.stepForward(scenario, currentStepIndex, params);
     }
   }, []);
 
@@ -109,13 +129,18 @@ export function useSimulation() {
   }, []);
 
   const setParam = useCallback((id: string, value: string) => {
-    store.setParam(id, value);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const { currentStepIndex } = useSimulationStore.getState();
+    // Route through the engine so the computed run is invalidated (and the
+    // run reset when already started). Fallback to the store pre-mount.
+    if (engineRef.current) {
+      engineRef.current.setParam(id, value, currentStepIndex);
+    } else {
+      useSimulationStore.getState().setParam(id, value);
+    }
   }, []);
 
   const setSpeed = useCallback((speed: number) => {
-    store.setSpeed(speed);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useSimulationStore.getState().setSpeed(speed);
   }, []);
 
   // ─── Derived helpers ───────────────────────────────────────────────────────
@@ -138,6 +163,9 @@ export function useSimulation() {
     speed: store.speed,
     params: store.params,
     stepResults: store.stepResults,
+    stepMeta: store.stepMeta,
+    nodeValues: store.nodeValues,
+    flowLabel: store.flowLabel,
     highlightedNodes: store.highlightedNodes,
     highlightedEdges: store.highlightedEdges,
     error: store.error,

@@ -100,5 +100,9 @@
   "sim.addLiquidity.step.transferToPair": "Router 按正确比例将两种代币从提供者转移到交易对合约。",
   "sim.addLiquidity.step.transferToPair.mobile": "转移代币到交易对",
   "sim.addLiquidity.step.mintLP": "交易对合约铸造与存入数量相对于现有储备量的几何平均数成比例的 LP 代币。",
-  "sim.addLiquidity.step.mintLP.mobile": "铸造 LP 代币"
+  "sim.addLiquidity.step.mintLP.mobile": "铸造 LP 代币",
+
+  "compose.erc20.role": "每个配对合约持有两种 ERC-20 代币的储备，并将流动性份额铸造为 ERC-20 LP 代币（UNI-V2）。",
+  "compose.erc2612.role": "LP 代币实现了 EIP-2612 风格的 permit，池代币的授权可以通过签名完成，无需单独发送 approve 交易。",
+  "compose.erc712.role": "permit 授权以 EIP-712 类型化数据签名，并绑定每个配对合约自己的 domain separator，钱包可读且能防止重放。"
 }

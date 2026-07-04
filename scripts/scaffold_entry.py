@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Scaffold a new standard or protocol entry.
+"""Scaffold a new standard or protocol entry (manual path; plan.md 8.0).
 
 Usage:
     python scripts/scaffold_entry.py \\
@@ -7,7 +7,7 @@ Usage:
         --name "ERC-777" \\
         --category token \\
         --type standard \\
-        --eip 777
+        --eip 777 [--tier A|B] [--unofficial] [--url https://...]
 
     python scripts/scaffold_entry.py \\
         --slug sushiswap \\
@@ -15,10 +15,23 @@ Usage:
         --category defi \\
         --type protocol
 
-Creates:
+Creates / updates:
   1. Data file:  src/data/standards/<slug>.ts  or  src/data/protocols/<slug>.ts
   2. i18n file:  src/i18n/locales/en/<slug>.json
-  3. Appends metadata entry to  src/data/allMeta.ts
+  3. Registry:
+       standard -> upserts the row in src/data/catalog.json
+                   (published: true, tier, siteCategory; manual rows are
+                   appended with sourcePath: null)
+       protocol -> appends a meta object to src/data/protocolsMeta.ts
+  4. Regenerates src/data/allMeta.ts (gen_allmeta.py) and the catalog
+     namespace + search corpus (gen_catalog_ns.py).
+
+Notes:
+  - allMeta.ts is GENERATED — never edit it by hand.
+  - Batch ingestion (scripts/ingest_ercs.py) is the bulk path; it preserves
+    published/tier/siteCategory (and a manual specUrl) for known slugs, and
+    carries manual rows (sourcePath: null, like the ones this script appends)
+    forward verbatim across re-ingests.
 """
 
 from __future__ import annotations
@@ -26,6 +39,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import subprocess
 import sys
 import textwrap
 from pathlib import Path
@@ -33,13 +47,24 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "src" / "data"
 I18N_DIR = ROOT / "src" / "i18n" / "locales" / "en"
-ALL_META = DATA_DIR / "allMeta.ts"
+CATALOG_PATH = DATA_DIR / "catalog.json"
+PROTOCOLS_META = DATA_DIR / "protocolsMeta.ts"
 
+# Keep in sync with the category registry in src/data/categories.ts (and the
+# Category union in src/data/types.ts) — Python cannot import the TS module.
 VALID_CATEGORIES = [
     "token", "nft", "proxy", "defi", "account",
     "utility", "identity", "oracle", "governance",
     "cross-chain", "rwa",
 ]
+
+_SLUG_NUM_RE = re.compile(r"^erc(\d+)([a-z]*)$")
+
+
+def write_lf(path: Path, content: str) -> None:
+    """Write text with LF line endings (Windows-safe; matches prettier endOfLine)."""
+    with path.open("w", encoding="utf-8", newline="\n") as fh:
+        fh.write(content)
 
 
 def parse_args() -> argparse.Namespace:
@@ -49,17 +74,19 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--category", required=True, choices=VALID_CATEGORIES, help="Entry category")
     p.add_argument("--type", required=True, choices=["standard", "protocol"], dest="entry_type", help="standard or protocol")
     p.add_argument("--eip", type=int, default=None, help="EIP number (required for standards)")
+    p.add_argument("--tier", choices=["A", "B"], default="A", help="Catalog tier (standards; default A for manual entries)")
+    p.add_argument("--unofficial", action="store_true", help="De-facto standard without an official EIP document")
     p.add_argument("--url", default=None, help="Official specification/docs URL")
-    p.add_argument("--sort-order", type=int, default=None, help="Sort order (auto-calculated if omitted)")
+    p.add_argument("--sort-order", type=int, default=None, help="Sort order (protocols only; auto-calculated if omitted)")
     p.add_argument("--force", action="store_true", help="Overwrite existing files")
     return p.parse_args()
 
 
-def compute_sort_order() -> int:
-    """Find the highest sortOrder in allMeta.ts and add 100."""
-    content = ALL_META.read_text(encoding="utf-8")
+def protocol_sort_order() -> int:
+    """Highest sortOrder in protocolsMeta.ts + 100."""
+    content = PROTOCOLS_META.read_text(encoding="utf-8")
     orders = [int(m) for m in re.findall(r"sortOrder:\s*(\d+)", content)]
-    return max(orders, default=0) + 100
+    return max(orders, default=2200) + 100
 
 
 def default_url(entry_type: str, slug: str, eip: int | None) -> str:
@@ -186,41 +213,101 @@ def generate_i18n_file(args: argparse.Namespace) -> dict:
     }
 
 
-def append_to_all_meta(args: argparse.Namespace, sort_order: int, url: str) -> None:
-    """Append a new entry to allMeta.ts before the closing bracket."""
-    content = ALL_META.read_text(encoding="utf-8")
+def catalog_sort_key(row: dict) -> tuple:
+    m = _SLUG_NUM_RE.match(row["slug"])
+    if m:
+        return (int(m.group(1)), m.group(2))
+    return (10**9, row["slug"])
 
-    # Check if slug already exists
+
+def upsert_catalog_row(args: argparse.Namespace, url: str | None) -> None:
+    """Mark an existing catalog row published or append a manual row."""
+    rows: list[dict] = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
+    row = next((r for r in rows if r.get("slug") == args.slug), None)
+
+    if row is not None:
+        if args.eip is not None and row.get("eip") not in (None, args.eip):
+            print(
+                f"ERROR: catalog.json row '{args.slug}' has eip {row.get('eip')},"
+                f" but --eip {args.eip} was passed.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        already = row.get("published") is True
+        row["published"] = True
+        row["tier"] = args.tier
+        row["siteCategory"] = args.category
+        if url and row.get("sourcePath") is None:
+            row["specUrl"] = url
+        verb = "already published — refreshed tier/siteCategory" if already else "published"
+        print(f"  catalog.json: row '{args.slug}' {verb}")
+    else:
+        rows.append({
+            "eip": args.eip,
+            "slug": args.slug,
+            "title": args.name,
+            "status": None,
+            "category": None,
+            "requires": [],
+            "inDegree": 0,
+            "included": True,
+            "tier": args.tier,
+            "existing": False,
+            "unofficial": bool(args.unofficial),
+            "published": True,
+            "sourcePath": None,
+            "specUrl": url or default_url("standard", args.slug, args.eip),
+            "sourceNote": "Manually scaffolded entry (scripts/scaffold_entry.py).",
+            "siteCategory": args.category,
+        })
+        rows.sort(key=catalog_sort_key)
+        print(f"  catalog.json: appended manual row '{args.slug}' (published: true)")
+
+    with CATALOG_PATH.open("w", encoding="utf-8", newline="\n") as fh:
+        json.dump(rows, fh, ensure_ascii=False, indent=2)
+        fh.write("\n")
+
+
+def append_to_protocols_meta(args: argparse.Namespace, sort_order: int, url: str) -> None:
+    """Append a new protocol meta object to protocolsMeta.ts before the closing bracket."""
+    content = PROTOCOLS_META.read_text(encoding="utf-8")
+
     if f"slug: '{args.slug}'" in content:
-        print(f"  allMeta.ts already contains slug '{args.slug}', skipping.")
+        print(f"  protocolsMeta.ts already contains slug '{args.slug}', skipping.")
         return
 
-    eip_fields = ""
-    if args.entry_type == "standard" and args.eip is not None:
-        eip_fields = f"\n    eipNumber: {args.eip},"
+    new_entry = "\n".join([
+        "  {",
+        f"    slug: '{args.slug}',",
+        f"    name: '{args.name}',",
+        f"    shortDescription: '{args.slug}.short',",
+        f"    category: '{args.category}',",
+        "    entryType: 'protocol',",
+        f"    officialUrl: '{url}',",
+        f"    sortOrder: {sort_order},",
+        "  },",
+    ])
 
-    new_entry = textwrap.dedent(f"""\
-      {{
-        slug: '{args.slug}',
-        name: '{args.name}',
-        shortDescription: '{args.slug}.short',
-        category: '{args.category}',
-        entryType: '{args.entry_type}',{eip_fields}
-        officialUrl: '{url}',
-        relatedSlugs: [],
-        sortOrder: {sort_order},
-      }},""")
-
-    # Insert before the closing `];`
     content = content.rstrip()
     if content.endswith("];"):
-        content = content[:-2].rstrip() + "\n  " + new_entry + "\n];\n"
+        content = content[:-2].rstrip() + "\n" + new_entry + "\n];\n"
     else:
-        print("  WARNING: Could not find closing ']; ' in allMeta.ts. Please add entry manually.")
+        print("  WARNING: Could not find closing ']; ' in protocolsMeta.ts. Please add entry manually.")
         return
 
-    ALL_META.write_text(content, encoding="utf-8")
-    print(f"  Updated allMeta.ts with '{args.slug}'")
+    write_lf(PROTOCOLS_META, content)
+    print(f"  Updated protocolsMeta.ts with '{args.slug}'")
+
+
+def run_generators() -> None:
+    for script in ("gen_allmeta.py", "gen_catalog_ns.py"):
+        result = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / script)],
+            cwd=ROOT,
+        )
+        if result.returncode != 0:
+            print(f"ERROR: {script} failed — fix and re-run it manually.", file=sys.stderr)
+            sys.exit(result.returncode)
 
 
 def main() -> None:
@@ -231,7 +318,12 @@ def main() -> None:
         print("ERROR: --eip is required for standards.", file=sys.stderr)
         sys.exit(1)
 
-    sort_order = args.sort_order if args.sort_order is not None else compute_sort_order()
+    if args.entry_type == "standard":
+        # Meta sortOrder for non-curated standards is 10000 + eip (gen_allmeta.py);
+        # keep the data file in lockstep.
+        sort_order = 10000 + args.eip
+    else:
+        sort_order = args.sort_order if args.sort_order is not None else protocol_sort_order()
     url = args.url or default_url(args.entry_type, args.slug, args.eip)
 
     subdir = "standards" if args.entry_type == "standard" else "protocols"
@@ -248,7 +340,7 @@ def main() -> None:
         print(f"  SKIP: {data_file.relative_to(ROOT)} already exists (use --force to overwrite)")
     else:
         data_file.parent.mkdir(parents=True, exist_ok=True)
-        data_file.write_text(generate_data_file(args, sort_order, url), encoding="utf-8")
+        write_lf(data_file, generate_data_file(args, sort_order, url))
         print(f"  Created {data_file.relative_to(ROOT)}")
 
     # 2. i18n file
@@ -256,18 +348,25 @@ def main() -> None:
         print(f"  SKIP: {i18n_file.relative_to(ROOT)} already exists (use --force to overwrite)")
     else:
         i18n_file.parent.mkdir(parents=True, exist_ok=True)
-        i18n_file.write_text(json.dumps(generate_i18n_file(args), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        write_lf(i18n_file, json.dumps(generate_i18n_file(args), indent=2, ensure_ascii=False) + "\n")
         print(f"  Created {i18n_file.relative_to(ROOT)}")
 
-    # 3. allMeta.ts
-    append_to_all_meta(args, sort_order, url)
+    # 3. Registry (catalog.json for standards / protocolsMeta.ts for protocols)
+    if args.entry_type == "standard":
+        upsert_catalog_row(args, args.url)
+    else:
+        append_to_protocols_meta(args, sort_order, url)
+
+    # 4. Regenerate allMeta.ts + catalog namespace + search corpus
+    run_generators()
 
     print()
     print("Next steps:")
     print(f"  1. Fill in functions, flowNodes, flowEdges, simulations in {data_file.relative_to(ROOT)}")
-    print(f"  2. Update i18n translations in {i18n_file.relative_to(ROOT)}")
-    print(f"  3. Run: python scripts/validate_registry.py")
-    print(f"  4. Run: python scripts/sync_translations.py")
+    print(f"  2. Replace the TODO strings in {i18n_file.relative_to(ROOT)}, then run:")
+    print("     python scripts/sync_translations.py --fix   (other locales)")
+    print("     python scripts/gen_catalog_ns.py            (refresh catalog ns + search corpus)")
+    print("  3. Run: python scripts/validate_registry.py")
     print()
 
 

@@ -64,5 +64,8 @@
   "sim.stablecoinSwap.step.stableswapInvariant": "The pool recalculates using the StableSwap invariant with the amplification factor A, determining the output amount along the near-linear price curve.",
   "sim.stablecoinSwap.step.stableswapInvariant.mobile": "Calculate via invariant",
   "sim.stablecoinSwap.step.receiveTokenOut": "The pool transfers USDC to the trader. A small fee (typically 0.04%) is deducted and retained by the pool for LP holders.",
-  "sim.stablecoinSwap.step.receiveTokenOut.mobile": "Receive USDC output"
+  "sim.stablecoinSwap.step.receiveTokenOut.mobile": "Receive USDC output",
+
+  "compose.erc20.role": "Liquidity shares are ERC-20 LP tokens — legacy pools deploy a separate LP token contract, while stableswap-ng pools implement ERC-20 in the pool contract itself.",
+  "compose.erc2612.role": "Stableswap-ng LP tokens implement EIP-2612 permit with an EIP-712 domain separator for signature-based approvals."
 }

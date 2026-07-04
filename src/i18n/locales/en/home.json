@@ -3,6 +3,7 @@
   "subtitle": "Interactive guide to Ethereum standards & DeFi protocols",
   "description": "Explore and understand Ethereum standards and DeFi protocols through interactive visualizations, live simulations, and clear explanations. From fungible tokens to cross-chain protocols, Smart Contract Handbook makes on-chain standards approachable for developers and learners alike.",
   "getStarted": "Get Started",
+  "featuresHeading": "Everything you need to understand Ethereum standards",
   "features": {
     "visualization": "Visual Flow Diagrams",
     "visualizationDesc": "Understand complex contract interactions through clear, interactive flow diagrams that illustrate how each standard works under the hood.",
@@ -11,9 +12,11 @@
     "multilingual": "Multilingual Support",
     "multilingualDesc": "Available in English, Simplified Chinese, Traditional Chinese, Japanese, Korean, and Spanish — making Ethereum standards accessible worldwide."
   },
+  "exploreHeading": "Explore by standard",
+  "viewCatalog": "View the full catalog →",
   "stats": {
     "standards": "22 ERC Standards",
     "protocols": "13 Protocols",
-    "simulations": "Interactive Simulations"
+    "entries": "Interactive guides"
   }
 }

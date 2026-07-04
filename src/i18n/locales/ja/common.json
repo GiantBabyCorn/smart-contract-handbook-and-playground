@@ -14,12 +14,15 @@
       "governance": "ガバナンス",
       "crossChain": "クロスチェーン",
       "rwa": "現実世界資産"
-    }
+    },
+    "viewAll": "すべて表示（{{count}} 件）→",
+    "footerCounts": "標準 {{standards}} 件 · プロトコル {{protocols}} 件"
   },
   "nav": {
     "home": "ホーム",
     "backToHome": "ホームに戻る",
-    "playground": "プレイグラウンド"
+    "playground": "プレイグラウンド",
+    "catalog": "カタログ"
   },
   "theme": {
     "switchToLight": "ライトテーマに切り替え",
@@ -43,11 +46,147 @@
     "goHome": "ホームに戻る"
   },
   "loading": "読み込み中...",
-  "sim": { "scenarios": "シナリオ", "interactive": "インタラクティブ", "play": "再生", "pause": "一時停止", "stepForward": "次のステップ", "stepBack": "前のステップ", "reset": "リセット" },
-  "interactive": { "selectFunction": "関数を選択", "parameters": "パラメータ", "execute": "実行" },
-  "playground": { "title": "プレイグラウンド", "subtitle": "コントラクトを組み合わせてインタラクションをテスト", "addContract": "追加", "remove": "削除", "clearAll": "すべてクリア", "autoLayout": "自動レイアウト", "searchContracts": "コントラクトを検索...", "empty": "パレットからコントラクトを追加して始めましょう" },
+  "sim": {
+    "scenarios": "シナリオ",
+    "interactive": "インタラクティブ",
+    "play": "再生",
+    "pause": "一時停止",
+    "stepForward": "次のステップ",
+    "stepBack": "前のステップ",
+    "reset": "リセット"
+  },
+  "interactive": {
+    "selectFunction": "関数を選択",
+    "parameters": "パラメータ",
+    "execute": "実行",
+    "entryPoint": "開始地点",
+    "filterFunctions": "関数を絞り込み...",
+    "noFunctions": "条件に一致する関数がありません",
+    "currentStep": "現在のステップ",
+    "stepFrom": "{{label}} から開始",
+    "stepCall": "呼び出しが {{label}} に到達",
+    "stepStorage": "ストレージを更新：{{label}}",
+    "stepEvent": "イベントを発行：{{label}}",
+    "stepInteract": "{{label}} と対話"
+  },
+  "playground": {
+    "title": "プレイグラウンド",
+    "subtitle": "コントラクトを組み合わせてインタラクションをテスト",
+    "addContract": "追加",
+    "remove": "削除",
+    "clearAll": "すべてクリア",
+    "autoLayout": "自動レイアウト",
+    "searchContracts": "コントラクトを検索...",
+    "empty": "パレットからコントラクトを追加して始めましょう",
+    "share": "共有",
+    "linkCopied": "リンクをクリップボードにコピーしました",
+    "shareFailed": "リンクをコピーできませんでした",
+    "simulate": "シミュレーション",
+    "close": "閉じる",
+    "openPalette": "コントラクトを追加",
+    "tapToPlace": "キャンバスをタップして {{name}} を配置",
+    "cancel": "キャンセル",
+    "dragHint": "項目をキャンバスにドラッグするか、「追加」をクリック",
+    "tapHint": "項目をタップしてから、キャンバスをタップして配置",
+    "onboardingTitle": "3ステップで始めよう",
+    "step1Title": "コントラクトを追加",
+    "step1Desc": "パレットから標準をキャンバスにドラッグするか、「追加」をクリック",
+    "step2Title": "関数を選択",
+    "step2Desc": "右側のパネルで関数を選び、パラメータを入力",
+    "step3Title": "シミュレーションを実行",
+    "step3Desc": "実行して、コントラクト間の呼び出しの流れを観察",
+    "presetsTitle": "またはプリセットの組み合わせから始める",
+    "presetPermit": "ガスレス承認（permit）",
+    "presetSwap": "トークンスワップフロー",
+    "presetRoyalty": "ロイヤリティ付き NFT",
+    "presetAa": "モジュール型スマートアカウント",
+    "presetUups": "アップグレード可能プロキシ（UUPS）"
+  },
   "a11y": {
     "flowDiagram": "コントラクトコンポーネント間のインタラクションを示すフロー図",
-    "simulationPanel": "ステップごとの実行のためのインタラクティブシミュレーションパネル"
+    "simulationPanel": "ステップごとの実行のためのインタラクティブシミュレーションパネル",
+    "skipToContent": "メインコンテンツへスキップ"
+  },
+  "search": {
+    "button": "検索",
+    "placeholder": "標準・プロトコル・関数を検索...",
+    "noResults": "結果が見つかりません",
+    "recent": "最近閲覧した項目",
+    "loading": "検索インデックスを読み込み中..."
+  },
+  "catalogUi": {
+    "title": "カタログ",
+    "description": "公開済みのすべての ERC 標準と DeFi プロトコルを、カテゴリ・ステータス・種類で絞り込んで閲覧できます。",
+    "summary": "{{total}} 件中 {{shown}} 件を表示",
+    "searchLabel": "名前または EIP 番号で絞り込み",
+    "searchPlaceholder": "名前または EIP 番号...",
+    "eip": "EIP 番号",
+    "name": "名称",
+    "category": "カテゴリ",
+    "status": "ステータス",
+    "type": "種類",
+    "tier": "ティア",
+    "availability": "公開状態",
+    "live": "公開中",
+    "allCategories": "すべてのカテゴリ",
+    "allStatuses": "すべてのステータス",
+    "allTypes": "すべての種類",
+    "standard": "標準",
+    "protocol": "プロトコル",
+    "unofficial": "非公式",
+    "noMatches": "現在のフィルターに一致する項目はありません"
+  },
+  "detailUi": {
+    "toc": "目次",
+    "copyLink": "このセクションへのリンクをコピー",
+    "linkCopied": "リンクをコピーしました！",
+    "prev": "前の項目",
+    "next": "次の項目",
+    "entryNav": "前後の項目ナビゲーション",
+    "officialSpec": "公式仕様",
+    "officialSpecFor": "{{name}} の公式仕様",
+    "meta": {
+      "eip": "EIP",
+      "functions": "関数",
+      "simulations": "シミュレーション",
+      "requires": "依存"
+    },
+    "sections": {
+      "introduction": "概要",
+      "designPurpose": "設計目的",
+      "commonUsage": "一般的な用途",
+      "functions": "関数とイベント",
+      "security": "セキュリティ上の考慮事項",
+      "codeExamples": "コード例",
+      "errors": "エラーとリバート",
+      "gas": "ガスに関する注意",
+      "composition": "構成する標準",
+      "references": "参考資料",
+      "related": "関連する標準とプロトコル"
+    },
+    "severity": {
+      "critical": "重大",
+      "high": "高",
+      "medium": "中",
+      "info": "情報"
+    },
+    "security": {
+      "mitigation": "対策：",
+      "source": "出典"
+    },
+    "refKind": {
+      "spec": "仕様",
+      "impl": "参考実装",
+      "audit": "監査",
+      "article": "記事"
+    },
+    "errorsTable": {
+      "name": "エラー",
+      "condition": "リバート条件"
+    },
+    "fn": {
+      "parameters": "パラメータ",
+      "returns": "戻り値"
+    }
   }
 }

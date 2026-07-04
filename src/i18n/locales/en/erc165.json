@@ -8,6 +8,14 @@
   "fn.supportsInterface.params.interfaceId": "The 4-byte interface identifier to query, as defined in ERC-165. Computed as the XOR of all function selectors in the interface.",
   "fn.supportsInterface.returns.supported": "True if the contract implements the queried interface, false otherwise.",
 
+  "sec.trust.title": "Interface support is self-reported",
+  "sec.trust.desc": "supportsInterface answers come from the queried contract itself, so a malicious or buggy contract can claim interfaces it does not implement — or answer true to every query.",
+  "sec.trust.mitigation": "Treat the answer as a hint, not a proof. Per the specification, a compliant contract must return false for 0xffffffff — query it to filter out contracts that blindly answer true, and keep validating actual call behaviour.",
+
+  "code.iface.title": "Canonical ERC-165 interface",
+
+  "gas.notes": "The specification caps supportsInterface at under 30,000 gas. Implementations should answer with a constant-time check (a pre-registered mapping or hard-coded comparisons) rather than any unbounded computation.",
+
   "node.caller": "Caller / DApp",
   "node.contract": "ERC-165 Contract",
   "node.interfaceRegistry": "Interface Registry",

@@ -258,6 +258,13 @@ export const entry: ProtocolEntry = {
       id: 'token-swap',
       name: 'uniswap-v2.sim.tokenSwap.name',
       description: 'uniswap-v2.sim.tokenSwap.desc',
+      // Live computation: worker computeSwap (x·y=k with 0.3% fee) against
+      // the diagram's 1000 TOKEN-A / 3000 TOKEN-B pool; reserve/output
+      // valueChanges below update from the current amountIn.
+      compute: {
+        kind: 'swap',
+        inputs: { amountIn: 'amountIn' },
+      },
       params: [
         { id: 'amountIn', label: 'uniswap-v2.sim.tokenSwap.param.amountIn', type: 'uint256', defaultValue: '1000000000000000000' },
         { id: 'path', label: 'uniswap-v2.sim.tokenSwap.param.path', type: 'address', defaultValue: '0xTokenA,0xTokenB' },

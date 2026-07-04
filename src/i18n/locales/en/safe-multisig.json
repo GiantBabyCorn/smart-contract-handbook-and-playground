@@ -83,5 +83,10 @@
   "sim.add-new-owner.step.collectSigs": "Owner B and Owner C sign the transaction, providing enough confirmations to meet the current threshold.",
   "sim.add-new-owner.step.collectSigs.mobile": "Collect signatures",
   "sim.add-new-owner.step.addOwner": "The Safe executes addOwnerWithThreshold(), adding the new owner to the linked list and updating the threshold from 2 to 3.",
-  "sim.add-new-owner.step.addOwner.mobile": "Add owner & update threshold"
+  "sim.add-new-owner.step.addOwner.mobile": "Add owner & update threshold",
+
+  "compose.erc1271.role": "A Safe can sign as a contract: isValidSignature (ERC-1271) validates owner signatures or pre-approved messages, implemented in the CompatibilityFallbackHandler.",
+  "compose.erc165.role": "ERC-165 interface detection is provided by the CompatibilityFallbackHandler (via TokenCallbackHandler), not by the Safe singleton core itself.",
+  "compose.erc4337.role": "The Safe4337Module is an optional add-on (acting as both module and fallback handler, Safe v1.4.1+) that gives a Safe ERC-4337 account-abstraction support.",
+  "compose.erc712.role": "Every Safe transaction is hashed as EIP-712 typed data (SAFE_TX_TYPEHASH), which owners sign to reach the confirmation threshold."
 }

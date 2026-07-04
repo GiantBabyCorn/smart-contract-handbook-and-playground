@@ -14,12 +14,15 @@
       "governance": "Gobernanza",
       "crossChain": "Cadenas Cruzadas",
       "rwa": "Activos del Mundo Real"
-    }
+    },
+    "viewAll": "Ver todos ({{count}}) →",
+    "footerCounts": "{{standards}} estándares · {{protocols}} protocolos"
   },
   "nav": {
     "home": "Inicio",
     "backToHome": "Volver al Inicio",
-    "playground": "Laboratorio"
+    "playground": "Laboratorio",
+    "catalog": "Catálogo"
   },
   "theme": {
     "switchToLight": "Cambiar al tema claro",
@@ -43,11 +46,147 @@
     "goHome": "Ir al inicio"
   },
   "loading": "Cargando...",
-  "sim": { "scenarios": "Escenarios", "interactive": "Interactivo", "play": "Reproducir", "pause": "Pausar", "stepForward": "Paso adelante", "stepBack": "Paso atrás", "reset": "Reiniciar" },
-  "interactive": { "selectFunction": "Seleccionar función", "parameters": "Parámetros", "execute": "Ejecutar" },
-  "playground": { "title": "Laboratorio", "subtitle": "Componer contratos y probar interacciones", "addContract": "Agregar", "remove": "Eliminar", "clearAll": "Limpiar todo", "autoLayout": "Auto-diseño", "searchContracts": "Buscar contratos...", "empty": "Agregue contratos desde la paleta para comenzar" },
+  "sim": {
+    "scenarios": "Escenarios",
+    "interactive": "Interactivo",
+    "play": "Reproducir",
+    "pause": "Pausar",
+    "stepForward": "Paso adelante",
+    "stepBack": "Paso atrás",
+    "reset": "Reiniciar"
+  },
+  "interactive": {
+    "selectFunction": "Seleccionar función",
+    "parameters": "Parámetros",
+    "execute": "Ejecutar",
+    "entryPoint": "Punto de entrada",
+    "filterFunctions": "Filtrar funciones...",
+    "noFunctions": "Ninguna función coincide con tu filtro",
+    "currentStep": "Paso actual",
+    "stepFrom": "Comenzar desde {{label}}",
+    "stepCall": "La llamada llega a {{label}}",
+    "stepStorage": "Actualizar almacenamiento: {{label}}",
+    "stepEvent": "Emitir evento: {{label}}",
+    "stepInteract": "Interactuar con {{label}}"
+  },
+  "playground": {
+    "title": "Laboratorio",
+    "subtitle": "Componer contratos y probar interacciones",
+    "addContract": "Agregar",
+    "remove": "Eliminar",
+    "clearAll": "Limpiar todo",
+    "autoLayout": "Auto-diseño",
+    "searchContracts": "Buscar contratos...",
+    "empty": "Agregue contratos desde la paleta para comenzar",
+    "share": "Compartir",
+    "linkCopied": "Enlace copiado al portapapeles",
+    "shareFailed": "No se pudo copiar el enlace",
+    "simulate": "Simular",
+    "close": "Cerrar",
+    "openPalette": "Añadir contratos",
+    "tapToPlace": "Toca el lienzo para colocar {{name}}",
+    "cancel": "Cancelar",
+    "dragHint": "Arrastra un elemento al lienzo o haz clic en «Agregar»",
+    "tapHint": "Toca un elemento y luego toca el lienzo para colocarlo",
+    "onboardingTitle": "Comienza en tres pasos",
+    "step1Title": "Añade contratos",
+    "step1Desc": "Arrastra estándares de la paleta al lienzo o haz clic en «Agregar»",
+    "step2Title": "Elige una función",
+    "step2Desc": "Selecciona una función en el panel derecho y completa sus parámetros",
+    "step3Title": "Ejecuta la simulación",
+    "step3Desc": "Ejecuta y observa el flujo de llamadas entre tus contratos",
+    "presetsTitle": "O comienza con una combinación predefinida",
+    "presetPermit": "Aprobaciones sin gas (permit)",
+    "presetSwap": "Flujo de intercambio de tokens",
+    "presetRoyalty": "NFT con regalías",
+    "presetAa": "Cuentas inteligentes modulares",
+    "presetUups": "Proxy actualizable (UUPS)"
+  },
   "a11y": {
     "flowDiagram": "Diagrama de flujo que ilustra la interacción entre los componentes del contrato",
-    "simulationPanel": "Panel de simulación interactivo para ejecución paso a paso"
+    "simulationPanel": "Panel de simulación interactivo para ejecución paso a paso",
+    "skipToContent": "Saltar al contenido principal"
+  },
+  "search": {
+    "button": "Buscar",
+    "placeholder": "Buscar estándares, protocolos, funciones...",
+    "noResults": "No se encontraron resultados",
+    "recent": "Vistos recientemente",
+    "loading": "Cargando índice de búsqueda..."
+  },
+  "catalogUi": {
+    "title": "Catálogo",
+    "description": "Explora todos los estándares ERC y protocolos DeFi publicados: filtra por categoría, estado y tipo.",
+    "summary": "Mostrando {{shown}} de {{total}} entradas",
+    "searchLabel": "Filtrar por nombre o número de EIP",
+    "searchPlaceholder": "Nombre o n.º de EIP...",
+    "eip": "N.º de EIP",
+    "name": "Nombre",
+    "category": "Categoría",
+    "status": "Estado",
+    "type": "Tipo",
+    "tier": "Nivel",
+    "availability": "Disponibilidad",
+    "live": "Publicado",
+    "allCategories": "Todas las categorías",
+    "allStatuses": "Todos los estados",
+    "allTypes": "Todos los tipos",
+    "standard": "Estándar",
+    "protocol": "Protocolo",
+    "unofficial": "No oficial",
+    "noMatches": "Ninguna entrada coincide con los filtros actuales"
+  },
+  "detailUi": {
+    "toc": "En esta página",
+    "copyLink": "Copiar enlace a esta sección",
+    "linkCopied": "¡Enlace copiado!",
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "entryNav": "Navegación entre entradas",
+    "officialSpec": "Especificación oficial",
+    "officialSpecFor": "Especificación oficial de {{name}}",
+    "meta": {
+      "eip": "EIP",
+      "functions": "Funciones",
+      "simulations": "Simulaciones",
+      "requires": "Requiere"
+    },
+    "sections": {
+      "introduction": "Introducción",
+      "designPurpose": "Propósito de diseño",
+      "commonUsage": "Usos comunes",
+      "functions": "Funciones y eventos",
+      "security": "Consideraciones de seguridad",
+      "codeExamples": "Ejemplos de código",
+      "errors": "Errores y reversiones",
+      "gas": "Notas de gas",
+      "composition": "Estándares que compone",
+      "references": "Referencias",
+      "related": "Estándares y protocolos relacionados"
+    },
+    "severity": {
+      "critical": "Crítica",
+      "high": "Alta",
+      "medium": "Media",
+      "info": "Información"
+    },
+    "security": {
+      "mitigation": "Mitigación:",
+      "source": "Fuente"
+    },
+    "refKind": {
+      "spec": "Especificación",
+      "impl": "Implementaciones",
+      "audit": "Auditorías",
+      "article": "Artículos"
+    },
+    "errorsTable": {
+      "name": "Error",
+      "condition": "Condición de reversión"
+    },
+    "fn": {
+      "parameters": "Parámetros",
+      "returns": "Valores de retorno"
+    }
   }
 }

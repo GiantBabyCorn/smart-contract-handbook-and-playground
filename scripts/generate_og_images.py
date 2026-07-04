@@ -3,7 +3,20 @@
 
 Creates:
   - public/og-image.png         (default, 1200x630)
+  - public/og/catalog.png       (generic /catalog page card, 1200x630)
   - public/og/<slug>.png        (per-entry, 1200x630)
+
+Usage:
+  python scripts/generate_og_images.py                 # everything
+  python scripts/generate_og_images.py --only catalog  # just the catalog card
+  python scripts/generate_og_images.py --only default erc20 uniswap-v2
+
+--only targets: "default" (og-image.png), "catalog", or entry slugs. Use it to
+avoid rewriting dozens of committed PNGs when only one card changed.
+
+Entry list comes from src/data/allMeta.ts (generated; published standards)
+plus src/data/protocolsMeta.ts (protocols — spread into allMeta at runtime,
+so they must be parsed separately here).
 
 Requires: pip install Pillow cairosvg
 If Pillow is not available, generates a minimal PNG using stdlib only
@@ -12,6 +25,8 @@ If Pillow is not available, generates a minimal PNG using stdlib only
 
 from __future__ import annotations
 
+import argparse
+import re
 import struct
 import sys
 import zlib
@@ -21,6 +36,24 @@ ROOT = Path(__file__).resolve().parent.parent
 PUBLIC_DIR = ROOT / "public"
 OG_DIR = PUBLIC_DIR / "og"
 ALL_META = ROOT / "src" / "data" / "allMeta.ts"
+PROTOCOLS_META = ROOT / "src" / "data" / "protocolsMeta.ts"
+
+# Same visual language as the per-entry cards.
+CATALOG_TITLE = "Standards Catalog"
+CATALOG_SUBTITLE = "ERC STANDARDS & DEFI PROTOCOLS"
+
+# Candidate fonts, tried in order (Linux/CI first — the committed cards were
+# rendered with DejaVu Sans — then Windows equivalents for local runs).
+BOLD_FONTS = [
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+    "C:/Windows/Fonts/DejaVuSans-Bold.ttf",
+    "C:/Windows/Fonts/arialbd.ttf",
+]
+REGULAR_FONTS = [
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    "C:/Windows/Fonts/DejaVuSans.ttf",
+    "C:/Windows/Fonts/arial.ttf",
+]
 
 WIDTH = 1200
 HEIGHT = 630
@@ -59,14 +92,35 @@ def _make_chunk(chunk_type: bytes, data: bytes) -> bytes:
     return struct.pack('>I', len(data)) + chunk + struct.pack('>I', zlib.crc32(chunk) & 0xFFFFFFFF)
 
 
-def generate_with_pillow() -> bool:
+def parse_entries() -> list[tuple[str, str, str]]:
+    """(slug, name, category) for every published entry, standards + protocols."""
+    entries: list[tuple[str, str, str]] = []
+    seen: set[str] = set()
+    for path in (ALL_META, PROTOCOLS_META):
+        if not path.exists():
+            continue
+        content = path.read_text(encoding="utf-8")
+        for slug, name, category in re.findall(
+            r"slug:\s*'([^']+)'.*?name:\s*'([^']+)'.*?category:\s*'([^']+)'",
+            content,
+            re.DOTALL,
+        ):
+            if slug not in seen:
+                seen.add(slug)
+                entries.append((slug, name, category))
+    return entries
+
+
+def wanted(only: set[str] | None, target: str) -> bool:
+    return only is None or target in only
+
+
+def generate_with_pillow(only: set[str] | None) -> bool:
     """Try to generate OG images with Pillow for text rendering."""
     try:
         from PIL import Image, ImageDraw, ImageFont
     except ImportError:
         return False
-
-    import re
 
     def load_logo() -> Image.Image | None:
         """Load and render the SVG logo to a PIL Image."""
@@ -106,12 +160,17 @@ def generate_with_pillow() -> bool:
         # Try to use a decent font, fall back to default
         title_size = 52
         subtitle_size = 28
-        try:
-            title_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", title_size)
-            subtitle_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", subtitle_size)
-        except (OSError, IOError):
-            title_font = ImageFont.load_default()
-            subtitle_font = ImageFont.load_default()
+
+        def load_font(candidates: list[str], size: int):
+            for candidate in candidates:
+                try:
+                    return ImageFont.truetype(candidate, size)
+                except (OSError, IOError):
+                    continue
+            return ImageFont.load_default()
+
+        title_font = load_font(BOLD_FONTS, title_size)
+        subtitle_font = load_font(REGULAR_FONTS, subtitle_size)
 
         # Draw title centered
         bbox = draw.textbbox((0, 0), title, font=title_font)
@@ -133,56 +192,71 @@ def generate_with_pillow() -> bool:
         img.convert('RGB').save(output_path, 'PNG')
 
     # Generate default og-image (with logo)
-    make_og_image(
-        "Smart Contract Handbook",
-        "Interactive ERC Standards & DeFi Protocol Explorer",
-        PUBLIC_DIR / "og-image.png",
-        show_logo=True,
-    )
-    print(f"  Created public/og-image.png")
+    if wanted(only, "default"):
+        make_og_image(
+            "Smart Contract Handbook",
+            "Interactive ERC Standards & DeFi Protocol Explorer",
+            PUBLIC_DIR / "og-image.png",
+            show_logo=True,
+        )
+        print("  Created public/og-image.png")
 
-    # Parse entries from allMeta.ts
-    content = ALL_META.read_text(encoding="utf-8")
-    entries = re.findall(
-        r"slug:\s*'([^']+)'.*?name:\s*'([^']+)'.*?category:\s*'([^']+)'",
-        content,
-        re.DOTALL,
-    )
+    # Generic /catalog page card (same style as the per-entry cards)
+    if wanted(only, "catalog"):
+        make_og_image(CATALOG_TITLE, CATALOG_SUBTITLE, OG_DIR / "catalog.png")
+        print("  Created public/og/catalog.png")
 
-    OG_DIR.mkdir(parents=True, exist_ok=True)
-    for slug, name, category in entries:
-        make_og_image(name, category.upper(), OG_DIR / f"{slug}.png")
-        print(f"  Created public/og/{slug}.png")
+    for slug, name, category in parse_entries():
+        if wanted(only, slug):
+            make_og_image(name, category.upper(), OG_DIR / f"{slug}.png")
+            print(f"  Created public/og/{slug}.png")
 
     return True
 
 
-def generate_fallback() -> None:
+def generate_fallback(only: set[str] | None) -> None:
     """Generate minimal solid-color PNGs without Pillow."""
     print("  Pillow not available, generating minimal fallback PNGs...")
 
     png_data = create_minimal_png(WIDTH, HEIGHT, BG_COLOR)
-
-    # Default og-image
-    (PUBLIC_DIR / "og-image.png").write_bytes(png_data)
-    print(f"  Created public/og-image.png (solid color fallback)")
-
-    # Per-entry images
-    import re
-    content = ALL_META.read_text(encoding="utf-8")
-    slugs = re.findall(r"slug:\s*'([^']+)'", content)
-
     OG_DIR.mkdir(parents=True, exist_ok=True)
-    for slug in slugs:
-        (OG_DIR / f"{slug}.png").write_bytes(png_data)
-        print(f"  Created public/og/{slug}.png (solid color fallback)")
+
+    if wanted(only, "default"):
+        (PUBLIC_DIR / "og-image.png").write_bytes(png_data)
+        print("  Created public/og-image.png (solid color fallback)")
+
+    if wanted(only, "catalog"):
+        (OG_DIR / "catalog.png").write_bytes(png_data)
+        print("  Created public/og/catalog.png (solid color fallback)")
+
+    for slug, _name, _category in parse_entries():
+        if wanted(only, slug):
+            (OG_DIR / f"{slug}.png").write_bytes(png_data)
+            print(f"  Created public/og/{slug}.png (solid color fallback)")
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Generate OG images (default card, catalog card, per-entry cards)")
+    parser.add_argument(
+        "--only",
+        nargs="+",
+        metavar="TARGET",
+        help="generate only these targets: 'default' (og-image.png), 'catalog', or entry slugs",
+    )
+    args = parser.parse_args()
+    only: set[str] | None = set(args.only) if args.only else None
+
+    if only is not None:
+        known = {"default", "catalog"} | {slug for slug, _n, _c in parse_entries()}
+        unknown = only - known
+        if unknown:
+            print(f"ERROR: unknown --only target(s): {', '.join(sorted(unknown))}", file=sys.stderr)
+            sys.exit(1)
+
     print("Generating OG images...\n")
 
-    if not generate_with_pillow():
-        generate_fallback()
+    if not generate_with_pillow(only):
+        generate_fallback(only)
         print("\nTip: Install Pillow for branded images with text:")
         print("  pip install Pillow")
 

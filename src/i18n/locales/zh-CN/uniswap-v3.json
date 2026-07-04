@@ -109,5 +109,9 @@
   "sim.provideConcentratedLiquidity.step.mintPosition": "提供者在 NonfungiblePositionManager 上调用 mint()，指定 tick 范围。铸造一个代表该头寸的唯一 NFT。",
   "sim.provideConcentratedLiquidity.step.mintPosition.mobile": "铸造头寸 NFT",
   "sim.provideConcentratedLiquidity.step.updateTicks": "池更新指定范围的 tick 位图和流动性。两种代币根据当前价格相对于范围的比例按比例存入。",
-  "sim.provideConcentratedLiquidity.step.updateTicks.mobile": "更新 tick 流动性"
+  "sim.provideConcentratedLiquidity.step.updateTicks.mobile": "更新 tick 流动性",
+
+  "compose.erc721.role": "每个集中流动性头寸都由 NonfungiblePositionManager 铸造为 ERC-721 NFT，以 tokenId 标识。",
+  "compose.erc20.role": "每个池交易一对 ERC-20 代币，交易手续费也以这两种代币累积到头寸上。",
+  "compose.erc712.role": "头寸管理合约的 ERC721Permit 扩展（Uniswap 自研，非定稿 ERC）通过 EIP-712 签名授权头寸 NFT 的操作者。"
 }

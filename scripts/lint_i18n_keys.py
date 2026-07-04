@@ -6,12 +6,19 @@ Checks:
   2. Every JSON file has the same key set across all locales (deep compare)
   3. Key naming follows conventions (no underscores except _one/_other, max 3 levels)
   4. No empty string values
+  5. (opt-in) --max-identical-ratio: per non-en locale, the share of leaf string
+     values identical to the en value must not exceed the threshold. Catches
+     untranslated copy-paste locales; code snippets and proper nouns keep the
+     genuine ratio slightly above zero (currently ~2-3%).
+
+Use --report to print the per-locale identical-to-en ratios even when passing.
 
 Exit code 1 if any issues found.
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -68,7 +75,61 @@ def check_key_convention(key: str) -> list[str]:
     return errors
 
 
+def compute_identical_stats() -> dict[str, tuple[int, int]]:
+    """Per non-en locale: (# leaf string values identical to en, # compared) across all namespaces."""
+    en_dir = I18N_DIR / "en"
+    stats: dict[str, list[int]] = {locale: [0, 0] for locale in LOCALES if locale != "en"}
+
+    for en_file in sorted(en_dir.glob("*.json")):
+        try:
+            en_keys = flatten_keys(json.loads(en_file.read_text(encoding="utf-8")))
+        except json.JSONDecodeError:
+            continue  # invalid JSON is reported by the main checks
+
+        for locale in stats:
+            locale_file = I18N_DIR / locale / en_file.name
+            if not locale_file.exists():
+                continue  # missing file is reported by the main checks
+            try:
+                locale_keys = flatten_keys(json.loads(locale_file.read_text(encoding="utf-8")))
+            except json.JSONDecodeError:
+                continue  # invalid JSON is reported by the main checks
+
+            for key, value in locale_keys.items():
+                en_value = en_keys.get(key)
+                if not isinstance(value, str) or not isinstance(en_value, str):
+                    continue
+                stats[locale][1] += 1
+                if value == en_value:
+                    stats[locale][0] += 1
+
+    return {locale: (identical, total) for locale, (identical, total) in stats.items()}
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Validate i18n key naming conventions and cross-locale consistency."
+    )
+    parser.add_argument(
+        "--max-identical-ratio",
+        type=float,
+        default=None,
+        metavar="RATIO",
+        help=(
+            "fail if any non-en locale has more than RATIO (e.g. 0.08) of its leaf "
+            "string values identical to the en value (default: off)"
+        ),
+    )
+    parser.add_argument(
+        "--report",
+        action="store_true",
+        help="print per-locale identical-to-en ratios even when all checks pass",
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
+    args = parse_args()
     errors: list[str] = []
     warnings: list[str] = []
 
@@ -151,6 +212,36 @@ def main() -> None:
             for key, value in locale_keys.items():
                 if isinstance(value, str) and value.strip() == "":
                     errors.append(f"[{locale}/{filename}] Empty value for key: {key}")
+
+    # Check 5 (opt-in): identical-to-English ratio per locale
+    if args.max_identical_ratio is not None or args.report:
+        stats = compute_identical_stats()
+        non_en_locales = [locale for locale in LOCALES if locale != "en"]
+        over_threshold: list[str] = []
+
+        for locale in non_en_locales:
+            identical, total = stats[locale]
+            ratio = identical / total if total else 0.0
+            if args.max_identical_ratio is not None and ratio > args.max_identical_ratio:
+                over_threshold.append(locale)
+                errors.append(
+                    f"[{locale}] {identical}/{total} ({ratio:.2%}) leaf values identical to en"
+                    f" exceed --max-identical-ratio {args.max_identical_ratio:g}"
+                )
+
+        if args.report or over_threshold:
+            threshold_note = (
+                f" (threshold {args.max_identical_ratio:.2%})"
+                if args.max_identical_ratio is not None
+                else ""
+            )
+            print(f"Identical-to-English leaf string values per locale{threshold_note}:")
+            for locale in non_en_locales:
+                identical, total = stats[locale]
+                ratio = identical / total if total else 0.0
+                flag = "  <-- over threshold" if locale in over_threshold else ""
+                print(f"  {locale:<6} {identical:>4}/{total} = {ratio:6.2%}{flag}")
+            print()
 
     # Report
     if warnings:

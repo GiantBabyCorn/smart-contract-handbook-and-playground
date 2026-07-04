@@ -1,1 +1,41 @@
-<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/catalog</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/playground</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/aave-v3</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/chainlink-oracle</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/compound-v3</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/curve-stableswap</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/eigenlayer</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc1155</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc1271</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc165</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc173</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc1822</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc1967</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc20</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc2535</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc2612</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc2981</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc3525</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc3643</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc4337</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc4361</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc4626</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc5267</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc6551</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc6900</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc721</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc7579</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc7683</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/erc7702</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/lido-steth</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/maker-dao</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/oneinch-aggregator</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/oz-governor</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/safe-multisig</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/uniswap-v2</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/uniswap-v3</loc></url>
+  <url><loc>https://smart-contract-handbook.giantbabycorn.finance/uniswap-v4</loc></url>
+</urlset>

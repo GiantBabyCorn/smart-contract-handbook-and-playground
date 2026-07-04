@@ -100,5 +100,9 @@
   "sim.addLiquidity.step.transferToPair": "El Router transfiere ambos tokens del proveedor al contrato de par en la proporción correcta.",
   "sim.addLiquidity.step.transferToPair.mobile": "Transferir tokens al par",
   "sim.addLiquidity.step.mintLP": "El contrato de par acuña tokens LP proporcionales a la media geométrica de las cantidades depositadas en relación con las reservas existentes.",
-  "sim.addLiquidity.step.mintLP.mobile": "Acuñar tokens LP"
+  "sim.addLiquidity.step.mintLP.mobile": "Acuñar tokens LP",
+
+  "compose.erc20.role": "Cada contrato de par mantiene reservas de dos tokens ERC-20 y acuña la participación de liquidez como un token LP ERC-20 (UNI-V2).",
+  "compose.erc2612.role": "El token LP implementa permit al estilo EIP-2612, por lo que las aprobaciones del token del pool pueden otorgarse con una firma en lugar de una transacción approve separada.",
+  "compose.erc712.role": "Las aprobaciones permit se firman como datos tipados EIP-712 contra el domain separator propio de cada par, legibles por la billetera y protegidas contra repetición."
 }

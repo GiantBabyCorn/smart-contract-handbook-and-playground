@@ -24,5 +24,80 @@
     "running": "Running",
     "completed": "Completed",
     "error": "Error"
+  },
+  "param": {
+    "invalidAddress": "Enter a full 0x… address (40 hex characters) or a demo alias like 0xAlice",
+    "invalidUint": "Enter a whole number (digits only)",
+    "reset": "Reset to default",
+    "unitToggle": "Toggle display between wei and ETH",
+    "unitWei": "wei",
+    "unitEth": "ETH",
+    "boolTrue": "true",
+    "boolFalse": "false"
+  },
+  "state": {
+    "title": "State Changes",
+    "empty": "Execute a step to see state changes",
+    "summary": "Initial → Final",
+    "reverted": "Transaction reverted",
+    "stepLabel": "Step {{n}}",
+    "increase": "increased",
+    "decrease": "decreased",
+    "currentValue": "current value",
+    "announce": "Step {{n}} executed: {{summary}}"
+  },
+  "revert": {
+    "insufficientBalance": "Transfer amount exceeds the sender's balance",
+    "insufficientAllowance": "Transfer amount exceeds the approved allowance"
+  },
+  "legend": {
+    "title": "Legend",
+    "nodes": "Nodes",
+    "edges": "Edges",
+    "functions": "Functions",
+    "contract": "Contract",
+    "contractDesc": "Smart contract",
+    "function": "Function",
+    "functionDesc": "Contract function",
+    "user": "User",
+    "userDesc": "External account (EOA)",
+    "proxy": "Proxy",
+    "proxyDesc": "Delegating proxy contract",
+    "storage": "Storage",
+    "storageDesc": "On-chain storage slots",
+    "tokenFlow": "Token Flow",
+    "tokenFlowDesc": "Token transfer event",
+    "animated": "Animated",
+    "animatedDesc": "Animated call flow",
+    "labeled": "Labeled",
+    "labeledDesc": "Edge with a label",
+    "fundFlow": "Fund Flow",
+    "fundFlowDesc": "Token / ETH transfer",
+    "readDesc": "View / pure function",
+    "writeDesc": "State-mutating function",
+    "eventDesc": "Emitted event"
+  },
+  "flow": {
+    "title": "Interaction Flow",
+    "fullscreen": "Fullscreen",
+    "exitFullscreen": "Exit Fullscreen",
+    "resetView": "Reset view",
+    "resize": "Drag to resize the flow diagram",
+    "computing": "Computing layout…",
+    "renderError": "Failed to render flow diagram",
+    "renderErrorHint": "An unexpected error occurred while drawing the diagram.",
+    "retry": "Try again"
+  },
+  "popover": {
+    "close": "Close"
+  },
+  "drawer": {
+    "title": "Simulation",
+    "open": "Open simulation panel",
+    "close": "Close simulation panel",
+    "expand": "Expand simulation panel",
+    "collapse": "Collapse simulation panel",
+    "tooltip": "Try the Simulation to see how data flows through the contract!",
+    "dismiss": "Dismiss tip"
   }
 }

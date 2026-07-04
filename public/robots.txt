@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://smart-contract-handbook.giantbabycorn.finance/sitemap.xml

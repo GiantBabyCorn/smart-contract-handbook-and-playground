@@ -65,5 +65,8 @@
   "sim.supplyAndBorrowComet.step.borrowBase": "El prestatario llama a withdraw() con USDC para pedir prestado. El protocolo rastrea el saldo del préstamo internamente y transfiere USDC al prestatario.",
   "sim.supplyAndBorrowComet.step.borrowBase.mobile": "Pedir prestado USDC",
   "sim.supplyAndBorrowComet.step.utilization": "La utilización del mercado aumenta, causando que el modelo de tasa de interés ajuste las tasas de préstamo y suministro. Los proveedores base obtienen mayores rendimientos.",
-  "sim.supplyAndBorrowComet.step.utilization.mobile": "Utilización y tasas se ajustan"
+  "sim.supplyAndBorrowComet.step.utilization.mobile": "Utilización y tasas se ajustan",
+
+  "compose.erc20.role": "El contrato Comet es en sí un envoltorio ERC-20 totalmente compatible para el activo base — balanceOf informa el principal suministrado más los intereses acumulados — y el colateral se deposita mediante aprobaciones ERC-20 estándar.",
+  "compose.erc712.role": "allowBySig autoriza a un gestor de cuenta con una firma EIP-712 fuera de línea en lugar de una transacción allow en cadena."
 }
