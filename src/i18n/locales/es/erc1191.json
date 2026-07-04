@@ -1,0 +1,35 @@
+{
+  "short": "Codificación de Direcciones con Suma de Verificación de Mayúsculas y Minúsculas Mixtas por Id de Cadena",
+  "introduction": "ERC-1191 extiende la suma de verificación de direcciones en mayúsculas y minúsculas mixtas de ERC-55 añadiendo de forma opcional un id de cadena de EIP-155 al cálculo del hash. Fue propuesto por Juliano Rizzo en marzo de 2018. Cuando un id de cadena pertenece a una red que se adhirió a esta variante, la dirección se antepone con el id de cadena y el separador '0x' antes de calcular el hash Keccak-256, que luego determina la regla de mayúsculas y minúsculas de ERC-55. Nota: ERC-1191 está en Last Call, la última ventana de revisión antes de convertirse en Final.",
+  "designPurpose": "ERC-1191 se diseñó para evitar la pérdida de fondos cuando una dirección válida de una red basada en Ethereum se usa en otra. ERC-55 detecta errores de escritura, pero trata a todas las redes por igual, de modo que una dirección generada para una red de pruebas o una cadena hermana sigue pasando la suma de verificación en la red principal. ERC-1191 mezcla el id de cadena en la entrada del hash para las redes que se adhieren, de modo que una dirección con suma de verificación para un id de cadena falla la validación bajo otro, lo que permite a las billeteras señalar errores entre redes con un cambio mínimo en el código ERC-55 existente.",
+  "commonUsage": "ERC-1191 lo aplican fuera de la cadena las billeteras y las bibliotecas cuando muestran o validan una dirección, por lo que no necesita ningún contrato ni almacenamiento en la cadena. La especificación enumera RSK Mainnet (id de cadena 30) y RSK Testnet (id de cadena 31) como las redes que se adhirieron a la variante, y sus vectores de prueba dan el uso esperado de mayúsculas y minúsculas para esas cadenas más la red principal de Ethereum. Las implementaciones mencionadas en la especificación incluyen MyCrypto, MyEtherWallet, web3.js y las billeteras de hardware Ledger y Trezor.",
+
+  "node.user": "Fuente de la dirección",
+  "node.encoder": "Codificador de suma de verificación",
+  "node.storageInput": "Entrada con prefijo de cadena",
+  "node.storageHash": "Hash Keccak-256",
+  "node.storageResult": "Dirección con suma de verificación",
+  "node.verifier": "Verificador de red",
+  "node.consumer": "Billetera verificadora",
+
+  "edge.submitAddress": "Enviar dirección e id de cadena",
+  "edge.prefixChainId": "Anteponer el id de cadena",
+  "edge.hashInput": "Aplicar hash a la entrada con prefijo",
+  "edge.applyCasing": "Aplicar mayúsculas y minúsculas",
+  "edge.readHash": "Leer los bits del hash",
+  "edge.checkCasing": "Comprobar mayúsculas y minúsculas",
+  "edge.deliverAddress": "Entregar la dirección validada",
+
+  "sim.checksumWalkthrough.name": "Recorrido de la suma de verificación por id de cadena",
+  "sim.checksumWalkthrough.desc": "Muestra el recorrido de una dirección y un id de cadena a medida que el codificador antepone el id de cadena, aplica hash a la entrada, aplica el uso de mayúsculas y minúsculas de ERC-1191 y un cliente de red verifica el resultado.",
+  "sim.checksumWalkthrough.param.address": "Dirección en minúsculas",
+  "sim.checksumWalkthrough.param.chainId": "Id de cadena de la red",
+  "sim.checksumWalkthrough.step.submit": "Una billetera envía una dirección en minúsculas junto con el id de cadena de la red a la que pertenece.",
+  "sim.checksumWalkthrough.step.submit.mobile": "Enviar dirección y cadena",
+  "sim.checksumWalkthrough.step.prefix": "Para un id de cadena adherido, el codificador antepone a la dirección el id de cadena y el separador '0x', y luego calcula el hash Keccak-256 de esa cadena de texto.",
+  "sim.checksumWalkthrough.step.prefix.mobile": "Anteponer id de cadena y hash",
+  "sim.checksumWalkthrough.step.case": "Cada letra hexadecimal se pone en mayúscula cuando su nibble correspondiente del hash es 8 o mayor y se deja en minúscula en caso contrario, lo que produce una dirección de mayúsculas y minúsculas mixtas específica de la cadena.",
+  "sim.checksumWalkthrough.step.case.mobile": "Aplicar mayúsculas y minúsculas",
+  "sim.checksumWalkthrough.step.verify": "Un cliente en la misma red vuelve a derivar el uso de mayúsculas y minúsculas a partir del hash con prefijo de cadena y acepta la dirección solo cuando todas las letras coinciden.",
+  "sim.checksumWalkthrough.step.verify.mobile": "Verificar la suma de verificación"
+}

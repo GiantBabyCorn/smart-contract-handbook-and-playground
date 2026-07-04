@@ -1,0 +1,90 @@
+{
+  "short": "Vaults ERC-4626 tokenizados asíncronos",
+  "introduction": "ERC-7540 amplía el estándar de vaults tokenizados ERC-4626 con flujos asíncronos de depósito y canje, llamados solicitudes (Requests). Fue propuesto por Jeroen Offerijns, Alina Sinelnikova, Vikram Arun, Joey Santoro, Farhaan Ali y João Martins en octubre de 2023. Un usuario llama a requestDeposit o requestRedeem para colocar activos o participaciones en un estado pendiente (Pending), y una vez que el vault cumple la solicitud, el monto pasa a ser reclamable (Claimable) y se recoge mediante los métodos existentes deposit, mint, withdraw o redeem.",
+  "designPurpose": "ERC-7540 se diseñó para incorporar al ecosistema ERC-4626 los vaults con retrasos de liquidación. El estándar base asume que los depósitos y canjes se completan de forma atómica hasta un límite, lo que excluye los protocolos de activos del mundo real, los préstamos subcolateralizados o entre cadenas, los tokens de staking líquido y los módulos de seguros cuyos flujos se liquidan con el tiempo. En lugar de una interfaz paralela, añade requestDeposit y requestRedeem para entrar en un estado pendiente (Pending) y reutiliza los métodos de reclamo de ERC-4626 una vez que una solicitud es reclamable (Claimable).",
+  "commonUsage": "Los vaults asíncronos están pensados para sistemas en los que entrar o salir de una posición no es instantáneo: protocolos de activos del mundo real y de préstamos subcolateralizados que se liquidan fuera de la cadena, vaults de préstamos entre cadenas, tokens de staking líquido y módulos de seguros. Como las posiciones pendientes solo son semifungibles, las implementaciones pueden mantenerlas como contabilidad interna o envolverlas en otros estándares de tokens, y los integradores leen los ID de interfaz de ERC-165 para saber si un vault es asíncrono en los depósitos, en los canjes o en ambos.",
+
+  "fn.requestDeposit.desc": "Transfiere los activos del propietario al vault y abre una solicitud de depósito, pasando el monto al estado pendiente (Pending) e incrementando pendingDepositRequest del controlador. Devuelve un requestId y emite DepositRequest.",
+  "fn.requestDeposit.params.assets": "La cantidad de activos subyacentes a bloquear para la solicitud de depósito.",
+  "fn.requestDeposit.params.controller": "La cuenta que controlará la solicitud y luego reclamará las participaciones.",
+  "fn.requestDeposit.params.owner": "La cuenta cuyos activos se transfieren; debe ser msg.sender o un operador aprobado.",
+  "fn.requestDeposit.returns.requestId": "El identificador de la solicitud, usado junto con el controlador para consultar su estado.",
+
+  "fn.pendingDepositRequest.desc": "Devuelve la cantidad de activos de la solicitud de depósito del controlador que aún están pendientes (Pending) y todavía no son reclamables (Claimable).",
+  "fn.pendingDepositRequest.params.requestId": "El identificador de la solicitud a consultar.",
+  "fn.pendingDepositRequest.params.controller": "La cuenta propietaria de la solicitud.",
+  "fn.pendingDepositRequest.returns.assets": "Los activos del controlador que siguen en estado pendiente (Pending).",
+
+  "fn.claimableDepositRequest.desc": "Devuelve la cantidad de activos de la solicitud de depósito del controlador que ahora son reclamables (Claimable) y pueden convertirse en participaciones mediante deposit o mint.",
+  "fn.claimableDepositRequest.params.requestId": "El identificador de la solicitud a consultar.",
+  "fn.claimableDepositRequest.params.controller": "La cuenta propietaria de la solicitud.",
+  "fn.claimableDepositRequest.returns.assets": "Los activos del controlador en estado reclamable (Claimable).",
+
+  "fn.requestRedeem.desc": "Toma el control de las participaciones del propietario y abre una solicitud de canje, pasando el monto al estado pendiente (Pending) e incrementando pendingRedeemRequest del controlador. Devuelve un requestId y emite RedeemRequest.",
+  "fn.requestRedeem.params.shares": "La cantidad de participaciones del vault a bloquear para la solicitud de canje.",
+  "fn.requestRedeem.params.controller": "La cuenta que controlará la solicitud y luego reclamará los activos.",
+  "fn.requestRedeem.params.owner": "La cuenta cuyas participaciones se retiran de la custodia; debe ser msg.sender, un operador aprobado o un gastador aprobado.",
+  "fn.requestRedeem.returns.requestId": "El identificador de la solicitud, usado junto con el controlador para consultar su estado.",
+
+  "fn.pendingRedeemRequest.desc": "Devuelve la cantidad de participaciones de la solicitud de canje del controlador que aún están pendientes (Pending) y todavía no son reclamables (Claimable).",
+  "fn.pendingRedeemRequest.params.requestId": "El identificador de la solicitud a consultar.",
+  "fn.pendingRedeemRequest.params.controller": "La cuenta propietaria de la solicitud.",
+  "fn.pendingRedeemRequest.returns.shares": "Las participaciones del controlador que siguen en estado pendiente (Pending).",
+
+  "fn.claimableRedeemRequest.desc": "Devuelve la cantidad de participaciones de la solicitud de canje del controlador que ahora son reclamables (Claimable) y pueden convertirse en activos mediante redeem o withdraw.",
+  "fn.claimableRedeemRequest.params.requestId": "El identificador de la solicitud a consultar.",
+  "fn.claimableRedeemRequest.params.controller": "La cuenta propietaria de la solicitud.",
+  "fn.claimableRedeemRequest.returns.shares": "Las participaciones del controlador en estado reclamable (Claimable).",
+
+  "fn.setOperator.desc": "Otorga o revoca un operador que puede gestionar solicitudes en nombre de msg.sender. Emite OperatorSet y devuelve true.",
+  "fn.setOperator.params.operator": "La cuenta cuyo estado de operador se está configurando.",
+  "fn.setOperator.params.approved": "true para otorgar el permiso de operador, false para revocarlo.",
+  "fn.setOperator.returns.success": "Siempre true cuando la llamada tiene éxito.",
+
+  "fn.deposit.desc": "Reclama una solicitud de depósito reclamable (Claimable) acuñando participaciones para el receptor y reduciendo claimableDepositRequest del controlador. Esta sobrecarga añade un argumento controller al método deposit de ERC-4626.",
+  "fn.deposit.params.assets": "La cantidad de activos solicitados previamente que se van a reclamar.",
+  "fn.deposit.params.receiver": "La cuenta que recibe las participaciones acuñadas.",
+  "fn.deposit.params.controller": "La cuenta cuya solicitud reclamable (Claimable) se reduce; debe ser msg.sender o un operador aprobado.",
+  "fn.deposit.returns.shares": "La cantidad de participaciones acuñadas para el receptor.",
+
+  "fn.DepositRequest.desc": "Se emite cuando se envía una solicitud de depósito mediante requestDeposit, y registra el controlador, el propietario, el requestId, quien llama y los activos solicitados.",
+  "fn.DepositRequest.params.controller": "La cuenta que controla la nueva solicitud.",
+  "fn.DepositRequest.params.owner": "La cuenta cuyos activos se bloquearon.",
+  "fn.DepositRequest.params.requestId": "El identificador asignado a la solicitud.",
+  "fn.DepositRequest.params.sender": "Quien llama a requestDeposit, que puede diferir del propietario.",
+  "fn.DepositRequest.params.assets": "La cantidad de activos bloqueados para la solicitud.",
+
+  "fn.RedeemRequest.desc": "Se emite cuando se envía una solicitud de canje mediante requestRedeem, y registra el controlador, el propietario, el requestId, quien llama y las participaciones solicitadas.",
+  "fn.RedeemRequest.params.controller": "La cuenta que controla la nueva solicitud.",
+  "fn.RedeemRequest.params.owner": "La cuenta cuyas participaciones se bloquearon.",
+  "fn.RedeemRequest.params.requestId": "El identificador asignado a la solicitud.",
+  "fn.RedeemRequest.params.sender": "Quien llama a requestRedeem, que puede diferir del propietario.",
+  "fn.RedeemRequest.params.shares": "La cantidad de participaciones bloqueadas para la solicitud.",
+
+  "fn.OperatorSet.desc": "Se emite cuando un controlador establece el estado de aprobación de un operador mediante setOperator.",
+  "fn.OperatorSet.params.controller": "La cuenta que otorga o revoca el permiso de operador.",
+  "fn.OperatorSet.params.operator": "La cuenta cuyo estado de operador cambió.",
+  "fn.OperatorSet.params.approved": "El nuevo estado de aprobación del operador.",
+
+  "node.user": "Usuario del vault",
+  "node.contract": "Vault ERC-4626 asíncrono",
+  "node.storageRequests": "Estado de la solicitud",
+
+  "edge.callRequestDeposit": "Llamar a requestDeposit()",
+  "edge.updateRequests": "Actualizar el estado de la solicitud",
+  "edge.emitDepositRequest": "Emitir el evento DepositRequest",
+  "edge.callDeposit": "Llamar a deposit()",
+
+  "sim.requestDepositWalkthrough.name": "Recorrido de la solicitud de depósito",
+  "sim.requestDepositWalkthrough.desc": "Sigue un depósito asíncrono desde requestDeposit, pasando por los estados pendiente (Pending) y reclamable (Claimable), hasta el reclamo mediante deposit.",
+  "sim.requestDepositWalkthrough.param.assets": "Activos a solicitar",
+  "sim.requestDepositWalkthrough.param.controller": "Dirección del controlador",
+  "sim.requestDepositWalkthrough.step.request": "El usuario llama a requestDeposit(assets, controller, owner) y el vault transfiere los activos y abre la solicitud.",
+  "sim.requestDepositWalkthrough.step.request.mobile": "Llamar a requestDeposit()",
+  "sim.requestDepositWalkthrough.step.pending": "El vault incrementa pendingDepositRequest del controlador y mantiene los activos en estado pendiente (Pending) hasta que cumple la solicitud.",
+  "sim.requestDepositWalkthrough.step.pending.mobile": "Registrar solicitud pendiente",
+  "sim.requestDepositWalkthrough.step.event": "El vault emite DepositRequest para que los indexadores y el controlador puedan rastrear la nueva solicitud por su requestId.",
+  "sim.requestDepositWalkthrough.step.event.mobile": "Emitir el evento DepositRequest",
+  "sim.requestDepositWalkthrough.step.claim": "Una vez que la solicitud es reclamable (Claimable), el controlador llama a deposit para acuñar participaciones y reducir claimableDepositRequest.",
+  "sim.requestDepositWalkthrough.step.claim.mobile": "Reclamar participaciones con deposit()"
+}

@@ -1,0 +1,32 @@
+{
+  "short": "IPFS 콘텐츠 해시를 ENS 리졸버에 매핑",
+  "introduction": "ERC-1062는 읽을 수 있는 이름이 탈중앙화 파일을 가리키도록, IPFS 콘텐츠 해시를 ENS 리졸버에 저장하기 위한 규약을 정의합니다. 이 표준은 2018년 5월 Phyrex Tsai와 Portal Network 팀이 제안했습니다. IPFS 해시는 Base58을 사용하고 Ethereum은 hex를 저장하므로, 이 표준은 바이너리 버퍼를 통해 둘을 연결하여 setMultihash로 hex를 저장하고 읽을 때 이를 역변환합니다. 참고: ERC-1062는 Stagnant(정체) 상태입니다. 6개월 이상 활동이 없어 최종 확정되지 않을 수 있지만, 역사적으로 또는 기술적으로 여전히 중요한 의미가 있습니다.",
+  "designPurpose": "ERC-1062는 원시 IPFS 해시 대신 읽을 수 있는 이름을 통해 탈중앙화 웹사이트에 접근할 수 있도록 설계되었습니다. IPFS는 아무도 외울 수 없는 긴 Base58 지문으로 콘텐츠를 주소 지정하고 ENS는 이름을 온체인 레코드에 매핑하지만, IPFS 해시를 리졸버에 저장하거나 다시 읽어오는 합의된 방법이 없었습니다. 이 표준은 Base58에서 hex로의 변환을 고정하고 리졸버의 setMultihash 및 multihash 메서드를 재사용하여, 브라우저가 portal.eth 같은 이름을 IPFS 문서로 해석하고 웹 페이지로 렌더링할 수 있게 합니다.",
+  "commonUsage": "ERC-1062는 초기 단계를 넘어서지 못했기 때문에, 배포된 표준이라기보다는 탈중앙화 콘텐츠 해석을 위한 청사진으로 보는 것이 가장 적절합니다. 그 참조 구현은 Portal Network 브라우저 확장 프로그램으로, 사용자가 ENS 이름을 입력하면 DNS 도메인처럼 연결된 IPFS 리소스를 가져올 수 있게 합니다. Base58에서 hex로의 변환은 multihashes JavaScript 라이브러리에 의존하며, 새로운 인터페이스를 정의하는 대신 ENS 퍼블릭 리졸버의 기존 setMultihash 및 multihash 메서드를 재사용합니다.",
+
+  "node.publisher": "콘텐츠 발행자",
+  "node.encoder": "Base58→hex 인코더",
+  "node.resolver": "ENS 퍼블릭 리졸버",
+  "node.storageMultihash": "Multihash 레코드",
+  "node.decoder": "hex→Base58 디코더",
+  "node.browser": "Web3 브라우저",
+
+  "edge.provideHash": "Base58 해시 제공",
+  "edge.callSetMultihash": "setMultihash() 호출",
+  "edge.storeMultihash": "hex multihash 저장",
+  "edge.readMultihash": "multihash()로 읽기",
+  "edge.returnAddress": "Base58 주소 반환",
+
+  "sim.ipfsResolutionWalkthrough.name": "IPFS 해석 워크스루",
+  "sim.ipfsResolutionWalkthrough.desc": "IPFS 해시를 ENS 이름 소유자로부터 리졸버의 multihash 레코드를 거쳐, 브라우저가 로드할 수 있는 Base58 주소까지 따라갑니다.",
+  "sim.ipfsResolutionWalkthrough.param.name": "ENS 이름",
+  "sim.ipfsResolutionWalkthrough.param.ipfsHash": "IPFS Base58 해시",
+  "sim.ipfsResolutionWalkthrough.step.publish": "ENS 이름 소유자가 콘텐츠의 Base58 IPFS 해시를 온체인 저장용으로 준비할 인코더에 전달합니다.",
+  "sim.ipfsResolutionWalkthrough.step.publish.mobile": "IPFS 해시 제공",
+  "sim.ipfsResolutionWalkthrough.step.store": "인코더가 해시를 hex로 변환하고 setMultihash를 호출하면, ENS 리졸버가 해당 이름의 레코드에 multihash 바이트를 기록합니다.",
+  "sim.ipfsResolutionWalkthrough.step.store.mobile": "multihash 저장",
+  "sim.ipfsResolutionWalkthrough.step.read": "이름을 해석하는 클라이언트가 multihash를 통해 저장된 바이트를 읽고 hex 값을 디코더에 전달합니다.",
+  "sim.ipfsResolutionWalkthrough.step.read.mobile": "multihash 읽기",
+  "sim.ipfsResolutionWalkthrough.step.render": "디코더가 hex를 다시 Base58 IPFS 주소로 변환하여, 브라우저가 탈중앙화 콘텐츠를 가져와 렌더링할 수 있게 합니다.",
+  "sim.ipfsResolutionWalkthrough.step.render.mobile": "콘텐츠 로드"
+}

@@ -1,0 +1,26 @@
+{
+  "short": "分層 BLS12-381 金鑰生成",
+  "introduction": "ERC-2333 定義了一種從單個熵種子衍生出分層 BLS12-381 私鑰樹的方法。它由 Carl Beekhuizen 於 2019 年 9 月提出。主金鑰位於樹根；每個子金鑰都由其父金鑰和一個 32 位元索引計算得出，因此眾多金鑰皆源自同一個祖先。衍生過程會將熵經過以 SHA256 雜湊的中間 Lamport 金鑰，這些金鑰同時兼作後量子備份。注：ERC-2333 處於 Review 狀態；在最終定案之前介面仍可能變更。",
+  "designPurpose": "設計 ERC-2333 的原因在於：以太坊針對 secp256k1 金鑰常用的 BIP32 方案對 BLS12-381 並不安全——它生成的金鑰中有超過 54% 會超出曲線的子群階而變得無效。為避免這一點，該標準使用 HKDF_mod_r（來自 IETF BLS 簽章草案的 KeyGen 函式）將每個父金鑰雜湊到有效的私鑰範圍內。及早對衍生方式加以標準化還能讓各種工具相互協作，而且它只使用硬化金鑰，相比 UTXO 式的非硬化金鑰更適合用於簽署。",
+  "commonUsage": "該方案用於生成和管理 BLS12-381 金鑰，其中最典型的是以太坊信標鏈（Beacon Chain）上使用的驗證者金鑰——在那裡，一個助記詞種子就能備份整整一族金鑰。規範建議使用 BIP-39 方法來衍生該種子，這樣遵循此方法的錢包和金鑰生成工具就能在不同程式之間復原出相同的金鑰。由於每個金鑰只需要一個父金鑰和一個子索引，便可從單個祖先為不同用途配置出各組金鑰。",
+
+  "node.user": "種子擁有者",
+  "node.scheme": "金鑰衍生方案",
+  "node.storageTree": "金鑰樹",
+
+  "edge.provideSeed": "提供種子",
+  "edge.storeMaster": "儲存主金鑰",
+  "edge.deriveChild": "衍生子金鑰",
+  "edge.populateTree": "填入金鑰樹",
+
+  "sim.deriveKeysWalkthrough.name": "金鑰衍生演練",
+  "sim.deriveKeysWalkthrough.desc": "跟隨一個種子，觀察方案如何衍生出主金鑰，再於樹中衍生出子金鑰。",
+  "sim.deriveKeysWalkthrough.param.seed": "熵種子",
+  "sim.deriveKeysWalkthrough.param.index": "子索引",
+  "sim.deriveKeysWalkthrough.step.seed": "種子擁有者向衍生方案的進入點 derive_master_SK 提供一個熵種子。",
+  "sim.deriveKeysWalkthrough.step.seed.mobile": "提供種子",
+  "sim.deriveKeysWalkthrough.step.master": "方案將種子雜湊到 BLS 私鑰範圍內，並將結果作為主金鑰儲存在樹的根部。",
+  "sim.deriveKeysWalkthrough.step.master.mobile": "衍生主金鑰",
+  "sim.deriveKeysWalkthrough.step.child": "以主金鑰作為父金鑰並使用一個 32 位元索引，derive_child_SK 計算出一個子金鑰來填入這棵樹。",
+  "sim.deriveKeysWalkthrough.step.child.mobile": "衍生子金鑰"
+}

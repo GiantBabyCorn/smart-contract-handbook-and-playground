@@ -1,0 +1,43 @@
+{
+  "short": "Detección y descubrimiento de ERC",
+  "introduction": "ERC-5269 define una interfaz para detectar qué ERC admite un contrato inteligente, identificando cada estándar por su número de ERC en lugar de por un selector de función con hash. Fue propuesto por Zainan Victor Zhou en julio de 2022. Su método central, supportERC, recibe un llamante, un número de ERC y un identificador de subcomportamiento, y devuelve un estado bytes32 como keccak256(\"FINAL\"). Los contratos también pueden emitir un evento OnSupportERC para anunciar su compatibilidad. Nota: ERC-5269 está en estado Review; la interfaz aún puede cambiar antes de que se finalice.",
+  "designPurpose": "ERC-5269 se diseñó para abordar las limitaciones de ERC-165. ERC-165 aplica un hash a la firma de un método, por lo que no puede describir estándares que no definen ningún método, como los esquemas de formato de datos o de firma, y no puede responder de forma diferente según quién pregunte. En su lugar, ERC-5269 consulta la compatibilidad por número de ERC, que es legible por humanos y más fácil de usar con contratos con nombre como ENS, y añade un parámetro caller para que un contrato pueda informar de una compatibilidad diferente para distintos llamantes, como ocurre con el administrador de un proxy transparente.",
+  "commonUsage": "Dado que ERC-5269 compite con el ampliamente utilizado ERC-165, está pensado para contratos que desean anunciar los ERC que implementan en un formato legible por humanos. Un contrato emite OnSupportERC(address(0), 5269, 0, status) durante la construcción o la actualización para declarar su conformidad, y los llamantes pueden consultar supportERC para saber si un estándar determinado está disponible para una dirección. La especificación ilustra este patrón con un contrato ERC-721 que también declara compatibilidad con sus extensiones Metadata y Enumerable.",
+
+  "fn.supportERC.desc": "Devuelve un estado bytes32 que indica si el contrato admite el ERC dado por majorERCIdentifier y el subcomportamiento indicado en minorERCIdentifier. Devuelve keccak256(\"FINAL\") para los ERC en estado Final; un valor de retorno cero significa que no es compatible.",
+  "fn.supportERC.params.caller": "La dirección cuyo acceso al ERC consultado se está comprobando; la compatibilidad puede variar según el llamante.",
+  "fn.supportERC.params.majorERCIdentifier": "El número de ERC que se consulta, que debe estar en el rango (0, 2^32-1].",
+  "fn.supportERC.params.minorERCIdentifier": "Un identificador bytes32 para un subcomportamiento; un valor de 0 se refiere al comportamiento principal del ERC.",
+  "fn.supportERC.params.extraData": "Calldata adicional reservado para futuras extensiones al estilo de ERC-5750.",
+  "fn.supportERC.returns.ercStatus": "Un estado bytes32: keccak256(\"FINAL\") para los ERC en estado Final, keccak256(\"DRAFT\") u otro valor documentado en caso contrario, y 0 si no es compatible.",
+
+  "fn.OnSupportERC.desc": "Se emite de forma opcional, normalmente durante la construcción o la actualización, para declarar que el contrato admite un ERC o subcomportamiento determinado. Una emisión con caller address(0) se aplica a todos los llamantes.",
+  "fn.OnSupportERC.params.caller": "El llamante al que se aplica la declaración; address(0) significa todos los llamantes.",
+  "fn.OnSupportERC.params.majorERCIdentifier": "El número de ERC para el que el contrato declara compatibilidad.",
+  "fn.OnSupportERC.params.minorERCIdentifier": "El identificador de subcomportamiento; un valor de 0 significa todo el ERC.",
+  "fn.OnSupportERC.params.ercStatus": "El valor de estado declarado para el ERC, como keccak256(\"FINAL\").",
+  "fn.OnSupportERC.params.extraData": "Datos adicionales reservados para futuras extensiones.",
+
+  "node.user": "Llamante consultante",
+  "node.contract": "Contrato ERC-5269",
+  "node.storageSupport": "Tabla de compatibilidad declarada",
+
+  "edge.callSupportERC": "Llamar a supportERC()",
+  "edge.readSupport": "Buscar estado de ERC",
+  "edge.returnStatus": "Devolver ercStatus",
+  "edge.emitOnSupport": "Emitir evento OnSupportERC",
+
+  "sim.supportQueryWalkthrough.name": "Recorrido de consulta de compatibilidad",
+  "sim.supportQueryWalkthrough.desc": "Consulta a un contrato si admite un número de ERC determinado usando supportERC(), y luego observa cómo el contrato anuncia su compatibilidad.",
+  "sim.supportQueryWalkthrough.param.caller": "Dirección del llamante a comprobar",
+  "sim.supportQueryWalkthrough.param.majorERCIdentifier": "Número de ERC a consultar",
+  "sim.supportQueryWalkthrough.param.minorERCIdentifier": "Identificador de subcomportamiento",
+  "sim.supportQueryWalkthrough.step.call": "El llamante invoca supportERC(caller, majorERCIdentifier, minorERCIdentifier, extraData) en el contrato para preguntar si un ERC es compatible.",
+  "sim.supportQueryWalkthrough.step.call.mobile": "Llamar a supportERC()",
+  "sim.supportQueryWalkthrough.step.lookup": "La función view comprueba la compatibilidad declarada del contrato para el número de ERC y el subcomportamiento solicitados, sin modificar ningún estado.",
+  "sim.supportQueryWalkthrough.step.lookup.mobile": "Buscar estado de ERC",
+  "sim.supportQueryWalkthrough.step.return": "El contrato devuelve el estado bytes32, como keccak256(\"DRAFTv1\") en este caso; un valor cero significaría que el ERC no es compatible.",
+  "sim.supportQueryWalkthrough.step.return.mobile": "Devolver ercStatus",
+  "sim.supportQueryWalkthrough.step.declare": "Por separado, el contrato emite OnSupportERC durante la construcción o la actualización para que los indexadores puedan descubrir los ERC que admite.",
+  "sim.supportQueryWalkthrough.step.declare.mobile": "Emitir evento OnSupportERC"
+}

@@ -1,0 +1,75 @@
+{
+  "short": "通用数据键值存储与执行",
+  "introduction": "ERC-725 为智能合约账户定义了两个构件：一个将 bytes32 键映射到任意 bytes 值的键值数据存储（ERC725Y），以及一个用于调用、创建其他合约或对其执行 delegatecall 的通用执行函数（ERC725X）。它由 Fabian Vogelsteller 与 Tyler Yasaka 于 2017 年 10 月提出。两个部分均通过 ERC-173 由所有者控制，可一起使用，也可单独使用。注意：ERC-725 目前为 Draft（草案）状态，规范仍在积极开发中，可能发生重大变更。",
+  "designPurpose": "ERC-725 的设计目标是为智能合约账户提供一套既足够灵活以长期沿用、又足够标准化以供工具依赖的数据与执行布局。在此之前，每个项目都各自发明自己的存储变量和执行入口，因此外部合约和链下应用无法以统一的方式读取或驱动它们。将所有数据保存在单个 mapping(bytes32 => bytes) 之下，并将对外操作统一经由单个 execute 函数路由，使协议无需改动接口即可重新解释其数据。",
+  "commonUsage": "ERC-725 是模块化智能合约账户以及可升级链上元数据的基础。它的 ERC725Y 存储可单独用于为 NFT、代币和其他合约附加可变更的元数据，而 ERC725X 则为代表用户行事的账户型合约提供通用的 execute 入口。规范指出，账户形态被标准化为 LSP0-ERC725Account，并由 LSP2-ERC725JSONSchema 定义键和值的编码方式。",
+
+  "fn.execute.desc": "从账户执行单个操作：CALL 调用、通过 CREATE 或 CREATE2 创建合约、staticcall 或 delegatecall，由 operationType 选择。只能由当前所有者调用，若操作失败则回滚。",
+  "fn.execute.params.operationType": "要执行的操作类型：0 表示 CALL，1 表示 CREATE，2 表示 CREATE2，3 表示 STATICCALL，4 表示 DELEGATECALL。",
+  "fn.execute.params.target": "要调用的合约或地址；创建合约时应为 address(0)。",
+  "fn.execute.params.value": "要转移的原生代币数量，以 wei 计。",
+  "fn.execute.params.data": "调用数据，或部署合约时的创建字节码。",
+  "fn.execute.returns.returnData": "被调用函数返回的数据，或所部署合约的地址。",
+
+  "fn.executeBatch.desc": "在一笔交易中执行一批操作，接受长度相等的操作类型、目标、金额和调用数据数组。只能由所有者调用，若任一操作失败则回滚。",
+  "fn.executeBatch.params.operationsType": "每次调用要执行的操作类型列表。",
+  "fn.executeBatch.params.targets": "每个操作要调用的地址列表。",
+  "fn.executeBatch.params.values": "要转移的原生代币数量列表，以 wei 计。",
+  "fn.executeBatch.params.datas": "调用数据或合约创建字节码的列表。",
+  "fn.executeBatch.returns.results": "返回数据或所部署合约地址的数组。",
+
+  "fn.getData.desc": "返回 ERC725Y 存储中单个数据键下存储的 bytes 值。任何调用者都可读取。",
+  "fn.getData.params.dataKey": "要检索其值的数据键。",
+  "fn.getData.returns.dataValue": "所请求数据键对应存储的 bytes 值。",
+
+  "fn.getDataBatch.desc": "在一次调用中返回多个数据键下存储的值，使批量读取的 gas 成本保持较低。",
+  "fn.getDataBatch.params.dataKeys": "要检索其值的数据键列表。",
+  "fn.getDataBatch.returns.dataValues": "所请求数据键对应的 bytes 值数组。",
+
+  "fn.setData.desc": "在 ERC725Y 存储中将一个 bytes 值存储到单个数据键下，覆盖任何先前的值。只能由所有者调用，并会触发 DataChanged 事件。",
+  "fn.setData.params.dataKey": "要设置其值的数据键。",
+  "fn.setData.params.dataValue": "要存储的 bytes 值。",
+
+  "fn.setDataBatch.desc": "在一次调用中将多个值存储到多个数据键下，接受长度相等的键数组和值数组。只能由所有者调用，并会为每个键触发 DataChanged 事件。",
+  "fn.setDataBatch.params.dataKeys": "要设置其值的数据键列表。",
+  "fn.setDataBatch.params.dataValues": "要存储的 bytes 值列表。",
+
+  "fn.Executed.desc": "当 execute 执行 CALL、STATICCALL 或 DELEGATECALL（操作类型 0、3 和 4）时触发。",
+  "fn.Executed.params.operationType": "所执行的操作类型。",
+  "fn.Executed.params.target": "被调用的地址。",
+  "fn.Executed.params.value": "发送的原生代币数量，以 wei 计。",
+  "fn.Executed.params.data": "调用数据的前四个字节，通常是函数选择器。",
+
+  "fn.ContractCreated.desc": "当 execute 通过 CREATE 或 CREATE2（操作类型 1 和 2）部署新合约时触发。",
+  "fn.ContractCreated.params.operationType": "用于部署合约的操作类型。",
+  "fn.ContractCreated.params.contractAddress": "新部署合约的地址。",
+  "fn.ContractCreated.params.value": "发送给新合约的原生代币数量，以 wei 计。",
+  "fn.ContractCreated.params.salt": "用于 CREATE2 部署的 bytes32 salt。",
+
+  "fn.DataChanged.desc": "每当 ERC725Y 存储中某个数据键的值被成功设置时触发。",
+  "fn.DataChanged.params.dataKey": "值发生变化的数据键。",
+  "fn.DataChanged.params.dataValue": "为该键存储的新 bytes 值。",
+
+  "node.user": "账户所有者",
+  "node.contract": "ERC-725 账户",
+  "node.storageData": "数据存储",
+  "node.target": "目标合约",
+
+  "edge.callExecute": "调用 execute()",
+  "edge.callSetData": "调用 setData()",
+  "edge.forwardCall": "转发调用",
+  "edge.updateStore": "更新数据存储",
+  "edge.emitExecuted": "触发 Executed 事件",
+  "edge.emitDataChanged": "触发 DataChanged 事件",
+
+  "sim.setDataWalkthrough.name": "setData 逐步演示",
+  "sim.setDataWalkthrough.desc": "跟随一次 setData 调用，从所有者出发，经过 ERC725Y 数据存储，直到 DataChanged 事件。",
+  "sim.setDataWalkthrough.param.dataKey": "数据键",
+  "sim.setDataWalkthrough.param.dataValue": "数据值",
+  "sim.setDataWalkthrough.step.call": "所有者在 ERC-725 账户上调用 setData(dataKey, dataValue) 以存储一个值。",
+  "sim.setDataWalkthrough.step.call.mobile": "调用 setData()",
+  "sim.setDataWalkthrough.step.execute": "合约检查调用者是否为所有者，然后将该值写入 bytes32 到 bytes 的数据存储，覆盖该键先前的任何值。",
+  "sim.setDataWalkthrough.step.execute.mobile": "写入数据存储",
+  "sim.setDataWalkthrough.step.event": "合约触发 DataChanged(dataKey, dataValue)，以便索引器和链下应用能够追踪此更新。",
+  "sim.setDataWalkthrough.step.event.mobile": "触发 DataChanged 事件"
+}

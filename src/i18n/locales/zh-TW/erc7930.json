@@ -1,0 +1,32 @@
+{
+  "short": "鏈專屬互通地址格式",
+  "introduction": "ERC-7930 定義了一種精簡的二進位格式，將目標地址與其所屬的鏈一同編碼，產生一個規範的互通地址（Interoperable Address）。它由 Teddy、Joxes、Nick Johnson 等人於 2025 年 2 月提出。該格式是一個帶版本號、以長度為前綴的信封結構，承載版本、鏈類型與鏈引用以及地址；配套的 CAIP-350 標準定義了每個命名空間如何序列化這些欄位。注意：ERC-7930 處於 Review 狀態，其介面在最終定案前仍可能變動。",
+  "designPurpose": "ERC-7930 旨在終結各協議以臨時方式將地址與其所屬鏈組合起來的做法。以太坊地址格式 ERC-55 不攜帶任何鏈資訊，因此每個跨鏈協議都自行發明欄位與慣例，導致工具生態碎片化並增加風險。透過將鏈標識與原始地址綁定進單一的規範二進位載荷——它足夠精簡可供鏈上使用，並可經由 CAIP-350 描述檔擴充到 EVM 以外的鏈——該標準為互通系統提供了一種共享格式。",
+  "commonUsage": "互通地址面向那些必須引用另一條鏈上帳戶的智能合約，例如跨鏈訊息傳遞與意圖系統。長度為零的地址會把載荷變成一個僅指明某條鏈的鏈標識符（Chain Identifier），而長度為零的鏈引用則表示任意相容鏈上的地址。由於二進位形式並非用於顯示，ERC-7828 在其之上疊加了一個人類可讀的互通名稱（Interoperable Name）；顯示原始值的實作者會將其渲染為小寫的十六進位字串。",
+
+  "node.user": "地址來源",
+  "node.caip350": "CAIP-350 描述檔",
+  "node.encoder": "互通地址編碼器",
+  "node.storageEnvelope": "信封欄位",
+  "node.storageResult": "互通地址",
+  "node.consumer": "跨鏈協議",
+
+  "edge.submitTarget": "提交地址與鏈",
+  "edge.provideRules": "提供序列化規則",
+  "edge.assembleFields": "組裝欄位",
+  "edge.concatenate": "串接為載荷",
+  "edge.deliverAddress": "交付互通地址",
+
+  "sim.encodeAddressWalkthrough.name": "編碼一個互通地址",
+  "sim.encodeAddressWalkthrough.desc": "跟隨一個目標地址與鏈，觀察編碼器如何依 CAIP-350 序列化每個欄位，並將它們串接成單一的二進位載荷。",
+  "sim.encodeAddressWalkthrough.param.address": "目標地址",
+  "sim.encodeAddressWalkthrough.param.chain": "目標鏈",
+  "sim.encodeAddressWalkthrough.step.submit": "一個應用提交目標地址及其所屬的鏈，以將其編碼為互通地址。",
+  "sim.encodeAddressWalkthrough.step.submit.mobile": "提交地址與鏈",
+  "sim.encodeAddressWalkthrough.step.serialize": "編碼器讀取該鏈命名空間對應的 CAIP-350 描述檔，並填入版本、鏈類型，以及以長度為前綴的鏈引用與地址欄位。",
+  "sim.encodeAddressWalkthrough.step.serialize.mobile": "序列化欄位",
+  "sim.encodeAddressWalkthrough.step.concatenate": "這六個欄位被串接成單一的、以長度為前綴的二進位載荷，此處即以太坊主網地址的 27 位元組編碼。",
+  "sim.encodeAddressWalkthrough.step.concatenate.mobile": "串接載荷",
+  "sim.encodeAddressWalkthrough.step.deliver": "產生的互通地址被交給一個跨鏈協議，後者可將其作為一個無歧義的引用來儲存或傳輸。",
+  "sim.encodeAddressWalkthrough.step.deliver.mobile": "交付給協議"
+}

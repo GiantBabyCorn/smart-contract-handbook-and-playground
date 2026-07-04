@@ -1,0 +1,28 @@
+{
+  "short": "ERC-4804 Resolve Mode for ERC-5219",
+  "introduction": "ERC-6944 defines a resolve-mode value that lets an ERC-4804 client resolve a contract's web3:// requests through the ERC-5219 interface. It was proposed by Gavin John and Qi Zhou in April 2023. A contract signals support by implementing IERC5219Resolver, whose resolveMode() function returns the constant bytes32 value \"5219\"; an ERC-4804 gateway reads it and then uses ERC-5219's request() method. Note: ERC-6944 is a Draft; the specification is still under active development and may change substantially.",
+  "designPurpose": "ERC-6944 was designed to make ERC-5219 usable as a resolution mode inside ERC-4804's web3:// scheme. An ERC-4804 client needs to know how each contract expects its requests to be resolved, but before this proposal there was no flag for the ERC-5219 request() interface, only the built-in automatic and manual modes. ERC-6944 fills that gap with one pure function, resolveMode(), returning the fixed bytes32 constant \"5219\". It avoids ERC-165, since a client can check compatibility by calling resolveMode() itself.",
+  "commonUsage": "ERC-6944 is implemented by contracts that host an on-chain front-end through ERC-5219 and want browsers and gateways to reach it over a web3:// URL. The value is read by web3:// gateway software and by wallets or browser extensions that resolve ERC-4804 addresses on a user's behalf. Because resolveMode() is pure and returns a compile-time constant, implementations typically inherit a small abstract contract that hard-codes the \"5219\" return value, adding no storage and negligible gas to the host contract.",
+
+  "fn.resolveMode.desc": "Returns the ERC-4804 resolve mode of the contract. It is a pure function that must return the constant bytes32 value \"5219\" (case-insensitive) to signal that requests should be resolved through the ERC-5219 request() interface.",
+  "fn.resolveMode.returns.mode": "The resolve-mode identifier, fixed to the bytes32 value \"5219\" for ERC-5219 resolution.",
+
+  "node.user": "Web3 Gateway",
+  "node.contract": "ERC-5219 Resolver",
+  "node.storageMode": "Resolve Mode Value",
+  "node.browser": "User Browser",
+
+  "edge.callResolveMode": "Call resolveMode()",
+  "edge.readMode": "Read resolve mode",
+  "edge.serveResponse": "Serve ERC-5219 response",
+
+  "sim.resolveModeWalkthrough.name": "Resolve Mode Walkthrough",
+  "sim.resolveModeWalkthrough.desc": "Follow an ERC-4804 client as it calls resolveMode() and learns to resolve the contract through ERC-5219.",
+  "sim.resolveModeWalkthrough.param.target": "Resolver contract",
+  "sim.resolveModeWalkthrough.step.call": "The web3:// gateway calls resolveMode() on the target contract to learn how its requests should be resolved.",
+  "sim.resolveModeWalkthrough.step.call.mobile": "Call resolveMode()",
+  "sim.resolveModeWalkthrough.step.resolve": "The contract returns the fixed bytes32 constant \"5219\", identifying itself as an ERC-5219 resolver.",
+  "sim.resolveModeWalkthrough.step.resolve.mobile": "Return mode 5219",
+  "sim.resolveModeWalkthrough.step.serve": "Seeing the \"5219\" mode, the gateway resolves the request through ERC-5219 and serves the response to the browser.",
+  "sim.resolveModeWalkthrough.step.serve.mobile": "Serve via ERC-5219"
+}

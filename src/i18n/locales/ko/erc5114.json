@@ -1,0 +1,51 @@
+{
+  "short": "NFT에 바인딩된 소울바운드 배지",
+  "introduction": "ERC-5114는 발행 시점에 다른 대체 불가능 토큰(NFT)에 바인딩되어 이후 절대 전송할 수 없는 토큰인 소울바운드 배지를 정의합니다. 2022년 5월 Micah Zoltu가 제안했습니다. 각 배지는 [address, tokenId] 쌍으로 식별되는 NFT에 연결되며, 한 번의 Mint 이벤트로 기록되고, 그 바인딩은 ownerOf로 다시 조회됩니다. ownerOf는 지갑 주소가 아니라 해당 NFT를 반환합니다. 참고: ERC-5114는 Last Call 단계로, Final이 되기 전 마지막 검토 기간입니다.",
+  "designPurpose": "ERC-5114는 평판과 성취 배지를, 이를 판매할 수 있는 지갑이 아니라 페르소나에 고정하도록 설계되었습니다. 일반 NFT는 자유롭게 이동하므로, 일반 토큰으로 만든 배지는 거래로 넘어가 성취가 그것을 획득한 정체성에서 분리될 수 있습니다. 각 배지를 발행 시점에 NFT에 바인딩하고 이후 전송을 금지함으로써, 이 표준은 하나의 NFT에 바인딩된 배지들 사이의 분리 불가능성과 병합 불가능성을 보장합니다. 콘텐츠 주소 지정 메타데이터는 발행자가 배지를 검열하는 것도 막습니다.",
+  "commonUsage": "소울바운드 배지는 일반 NFT처럼 거래되기보다 페르소나를 따라야 하는 온체인 평판, 자격 증명, 성취, 멤버십 표식에 적합합니다. 배지는 [address, tokenId] 쌍으로 식별되는 NFT에 바인딩되므로, 그러한 방식으로 주소를 지정할 수 있는 자산, 즉 ERC-721 또는 ERC-1155 토큰이라면 소울 역할을 할 수 있습니다. 이 표준은 메타데이터 형식을 규정하지 않고 불변성과 콘텐츠 주소 지정 가능성만 정의하므로, 애플리케이션은 자체 스키마를 제공하고 metadataFormat을 사용하여 URI를 어떻게 파싱하는지 나타냅니다.",
+
+  "fn.ownerOf.desc": "배지가 바인딩된 NFT를 [address, tokenId] 쌍으로 반환합니다. 배지가 발행되지 않았으면 revert되며, 항상 해당 배지의 원래 Mint 이벤트가 담고 있는 것과 동일한 값을 반환합니다.",
+  "fn.ownerOf.params.badgeId": "해석할 배지의 식별자.",
+  "fn.ownerOf.returns.nftAddress": "배지가 바인딩된 NFT의 컨트랙트 주소.",
+  "fn.ownerOf.returns.nftTokenId": "배지가 바인딩된 NFT의 token ID.",
+
+  "fn.collectionUri.desc": "배지 컬렉션을 설명하는 불변의 콘텐츠 주소 지정 URI를 반환합니다. 그 메타데이터는 각 배지의 badgeUri 출력과 병합되며, 이때 badgeUri 데이터가 우선합니다.",
+  "fn.collectionUri.returns.collectionUri": "컬렉션 메타데이터에 대한 불변의 콘텐츠 주소 지정 URI.",
+
+  "fn.badgeUri.desc": "단일 배지 인스턴스를 설명하는 검열 저항적이고 콘텐츠 주소 지정이 가능한 URI를 반환합니다. 그 데이터는 collectionUri가 반환하는 컬렉션 수준 메타데이터보다 우선합니다.",
+  "fn.badgeUri.params.badgeId": "설명할 배지의 식별자.",
+  "fn.badgeUri.returns.badgeUri": "이 배지 메타데이터에 대한 불변의 콘텐츠 주소 지정 URI.",
+
+  "fn.metadataFormat.desc": "collectionUri와 badgeUri에 있는 데이터의 형식 또는 버전을 식별하는 문자열(예: 'EIP-ABCD' 또는 'soulbound-schema-version-4')을 반환하여, 호출자가 먼저 내용을 검사하지 않고도 파싱할 수 있게 합니다.",
+  "fn.metadataFormat.returns.format": "URI 메타데이터의 형식 또는 버전을 나타내는 문자열.",
+
+  "fn.Mint.desc": "배지가 발행될 때 한 번 방출되어 해당 배지와 바인딩된 NFT를 기록합니다. 동일한 badgeId에 대해 두 번 발생시켜서는 안 됩니다.",
+  "fn.Mint.params.badgeId": "새로 발행된 배지의 식별자.",
+  "fn.Mint.params.nftAddress": "배지가 바인딩된 NFT의 컨트랙트 주소.",
+  "fn.Mint.params.nftTokenId": "배지가 바인딩된 NFT의 token ID.",
+
+  "node.minter": "배지 발행자",
+  "node.contract": "소울바운드 배지 컨트랙트",
+  "node.storageBinding": "배지 바인딩 스토리지",
+  "node.soul": "바인딩된 NFT(소울)",
+
+  "edge.mint": "배지 발행",
+  "edge.storeBinding": "배지 바인딩 저장",
+  "edge.bindSoul": "배지를 NFT에 바인딩",
+  "edge.emitMint": "Mint 이벤트 방출",
+  "edge.queryOwner": "ownerOf() 호출",
+
+  "sim.mintBadgeWalkthrough.name": "소울바운드 배지 발행",
+  "sim.mintBadgeWalkthrough.desc": "배지를 발행에서 불변의 NFT 바인딩과 Mint 이벤트를 거쳐 ownerOf 조회까지 따라갑니다.",
+  "sim.mintBadgeWalkthrough.param.badgeId": "배지 ID",
+  "sim.mintBadgeWalkthrough.param.nftAddress": "NFT 주소",
+  "sim.mintBadgeWalkthrough.param.nftTokenId": "NFT 토큰 ID",
+  "sim.mintBadgeWalkthrough.step.mint": "발행자가 새 배지를 발행하고 대상 NFT에 영구적으로 바인딩합니다. 이 바인딩은 이후 절대 변경할 수 없습니다.",
+  "sim.mintBadgeWalkthrough.step.mint.mobile": "배지 발행",
+  "sim.mintBadgeWalkthrough.step.bind": "컨트랙트가 배지-NFT 바인딩을 스토리지에 기록하여 배지를 그 소울 NFT에 연결합니다.",
+  "sim.mintBadgeWalkthrough.step.bind.mobile": "바인딩 저장",
+  "sim.mintBadgeWalkthrough.step.event": "컨트랙트가 Mint(badgeId, nftAddress, nftTokenId)를 정확히 한 번 방출하여 인덱서가 바인딩을 기록할 수 있게 합니다.",
+  "sim.mintBadgeWalkthrough.step.event.mobile": "Mint 이벤트 방출",
+  "sim.mintBadgeWalkthrough.step.query": "호출자가 ownerOf(badgeId)를 호출하면 배지가 바인딩된 NFT의 [address, tokenId]가 반환됩니다.",
+  "sim.mintBadgeWalkthrough.step.query.mobile": "ownerOf() 조회"
+}

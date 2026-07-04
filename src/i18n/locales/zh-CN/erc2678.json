@@ -1,0 +1,32 @@
+{
+  "short": "智能合约包清单格式（EthPM v3）",
+  "introduction": "ERC-2678 定义了一种用于包清单的 JSON 数据格式，该清单描述一个智能合约包：一个或多个合约，连同其源代码、编译器设置以及在各网络上的已部署实例。它由 g. nicholas d'andrea、Piper Merriam 及多位共同作者于 2020 年 5 月提出，是 EthPM 格式的第 3 版。清单是按字母顺序排序、经过压缩的 JSON 对象，通过 IPFS 等内容寻址存储进行分发，并发布到链上 EthPM 注册表。",
+  "designPurpose": "EthPM v3 的设计目标是为以太坊生态系统提供一种单一的、与工具无关的格式，用于共享和复用已编译的合约。在此之前，各项目以互不兼容的临时格式来描述其源代码和部署，因此依赖项无法在不同工具间可靠地安装或验证。第 3 版使其结构与 Solidity 编译器的元数据输出保持一致，将编译器定义收集到一个顶层数组中，并为保持一致性将键名从 snake_case 改为 camelCase。",
+  "commonUsage": "包清单由包管理工具在项目的发布流程中以编程方式生成，而非手动编写。包管理器读取这些清单，用于安装依赖项、构建发布版本，并对照源合约验证部署。包的范围涵盖：供继承使用的基础合约、可复用合约（如标准的 ERC-20 代币），以及已部署实例的集合。清单存储在 IPFS 等内容寻址系统上，并由 EthPM 注册表引用。",
+
+  "node.author": "包作者",
+  "node.packageManager": "EthPM 包管理器",
+  "node.manifest": "包清单",
+  "node.ipfs": "内容寻址存储",
+  "node.registry": "EthPM 注册表",
+  "node.consumer": "使用方开发者",
+
+  "edge.assemble": "组装包",
+  "edge.serialize": "序列化清单",
+  "edge.publish": "发布到 IPFS",
+  "edge.register": "注册发布版本",
+  "edge.resolve": "解析并安装",
+
+  "sim.publishPackageWalkthrough.name": "发布包演练",
+  "sim.publishPackageWalkthrough.desc": "跟随一个 EthPM v3 包，从作者组装它、经过 IPFS 存储，到使用方安装该发布版本的全过程。",
+  "sim.publishPackageWalkthrough.param.packageName": "包名称",
+  "sim.publishPackageWalkthrough.param.version": "包版本",
+  "sim.publishPackageWalkthrough.step.assemble": "包作者运行包管理器，从项目的合约、源代码和部署组装出一个新的发布版本。",
+  "sim.publishPackageWalkthrough.step.assemble.mobile": "组装包",
+  "sim.publishPackageWalkthrough.step.serialize": "该工具将收集到的数据序列化为一个包清单，将 manifest 字段设为 ethpm/3，并写入 name、version、sources、contractTypes、compilers 和 deployments 字段。",
+  "sim.publishPackageWalkthrough.step.serialize.mobile": "序列化清单字段",
+  "sim.publishPackageWalkthrough.step.publish": "该清单经过按字母顺序排序、压缩后存储到 IPFS，其内容寻址 URI 作为一个发布版本注册到链上 EthPM 注册表。",
+  "sim.publishPackageWalkthrough.step.publish.mobile": "发布到 IPFS 与注册表",
+  "sim.publishPackageWalkthrough.step.consume": "使用方开发者从注册表解析该发布版本并安装该包，利用清单获取源代码并验证已部署实例。",
+  "sim.publishPackageWalkthrough.step.consume.mobile": "解析并安装包"
+}

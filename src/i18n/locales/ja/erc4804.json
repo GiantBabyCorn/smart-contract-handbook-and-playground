@@ -1,0 +1,32 @@
+{
+  "short": "Web3 URL から EVM コールメッセージへの変換",
+  "introduction": "ERC-4804 は、HTTP 形式の web3:// URL を EVM コールメッセージへ変換する標準的な方法を定義し、クライアントが生の calldata ではなく人間が読める URL を通じてオンチェーンのコンテンツを読み取れるようにします。2022 年 2 月に Qi Zhou、Chao Pi、Sam Wilson によって提案されました。この URL はコントラクト名またはアドレス、省略可能なチェーン ID、メソッド、および引数をエンコードします。リゾルバーはこれらのフィールドを解析し、.eth のようなネームサービスのサフィックスをアドレスに解決したうえで、返されたデータを Web コンテンツとして表示する読み取り専用のビュー呼び出しを構築します。",
+  "designPurpose": "ERC-4804 は、通常ユーザーとオンチェーンデータの間に立つ Web2 のプロキシを取り除くために設計されました。それ以前は、コントラクトのコンテンツを読み取るには、リクエストを EVM コールへ変換する処理を dApp のウェブサイト、ノードプロバイダー、あるいはブロックエクスプローラーに委ねる必要があり、いずれもユーザーの管理の外にありました。URL の文法と解決モードの規約を定めることで、ERC-4804 は任意のクライアントが web3:// URL を直接ビュー呼び出しへ変換できるようにし、信頼できる仲介者なしにオンチェーンの HTML、SVG、その他のリソースを取得できるようにします。",
+  "commonUsage": "このスキームは、完全にオンチェーンなウェブサイトやメディアを配信するために使われ、アドレスまたは ENS 名にパスを加えたものが、HTML、SVG、または JSON を返すコントラクトのメソッドにマッピングされます。web3:// を理解するブラウザやゲートウェイは名前を解決し、自動または手動の解決モードを選び、結果を通常のウェブページのように表示します。これは ERC-5219 と自然に組み合わさり、ERC-5219 は多くの web3:// リソースが実装するリクエスト・レスポンスのコントラクトインターフェースを定式化します。",
+
+  "node.browser": "Web3 クライアント",
+  "node.resolver": "Web3 URL リゾルバー",
+  "node.url": "解析済み Web3 URL",
+  "node.nameService": "ネームサービス（ENS）",
+  "node.callMessage": "EVM コールメッセージ",
+  "node.target": "対象コントラクト",
+
+  "edge.submitUrl": "web3:// URL を送信",
+  "edge.parseUrl": "URL 文法を解析",
+  "edge.resolveName": "コントラクト名を解決",
+  "edge.buildMessage": "EVM メッセージを構築",
+  "edge.callTarget": "ビュー呼び出しを送信",
+  "edge.returnContent": "コンテンツを返却",
+
+  "sim.resolveUrlWalkthrough.name": "Web3 URL を解決する",
+  "sim.resolveUrlWalkthrough.desc": "リゾルバーが web3:// URL を解析し、名前を解決し、EVM コールメッセージを構築して、レンダリングされたコンテンツを返すまでを追います。",
+  "sim.resolveUrlWalkthrough.param.url": "Web3 URL",
+  "sim.resolveUrlWalkthrough.step.submit": "クライアントは、このスキームを理解するリゾルバーに web3:// URL を送信します。",
+  "sim.resolveUrlWalkthrough.step.submit.mobile": "web3:// URL を送信",
+  "sim.resolveUrlWalkthrough.step.parse": "リゾルバーは URL をコントラクト名、メソッド、引数に解析し、続いてネームサービスを通じてその名前をアドレスに解決します。",
+  "sim.resolveUrlWalkthrough.step.parse.mobile": "解析して名前を解決",
+  "sim.resolveUrlWalkthrough.step.build": "リゾルバーは EVM コールメッセージを組み立て、To に解決済みのアドレスを、Calldata に ABI エンコードされたメソッド呼び出しを設定します。",
+  "sim.resolveUrlWalkthrough.step.build.mobile": "コールメッセージを構築",
+  "sim.resolveUrlWalkthrough.step.call": "この読み取り専用のビュー呼び出しは対象コントラクト上で実行され、返されたバイト列がクライアントで Web コンテンツとしてレンダリングされます。",
+  "sim.resolveUrlWalkthrough.step.call.mobile": "呼び出してレンダリング"
+}

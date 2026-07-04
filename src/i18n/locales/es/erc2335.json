@@ -1,0 +1,30 @@
+{
+  "short": "Formato de keystore BLS12-381",
+  "introduction": "ERC-2335 define un formato de archivo keystore en JSON para cifrar y almacenar claves privadas BLS12-381, las claves de firma que utilizan los validadores de prueba de participación. Fue propuesto por Carl Beekhuizen en septiembre de 2019. Un keystore cifra el secreto bajo una contraseña de usuario para que la clave permanezca segura hasta que se proporcione la contraseña, y organiza la criptografía en tres módulos intercambiables: una función de derivación de claves, un checksum (suma de verificación) y un cifrado (cipher). Nota: ERC-2335 está en estado Review; la interfaz aún puede cambiar antes de que se finalice.",
+  "designPurpose": "ERC-2335 se diseñó para reemplazar el keystore de Web3 Secret Storage, que depende de un checksum Keccak256. Dado que las claves BLS y su almacenamiento son estándares entre cadenas, el formato necesita un checksum neutral para todas las cadenas, por lo que Keccak no era adecuado. También introduce la noción de módulos, que tratan la función de derivación de claves, el checksum y el cipher como instancias de una misma abstracción que pueden intercambiarse con un esfuerzo mínimo. El campo version se fija en 4 para evitar colisiones con el keystore existente de Ethereum.",
+  "commonUsage": "Los keystores BLS12-381 los utiliza el software de staking de Ethereum para almacenar las claves de firma y de retiro de los validadores, lo que permite a los operadores mover una clave cifrada entre dispositivos sin exponer el secreto en bruto. Las herramientas de staking y de depósito generan estos archivos, derivan su contenido mediante la generación de claves de ERC-2333 y las rutas de ERC-2334, y registran la clave pública, la ruta y un UUID para que se pueda referenciar una cuenta sin descifrarla. Los clientes validadores descifran el secreto bajo demanda una vez que el operador proporciona la contraseña.",
+
+  "node.user": "Titular del keystore",
+  "node.keystore": "Keystore BLS12-381",
+  "node.storageFile": "Campos del archivo keystore",
+  "node.signer": "Cliente de firma",
+
+  "edge.providePassword": "Proporcionar contraseña",
+  "edge.readModules": "Leer módulos criptográficos",
+  "edge.verifyPassword": "Verificar contraseña",
+  "edge.decryptSecret": "Descifrar secreto",
+  "edge.recoverKey": "Recuperar clave privada",
+
+  "sim.decryptKeystoreWalkthrough.name": "Recorrido de descifrado del keystore",
+  "sim.decryptKeystoreWalkthrough.desc": "Muestra cómo una contraseña desbloquea un keystore BLS12-381, desde la derivación de claves, pasando por la verificación del checksum, hasta el descifrado del secreto.",
+  "sim.decryptKeystoreWalkthrough.param.password": "Contraseña",
+  "sim.decryptKeystoreWalkthrough.param.kdf": "Función de derivación de claves",
+  "sim.decryptKeystoreWalkthrough.step.derive": "El titular proporciona la contraseña y el módulo KDF deriva la clave de descifrado a partir de la contraseña y los parámetros kdf almacenados.",
+  "sim.decryptKeystoreWalkthrough.step.derive.mobile": "Derivar clave de descifrado",
+  "sim.decryptKeystoreWalkthrough.step.verify": "El keystore aplica SHA-256 a los segundos 16 bytes de la clave de descifrado junto con el mensaje cipher y compara el resultado con el mensaje checksum almacenado para confirmar que la contraseña es correcta.",
+  "sim.decryptKeystoreWalkthrough.step.verify.mobile": "Verificar contraseña",
+  "sim.decryptKeystoreWalkthrough.step.decrypt": "Con la contraseña verificada, el módulo cipher usa la clave de descifrado para descifrar el mensaje cipher almacenado y recuperar el secreto.",
+  "sim.decryptKeystoreWalkthrough.step.decrypt.mobile": "Descifrar el secreto",
+  "sim.decryptKeystoreWalkthrough.step.recover": "La clave privada BLS12-381 descifrada se entrega al cliente de firma, que ahora puede producir firmas.",
+  "sim.decryptKeystoreWalkthrough.step.recover.mobile": "Recuperar clave privada"
+}

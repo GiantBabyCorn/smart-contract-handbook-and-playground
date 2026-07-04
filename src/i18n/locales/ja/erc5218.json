@@ -1,0 +1,68 @@
+{
+  "short": "NFT権利管理",
+  "introduction": "ERC-5218は、著作権ライセンスをオンチェーンで記録し、それをERC-721 NFTに紐付けるためのインターフェースを定義します。この規格はJames Grimmelmann、Yan Ji、Tyler Kellにより2022年7月に提案されました。各NFTには所有者が保有するルートライセンスがあり、所有者はツリーを形成するサブライセンスを付与できます。各ライセンスは規約URIを指し示し、作成・転送・取り消し・有効性の確認が可能です。注意：ERC-5218はStagnant（停滞）状態です。6か月以上活動がなく、最終化されない可能性がありますが、歴史的または技術的に重要な意味を持ちます。",
+  "designPurpose": "ERC-5218は、NFTを所有することと、それが表す著作物に対する法的権利を保有することとの間のギャップを埋めるために設計されました。それ以前は、NFTのライセンスはオフチェーンに存在し、トークンはどの権利が適用されるかを示さず、サブライセンスは追跡不可能で、一部のプロジェクトはライセンスの代わりとして別個のNFTをミントしていました。すべてのライセンスを、ライセンス識別子とトークン識別子をキーとするオンチェーンのツリーに記録し、それぞれに規約URIと取り消し権限者を持たせることで、この標準は作成者・保有者・監査者がイベントログを通じて完全な権利履歴を追跡できるようにします。",
+  "commonUsage": "ERC-5218は、画像・音楽・その他のメディアといった創作物をトークンに付随させ、ライセンスを明示的かつ転送可能にしたいNFTプロジェクト向けです。準拠コントラクトはERC-721を継承し、supportsInterfaceに対して0xac7b5ca9を返すため、マーケットプレイスやエクスプローラーはライセンスのサポートを検出し、各URIから規約を解決できます。この仕様はFinalステータスに到達しなかったため、オンチェーンでの採用は限定的であり、主に権利管理のリファレンス設計として位置づけられます。",
+
+  "fn.isLicenseActive.desc": "指定されたライセンスが現在有効かどうかを返します。存在しないライセンスや取り消されたライセンスは無効であり、また、いずれかの祖先ライセンスが取り消されている場合にも、そのライセンスは無効とみなされます。",
+  "fn.isLicenseActive.params.licenseId": "照会対象のライセンスの識別子。",
+  "fn.isLicenseActive.returns.active": "ライセンスが有効な場合はtrue、そうでない場合はfalse。",
+
+  "fn.getLicenseIdByTokenId.desc": "指定されたNFTに紐付けられたルートライセンスの識別子を返します。そのNFTにルートライセンスがない場合は、いずれのライセンスも指さない特別な識別子（例：0）が返されます。",
+  "fn.getLicenseIdByTokenId.params.tokenId": "ルートライセンスを照会する対象のNFTの識別子。",
+  "fn.getLicenseIdByTokenId.returns.licenseId": "そのNFTのルートライセンス識別子。存在しない場合は0。",
+
+  "fn.createLicense.desc": "NFT上に新しいライセンスを作成し、その識別子を返します。ルートライセンスはNFT所有者が作成でき、サブライセンスは有効な親ライセンスの保有者が作成できます。CreateLicenseイベントを発行します。",
+  "fn.createLicense.params.tokenId": "ライセンスが発行される対象のNFT。",
+  "fn.createLicense.params.parentLicenseId": "親ライセンスの識別子。ルートライセンスの場合は特別な値（例：0）。",
+  "fn.createLicense.params.licenseHolder": "新しいライセンスを保有するアドレス。",
+  "fn.createLicense.params.uri": "ライセンス規約を指すURI。",
+  "fn.createLicense.params.revoker": "ライセンスを取り消すことを許可されたアドレス。",
+  "fn.createLicense.returns.licenseId": "作成されたライセンスに割り当てられた識別子。",
+
+  "fn.revokeLicense.desc": "有効なライセンスを取り消します。呼び出せるのはそのライセンスに指定された取り消し権限者のみです。ルートライセンスを取り消すとNFTはその作成者に返却され、取り消されたライセンス配下のサブライセンスも同様に無効になります。",
+  "fn.revokeLicense.params.licenseId": "取り消すライセンスの識別子。",
+
+  "fn.transferSublicense.desc": "有効なサブライセンスを新しい保有者に転送します。呼び出せるのは現在の保有者のみです。ルートライセンスはこの方法では転送されません。ERC-721の転送によってNFTとともに移動するためです。",
+  "fn.transferSublicense.params.licenseId": "転送するサブライセンスの識別子。",
+  "fn.transferSublicense.params.licenseHolder": "新しいサブライセンス保有者のアドレス。",
+
+  "fn.CreateLicense.desc": "何らかのメカニズムによって新しいライセンスが作成されたときに発行され、その識別子、NFT、親ライセンス、保有者、規約URI、取り消し権限者を記録します。",
+  "fn.CreateLicense.params.licenseId": "新しく作成されたライセンスの識別子。",
+  "fn.CreateLicense.params.tokenId": "ライセンスが発行される対象のNFT。",
+  "fn.CreateLicense.params.parentLicenseId": "親ライセンスの識別子。ルートライセンスの場合は0。",
+  "fn.CreateLicense.params.licenseHolder": "新しいライセンスを保有するアドレス。",
+  "fn.CreateLicense.params.uri": "ライセンス規約を指すURI。",
+  "fn.CreateLicense.params.revoker": "ライセンスを取り消すことを許可されたアドレス。",
+
+  "fn.RevokeLicense.desc": "ライセンスが取り消されたときに発行されます。一部の規約では、祖先ライセンスに対する単一のイベントが、そのすべてのサブライセンスの取り消しを意味します。",
+  "fn.RevokeLicense.params.licenseId": "取り消されたライセンスの識別子。",
+
+  "fn.TransferLicense.desc": "ライセンスが新しい保有者に転送されたときに発行されます。ルートライセンスがそのNFTとともに新しい所有者へ移動する場合も含みます。",
+  "fn.TransferLicense.params.licenseId": "転送されたライセンスの識別子。",
+  "fn.TransferLicense.params.licenseHolder": "新しいライセンス保有者のアドレス。",
+
+  "node.user": "NFT所有者",
+  "node.contract": "ERC-5218コントラクト",
+  "node.storageLicenses": "ライセンスストレージ",
+  "node.licenseHolder": "ライセンス保有者",
+
+  "edge.callCreateLicense": "createLicense()を呼び出す",
+  "edge.recordLicense": "ライセンスを記録",
+  "edge.emitCreateLicense": "CreateLicenseイベントを発行",
+  "edge.grantLicense": "ライセンスを付与",
+
+  "sim.createLicenseWalkthrough.name": "ライセンス作成ウォークスルー",
+  "sim.createLicenseWalkthrough.desc": "createLicenseの呼び出しを、NFT所有者からストレージを経てライセンス保有者、そしてCreateLicenseイベントまで追跡します。",
+  "sim.createLicenseWalkthrough.param.tokenId": "トークンID",
+  "sim.createLicenseWalkthrough.param.parentLicenseId": "親ライセンスID",
+  "sim.createLicenseWalkthrough.param.licenseHolder": "ライセンス保有者",
+  "sim.createLicenseWalkthrough.step.call": "NFT所有者はコントラクト上でcreateLicense()を呼び出し、トークンID、親ライセンス、保有者、規約URI、取り消し権限者を渡します。",
+  "sim.createLicenseWalkthrough.step.call.mobile": "createLicense()を呼び出す",
+  "sim.createLicenseWalkthrough.step.execute": "コントラクトは新しいLicenseエントリを記録し、ルートライセンスの場合は_licenseIdsマッピングでそれをNFTに関連付けます。",
+  "sim.createLicenseWalkthrough.step.execute.mobile": "ライセンスを記録",
+  "sim.createLicenseWalkthrough.step.grant": "新しいライセンスは指定された保有者に割り当てられ、その保有者はライセンスURIに記述されたオンチェーン上の権利を得ます。",
+  "sim.createLicenseWalkthrough.step.grant.mobile": "保有者に割り当てる",
+  "sim.createLicenseWalkthrough.step.event": "コントラクトはCreateLicenseを発行し、インデクサーや監査者がそのNFTの完全なライセンスツリーを追跡できるようにします。",
+  "sim.createLicenseWalkthrough.step.event.mobile": "CreateLicenseイベントを発行"
+}

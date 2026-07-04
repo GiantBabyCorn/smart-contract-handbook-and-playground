@@ -1,0 +1,57 @@
+{
+  "short": "Interfaz de Propuesta Ejecutable de Contrato Inteligente",
+  "introduction": "ERC-5247 define una interfaz para propuestas ejecutables de contratos inteligentes: paquetes de llamadas on-chain que se registran y pueden ejecutarse más tarde. Fue propuesto por Zainan Victor Zhou en julio de 2022. Una propuesta empaqueta arreglos paralelos de targets, values, límites de gas y calldatas, de modo que puede transportar una cantidad arbitraria de llamadas. createProposal registra el paquete y devuelve un id de propuesta; executeProposal despacha cada llamada almacenada. Nota: ERC-5247 está en estado Review; la interfaz aún puede cambiar antes de finalizarse.",
+  "designPurpose": "ERC-5247 se diseñó para separar el código que se va a ejecutar del acto de ejecutarlo. Antes de él, los DAO y los sistemas de delegación codificaban el contenido de las propuestas en formatos propios, por lo que las herramientas no podían componer ni inspeccionar propuestas entre distintas implementaciones. Al estandarizar una única interfaz createProposal y executeProposal construida sobre arreglos paralelos de targets, values, límites de gas y calldatas, ERC-5247 permite que una propuesta se componga primero, se apruebe mediante cualquier mecanismo y luego se ejecute como una única acción on-chain.",
+  "commonUsage": "Las propuestas ejecutables encajan en la gobernanza de un DAO, donde un proponente registra una propuesta, los miembros votan sobre ella a través de una interfaz de votación aparte como ERC-1202, y el paquete aprobado se ejecuta una vez que se forma el consenso. El mismo patrón de crear y luego ejecutar se adapta a acuerdos de delegación y fideicomiso, o a una oferta condicional que una contraparte puede optar por aceptar y ejecutar. Como la interfaz desacopla el almacenamiento de la propuesta de su ejecución, puede desplegarse como un reenviador independiente o integrarse en un contrato de gobernanza existente.",
+
+  "fn.createProposal.desc": "Registra una nueva propuesta ejecutable a partir de arreglos paralelos de direcciones de destino, valores de ether, límites de gas y calldatas, y devuelve el id con el que quedó registrada. Emite un evento ProposalCreated.",
+  "fn.createProposal.params.proposalId": "Un identificador para la propuesta sugerido por quien llama; las implementaciones pueden respetarlo o asignar su propio id.",
+  "fn.createProposal.params.targets": "Las direcciones de contrato a las que se enviará cada llamada de la propuesta.",
+  "fn.createProposal.params.values": "La cantidad de ether, en wei, que se envía con cada llamada correspondiente.",
+  "fn.createProposal.params.gasLimits": "El límite de gas que se aplica a cada llamada correspondiente.",
+  "fn.createProposal.params.calldatas": "El calldata codificado en ABI para cada llamada correspondiente.",
+  "fn.createProposal.params.extraParams": "Parámetros adicionales definidos por la implementación.",
+  "fn.createProposal.returns.registeredProposalId": "El identificador con el que la propuesta quedó realmente registrada.",
+
+  "fn.executeProposal.desc": "Ejecuta una propuesta registrada previamente, despachando en secuencia cada una de sus llamadas almacenadas. Emite un evento ProposalExecuted.",
+  "fn.executeProposal.params.proposalId": "El identificador de la propuesta que se va a ejecutar.",
+  "fn.executeProposal.params.extraParams": "Parámetros adicionales definidos por la implementación.",
+
+  "fn.ProposalCreated.desc": "Se emite cuando se crea una nueva propuesta, transportando el contenido completo de la propuesta para que los servicios off-chain puedan indexarla.",
+  "fn.ProposalCreated.params.proposer": "La dirección que creó la propuesta.",
+  "fn.ProposalCreated.params.proposalId": "El identificador de la propuesta creada.",
+  "fn.ProposalCreated.params.targets": "Las direcciones de destino de las llamadas de la propuesta.",
+  "fn.ProposalCreated.params.values": "Los valores de ether de las llamadas de la propuesta.",
+  "fn.ProposalCreated.params.gasLimits": "Los límites de gas de las llamadas de la propuesta.",
+  "fn.ProposalCreated.params.calldatas": "El calldata de las llamadas de la propuesta.",
+  "fn.ProposalCreated.params.extraParams": "Parámetros adicionales definidos por la implementación.",
+
+  "fn.ProposalExecuted.desc": "Se emite cuando se ejecuta una propuesta.",
+  "fn.ProposalExecuted.params.executor": "La dirección que ejecutó la propuesta.",
+  "fn.ProposalExecuted.params.proposalId": "El identificador de la propuesta ejecutada.",
+  "fn.ProposalExecuted.params.extraParams": "Parámetros adicionales definidos por la implementación.",
+
+  "node.user": "Proponente",
+  "node.contract": "Registro ERC-5247",
+  "node.storageProposals": "Almacenamiento de Propuestas",
+
+  "edge.callCreateProposal": "Llamar a createProposal()",
+  "edge.callExecuteProposal": "Llamar a executeProposal()",
+  "edge.storeProposal": "Almacenar propuesta",
+  "edge.emitProposalCreated": "Emitir evento ProposalCreated",
+  "edge.emitProposalExecuted": "Emitir evento ProposalExecuted",
+
+  "sim.createProposalWalkthrough.name": "Crear y Ejecutar Propuesta",
+  "sim.createProposalWalkthrough.desc": "Sigue una propuesta ejecutable desde su creación, pasando por el almacenamiento y el evento ProposalCreated, hasta la ejecución on-chain.",
+  "sim.createProposalWalkthrough.param.proposalId": "Id de propuesta",
+  "sim.createProposalWalkthrough.param.target": "Dirección de destino",
+  "sim.createProposalWalkthrough.param.value": "Valor de ether (en wei)",
+  "sim.createProposalWalkthrough.step.call": "El proponente llama a createProposal con arreglos paralelos de targets, values, límites de gas y calldatas que describen las llamadas a ejecutar.",
+  "sim.createProposalWalkthrough.step.call.mobile": "Llamar a createProposal()",
+  "sim.createProposalWalkthrough.step.store": "El contrato de registro almacena el contenido de la propuesta bajo un id de propuesta registrado para su ejecución posterior.",
+  "sim.createProposalWalkthrough.step.store.mobile": "Almacenar propuesta",
+  "sim.createProposalWalkthrough.step.created": "El contrato emite ProposalCreated con el contenido completo de la propuesta para que los servicios de votación e indexación puedan recogerla.",
+  "sim.createProposalWalkthrough.step.created.mobile": "Emitir ProposalCreated",
+  "sim.createProposalWalkthrough.step.execute": "Una vez aprobada, el ejecutor llama a executeProposal, el registro despacha cada llamada almacenada y se emite un evento ProposalExecuted.",
+  "sim.createProposalWalkthrough.step.execute.mobile": "Ejecutar propuesta"
+}

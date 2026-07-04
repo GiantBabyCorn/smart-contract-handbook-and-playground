@@ -1,0 +1,36 @@
+{
+  "short": "Multi-Asset ERC-4626 Vaults",
+  "introduction": "ERC-7575 adapts the ERC-4626 tokenized vault standard to support vaults with multiple assets or entry points that share a single ERC-20 share token, including vaults that convert between two arbitrary external tokens. It was proposed by Jeroen Offerijns, Alina Sinelnikova, Vikram Arun, Joey Santoro, and Farhaan Ali in December 2023. It adds a share method that externalizes the ERC-20 share, an optional vault lookup mapping each asset to its vault, and mandatory ERC-165 support for detecting compliant contracts.",
+  "designPurpose": "ERC-7575 was designed to remove the ERC-4626 requirement that every vault also be an ERC-20 share token. That requirement makes multi-asset vaults and liquidity-provider-style vaults unwieldy or non-compliant, because one share cannot be minted from several entry points denominated in different assets. By externalizing the ERC-20 dependency behind a share method that may point to a separate contract, ERC-7575 lets several vaults link to one common share and enables Pipes that convert between two external tokens.",
+  "commonUsage": "ERC-7575 targets vaults that do not fit the one-vault-one-token model of ERC-4626: Multi-Asset Vaults that expose several asset entry points around a shared token, and Pipes that convert between two external ERC-20 tokens in one or both directions. The share token optionally implements a vault lookup and emits VaultUpdate when a linked vault changes, while the vault and share advertise ERC-165 interface IDs 0x2f0a18c5 and 0xf815c03d so front-ends and indexers can recognize the grouped contracts.",
+
+  "fn.share.desc": "Returns the address of the ERC-20 token that represents shares in the vault. It may return the vault's own address, or an external contract when the ERC-20 share is managed separately, and must not revert.",
+  "fn.share.returns.shareTokenAddress": "The address of the ERC-20 share representation of the vault.",
+
+  "fn.vault.desc": "Returns the address of the vault that uses the given asset as an entry point for the share. Implemented on the share token so integrators can look up a Multi-Asset Vault's entry point by asset.",
+  "fn.vault.params.asset": "The asset token whose linked vault is being queried.",
+  "fn.vault.returns.vault": "The address of the vault registered for the given asset.",
+
+  "fn.VaultUpdate.desc": "Emitted by the share token when the vault linked to it for a given asset changes, letting integrations track the current entry points of a Multi-Asset Vault.",
+  "fn.VaultUpdate.params.asset": "The asset whose linked vault changed.",
+  "fn.VaultUpdate.params.vault": "The address of the newly linked vault.",
+
+  "node.user": "Vault Integrator",
+  "node.contract": "ERC-7575 Share Token",
+  "node.storageVaults": "Asset-to-Vault Map",
+
+  "edge.callVault": "Call vault()",
+  "edge.readVaults": "Read vault map",
+  "edge.emitVaultUpdate": "Emit VaultUpdate event",
+  "edge.callShare": "Call share()",
+
+  "sim.vaultLookupWalkthrough.name": "Vault Lookup Walkthrough",
+  "sim.vaultLookupWalkthrough.desc": "Follow a vault(asset) lookup on the share token and see how VaultUpdate keeps the asset-to-vault map current.",
+  "sim.vaultLookupWalkthrough.param.asset": "Asset address",
+  "sim.vaultLookupWalkthrough.step.lookup": "An integrator calls vault(asset) on the share token to find the vault entry point for a given asset.",
+  "sim.vaultLookupWalkthrough.step.lookup.mobile": "Call vault()",
+  "sim.vaultLookupWalkthrough.step.read": "The share token reads its asset-to-vault mapping and returns the address of the vault registered for that asset.",
+  "sim.vaultLookupWalkthrough.step.read.mobile": "Read vault map",
+  "sim.vaultLookupWalkthrough.step.event": "Whenever the linked vault for an asset changes, the share token emits VaultUpdate so indexers can refresh their cached mapping.",
+  "sim.vaultLookupWalkthrough.step.event.mobile": "Emit VaultUpdate event"
+}

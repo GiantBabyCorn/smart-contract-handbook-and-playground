@@ -1,0 +1,70 @@
+{
+  "short": "Tokens multiactivo dependientes del contexto",
+  "introduction": "ERC-5773 define una interfaz para NFT multiactivo, en los que un único token no fungible contiene varios activos y expone el que mejor se adapta al contexto desde el que se accede. Fue propuesto por Bruno Škvorc, Cicada, Steven Pineda, Stevan Bogosavljevic y Jan Turk en octubre de 2022. Cada activo es un token URI con espacio de nombres referenciado por un identificador uint64, ordenado por prioridad y añadido mediante un patrón propose-commit: un nuevo activo entra en un array pendiente y debe ser aceptado por el propietario antes de volverse activo.",
+  "designPurpose": "ERC-5773 se diseñó para extender ERC-721 de modo que un NFT ya no quede ligado a un único tokenURI. Antes de él, dar a un token una representación distinta por aplicación, o replicar sus metadatos en varias redes de almacenamiento, implicaba reemplazar una única URI y borrar su linaje. En cambio, ERC-5773 almacena los activos por referencia como identificadores uint64 y los ordena según la prioridad fijada por el propietario, de modo que un consumidor elige el activo que se ajusta a su medio. Un flujo propose-commit permite al emisor proponer o reemplazar un activo mientras el propietario conserva la aprobación final.",
+  "commonUsage": "Los tokens multiactivo se adaptan a casos en los que un NFT debe ofrecer salidas distintas a consumidores distintos: un libro electrónico que se resuelve como PDF en un lector y como MP3 en una aplicación de audiolibros, un cosmético de juego que lleva archivos de activo por motor, o metadatos replicados en IPFS, Arweave y otras redes para redundancia. Como el estándar extiende ERC-721, las implementaciones reutilizan las herramientas existentes de ERC-721 y añaden detección mediante ERC-165, además de aprobaciones por token y de operador dedicadas a gestionar los activos por separado de las transferencias.",
+
+  "fn.acceptAsset.desc": "Migra un activo del array pendiente del token a su array activo. El llamador debe ser propietario del token o estar aprobado para gestionar sus activos, y el index y el assetId esperado deben coincidir. Emite un evento AssetAccepted.",
+  "fn.acceptAsset.params.tokenId": "ID del token cuyo activo pendiente se va a aceptar.",
+  "fn.acceptAsset.params.index": "Índice del activo que se va a aceptar en el array pendiente.",
+  "fn.acceptAsset.params.assetId": "ID del activo esperado en ese índice, comprobado para evitar condiciones de carrera.",
+
+  "fn.rejectAsset.desc": "Elimina un único activo del array pendiente del token sin activarlo. El llamador debe ser propietario del token o estar aprobado para gestionar sus activos, y el index y el assetId esperado deben coincidir. Emite un evento AssetRejected.",
+  "fn.rejectAsset.params.tokenId": "ID del token del que se rechaza el activo.",
+  "fn.rejectAsset.params.index": "Índice del activo que se va a rechazar en el array pendiente.",
+  "fn.rejectAsset.params.assetId": "ID del activo esperado en ese índice.",
+
+  "fn.rejectAllAssets.desc": "Vacía todo el array pendiente del token en una sola llamada, con un límite de maxRejections para evitar descartar activos que llegan justo antes de la operación. Emite un evento AssetRejected con assetId 0.",
+  "fn.rejectAllAssets.params.tokenId": "ID del token cuyo array pendiente se vacía.",
+  "fn.rejectAllAssets.params.maxRejections": "Número máximo de activos a rechazar, como protección frente a activos añadidos justo antes de la llamada.",
+
+  "fn.setPriority.desc": "Establece un nuevo orden de prioridad para los activos activos del token, donde el valor más bajo es la prioridad más alta y 0 significa sin inicializar. La longitud del array priorities debe ser igual al número de activos activos. Emite un evento AssetPrioritySet.",
+  "fn.setPriority.params.tokenId": "ID del token para el que se establecen las prioridades.",
+  "fn.setPriority.params.priorities": "Array de prioridades para los activos activos, que coincide con el orden del array activo.",
+
+  "fn.getActiveAssets.desc": "Devuelve el array de ID de activos activos del token dado; los datos del activo se obtienen por separado con getAssetMetadata.",
+  "fn.getActiveAssets.params.tokenId": "ID del token cuyos ID de activos activos se consultan.",
+  "fn.getActiveAssets.returns.assetIds": "Array de ID de activos activos del token dado.",
+
+  "fn.getPendingAssets.desc": "Devuelve el array de ID de activos pendientes que esperan la aceptación o el rechazo del propietario para el token dado.",
+  "fn.getPendingAssets.params.tokenId": "ID del token cuyos ID de activos pendientes se consultan.",
+  "fn.getPendingAssets.returns.assetIds": "Array de ID de activos pendientes del token dado.",
+
+  "fn.getAssetMetadata.desc": "Devuelve la URI de metadatos de un activo activo dado de un token, que se resuelve al medio o al descriptor del activo y habilita la salida dependiente del contexto.",
+  "fn.getAssetMetadata.params.tokenId": "ID del token del que se leen los metadatos del activo.",
+  "fn.getAssetMetadata.params.assetId": "ID del activo, que debe estar en el array de activos activos del token.",
+  "fn.getAssetMetadata.returns.metadata": "La URI de metadatos del activo especificado.",
+
+  "fn.AssetAccepted.desc": "Se emite cuando un activo pendiente se acepta y se migra al array activo del token, incluyendo el ID de cualquier activo al que reemplaza.",
+  "fn.AssetAccepted.params.tokenId": "ID del token que tuvo un nuevo activo aceptado.",
+  "fn.AssetAccepted.params.assetId": "ID del activo que se aceptó.",
+  "fn.AssetAccepted.params.replacesId": "ID del activo que se reemplazó, o 0 si no hay ninguno.",
+
+  "fn.AssetRejected.desc": "Se emite cuando un activo se descarta del array pendiente de un token; un assetId de 0 indica que se vació todo el array pendiente.",
+  "fn.AssetRejected.params.tokenId": "ID del token que tuvo un activo rechazado.",
+  "fn.AssetRejected.params.assetId": "ID del activo que se rechazó, o 0 cuando se vacía todo el array pendiente.",
+
+  "fn.AssetPrioritySet.desc": "Se emite cuando se actualiza el orden de prioridad de los activos activos de un token.",
+  "fn.AssetPrioritySet.params.tokenId": "ID del token cuyo array de prioridad de activos se actualizó.",
+
+  "node.user": "Propietario del token",
+  "node.contract": "Token multiactivo",
+  "node.storageAssets": "Almacenamiento de activos",
+
+  "edge.callAcceptAsset": "Llamar a acceptAsset()",
+  "edge.callRejectAsset": "Llamar a rejectAsset()",
+  "edge.updateAssets": "Actualizar los arrays de activos",
+  "edge.emitAssetAccepted": "Emitir el evento AssetAccepted",
+
+  "sim.acceptAssetWalkthrough.name": "Recorrido de aceptación de activo",
+  "sim.acceptAssetWalkthrough.desc": "Recorrido de una llamada a acceptAsset en la que un activo pendiente se migra al array activo y se emite el evento AssetAccepted.",
+  "sim.acceptAssetWalkthrough.param.tokenId": "ID del token",
+  "sim.acceptAssetWalkthrough.param.index": "Índice pendiente",
+  "sim.acceptAssetWalkthrough.param.assetId": "ID del activo",
+  "sim.acceptAssetWalkthrough.step.call": "El propietario del token llama a acceptAsset(tokenId, index, assetId) para aceptar un activo pendiente, pasando el assetId esperado para protegerse frente a cambios de índice.",
+  "sim.acceptAssetWalkthrough.step.call.mobile": "Llamar a acceptAsset()",
+  "sim.acceptAssetWalkthrough.step.execute": "El contrato elimina el activo del array pendiente y lo añade al array de activos activos del token.",
+  "sim.acceptAssetWalkthrough.step.execute.mobile": "Migrar a activo",
+  "sim.acceptAssetWalkthrough.step.event": "El contrato emite AssetAccepted para que los indexadores y los marketplaces puedan actualizar los activos activos del token.",
+  "sim.acceptAssetWalkthrough.step.event.mobile": "Emitir AssetAccepted"
+}

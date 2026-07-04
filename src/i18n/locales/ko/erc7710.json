@@ -1,0 +1,32 @@
+{
+  "short": "스마트 컨트랙트 위임 인터페이스",
+  "introduction": "ERC-7710은 스마트 컨트랙트 위임을 위한 최소한의 인터페이스를 정의하여, 위임자가 위임 관리자(Delegation Manager)에게 자신을 대신해 행동하도록 권한을 부여할 수 있게 합니다. 이 표준은 Ryan McPeck, Dan Finlay, Rob Dawson, Derek Chiang이 2024년 5월에 제안했습니다. 수임자는 자신의 권한을 증명하는 권한 컨텍스트와 함께 ERC-7579 모드 및 calldata를 전달하여 redeemDelegations를 호출하며, 관리자는 이를 검증하고 위임자가 해당 작업을 실행하도록 구동합니다. 참고: ERC-7710은 Draft 상태이며, 명세는 여전히 활발히 개발 중이므로 크게 변경될 수 있습니다.",
+  "designPurpose": "ERC-7710은 한 컨트랙트가 다른 컨트랙트의 기능을 사용하기 위해 이전에 필요했던 하드코딩된 권한과 맞춤형 중개 컨트랙트를 대체하도록 설계되었으며, 이러한 방식은 복잡성과 gas 비용을 높였습니다. 또한 사용자가 정책으로 제약된 단일 위임을 부여할 수 있게 하여, 상호작용할 때마다 다시 서명해야 하는 번거로움을 해소합니다. 이 인터페이스는 redeemDelegations만 규정하고 ERC-7579의 실행 인코딩을 차용하므로, 기존 스마트 계정은 새로운 실행 메서드를 구현하지 않고도 위임자로서 동작할 수 있습니다.",
+  "commonUsage": "이 표준은 장기간 유지되는 세션과 제한된 권한을 대상으로 합니다. 반복적인 서명을 피하는 지속적인 dApp 세션, AI 에이전트나 자동화 시스템에 부여되는 범위가 지정된 권한, 특정 기능을 담은 공유 가능한 초대 링크, 그리고 정의된 정책 한도 내에서 행동하는 서드파티 수임자 등입니다. 이 표준은 행사만 다루고 위임 생성은 범위에서 제외하므로, 일반적으로 서명, caveat, 취소를 처리하는 MetaMask Delegation Framework와 같은 프레임워크와 함께 사용됩니다.",
+
+  "fn.redeemDelegations.desc": "수임자가 하나 이상의 위임을 행사하기 위해 호출합니다. 관리자는 각 권한 컨텍스트를 검증하고, 승인된 경우 위임자를 통해 짝지어진 ERC-7579 모드와 calldata를 실행합니다. 배열의 길이가 서로 다르면 revert됩니다.",
+  "fn.redeemDelegations.params.permissionContexts": "각 위임별 데이터로, 호출자가 각 위임자를 대신해 행동할 권한이 있음을 증명합니다. 그 구조는 구체적인 위임 관리자가 정의합니다.",
+  "fn.redeemDelegations.params.modes": "ERC-7579 실행 모드의 배열로, 각 모드는 해당 실행에 대해 단일 호출이나 배치 호출과 같은 호출 동작을 인코딩합니다.",
+  "fn.redeemDelegations.params.executionCallData": "ERC-7579로 인코딩된 실행의 배열로, 각 요소는 일반적으로 위임자를 대신해 실행할 대상(target), value, calldata를 담고 있습니다.",
+
+  "node.delegate": "수임자(행사자)",
+  "node.contract": "위임 관리자",
+  "node.delegator": "위임자",
+  "node.target": "대상 컨트랙트",
+
+  "edge.callRedeem": "redeemDelegations() 호출",
+  "edge.callDelegator": "위임자 호출",
+  "edge.executeAction": "작업 실행",
+
+  "sim.redeemDelegationWalkthrough.name": "위임 행사하기",
+  "sim.redeemDelegationWalkthrough.desc": "수임자가 위임 관리자를 통해 위임을 행사하고, 위임자가 대상 컨트랙트에서 작업을 실행하는 과정을 따라갑니다.",
+  "sim.redeemDelegationWalkthrough.param.delegator": "위임자 계정",
+  "sim.redeemDelegationWalkthrough.param.target": "대상 컨트랙트",
+  "sim.redeemDelegationWalkthrough.param.mode": "실행 모드",
+  "sim.redeemDelegationWalkthrough.step.call": "수임자는 위임 관리자에서 redeemDelegations를 호출하며, 실행하려는 작업을 위한 권한 컨텍스트, 실행 모드, calldata를 전달합니다.",
+  "sim.redeemDelegationWalkthrough.step.call.mobile": "redeemDelegations() 호출",
+  "sim.redeemDelegationWalkthrough.step.validate": "관리자는 각 권한 컨텍스트가 유효한 권한을 증명하는지 검증합니다. 모든 위임이 유효하면 해당 위임자를 호출하고, 그렇지 않으면 배치 전체가 revert됩니다.",
+  "sim.redeemDelegationWalkthrough.step.validate.mobile": "권한 검증",
+  "sim.redeemDelegationWalkthrough.step.execute": "위임자는 대상 컨트랙트에서 ERC-7579로 인코딩된 작업을 실행하여, 수임자가 사용하도록 승인받은 기능을 완료합니다.",
+  "sim.redeemDelegationWalkthrough.step.execute.mobile": "대상에서 실행"
+}

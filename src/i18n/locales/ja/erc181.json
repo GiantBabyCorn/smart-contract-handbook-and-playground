@@ -1,0 +1,42 @@
+{
+  "short": "Ethereum アドレスの ENS リバース解決",
+  "introduction": "ERC-181 は、イーサリアムネームサービス（ENS）におけるリバース解決のためのレジストラおよびリゾルバのインターフェースを定義し、Ethereum アドレスを人間が読める名前へと逆方向にマッピングします。これは 2016 年 12 月に Nick Johnson によって提案されました。リバースレコードは予約された addr.reverse ドメインの配下に置かれ、あるアドレスのレコードは、その小文字の 16 進数表現に .addr.reverse を続けた位置に格納されます。そのドメインを所有するレジストラは、各アカウントが自身のリバースノードを取得できるようにし、リゾルバはノードに対応する ENS 名を返す name メソッドを公開します。",
+  "designPurpose": "ERC-181 は、名前からアドレスへのフォワード解決のみを当初サポートしていた ENS に、リバースルックアップを追加するために設計されました。誰でも自分が所有していないアドレスに名前を向けることができるため、フォワードレコードだけでは、あるアドレスが特定の名前を承認していることを証明できません。ERC-181 は各アドレスのリバースノードをその 16 進数エンコードから決定的に導出し、addr.reverse の上にレジストラを配置して、アカウントが自身のアドレスに対応するレコードのみを取得できるようにします。これにより、リゾルバはその名前がアドレスの所有者によって設定されたものであると信頼できます。",
+  "commonUsage": "リバース解決は、ウォレット、ブロックエクスプローラー、ダッシュボードなどで利用され、生の 16 進数アドレスの代わりに alice.eth のような短い ENS 名を表示します。また claim 関数を使うと、コントラクトは単一のコンストラクタ呼び出しの中でリバースレコードの設定をそのデプロイヤーに委任できるため、デプロイされたコントラクトも読みやすい名前を提示できます。リバースレコードはアドレスの 16 進数エンコードをキーとするため、オンチェーンでリバースルックアップを行うコントラクトは、ENS に問い合わせる前に自らアドレスを 16 進数エンコードする必要があります。",
+
+  "fn.claim.desc": "呼び出し元のリバースレコード hex(caller) + '.addr.reverse' の所有権を、指定された owner アドレスへ移転するよう ENS レジストリに指示し、そのレコードの namehash を返します。",
+  "fn.claim.params.owner": "ENS において、呼び出し元のリバースレコードの所有者として設定するアドレス。",
+  "fn.claim.returns.node": "所有権が移転されたリバースレコードの ENS namehash。",
+
+  "fn.claimWithResolver.desc": "呼び出し元のリバースレコードにリゾルバを設定し、その所有権を指定された owner へ移転する処理を 1 回の呼び出しで行い、そのレコードの namehash を返します。リゾルバにゼロを渡した場合は、現在のリゾルバは変更されません。",
+  "fn.claimWithResolver.params.owner": "リバースレコードの所有者として設定するアドレス。",
+  "fn.claimWithResolver.params.resolver": "レコードに設定するリゾルバのアドレス。ゼロを指定すると現在のリゾルバは変更されません。",
+  "fn.claimWithResolver.returns.node": "リバースレコードの ENS namehash。",
+
+  "fn.setName.desc": "呼び出し元のリバースレコードをデフォルトリゾルバに向け、指定された name をそこに書き込むことで、単一のトランザクションでリバースレコードを作成します。そのレコードの namehash を返します。",
+  "fn.setName.params.name": "呼び出し元のリバースレコードとして格納する ENS 名。",
+  "fn.setName.returns.node": "リバースレコードの ENS namehash。",
+
+  "fn.name.desc": "指定された node に対して記録されている ENS 名を返すリゾルバメソッドで、設定されていない場合は空文字列を返します。その ERC-165 インターフェースIDは 0x691f3431 です。",
+  "fn.name.params.node": "ルックアップするリバースレコードの namehash。",
+  "fn.name.returns.name": "その node に登録されている ENS 名。設定されていない場合は空文字列。",
+
+  "node.user": "アドレス所有者",
+  "node.contract": "リバースレジストラ",
+  "node.storageReverse": "リバースレコード",
+
+  "edge.callClaim": "claim() を呼び出す",
+  "edge.callSetName": "setName() を呼び出す",
+  "edge.updateReverse": "リバースレコードを更新",
+
+  "sim.setNameWalkthrough.name": "リバース名設定のウォークスルー",
+  "sim.setNameWalkthrough.desc": "リバースレジストラが呼び出し元のリバースノードを取得し、そのノードに ENS 名を格納するまで、setName の呼び出しを追っていきます。",
+  "sim.setNameWalkthrough.param.caller": "アドレス所有者",
+  "sim.setNameWalkthrough.param.name": "ENS 名",
+  "sim.setNameWalkthrough.step.call": "あるアカウントがリバースレジストラ上で setName(name) を呼び出し、単一のトランザクションで自身のアドレスに ENS 名を設定します。",
+  "sim.setNameWalkthrough.step.call.mobile": "setName() を呼び出す",
+  "sim.setNameWalkthrough.step.claim": "レジストラは hex(caller) + '.addr.reverse' から呼び出し元のリバースノードを計算し、その所有権を取得して、デフォルトリゾルバに向けます。",
+  "sim.setNameWalkthrough.step.claim.mobile": "リバースノードを取得",
+  "sim.setNameWalkthrough.step.store": "デフォルトリゾルバは、指定された name をリバースノードに対応する name マッピングに書き込みます。これにより、ルックアップは人間が読める名前を返すようになります。",
+  "sim.setNameWalkthrough.step.store.mobile": "ENS 名を格納"
+}

@@ -1,0 +1,75 @@
+{
+  "short": "Almacén General de Datos Clave/Valor y Ejecución",
+  "introduction": "ERC-725 define dos bloques de construcción para cuentas de contrato inteligente: un almacén de datos clave/valor (ERC725Y) que mapea claves bytes32 a valores bytes arbitrarios, y una función de ejecución genérica (ERC725X) para llamar, crear o hacer delegatecall a otros contratos. Fue propuesto por Fabian Vogelsteller y Tyler Yasaka en octubre de 2017. Ambas partes son controladas por el propietario mediante ERC-173 y se pueden usar juntas o por separado. Nota: ERC-725 es un Draft; la especificación aún está en desarrollo activo y puede cambiar sustancialmente.",
+  "designPurpose": "ERC-725 fue diseñado para dar a las cuentas de contrato inteligente una disposición de datos y ejecución lo suficientemente flexible como para durar a largo plazo, pero lo suficientemente estandarizada como para que las herramientas puedan depender de ella. Antes de él, cada proyecto inventaba sus propias variables de almacenamiento y puntos de entrada de ejecución, por lo que los contratos externos y las aplicaciones fuera de cadena no podían leerlos ni operarlos de manera uniforme. Mantener todos los datos bajo un único mapping(bytes32 => bytes) y enrutar las acciones salientes a través de una sola función execute permite que los protocolos reinterpreten sus datos sin cambiar la interfaz.",
+  "commonUsage": "ERC-725 sirve como base para cuentas de contrato inteligente modulares y para metadatos en cadena actualizables. Su almacén ERC725Y se usa por sí solo para adjuntar metadatos mutables a NFTs, tokens y otros contratos, mientras que ERC725X proporciona un punto de entrada execute genérico para contratos de tipo cuenta que actúan en nombre de un usuario. La especificación señala que la forma de cuenta está estandarizada como LSP0-ERC725Account, con LSP2-ERC725JSONSchema definiendo cómo se codifican las claves y los valores.",
+
+  "fn.execute.desc": "Ejecuta una única operación desde la cuenta: una llamada (call), creación de contrato con CREATE o CREATE2, staticcall o delegatecall, seleccionada por operationType. Solo puede ser llamada por el propietario actual y revierte si la operación falla.",
+  "fn.execute.params.operationType": "El tipo de operación a realizar: 0 para CALL, 1 para CREATE, 2 para CREATE2, 3 para STATICCALL o 4 para DELEGATECALL.",
+  "fn.execute.params.target": "El contrato o dirección a llamar; debe ser address(0) al crear un contrato.",
+  "fn.execute.params.value": "La cantidad de token nativo a transferir, en wei.",
+  "fn.execute.params.data": "Los datos de la llamada, o el bytecode de creación al desplegar un contrato.",
+  "fn.execute.returns.returnData": "Los datos devueltos por la función llamada, o la dirección del contrato desplegado.",
+
+  "fn.executeBatch.desc": "Ejecuta un lote de operaciones en una sola transacción, tomando arreglos de igual longitud de tipos de operación, objetivos, valores y datos de llamada. Solo el propietario puede llamarla, y revierte si alguna operación falla.",
+  "fn.executeBatch.params.operationsType": "La lista de tipos de operación a realizar para cada llamada.",
+  "fn.executeBatch.params.targets": "La lista de direcciones a llamar para cada operación.",
+  "fn.executeBatch.params.values": "La lista de cantidades de token nativo a transferir, en wei.",
+  "fn.executeBatch.params.datas": "La lista de datos de llamada o bytecode de creación de contrato.",
+  "fn.executeBatch.returns.results": "El arreglo de datos devueltos o direcciones de contratos desplegados.",
+
+  "fn.getData.desc": "Devuelve el valor bytes almacenado bajo una única clave de datos en el almacén ERC725Y. Cualquier llamador puede leerlo.",
+  "fn.getData.params.dataKey": "La clave de datos cuyo valor se recuperará.",
+  "fn.getData.returns.dataValue": "El valor bytes almacenado para la clave de datos solicitada.",
+
+  "fn.getDataBatch.desc": "Devuelve los valores almacenados bajo múltiples claves de datos en una sola llamada, manteniendo bajos los costos de gas para lecturas masivas.",
+  "fn.getDataBatch.params.dataKeys": "La lista de claves de datos cuyos valores se recuperarán.",
+  "fn.getDataBatch.returns.dataValues": "El arreglo de valores bytes para las claves de datos solicitadas.",
+
+  "fn.setData.desc": "Almacena un valor bytes bajo una única clave de datos en el almacén ERC725Y, sobrescribiendo cualquier valor anterior. Solo el propietario puede llamarla, y emite DataChanged.",
+  "fn.setData.params.dataKey": "La clave de datos cuyo valor se establecerá.",
+  "fn.setData.params.dataValue": "El valor bytes a almacenar.",
+
+  "fn.setDataBatch.desc": "Almacena valores bajo múltiples claves de datos en una sola llamada, tomando arreglos de igual longitud de claves y valores. Solo el propietario puede llamarla, y emite DataChanged para cada clave.",
+  "fn.setDataBatch.params.dataKeys": "La lista de claves de datos cuyos valores se establecerán.",
+  "fn.setDataBatch.params.dataValues": "La lista de valores bytes a almacenar.",
+
+  "fn.Executed.desc": "Se emite cuando execute realiza un CALL, STATICCALL o DELEGATECALL (tipos de operación 0, 3 y 4).",
+  "fn.Executed.params.operationType": "El tipo de operación que se ejecutó.",
+  "fn.Executed.params.target": "La dirección que fue llamada.",
+  "fn.Executed.params.value": "La cantidad de token nativo enviada, en wei.",
+  "fn.Executed.params.data": "Los primeros cuatro bytes de los datos de la llamada, típicamente el selector de función.",
+
+  "fn.ContractCreated.desc": "Se emite cuando execute despliega un nuevo contrato mediante CREATE o CREATE2 (tipos de operación 1 y 2).",
+  "fn.ContractCreated.params.operationType": "El tipo de operación usado para desplegar el contrato.",
+  "fn.ContractCreated.params.contractAddress": "La dirección del contrato recién desplegado.",
+  "fn.ContractCreated.params.value": "La cantidad de token nativo enviada al nuevo contrato, en wei.",
+  "fn.ContractCreated.params.salt": "El salt bytes32 usado para un despliegue CREATE2.",
+
+  "fn.DataChanged.desc": "Se emite cada vez que el valor de una clave de datos se establece con éxito en el almacén ERC725Y.",
+  "fn.DataChanged.params.dataKey": "La clave de datos cuyo valor cambió.",
+  "fn.DataChanged.params.dataValue": "El nuevo valor bytes almacenado para la clave.",
+
+  "node.user": "Propietario de la Cuenta",
+  "node.contract": "Cuenta ERC-725",
+  "node.storageData": "Almacén de Datos",
+  "node.target": "Contrato Objetivo",
+
+  "edge.callExecute": "Llamar a execute()",
+  "edge.callSetData": "Llamar a setData()",
+  "edge.forwardCall": "Reenviar llamada",
+  "edge.updateStore": "Actualizar almacén de datos",
+  "edge.emitExecuted": "Emitir evento Executed",
+  "edge.emitDataChanged": "Emitir evento DataChanged",
+
+  "sim.setDataWalkthrough.name": "Recorrido de setData",
+  "sim.setDataWalkthrough.desc": "Sigue una llamada a setData desde el propietario, a través del almacén de datos ERC725Y, hasta el evento DataChanged.",
+  "sim.setDataWalkthrough.param.dataKey": "Clave de datos",
+  "sim.setDataWalkthrough.param.dataValue": "Valor de datos",
+  "sim.setDataWalkthrough.step.call": "El propietario llama a setData(dataKey, dataValue) en la cuenta ERC-725 para almacenar un valor.",
+  "sim.setDataWalkthrough.step.call.mobile": "Llamar a setData()",
+  "sim.setDataWalkthrough.step.execute": "El contrato verifica que el llamador es el propietario, luego escribe el valor en el almacén de datos de bytes32 a bytes, sobrescribiendo cualquier valor anterior de la clave.",
+  "sim.setDataWalkthrough.step.execute.mobile": "Escribir en el almacén de datos",
+  "sim.setDataWalkthrough.step.event": "El contrato emite DataChanged(dataKey, dataValue) para que los indexadores y las aplicaciones fuera de cadena puedan rastrear la actualización.",
+  "sim.setDataWalkthrough.step.event.mobile": "Emitir evento DataChanged"
+}

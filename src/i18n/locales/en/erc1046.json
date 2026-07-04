@@ -1,0 +1,28 @@
+{
+  "short": "tokenURI Interoperability Extension",
+  "introduction": "ERC-1046 defines a metadata extension that adds an ERC-721-style tokenURI function to ERC-20 and aligns the token URI conventions of ERC-20, ERC-721, and ERC-1155 so wallets can read all three the same way. It was proposed by Tommy Nicholas, Matt Russo, John Zettler, Matt Condon, and Gavin John in April 2018. A compliant ERC-20 token returns a URI that resolves to a JSON document whose interop field flags the token type, letting applications detect and display tokens without per-standard code.",
+  "designPurpose": "ERC-1046 was designed to bring the metadata that ERC-721 exposes through tokenURI to fungible ERC-20 tokens, which historically carried only name, symbol, and decimals on-chain. Before it, applications had no uniform way to fetch an image or description for a token, nor a cheap way to tell a fungible token from an NFT or multi-token contract. Reusing the tokenURI name across standards and adding an interop object to the resolved JSON lets wallets read a token's type and display data from one document.",
+  "commonUsage": "ERC-1046 targets wallets, block explorers, and asset-listing interfaces that render ERC-20 tokens with the same imagery and descriptions they already show for NFTs. The ERC-20 tokenURI function is required for compliance, while the ERC-721 and ERC-1155 sides add an interop field to their existing metadata JSON so one resolver can handle all three types. To save gas, the standard recommends omitting on-chain name, symbol, and decimals and placing those fields in the metadata document instead.",
+
+  "fn.tokenURI.desc": "Returns a URI resolving to a JSON metadata document for the ERC-20 token, in the ERC-721-style tokenURI pattern. The document's interop field marks it as ERC-1046 metadata so wallets treat the address as an ERC-20 token.",
+  "fn.tokenURI.returns.uri": "The URI pointing to the token's off-chain JSON metadata document.",
+
+  "node.user": "Wallet",
+  "node.contract": "Token Contract",
+  "node.storageUri": "URI Storage",
+  "node.metadata": "Metadata Document",
+
+  "edge.callTokenURI": "Call tokenURI()",
+  "edge.readUri": "Read stored URI",
+  "edge.fetchMetadata": "Fetch metadata JSON",
+
+  "sim.tokenUriWalkthrough.name": "Token URI Resolution",
+  "sim.tokenUriWalkthrough.desc": "Follow a wallet reading an ERC-20 token's metadata: call tokenURI(), resolve the URI, and read the interop flag.",
+  "sim.tokenUriWalkthrough.param.token": "Token address",
+  "sim.tokenUriWalkthrough.step.call": "The wallet calls tokenURI() on the ERC-20 token contract to obtain its metadata URI.",
+  "sim.tokenUriWalkthrough.step.call.mobile": "Call tokenURI()",
+  "sim.tokenUriWalkthrough.step.resolve": "The contract reads its stored URI and returns a link such as https://example.com/token.json to the wallet.",
+  "sim.tokenUriWalkthrough.step.resolve.mobile": "Return metadata URI",
+  "sim.tokenUriWalkthrough.step.fetch": "The wallet fetches the JSON at the URI and reads interop.erc1046, confirming the address is an ERC-20 token.",
+  "sim.tokenUriWalkthrough.step.fetch.mobile": "Read interop flag"
+}

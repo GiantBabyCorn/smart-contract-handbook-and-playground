@@ -1,0 +1,64 @@
+{
+  "short": "可引用 NFT 關係擴展",
+  "introduction": "ERC-5521 是 ERC-721 的擴展，讓非同質化代幣能夠記錄與其他 NFT 之間的引用關係。它由 Saber Yu 及其共同作者於 2022 年 8 月提出。該標準新增了一個引用列表（referring list），指向某個代幣所引用的 NFT，以及一個被引用列表（referred list），記錄引用該代幣的 NFT，並附帶一個區塊層級的 createdTimestamp。由於引用必須指向更早的代幣，這些關係構成一個有向無環圖，錢包與索引器可以對其進行查詢、追溯與分析。",
+  "designPurpose": "ERC-5521 旨在連接彼此衍生的 NFT，而 ERC-721 將代幣視為孤立的、一次性的物件。在此之前，NFT 與其所衍生的作品之間沒有任何鏈上關聯，創作者無法追溯譜系，也無法在作品被再次使用時累積價值。該標準將引用關係以引用列表與被引用列表的形式記錄在鏈上，並為每個代幣標記其建立時間，使任何合約都能重建引用圖。要求引用只能指向更早的代幣，從而保持該圖無環。",
+  "commonUsage": "可引用 NFT 適用於創作作品建立在先前作品之上的場景：藝術家從先前的 NFT 衍生出新作品、音樂家混音所引用的曲目，或者後來的代幣標註其來源而形成的引用圖。由於引用可以透過 TargetContract 介面跨合約進行，一個代幣在檢查 ERC-165 支援後即可引用其他系列中的 NFT。該擴展被加入 ERC-721 合約，引用列表與被引用列表讓交易市場與瀏覽器能夠展示來源資訊。",
+
+  "fn.setNode.desc": "設定某個 rNFT 的引用列表，並更新它所指向的每個 NFT 的被引用列表，記錄這些關係，同時以目前區塊時間戳記標記該代幣。為每個發生變更的節點觸發 UpdateNode。",
+  "fn.setNode.params.tokenId": "正在設定引用關係的 rNFT。",
+  "fn.setNode.params.addresses": "持有被引用 rNFT 的合約地址。",
+  "fn.setNode.params.tokenIds": "對應每個地址，此 rNFT 所引用的代幣 ID 列表。",
+
+  "fn.setNodeReferredExternal.desc": "在目標合約上調用，將 tokenId 加入給定 rNFT 的被引用列表，使引用得以跨越兩個合約。僅在調用方確認目標合約支援該介面後才會被調用。",
+  "fn.setNodeReferredExternal.params._address": "發起外部引用的合約地址。",
+  "fn.setNodeReferredExternal.params.tokenId": "被加入每個目標的被引用列表中的引用方 rNFT。",
+  "fn.setNodeReferredExternal.params._tokenIds": "目標合約上被引用的代幣 ID。",
+
+  "fn.referringOf.desc": "返回某個 rNFT 的引用列表：合約地址，以及對應每個地址、此 NFT 所指向的代幣 ID。當地址不是本合約時，支援跨合約查詢。",
+  "fn.referringOf.params._address": "與被查詢 rNFT 關聯的合約地址。",
+  "fn.referringOf.params.tokenId": "請求其引用列表的 rNFT。",
+  "fn.referringOf.returns.addresses": "被引用 NFT 的合約地址。",
+  "fn.referringOf.returns.tokenIds": "對應每個地址，此 rNFT 所引用的代幣 ID。",
+
+  "fn.referredOf.desc": "返回某個 rNFT 的被引用列表：指向它的 NFT 的合約地址與代幣 ID。當地址不是本合約時，支援跨合約查詢。",
+  "fn.referredOf.params._address": "與被查詢 rNFT 關聯的合約地址。",
+  "fn.referredOf.params.tokenId": "請求其被引用列表的 rNFT。",
+  "fn.referredOf.returns.addresses": "引用方 NFT 的合約地址。",
+  "fn.referredOf.returns.tokenIds": "對應每個地址，引用此 rNFT 的代幣 ID。",
+
+  "fn.createdTimestampOf.desc": "返回建立該 rNFT 時記錄的區塊時間戳記；該標準用它來為引用排序，使代幣只能引用更早的代幣。",
+  "fn.createdTimestampOf.params._address": "與被查詢 rNFT 關聯的合約地址。",
+  "fn.createdTimestampOf.params.tokenId": "請求其建立時間戳記的 rNFT。",
+  "fn.createdTimestampOf.returns.timestamp": "建立該 rNFT 時的區塊時間戳記。",
+
+  "fn.UpdateNode.desc": "每當 setNode 變更某個節點時觸發，攜帶該代幣、其擁有者，以及其完整的引用列表與被引用列表，使索引器能夠追蹤引用關係圖。",
+  "fn.UpdateNode.params.tokenId": "關係發生變更的 rNFT。",
+  "fn.UpdateNode.params.owner": "發生變更的 rNFT 的擁有者。",
+  "fn.UpdateNode.params._address_referringList": "該代幣引用列表中的合約地址。",
+  "fn.UpdateNode.params._tokenIds_referringList": "對應每個地址，該代幣所引用的代幣 ID。",
+  "fn.UpdateNode.params._address_referredList": "該代幣被引用列表中的合約地址。",
+  "fn.UpdateNode.params._tokenIds_referredList": "對應每個地址，引用該代幣的代幣 ID。",
+
+  "node.user": "rNFT 建立者",
+  "node.contract": "ERC-5521 rNFT",
+  "node.storageRelationship": "關係儲存",
+  "node.targetContract": "被引用的 rNFT 合約",
+
+  "edge.callSetNode": "調用 setNode()",
+  "edge.updateRelationship": "更新關係",
+  "edge.referExternal": "引用外部 rNFT",
+  "edge.emitUpdateNode": "觸發 UpdateNode 事件",
+
+  "sim.setNodeWalkthrough.name": "setNode 演練",
+  "sim.setNodeWalkthrough.desc": "跟隨一次 setNode 調用，觀察新的 rNFT 如何記錄其引用列表、更新它所引用的較早代幣，並觸發 UpdateNode。",
+  "sim.setNodeWalkthrough.param.tokenId": "新 rNFT 的 ID",
+  "sim.setNodeWalkthrough.param.referredTokenId": "被引用 rNFT 的 ID",
+  "sim.setNodeWalkthrough.step.call": "建立者在 rNFT 合約上調用 setNode(tokenId, addresses, tokenIds)，以引用一個或多個既有代幣。",
+  "sim.setNodeWalkthrough.step.call.mobile": "調用 setNode()",
+  "sim.setNodeWalkthrough.step.referring": "合約為新代幣記錄引用列表，並在關係儲存中以目前區塊時間戳記標記它。",
+  "sim.setNodeWalkthrough.step.referring.mobile": "記錄引用",
+  "sim.setNodeWalkthrough.step.referred": "對於每個被引用的代幣，合約將此代幣加入其被引用列表；當引用跨越合約時，會在其他合約上調用 setNodeReferredExternal。",
+  "sim.setNodeWalkthrough.step.referred.mobile": "更新被引用列表",
+  "sim.setNodeWalkthrough.step.event": "合約為每個發生變更的代幣觸發 UpdateNode，使索引器能夠更新引用關係圖。",
+  "sim.setNodeWalkthrough.step.event.mobile": "觸發 UpdateNode 事件"
+}

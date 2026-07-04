@@ -1,0 +1,32 @@
+{
+  "short": "ENS テキストレコードリゾルバプロファイル",
+  "introduction": "ERC-634 は、Ethereum Name Service（ENS）向けのリゾルバプロファイルを定義し、名前がメール、URL、アバター、ソーシャルハンドルといった任意のキー/値のテキストレコードを保存できるようにします。この提案は 2017 年 5 月に Richard Moore によって提案されました。このプロファイルは view 関数 text(node, key) を 1 つ追加し、指定された nodehash とキーに対して保存された UTF-8 文字列を返します。設定されていない場合は空文字列を返します。注意：ERC-634 は Stagnant（停滞）状態です。6 か月以上活動がなく、最終化されない可能性がありますが、歴史的または技術的に重要な意味を持ち続けています。",
+  "designPurpose": "ERC-634 は、フィールドごとに新しいレコード型を定義することなく、人間が読めるメタデータを ENS 名に付加するために設計されました。数十の特定フィールドを固定する代わりに、DNS TXT レコードのモデルを借用しています。つまり、自由形式のキーと UTF-8 値に対する単一の text(node, key) 参照です。これにより、アプリケーションは標準を編集したり衝突のリスクを負ったりすることなく、com.github のようなリバース DNS サービスキーを通じて独自のキーを導入できます。一方で、avatar、email、url といった共通のグローバルキーはクライアント間で相互運用可能なまま保たれます。",
+  "commonUsage": "テキストレコードは、ENS 対応のウォレット、エクスプローラー、dapp が名前に対して表示するプロファイルを支えています。アドレスの横に表示されるアバター、リンクされた Web サイト、メール、com.twitter や com.github などのソーシャルハンドルなどです。クライアントは、名前のリゾルバに対する text(node, key) 呼び出しを通じてこれらを読み取り、空文字列を未設定のキーとして扱います。キーはオープンエンドであるため、各サービスは標準の変更を調整する代わりに、独自のリバース DNS キーを登録します。",
+
+  "fn.text.desc": "nodehash によって識別される ENS 名の下で、指定されたキーに対して保存された UTF-8 テキストデータを返します。キーに値が設定されていない場合は空文字列を返します。",
+  "fn.text.params.node": "照会する名前を識別する ENS nodehash。",
+  "fn.text.params.key": "検索するテキストレコードのキー。email、url、com.twitter など。",
+  "fn.text.returns.text": "キーに保存されたテキスト値。設定されていない場合は空文字列。",
+
+  "node.user": "レコード読み取り側",
+  "node.contract": "ENS テキストリゾルバ",
+  "node.storageTexts": "テキストレコードストレージ",
+  "node.result": "返されたテキスト",
+
+  "edge.query": "text() を呼び出す",
+  "edge.readTexts": "テキストレコードを読み取る",
+  "edge.returnText": "テキスト値を返す",
+  "edge.response": "テキスト値を届ける",
+
+  "sim.textRecordQuery.name": "テキストレコード参照",
+  "sim.textRecordQuery.desc": "text(node, key) クエリを、クライアントからリゾルバのストレージを経て、返される文字列値まで追跡します。",
+  "sim.textRecordQuery.param.node": "ENS 名",
+  "sim.textRecordQuery.param.key": "レコードキー",
+  "sim.textRecordQuery.step.call": "クライアントはリゾルバに対して text(node, key) を呼び出し、ENS nodehash と email などのレコードキーを渡します。",
+  "sim.textRecordQuery.step.call.mobile": "text() を呼び出す",
+  "sim.textRecordQuery.step.lookup": "リゾルバは、その nodehash とキーに対して保存された値を、自身のテキストレコードストレージ内で検索します。",
+  "sim.textRecordQuery.step.lookup.mobile": "テキストレコードを読み取る",
+  "sim.textRecordQuery.step.return": "リゾルバは、保存された UTF-8 文字列をクライアントに返します。キーが一度も設定されていない場合は空文字列を返します。",
+  "sim.textRecordQuery.step.return.mobile": "テキスト値を返す"
+}

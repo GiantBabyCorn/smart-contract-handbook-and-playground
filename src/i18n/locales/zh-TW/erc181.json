@@ -1,0 +1,42 @@
+{
+  "short": "以太坊地址的 ENS 反向解析",
+  "introduction": "ERC-181 為以太坊名稱服務（ENS）定義了一套用於反向解析的註冊器與解析器介面，可將以太坊地址反向映射回人類可讀的名稱。它由 Nick Johnson 於 2016 年 12 月提出。反向記錄存放在保留的 addr.reverse 網域之下：某個地址的記錄儲存在其小寫十六進位形式後接 .addr.reverse 的位置。擁有該網域的註冊器讓每個帳戶都能認領屬於自己的反向節點，而解析器則提供一個 name 方法，回傳某個節點對應的 ENS 名稱。",
+  "designPurpose": "ERC-181 旨在為 ENS 增加反向查找能力——ENS 最初只支援從名稱到地址的正向解析。由於任何人都可以把一個名稱指向自己並不擁有的地址，僅憑正向記錄無法證明某個地址認可某個特定名稱。ERC-181 從地址的十六進位編碼確定性地推導出每個地址的反向節點，並在 addr.reverse 之上設置一個註冊器，只允許帳戶認領屬於其自身地址的記錄，從而讓解析器可以信任該名稱確實由該地址的所有者設定。",
+  "commonUsage": "反向解析被錢包、區塊瀏覽器以及各類儀表板所使用，它們會用諸如 alice.eth 這樣簡短的 ENS 名稱來替代原始的十六進位地址顯示。claim 函式還能讓合約在一次建構函式呼叫中，把反向記錄的設定委託給它的部署者，從而使已部署的合約也能呈現一個可讀的名稱。由於反向記錄以地址的十六進位編碼為鍵，執行鏈上反向查找的合約必須先自行把地址進行十六進位編碼，然後再查詢 ENS。",
+
+  "fn.claim.desc": "指示 ENS 註冊表把呼叫者的反向記錄 hex(caller) + '.addr.reverse' 的所有權轉移給給定的 owner 地址，並回傳該記錄的 namehash。",
+  "fn.claim.params.owner": "在 ENS 中設為呼叫者反向記錄所有者的地址。",
+  "fn.claim.returns.node": "被轉移所有權的那條反向記錄的 ENS namehash。",
+
+  "fn.claimWithResolver.desc": "在一次呼叫中為呼叫者的反向記錄設定解析器並把其所有權轉移給給定的 owner，然後回傳該記錄的 namehash。將解析器傳入零地址則保持當前解析器不變。",
+  "fn.claimWithResolver.params.owner": "設為該反向記錄所有者的地址。",
+  "fn.claimWithResolver.params.resolver": "為該記錄設定的解析器地址；傳入零地址則保持當前解析器不變。",
+  "fn.claimWithResolver.returns.node": "該反向記錄的 ENS namehash。",
+
+  "fn.setName.desc": "把呼叫者的反向記錄指向一個預設解析器，並將給定的 name 寫入其中，從而在單筆交易中建立一條反向記錄。回傳該記錄的 namehash。",
+  "fn.setName.params.name": "要作為呼叫者反向記錄儲存的 ENS 名稱。",
+  "fn.setName.returns.node": "該反向記錄的 ENS namehash。",
+
+  "fn.name.desc": "解析器方法，回傳為給定 node 記錄的 ENS 名稱，若未設定則回傳空字串。其 ERC-165 介面 ID 為 0x691f3431。",
+  "fn.name.params.node": "要查找的反向記錄的 namehash。",
+  "fn.name.returns.name": "為該節點註冊的 ENS 名稱，若未設定則為空字串。",
+
+  "node.user": "地址所有者",
+  "node.contract": "反向註冊器",
+  "node.storageReverse": "反向記錄",
+
+  "edge.callClaim": "呼叫 claim()",
+  "edge.callSetName": "呼叫 setName()",
+  "edge.updateReverse": "更新反向記錄",
+
+  "sim.setNameWalkthrough.name": "設定反向名稱演練",
+  "sim.setNameWalkthrough.desc": "跟隨一次 setName 呼叫，看反向註冊器如何認領呼叫者的反向節點並為其儲存一個 ENS 名稱。",
+  "sim.setNameWalkthrough.param.caller": "地址所有者",
+  "sim.setNameWalkthrough.param.name": "ENS 名稱",
+  "sim.setNameWalkthrough.step.call": "某個帳戶在反向註冊器上呼叫 setName(name)，以在單筆交易中為其自身地址設定 ENS 名稱。",
+  "sim.setNameWalkthrough.step.call.mobile": "呼叫 setName()",
+  "sim.setNameWalkthrough.step.claim": "註冊器根據 hex(caller) + '.addr.reverse' 計算出呼叫者的反向節點，認領其所有權，並把它指向預設解析器。",
+  "sim.setNameWalkthrough.step.claim.mobile": "認領反向節點",
+  "sim.setNameWalkthrough.step.store": "預設解析器把所提供的 name 寫入其針對該反向節點的 name 映射中，因此現在查找將回傳該人類可讀的名稱。",
+  "sim.setNameWalkthrough.step.store.mobile": "儲存 ENS 名稱"
+}

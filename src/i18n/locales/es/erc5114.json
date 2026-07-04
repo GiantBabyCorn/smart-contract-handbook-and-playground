@@ -1,0 +1,51 @@
+{
+  "short": "Insignia Soulbound Vinculada a un NFT",
+  "introduction": "ERC-5114 define una insignia soulbound: un token vinculado a otro token no fungible (NFT) en el momento de la acuñación que nunca puede transferirse después. Fue propuesto por Micah Zoltu en mayo de 2022. Cada insignia se adjunta a un NFT identificado por un par [address, tokenId], registrado una sola vez mediante un evento Mint, y su vínculo se lee de nuevo con ownerOf, que devuelve ese NFT en lugar de la dirección de una billetera. Nota: ERC-5114 está en Last Call, la ventana de revisión final antes de convertirse en Final.",
+  "designPurpose": "ERC-5114 se diseñó para anclar las insignias de reputación y logros a una persona en lugar de a una billetera que puede venderlas. Un NFT común se mueve libremente, por lo que una insignia construida como un token normal podría intercambiarse, desligando un logro de la identidad que lo obtuvo. Al vincular cada insignia a un NFT en la acuñación y prohibir transferencias posteriores, el estándar garantiza la no separabilidad y la no combinabilidad entre las insignias vinculadas a un mismo NFT. Los metadatos direccionables por contenido también impiden que el acuñador censure una insignia.",
+  "commonUsage": "Las insignias soulbound se adaptan a la reputación on-chain, las credenciales, los logros y los marcadores de membresía que deben seguir a una persona en lugar de intercambiarse como NFT comunes. Como una insignia se vincula a un NFT identificado por un par [address, tokenId], cualquier activo direccionable de esa forma —un token ERC-721 o ERC-1155— puede actuar como el alma. El estándar deja abierto el formato de los metadatos, definiendo solo la inmutabilidad y la direccionabilidad por contenido, de modo que las aplicaciones aportan su propio esquema y usan metadataFormat para indicar cómo se analizan las URI.",
+
+  "fn.ownerOf.desc": "Devuelve el NFT al que está vinculada la insignia, como un par [address, tokenId]. Revierte si la insignia no se ha acuñado y siempre devuelve el mismo valor que lleva el evento Mint original de la insignia.",
+  "fn.ownerOf.params.badgeId": "El identificador de la insignia que se va a resolver.",
+  "fn.ownerOf.returns.nftAddress": "La dirección del contrato del NFT al que está vinculada la insignia.",
+  "fn.ownerOf.returns.nftTokenId": "El token ID del NFT al que está vinculada la insignia.",
+
+  "fn.collectionUri.desc": "Devuelve una URI inmutable y direccionable por contenido que describe la colección de insignias. Sus metadatos se combinan con la salida de badgeUri de cada insignia, donde los datos de badgeUri tienen prioridad.",
+  "fn.collectionUri.returns.collectionUri": "La URI inmutable y direccionable por contenido de los metadatos de la colección.",
+
+  "fn.badgeUri.desc": "Devuelve una URI resistente a la censura y direccionable por contenido que describe una única instancia de insignia. Sus datos tienen prioridad sobre los metadatos de nivel de colección que devuelve collectionUri.",
+  "fn.badgeUri.params.badgeId": "El identificador de la insignia que se va a describir.",
+  "fn.badgeUri.returns.badgeUri": "La URI inmutable y direccionable por contenido de los metadatos de esta insignia.",
+
+  "fn.metadataFormat.desc": "Devuelve una cadena que identifica el formato o la versión de los datos en collectionUri y badgeUri (por ejemplo, 'EIP-ABCD' o 'soulbound-schema-version-4'), de modo que quien la invoca puede analizarla sin inspeccionar primero el contenido.",
+  "fn.metadataFormat.returns.format": "Una cadena que nombra el formato o la versión de los metadatos de la URI.",
+
+  "fn.Mint.desc": "Se emite una vez cuando se acuña una insignia, registrando la insignia y el NFT al que está vinculada. No debe emitirse dos veces para el mismo badgeId.",
+  "fn.Mint.params.badgeId": "El identificador de la insignia recién acuñada.",
+  "fn.Mint.params.nftAddress": "La dirección del contrato del NFT al que está vinculada la insignia.",
+  "fn.Mint.params.nftTokenId": "El token ID del NFT al que está vinculada la insignia.",
+
+  "node.minter": "Acuñador de insignias",
+  "node.contract": "Contrato de insignia soulbound",
+  "node.storageBinding": "Almacenamiento del vínculo de la insignia",
+  "node.soul": "NFT vinculado (alma)",
+
+  "edge.mint": "Acuñar insignia",
+  "edge.storeBinding": "Almacenar vínculo de la insignia",
+  "edge.bindSoul": "Vincular insignia al NFT",
+  "edge.emitMint": "Emitir evento Mint",
+  "edge.queryOwner": "Llamar a ownerOf()",
+
+  "sim.mintBadgeWalkthrough.name": "Acuñar insignia soulbound",
+  "sim.mintBadgeWalkthrough.desc": "Sigue una insignia desde la acuñación, pasando por su vínculo inmutable con el NFT y el evento Mint, hasta una consulta ownerOf.",
+  "sim.mintBadgeWalkthrough.param.badgeId": "ID de la insignia",
+  "sim.mintBadgeWalkthrough.param.nftAddress": "Dirección del NFT",
+  "sim.mintBadgeWalkthrough.param.nftTokenId": "Token ID del NFT",
+  "sim.mintBadgeWalkthrough.step.mint": "El acuñador acuña una nueva insignia y la vincula permanentemente al NFT objetivo; este vínculo nunca puede cambiar después.",
+  "sim.mintBadgeWalkthrough.step.mint.mobile": "Acuñar insignia",
+  "sim.mintBadgeWalkthrough.step.bind": "El contrato registra el vínculo insignia-NFT en el almacenamiento, adjuntando la insignia a su NFT alma.",
+  "sim.mintBadgeWalkthrough.step.bind.mobile": "Almacenar vínculo",
+  "sim.mintBadgeWalkthrough.step.event": "El contrato emite Mint(badgeId, nftAddress, nftTokenId) exactamente una vez para que los indexadores puedan registrar el vínculo.",
+  "sim.mintBadgeWalkthrough.step.event.mobile": "Emitir evento Mint",
+  "sim.mintBadgeWalkthrough.step.query": "Quien llama invoca ownerOf(badgeId), que devuelve el [address, tokenId] del NFT al que está vinculada la insignia.",
+  "sim.mintBadgeWalkthrough.step.query.mobile": "Consultar ownerOf()"
+}

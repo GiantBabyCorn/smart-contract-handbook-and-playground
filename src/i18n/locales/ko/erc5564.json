@@ -1,0 +1,61 @@
+{
+  "short": "스텔스 주소",
+  "introduction": "ERC-5564는 스텔스 주소를 생성하고 찾아내기 위한 표준화된 방법을 정의하며, 발신자가 수신자만 제어할 수 있는 새로운 계정을 비대화형으로 만들 수 있도록 합니다. 이 표준은 2022년 8월 Toni Wahrstätter, Matt Solomon, Ben DiFrancesco, Vitalik Buterin이 제안했습니다. 발신자는 수신자의 스텔스 메타 주소와의 공유 비밀로부터 주소를 도출한 다음, 싱글턴 ERC5564Announcer 컨트랙트를 호출하여 임시 공개키와 뷰 태그를 담은 Announcement 이벤트를 발생시킵니다.",
+  "designPurpose": "ERC-5564는 수신자가 해당 전송을 자신의 온체인 신원과 연결하지 않고도 자산을 받을 수 있도록 설계되었습니다. 그 이전에는 알려진 주소로 지불하면 수신자가 노출되었고, 각 프라이버시 프로젝트가 서로 호환되지 않는 주소 도출 및 공지 방식을 저마다 고안했습니다. 이 표준은 발신자와 수신자 사이의 비밀로부터 스텔스 주소를 도출하기 위한 공통 인터페이스와 단일 ERC5564Announcer 컨트랙트를 고정함으로써, 지갑과 인덱서가 공지를 게시하고 스캔할 수 있는 단일한 장소를 제공합니다.",
+  "commonUsage": "스텔스 주소는 수신자가 연결 불가능한 상태로 남기를 원하는 프라이버시 중심 지갑 및 결제 도구에서 사용됩니다. 예를 들어 익명 기부나, 주소를 재사용하면 정보가 유출되는 일회성 전송 같은 경우입니다. Announcer는 이벤트만 발생시키므로, 통합자는 이를 오프체인 스캐닝 서비스 및 사용자를 각자의 스텔스 메타 주소에 매핑하는 ERC-6538 같은 레지스트리와 함께 사용합니다. 여기서 정의된 뷰 태그 방식의 SECP256k1 스킴(schemeId 1)이 일반적인 출발점입니다.",
+
+  "fn.generateStealthAddress.desc": "수신자의 스텔스 메타 주소로부터 해당 수신자를 위한 스텔스 주소를 생성합니다. 스텔스 주소, 발신자가 사용한 임시 공개키, 그리고 수신자의 스캔 속도를 높여 주는 뷰 태그를 반환합니다.",
+  "fn.generateStealthAddress.params.stealthMetaAddress": "수신자의 스텔스 메타 주소로, 그들의 지출 공개키와 조회 공개키를 인코딩한 것입니다.",
+  "fn.generateStealthAddress.returns.stealthAddress": "발신자가 자금을 보낼 수 있는 스텔스 주소입니다.",
+  "fn.generateStealthAddress.returns.ephemeralPubKey": "이 주소를 위해 생성된 임시 공개키로, 수신자가 공유 비밀을 다시 계산할 수 있도록 공개됩니다.",
+  "fn.generateStealthAddress.returns.viewTag": "공유 비밀에서 도출된 단일 바이트로, 수신자가 일치하지 않는 공지를 빠르게 걸러낼 수 있게 합니다.",
+
+  "fn.checkStealthAddress.desc": "지정된 스텔스 주소로 보낸 자금이 해당 지출 키를 제어하는 수신자에게 속하면 true를 반환합니다. 수신자는 각 공지에 대해 이를 실행하여 자신의 결제를 감지합니다.",
+  "fn.checkStealthAddress.params.stealthAddress": "소유 여부를 확인할 스텔스 주소입니다.",
+  "fn.checkStealthAddress.params.ephemeralPubKey": "공지에서 가져온 임시 공개키입니다.",
+  "fn.checkStealthAddress.params.viewingKey": "수신자의 조회용 개인키입니다.",
+  "fn.checkStealthAddress.params.spendingPubKey": "수신자의 지출 공개키입니다.",
+  "fn.checkStealthAddress.returns.isRecipient": "스텔스 주소가 이 수신자에게 속할 때 true입니다.",
+
+  "fn.computeStealthKey.desc": "수신자의 조회용 개인키와 지출용 개인키, 그리고 임시 공개키로부터 스텔스 주소의 개인키를 계산하여, 수신자가 해당 주소에 보관된 자금을 지출할 수 있게 합니다.",
+  "fn.computeStealthKey.params.stealthAddress": "개인키를 도출할 스텔스 주소로, 결과를 검증할 수 있도록 포함됩니다.",
+  "fn.computeStealthKey.params.ephemeralPubKey": "공지에서 가져온 임시 공개키입니다.",
+  "fn.computeStealthKey.params.viewingKey": "수신자의 조회용 개인키입니다.",
+  "fn.computeStealthKey.params.spendingKey": "수신자의 지출용 개인키입니다.",
+  "fn.computeStealthKey.returns.stealthKey": "스텔스 주소를 제어하는 스텔스 개인키입니다.",
+
+  "fn.announce.desc": "통합자가 호출하여, 스텔스 주소로 무언가가 전송되었음을 수신자에게 알리는 Announcement 이벤트를 발생시킵니다. Announcer는 체인마다 인스턴스가 하나뿐인 싱글턴 컨트랙트이며 어떠한 상태도 보유하지 않습니다.",
+  "fn.announce.params.schemeId": "적용된 스텔스 주소 스킴을 식별하는 정수입니다.",
+  "fn.announce.params.stealthAddress": "수신자를 위해 계산된 스텔스 주소입니다.",
+  "fn.announce.params.ephemeralPubKey": "발신자가 사용한 임시 공개키입니다.",
+  "fn.announce.params.metadata": "임의의 데이터로, 첫 번째 바이트는 반드시 뷰 태그여야 합니다. 나머지 바이트는 토큰과 금액을 설명할 수 있습니다.",
+
+  "fn.Announcement.desc": "스텔스 주소로 무언가가 전송될 때마다 발생합니다. 인덱서와 수신자가 이 이벤트들을 스캔하며, schemeId, stealthAddress, caller는 필터링을 위해 indexed로 지정됩니다.",
+  "fn.Announcement.params.schemeId": "스텔스 주소 스킴 식별자입니다(indexed).",
+  "fn.Announcement.params.stealthAddress": "자금이 전송된 스텔스 주소입니다(indexed).",
+  "fn.Announcement.params.caller": "announce를 호출한 계정, 즉 msg.sender입니다(indexed).",
+  "fn.Announcement.params.ephemeralPubKey": "발신자가 사용한 임시 공개키입니다.",
+  "fn.Announcement.params.metadata": "임의의 메타데이터로, 첫 번째 바이트는 뷰 태그입니다.",
+
+  "node.user": "발신자",
+  "node.contract": "ERC5564Announcer",
+  "node.recipient": "수신자",
+
+  "edge.callAnnounce": "announce() 호출",
+  "edge.emitAnnouncement": "Announcement 이벤트 발생",
+  "edge.scanAnnouncement": "공지 스캔",
+  "edge.callCheck": "checkStealthAddress() 호출",
+
+  "sim.announceWalkthrough.name": "스텔스 결제 공지",
+  "sim.announceWalkthrough.desc": "발신자의 announce 호출에서 Announcement 이벤트를 거쳐 수신자의 스캔에 이르기까지 스텔스 결제를 따라갑니다.",
+  "sim.announceWalkthrough.param.schemeId": "스킴 ID",
+  "sim.announceWalkthrough.param.stealthAddress": "스텔스 주소",
+  "sim.announceWalkthrough.step.call": "발신자가 ERC5564Announcer 싱글턴에서 announce()를 호출하여 스킴 ID, 수신자의 스텔스 주소, 임시 공개키, 메타데이터를 전달합니다.",
+  "sim.announceWalkthrough.step.call.mobile": "announce() 호출",
+  "sim.announceWalkthrough.step.execute": "Announcer는 호출을 전달하고 msg.sender를 indexed caller로 추가합니다. 상태를 보유하지 않으며 이벤트를 준비하기만 합니다.",
+  "sim.announceWalkthrough.step.execute.mobile": "Announcer로 전달",
+  "sim.announceWalkthrough.step.emit": "컨트랙트는 스킴 ID, 스텔스 주소, caller, 임시 공개키, 그리고 뷰 태그가 담긴 메타데이터를 실은 Announcement 이벤트를 발생시킵니다.",
+  "sim.announceWalkthrough.step.emit.mobile": "Announcement 발생",
+  "sim.announceWalkthrough.step.scan": "수신자는 Announcement 이벤트를 스캔하고 뷰 태그를 확인한 뒤, checkStealthAddress()를 실행하여 결제가 자신의 것임을 확인합니다.",
+  "sim.announceWalkthrough.step.scan.mobile": "스캔 후 확인"
+}

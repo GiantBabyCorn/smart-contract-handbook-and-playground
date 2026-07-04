@@ -1,0 +1,32 @@
+{
+  "short": "ERC-1155 供应量扩展",
+  "introduction": "ERC-5615 为 ERC-1155 多代币合约定义了一个供应量报告扩展，由 Gavin John 于 2023 年 5 月提出。该扩展新增两个 view 函数：totalSupply 返回给定 id 当前流通的代币数量，exists 报告某个 id 是否存在、曾经存在或可能存在。它将 OpenZeppelin 的 ERC1155Supply 已经实现的模式标准化，让索引器和钱包无需依赖链下数据即可以可预测的方式读取每个 id 的供应量。",
+  "designPurpose": "ERC-5615 旨在为 ERC-1155 提供一种统一的方式来暴露每个 id 的供应量，而基础标准并未包含这一点。在此之前，各个合约要么各自发明自己的供应量读取函数，要么完全不提供，因此索引器和市场无法可靠地判断某个代币 id 已铸造了多少单位，或某个 id 是否会存在。通过以与广泛使用的 OpenZeppelin 实现相同的语义将 totalSupply 和 exists 规范化，ERC-5615 让任何消费者都能通过一个可预测的接口查询供应量。",
+  "commonUsage": "该扩展被以下场景使用：展示每个代币 id 剩余或总供应量的 ERC-1155 收藏品和市场、限制版本数量的铸造界面，以及追踪流通数量的索引器。由于它与 OpenZeppelin 的 ERC1155Supply 一致，通常会被混入现有的 ERC-1155 合约中，而不是单独部署。exists 函数用于区分当前供应量为零的 id 和永远无法铸造的 id。",
+
+  "fn.exists.desc": "返回给定的代币 id 是否存在、曾经存在或可能存在。消费者用它来区分当前供应量为零的 id 和永远无法铸造的 id。",
+  "fn.exists.params.id": "要检查其是否存在的代币 id。",
+  "fn.exists.returns.exists": "如果代币 id 存在、曾经存在或可能存在，则为 true；否则为 false。",
+
+  "fn.totalSupply.desc": "返回给定 id 当前流通的代币数量。如果代币 id 不存在，则返回 0。",
+  "fn.totalSupply.params.id": "要获取其总供应量的代币 id。",
+  "fn.totalSupply.returns.totalSupply": "给定代币 id 的总供应量，如果不存在则为 0。",
+
+  "node.user": "供应量读取者",
+  "node.contract": "ERC-1155 供应量代币",
+  "node.storageSupply": "供应量存储",
+
+  "edge.callTotalSupply": "调用 totalSupply()",
+  "edge.callExists": "调用 exists()",
+  "edge.readSupply": "读取供应量映射",
+
+  "sim.totalSupplyWalkthrough.name": "查询代币供应量",
+  "sim.totalSupplyWalkthrough.desc": "跟踪一次 totalSupply 调用，从读取者出发，经过合约的供应量存储，然后调用 exists 来解读为零的结果。",
+  "sim.totalSupplyWalkthrough.param.id": "代币 id",
+  "sim.totalSupplyWalkthrough.step.call": "钱包或索引器等读取者在 ERC-1155 合约上调用 totalSupply(id)，以获取某个代币 id 的流通数量。",
+  "sim.totalSupplyWalkthrough.step.call.mobile": "调用 totalSupply()",
+  "sim.totalSupplyWalkthrough.step.read": "合约读取该 id 的供应量映射并返回存储的数量，如果没有铸造过该 id 的代币则返回 0。",
+  "sim.totalSupplyWalkthrough.step.read.mobile": "读取供应量映射",
+  "sim.totalSupplyWalkthrough.step.exists": "为了解读为零的结果，读取者调用 exists(id)，它会报告该 id 是尚无供应量还是永远无法铸造。",
+  "sim.totalSupplyWalkthrough.step.exists.mobile": "检查 exists()"
+}

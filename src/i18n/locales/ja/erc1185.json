@@ -1,0 +1,44 @@
+{
+  "short": "DNSレコード向けENSリゾルバプロファイル",
+  "introduction": "ERC-1185は、DNSレコードを保存・参照するEthereum Name Service（ENS）のリゾルバプロファイルを定義します。2018年6月にJim McDonaldによって提案されました。このプロファイルはレコードセットを操作対象とし、各レコードセットはドメイン・名前・リソースタイプのタプルで識別され、DNS wire formatで0個以上の値を保持します。2つの関数がレコードを書き込み、2つのビュー関数がそれらを読み取ることで、ENSがDNS情報の権威ある保管先として機能できるようにします。注意：ERC-1185はReviewステータスであり、確定前にインターフェースが変更される可能性があります。",
+  "designPurpose": "ERC-1185は、ENSが権威あるDNSデータの分散型ストアとして機能し、所有権と権威ある配信を混同することなく、ドメイン所有者がそのレコードを完全に制御できるようにするために設計されました。従来のDNSはゾーンのすべてのレコードを1つのファイルに保持しており、これはシンプルですが、ENSに置き換えると小さな変更にかかるgasのコストが高くなります。これを避けるため、このプロファイルはドメイン・名前・リソースのタプルをキーとして個々のレコードセットを保存し、ゾーン全体を書き換えることなく単一のレコードを更新できるようにします。",
+  "commonUsage": "ENSリゾルバコントラクトはこのプロファイルを実装してDNSデータを公開し、ウォレット・ゲートウェイ・DNS対応ソフトウェアがそれをクエリして、名前をAやCNAMEなどのレコードに解決します。ドメイン所有者はsetDNSRecordsを呼び出してレコードを公開し、clearDNSZoneを呼び出して1つのトランザクションでゾーンをリセットします。一方、リゾルバはRFC 4592で定義されたワイルドカード検索のためにhasDNSRecordsを呼び出します。このプロファイルはERC-137のリゾルバモデルとERC-165のインターフェース検出を再利用するため、通常は単独でデプロイされるのではなく、既存のリゾルバに追加されます。",
+
+  "fn.setDNSRecords.desc": "指定されたENS nodeに対して、1つ以上のDNSレコードを設定・更新・クリアします。レコードはDNS wire formatで指定し、値なしで指定されたレコードはクリアされ、同一レコードセット内のレコードは連続していなければなりません。",
+  "fn.setDNSRecords.params.node": "レコードを設定する対象となる完全修飾ENSドメインのnamehash。",
+  "fn.setDNSRecords.params.data": "DNS wire formatによる1つ以上のDNSレコード。値なしで指定されたレコードは、そのレコードをクリアします。",
+
+  "fn.clearDNSZone.desc": "ゾーンのバージョンを上げることで、単一の操作でそのドメインのすべてのDNSレコードを削除し、setDNSRecordsで各レコードを個別にクリアする必要をなくします。",
+  "fn.clearDNSZone.params.node": "レコードをクリアする対象となる完全修飾ENSドメインのnamehash。",
+
+  "fn.dnsRecords.desc": "指定されたnode、name、resourceに一致するすべてのDNSレコードをDNS wire formatで返します。レコードが存在しない場合は何も返しません。",
+  "fn.dnsRecords.params.node": "クエリ対象となる完全修飾ENSドメインのnamehash。",
+  "fn.dnsRecords.params.name": "DNS wire formatによるレコード名のkeccak256ハッシュ。",
+  "fn.dnsRecords.params.resource": "RFC 1035およびそれ以降のRFCで定義されているDNSリソースレコードタイプID。",
+  "fn.dnsRecords.returns.records": "DNS wire formatによる一致するレコード。存在しない場合は空。",
+
+  "fn.hasDNSRecords.desc": "ドメイン内に、指定されたnameのレコードが存在するかどうかを報告します。RFC 4592で定義されたワイルドカードリソースを処理する際にDNSリゾルバによって使用されます。",
+  "fn.hasDNSRecords.params.node": "クエリ対象となる完全修飾ENSドメインのnamehash。",
+  "fn.hasDNSRecords.params.name": "DNS wire formatによるレコード名のkeccak256ハッシュ。",
+  "fn.hasDNSRecords.returns.exists": "nodeとnameにレコードが1つでも存在すればtrue、そうでなければfalse。",
+
+  "node.user": "ドメイン所有者",
+  "node.contract": "DNSリゾルバ",
+  "node.storageRecords": "レコードストレージ",
+
+  "edge.callSetRecords": "setDNSRecords()を呼び出す",
+  "edge.queryRecords": "dnsRecords()を呼び出す",
+  "edge.updateRecords": "レコードを更新",
+  "edge.emitChanged": "DNSRecordChangedイベントを発行",
+
+  "sim.setRecordsWalkthrough.name": "DNSレコード設定のウォークスルー",
+  "sim.setRecordsWalkthrough.desc": "ドメイン所有者からのsetDNSRecords呼び出しを、レコードストレージを経てDNSRecordChangedイベントまで追跡します。",
+  "sim.setRecordsWalkthrough.param.domain": "ドメイン名",
+  "sim.setRecordsWalkthrough.param.recordType": "設定するレコード",
+  "sim.setRecordsWalkthrough.step.call": "ドメイン所有者がリゾルバ上でsetDNSRecords(node, data)を呼び出し、ドメインのnamehashとDNS wire formatのレコードを渡します。",
+  "sim.setRecordsWalkthrough.step.call.mobile": "setDNSRecords()を呼び出す",
+  "sim.setRecordsWalkthrough.step.execute": "リゾルバはwire形式のデータを解析し、レコードセットをドメインの現在のバージョンの下でrecordsマッピングに書き込みます。",
+  "sim.setRecordsWalkthrough.step.execute.mobile": "レコードセットを保存",
+  "sim.setRecordsWalkthrough.step.event": "リゾルバはDNSRecordChanged(node, name, resource, record)を発行し、オフチェーンのリゾルバやインデクサーが自身のビューを更新できるようにします。",
+  "sim.setRecordsWalkthrough.step.event.mobile": "DNSRecordChangedを発行"
+}

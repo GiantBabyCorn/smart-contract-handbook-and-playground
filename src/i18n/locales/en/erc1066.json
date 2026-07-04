@@ -1,0 +1,32 @@
+{
+  "short": "Smart Contract Status Codes",
+  "introduction": "ERC-1066 defines a shared set of one-byte status codes for contracts, modeled on HTTP statuses, so a function can return a meaningful outcome instead of a bare true/false or a revert. It was proposed by Brooklyn Zelenka, Tom Carchrae, and Gleb Naumenko in May 2018. Each byte pairs a high-nibble category with a low-nibble reason from a 16-by-16 table, returned first in a multiple return. Note: ERC-1066 is Stagnant — it has been inactive for 6+ months and may never be finalized, but remains historically or technically significant.",
+  "designPurpose": "ERC-1066 was designed to replace the low-context signaling contracts relied on: reverting on anything short of success, or returning an opaque true/false that carries no reason. Before it, every project invented its own error scheme, so contracts could not react to each other's results without knowing bespoke enums. By standardizing a finite, HTTP-like table of category-and-reason codes, ERC-1066 gives contracts a shared vocabulary to branch on autonomously, while staying compatible with revert-with-reason.",
+  "commonUsage": "ERC-1066 targets contracts that must communicate more than pass or fail: validators that report why a transfer was blocked, permission checks that return an allowed-or-stopped code, and flows where one contract branches on another's result. The specification illustrates it with a regulated-token validator that returns 0x10 (Disallowed) or 0x11 (Allowed). As a Stagnant proposal it never saw broad production adoption, and its human-readable translation layer was split into ERC-1444.",
+
+  "node.caller": "Calling Contract",
+  "node.contract": "Status-Returning Contract",
+  "node.storageCodeTable": "Status Code Table",
+  "node.storageReturn": "Returned Status Byte",
+  "node.consumer": "Reacting Consumer",
+  "node.translator": "Translation Layer",
+
+  "edge.callFunction": "Call function",
+  "edge.selectCode": "Select category & reason",
+  "edge.encodeByte": "Encode status byte",
+  "edge.reactToCode": "React to code",
+  "edge.translateCode": "Translate code",
+  "edge.showMessage": "Show message",
+
+  "sim.statusCodeWalkthrough.name": "Status Code Walkthrough",
+  "sim.statusCodeWalkthrough.desc": "Follow a status code from a contract call through encoding to a reacting consumer and a human-readable message.",
+  "sim.statusCodeWalkthrough.param.outcome": "Function outcome",
+  "sim.statusCodeWalkthrough.step.call": "The calling contract invokes a function on a status-returning contract, expecting a byte status code as the first return value.",
+  "sim.statusCodeWalkthrough.step.call.mobile": "Call the function",
+  "sim.statusCodeWalkthrough.step.encode": "The contract picks a category and a reason from the 16-by-16 code table and packs them into a single status byte.",
+  "sim.statusCodeWalkthrough.step.encode.mobile": "Encode status byte",
+  "sim.statusCodeWalkthrough.step.return": "The status byte is returned as the first value; the consumer branches on it, treating even codes as blocking and odd codes as non-blocking.",
+  "sim.statusCodeWalkthrough.step.return.mobile": "React to code",
+  "sim.statusCodeWalkthrough.step.translate": "A translation layer maps the code to a human-readable message, as later specified by ERC-1444.",
+  "sim.statusCodeWalkthrough.step.translate.mobile": "Show message"
+}

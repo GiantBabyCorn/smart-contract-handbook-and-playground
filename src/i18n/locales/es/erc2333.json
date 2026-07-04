@@ -1,0 +1,26 @@
+{
+  "short": "Generación Jerárquica de Claves BLS12-381",
+  "introduction": "ERC-2333 define un método para derivar un árbol jerárquico de claves privadas BLS12-381 a partir de una única semilla de entropía. Fue propuesto por Carl Beekhuizen en septiembre de 2019. Una clave maestra se sitúa en la raíz; cada clave hija se calcula a partir de la clave de su padre y un índice de 32 bits, de modo que muchas claves descienden de un mismo ancestro. La derivación hace pasar la entropía por claves Lamport intermedias con hash SHA256, que sirven también como respaldo post-cuántico. Nota: ERC-2333 está en estado Review; la interfaz aún puede cambiar antes de ser finalizada.",
+  "designPurpose": "ERC-2333 se diseñó porque BIP32, el esquema habitual de Ethereum para claves secp256k1, no es seguro para BLS12-381: más del 54 % de las claves que produce superarían el orden del subgrupo de la curva y serían inválidas. Para evitarlo, el estándar aplica un hash a cada clave padre hacia el rango válido de claves privadas con HKDF_mod_r, la función KeyGen del borrador de firma BLS del IETF. Estandarizar la derivación de forma temprana también permite que las herramientas interoperen, y usa solo claves endurecidas (hardened), más adecuadas para firmar que las claves no endurecidas de estilo UTXO.",
+  "commonUsage": "El esquema está pensado para generar y gestionar claves BLS12-381, sobre todo las claves de validador que se usan en la Beacon Chain de Ethereum, donde una sola semilla mnemónica puede respaldar toda una familia de claves. La especificación recomienda derivar esa semilla con el método BIP-39, de modo que las billeteras y herramientas de generación de claves que lo siguen pueden recuperar las mismas claves en distintos programas. Como cada clave solo necesita una clave padre y un índice hijo, se pueden aprovisionar grupos de claves para fines distintos a partir de un único ancestro.",
+
+  "node.user": "Propietario de la Semilla",
+  "node.scheme": "Esquema de Derivación de Claves",
+  "node.storageTree": "Árbol de Claves",
+
+  "edge.provideSeed": "Proporcionar semilla",
+  "edge.storeMaster": "Almacenar clave maestra",
+  "edge.deriveChild": "Derivar clave hija",
+  "edge.populateTree": "Poblar el árbol de claves",
+
+  "sim.deriveKeysWalkthrough.name": "Recorrido de Derivación de Claves",
+  "sim.deriveKeysWalkthrough.desc": "Sigue una semilla mientras el esquema deriva la clave maestra y luego una clave hija en el árbol.",
+  "sim.deriveKeysWalkthrough.param.seed": "Semilla de entropía",
+  "sim.deriveKeysWalkthrough.param.index": "Índice hijo",
+  "sim.deriveKeysWalkthrough.step.seed": "El propietario de la semilla proporciona una semilla de entropía a derive_master_SK, el punto de entrada del esquema de derivación.",
+  "sim.deriveKeysWalkthrough.step.seed.mobile": "Proporcionar semilla",
+  "sim.deriveKeysWalkthrough.step.master": "El esquema aplica un hash a la semilla para situarla en el rango de claves privadas BLS y almacena el resultado como la clave maestra en la raíz del árbol.",
+  "sim.deriveKeysWalkthrough.step.master.mobile": "Derivar clave maestra",
+  "sim.deriveKeysWalkthrough.step.child": "Usando la clave maestra como padre y un índice de 32 bits, derive_child_SK calcula una clave hija que puebla el árbol.",
+  "sim.deriveKeysWalkthrough.step.child.mobile": "Derivar clave hija"
+}

@@ -1,0 +1,57 @@
+{
+  "short": "智能合约可执行提案接口",
+  "introduction": "ERC-5247 为智能合约可执行提案定义了一套接口：将一批链上调用记录下来，以便日后执行。该标准由 Zainan Victor Zhou 于 2022 年 7 月提出。一个提案通过 targets、values、gas 上限与 calldata 的并列数组进行打包，因此可以承载任意数量的调用。createProposal 记录这批调用并返回提案 id；executeProposal 则分发每一个已存储的调用。注意：ERC-5247 处于 Review 状态，接口在最终定案前可能仍会变更。",
+  "designPurpose": "ERC-5247 的设计目标是将待执行的代码与执行这一动作本身分离开来。在此之前，各个 DAO 与委托系统都以各自定制的格式编码提案内容，因此工具无法跨实现组合或检视提案。ERC-5247 以 targets、values、gas 上限与 calldata 的并列数组为基础，将单一的 createProposal 与 executeProposal 接口标准化，从而让提案先被组合，再由任意机制批准，最后作为单一的链上动作执行。",
+  "commonUsage": "可执行提案契合 DAO 治理场景：提议者记录一份提案，成员通过 ERC-1202 等独立的投票接口对其投票，一旦形成共识，获批准的这批调用便会执行。同样的先创建、后执行模式也适用于委托与受托安排，或适用于交易对手方可选择接受并运行的附条件要约。由于该接口将提案存储与执行解耦，它既可以作为独立的转发器部署，也可以混入既有的治理合约中。",
+
+  "fn.createProposal.desc": "根据目标地址、ether 数额、gas 上限与 calldata 的并列数组记录一份新的可执行提案，并返回其注册所用的 id。会发出 ProposalCreated 事件。",
+  "fn.createProposal.params.proposalId": "调用方为提案建议的标识符；实现可以采用它，也可以指派自己的 id。",
+  "fn.createProposal.params.targets": "提案中每个调用将发往的合约地址。",
+  "fn.createProposal.params.values": "随每个对应调用发送的 ether 数额，以 wei 计。",
+  "fn.createProposal.params.gasLimits": "施加于每个对应调用的 gas 上限。",
+  "fn.createProposal.params.calldatas": "每个对应调用的 ABI 编码 calldata。",
+  "fn.createProposal.params.extraParams": "由实现自行定义的额外参数。",
+  "fn.createProposal.returns.registeredProposalId": "提案实际注册所用的标识符。",
+
+  "fn.executeProposal.desc": "执行一份先前记录的提案，按顺序分发其存储的每一个调用。会发出 ProposalExecuted 事件。",
+  "fn.executeProposal.params.proposalId": "要执行的提案的标识符。",
+  "fn.executeProposal.params.extraParams": "由实现自行定义的额外参数。",
+
+  "fn.ProposalCreated.desc": "在创建新提案时发出，携带提案的完整内容，以便链下服务对其建立索引。",
+  "fn.ProposalCreated.params.proposer": "创建该提案的地址。",
+  "fn.ProposalCreated.params.proposalId": "所创建提案的标识符。",
+  "fn.ProposalCreated.params.targets": "提案各调用的目标地址。",
+  "fn.ProposalCreated.params.values": "提案各调用的 ether 数额。",
+  "fn.ProposalCreated.params.gasLimits": "提案各调用的 gas 上限。",
+  "fn.ProposalCreated.params.calldatas": "提案各调用的 calldata。",
+  "fn.ProposalCreated.params.extraParams": "由实现自行定义的额外参数。",
+
+  "fn.ProposalExecuted.desc": "在提案被执行时发出。",
+  "fn.ProposalExecuted.params.executor": "执行该提案的地址。",
+  "fn.ProposalExecuted.params.proposalId": "所执行提案的标识符。",
+  "fn.ProposalExecuted.params.extraParams": "由实现自行定义的额外参数。",
+
+  "node.user": "提议者",
+  "node.contract": "ERC-5247 注册表",
+  "node.storageProposals": "提案存储",
+
+  "edge.callCreateProposal": "调用 createProposal()",
+  "edge.callExecuteProposal": "调用 executeProposal()",
+  "edge.storeProposal": "存储提案",
+  "edge.emitProposalCreated": "发出 ProposalCreated 事件",
+  "edge.emitProposalExecuted": "发出 ProposalExecuted 事件",
+
+  "sim.createProposalWalkthrough.name": "创建并执行提案",
+  "sim.createProposalWalkthrough.desc": "跟随一份可执行提案，从创建，经过存储与 ProposalCreated 事件，直到链上执行。",
+  "sim.createProposalWalkthrough.param.proposalId": "提案 id",
+  "sim.createProposalWalkthrough.param.target": "目标地址",
+  "sim.createProposalWalkthrough.param.value": "Ether 数额（以 wei 计）",
+  "sim.createProposalWalkthrough.step.call": "提议者调用 createProposal，传入描述待运行调用的 targets、values、gas 上限与 calldata 并列数组。",
+  "sim.createProposalWalkthrough.step.call.mobile": "调用 createProposal()",
+  "sim.createProposalWalkthrough.step.store": "注册表合约将提案内容存储在一个已注册的提案 id 之下，供日后执行。",
+  "sim.createProposalWalkthrough.step.store.mobile": "存储提案",
+  "sim.createProposalWalkthrough.step.created": "合约发出 ProposalCreated，携带完整的提案内容，以便投票与索引服务获取。",
+  "sim.createProposalWalkthrough.step.created.mobile": "发出 ProposalCreated",
+  "sim.createProposalWalkthrough.step.execute": "一旦获批准，执行者便调用 executeProposal，注册表分发每一个已存储的调用，并发出 ProposalExecuted 事件。",
+  "sim.createProposalWalkthrough.step.execute.mobile": "执行提案"
+}

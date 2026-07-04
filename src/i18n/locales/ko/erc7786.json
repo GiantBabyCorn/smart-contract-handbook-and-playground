@@ -1,0 +1,54 @@
+{
+  "short": "크로스체인 메시징 게이트웨이",
+  "introduction": "ERC-7786은 스마트 컨트랙트가 채택한 임의의 브리지를 통해 임의의 크로스체인 데이터를 송수신하기 위한 공통 인터페이스와 워크플로를 정의합니다. 2024년 10월 Francisco Giordano, Hadrien Croubois, Ernesto García 등이 제안했습니다. 소스 게이트웨이의 sendMessage는 ERC-7930 상호 운용 가능 주소(Interoperable Address)로 지정된 수신자에게 페이로드를 전달하고 MessageSent를 발행합니다. 목적지 게이트웨이는 receiveMessage를 통해 이를 배달합니다. 브리지 기능은 독점적인 호출이 아니라 bytes4를 키로 하는 속성으로 전달됩니다.",
+  "designPurpose": "ERC-7786은 각 크로스체인 메시징 프로토콜이 저마다 독점적인 인터페이스와 워크플로를 노출하는 데서 비롯되는 파편화를 극복하기 위해 설계되었습니다. 이러한 이식성 부재는 범용 크로스체인 컨트랙트를 비현실적으로 만들고, 애플리케이션을 일시 중지되거나 폐기될 수 있는 단일 브리지에 묶어 둡니다. ERC-7930 주소를 중심으로 sendMessage와 receiveMessage를 표준화함으로써, 이 ERC는 컨트랙트가 저장된 단일 주소를 갱신하기만 하면 게이트웨이를 전환할 수 있게 하며, 동시에 공유된 코어 뒤에서 속성이 브리지 고유의 옵션을 드러냅니다.",
+  "commonUsage": "이 인터페이스는 크로스체인 네이티브 컨트랙트와 이들을 연결하는 게이트웨이를 대상으로 합니다. 즉, 이를 직접 구현하는 프로토콜과, 기존 브리지를 교체 가능한 API 뒤에 감싸는 어댑터 게이트웨이입니다. 애플리케이션은 sendMessage를 호출해 불투명한 페이로드를 수신자에게 전달하고, receiveMessage를 구현해 배달을 수락하되 먼저 호출자가 신뢰할 수 있는 게이트웨이인지 확인합니다. 최소 목적지 gas 한도처럼 자체 ERC로 표준화된 속성은 독점적인 호출 없이 브리지 기능을 요청합니다.",
+
+  "fn.supportsAttribute.desc": "게이트웨이가 4바이트 셀렉터 키로 식별되는 속성을 지원하는지 여부를 반환합니다. 지원은 업그레이드를 통해 추가될 수 있지만 제거되어서는 안 되며, 호출자에 대한 하위 호환성을 유지합니다.",
+  "fn.supportsAttribute.params.selector": "4바이트 속성 키이며, Solidity 함수 셀렉터를 권장합니다.",
+  "fn.supportsAttribute.returns.supported": "게이트웨이가 주어진 속성 키를 지원하면 true입니다.",
+
+  "fn.sendMessage.desc": "다른 체인의 수신자에게 메시지 전송을 개시하며, 페이로드, 임의의 호출 value, 그리고 속성 목록을 함께 전달합니다. 알 수 없는 속성에 대해서는 UnsupportedAttribute로 revert하고, MessageSent를 발행하며, 0이 아닌 전송 식별자를 반환할 수 있습니다.",
+  "fn.sendMessage.params.recipient": "바이너리 ERC-7930 상호 운용 가능 주소 형식의 목적지 체인 수신자이며, 목적지가 지정되지 않은 경우 생략하거나 0으로 둘 수 있습니다.",
+  "fn.sendMessage.params.payload": "수신자에게 배달할 불투명한 바이트 페이로드입니다.",
+  "fn.sendMessage.params.attributes": "속성 목록으로, 각 속성은 4바이트 키와 그 인코딩된 값을 연결하여 브리지 고유의 기능을 요청합니다. 빈 목록도 유효합니다.",
+  "fn.sendMessage.returns.sendId": "메시지를 추적하기 위한 고유한 0이 아닌 전송 식별자이며, 게이트웨이가 할당하지 않으면 0입니다.",
+
+  "fn.receiveMessage.desc": "다른 체인에서 전송된 메시지를 수신자 컨트랙트에 배달합니다. 목적지 게이트웨이가 식별자, 발신자, 페이로드와 함께 이를 호출합니다. 수신자는 호출자가 신뢰할 수 있는 게이트웨이인지 검증하고 receiveMessage 셀렉터를 반환해야 합니다.",
+  "fn.receiveMessage.params.receiveId": "호출하는 게이트웨이에 대한, 배달된 메시지의 고유 식별자 또는 비어 있음.",
+  "fn.receiveMessage.params.sender": "바이너리 ERC-7930 상호 운용 가능 주소 형식의 소스 체인 발신자입니다.",
+  "fn.receiveMessage.params.payload": "소스 체인에서 배달된 불투명한 바이트 페이로드입니다.",
+  "fn.receiveMessage.returns.selector": "수락을 확인하기 위해 IERC7786Recipient.receiveMessage.selector(0x2432ef26)와 같아야 합니다.",
+
+  "fn.MessageSent.desc": "발신자가 메시지 전송을 요청할 때 소스 게이트웨이가 발행하며, 전송 식별자, 발신자와 수신자 주소, 페이로드, value, 속성을 기록합니다.",
+  "fn.MessageSent.params.sendId": "sendMessage가 반환하는 indexed 전송 식별자이며, 없으면 0입니다.",
+  "fn.MessageSent.params.sender": "바이너리 ERC-7930 상호 운용 가능 주소 형식의 소스 체인 발신자입니다.",
+  "fn.MessageSent.params.recipient": "바이너리 ERC-7930 상호 운용 가능 주소 형식의 목적지 체인 수신자입니다.",
+  "fn.MessageSent.params.payload": "배달될 불투명한 바이트 페이로드입니다.",
+  "fn.MessageSent.params.value": "메시지와 함께 전송되는 네이티브 토큰 value입니다.",
+  "fn.MessageSent.params.attributes": "메시지에 첨부된 인코딩된 속성 목록입니다.",
+
+  "node.user": "메시지 발신자",
+  "node.contract": "소스 게이트웨이",
+  "node.bridge": "크로스체인 프로토콜",
+  "node.recipient": "수신자 컨트랙트",
+
+  "edge.callSendMessage": "sendMessage() 호출",
+  "edge.emitMessageSent": "MessageSent 이벤트 발행",
+  "edge.relayMessage": "메시지 중계",
+  "edge.deliverMessage": "메시지 배달",
+
+  "sim.sendMessageWalkthrough.name": "크로스체인 메시지 둘러보기",
+  "sim.sendMessageWalkthrough.desc": "메시지가 발신자에서 소스 게이트웨이와 브리지를 거쳐 수신자의 receiveMessage 호출에 이르기까지 따라갑니다.",
+  "sim.sendMessageWalkthrough.param.recipient": "수신자 주소",
+  "sim.sendMessageWalkthrough.param.payload": "메시지 페이로드",
+  "sim.sendMessageWalkthrough.param.value": "네이티브 토큰 value",
+  "sim.sendMessageWalkthrough.step.call": "발신자는 수신자의 상호 운용 가능 주소, 페이로드, 임의의 속성과 함께 소스 게이트웨이에서 sendMessage를 호출합니다.",
+  "sim.sendMessageWalkthrough.step.call.mobile": "sendMessage() 호출",
+  "sim.sendMessageWalkthrough.step.emit": "게이트웨이는 속성을 검증하고 전송 식별자를 기록한 뒤, 요청된 메시지를 설명하는 MessageSent 이벤트를 발행합니다.",
+  "sim.sendMessageWalkthrough.step.emit.mobile": "MessageSent 이벤트 발행",
+  "sim.sendMessageWalkthrough.step.relay": "기반 크로스체인 프로토콜이 메시지를 가져와 소스 트랜잭션이 확정된 후 목적지 체인으로 중계합니다.",
+  "sim.sendMessageWalkthrough.step.relay.mobile": "체인 간 중계",
+  "sim.sendMessageWalkthrough.step.receive": "목적지 게이트웨이가 수신자에서 receiveMessage를 호출하고, 수신자는 신뢰할 수 있는 호출자를 검증한 뒤 배달을 확인하기 위해 0x2432ef26 셀렉터를 반환합니다.",
+  "sim.sendMessageWalkthrough.step.receive.mobile": "수신자에게 배달"
+}

@@ -1,0 +1,48 @@
+{
+  "short": "ERC-1155 Allowance Extension",
+  "introduction": "ERC-5216 defines an extension to the ERC-1155 standard that lets a holder approve an operator to transfer a limited amount of a specific token id rather than over their whole collection. It was proposed by Iván Mañús and Juan Carlos Cantó in July 2022. Borrowing the approve and allowance pattern from ERC-20, it adds an approve call that records a per-id spending limit and an allowance getter for the remaining amount. Note: ERC-5216 is in Last Call, the final review window before it becomes Final.",
+  "designPurpose": "ERC-5216 was designed to remove the all-or-nothing trust required by ERC-1155's only approval mechanism, setApprovalForAll, which authorizes an operator to move every token a holder owns. A bug or a malicious marketplace holding that permission can drain an entire balance. By reusing the ERC-20 style approve and allowance calls, the extension lets holders authorize an exact amount per token id, cap their exposure, and revoke unused approvals, so an operator can never transfer more than was explicitly granted.",
+  "commonUsage": "Granular ERC-1155 approvals are aimed at NFT and semi-fungible marketplaces, where sellers list specific token ids and want to authorize only the quantity being sold, not their whole inventory. A contract implements it by pairing the approve and allowance functions with an ERC-1155 base, subtracting the moved amount inside safeTransferFrom, and returning true from supportsInterface for interface id 0x1be07d74. Games and fractionalized-asset platforms that mint many ids use the same pattern to scope permissions.",
+
+  "fn.approve.desc": "Grants an operator permission to transfer the caller's tokens of a given id up to amount, overwriting any previous allowance for that operator and id. The operator cannot be the caller, and an Approval event is emitted.",
+  "fn.approve.params.operator": "The address being authorized to transfer the caller's tokens.",
+  "fn.approve.params.id": "The ERC-1155 token id the allowance applies to.",
+  "fn.approve.params.amount": "The maximum number of tokens of that id the operator may transfer.",
+
+  "fn.allowance.desc": "Returns the number of tokens of the given id that operator is currently approved to transfer on account's behalf.",
+  "fn.allowance.params.account": "The token holder whose approval is being queried.",
+  "fn.allowance.params.operator": "The operator whose remaining allowance is being queried.",
+  "fn.allowance.params.id": "The ERC-1155 token id to query the allowance for.",
+  "fn.allowance.returns.amount": "The remaining amount of that id the operator may transfer for account.",
+
+  "fn.Approval.desc": "Emitted when an account grants or revokes an operator's permission to transfer a specific id, recording the approved amount.",
+  "fn.Approval.params.account": "The token holder that granted or revoked the approval; indexed.",
+  "fn.Approval.params.operator": "The operator whose allowance changed; indexed.",
+  "fn.Approval.params.id": "The token id the approval applies to.",
+  "fn.Approval.params.amount": "The newly approved amount for that operator and id.",
+
+  "node.user": "Token Holder",
+  "node.contract": "ERC-5216 Token",
+  "node.storageAllowances": "Allowance Mapping",
+  "node.operator": "Approved Operator",
+
+  "edge.callApprove": "Call approve()",
+  "edge.updateAllowance": "Update allowance",
+  "edge.emitApproval": "Emit Approval event",
+  "edge.grantAllowance": "Grant limited allowance",
+  "edge.spendAllowance": "Spend via safeTransferFrom",
+
+  "sim.approveWalkthrough.name": "Limited Approval Walkthrough",
+  "sim.approveWalkthrough.desc": "Follow an approve call that grants an operator a capped allowance for one token id, then watch safeTransferFrom spend it.",
+  "sim.approveWalkthrough.param.operator": "Operator",
+  "sim.approveWalkthrough.param.id": "Token id",
+  "sim.approveWalkthrough.param.amount": "Amount",
+  "sim.approveWalkthrough.step.call": "The holder calls approve(operator, id, amount) to authorize the operator for a limited number of tokens of that id.",
+  "sim.approveWalkthrough.step.call.mobile": "Call approve()",
+  "sim.approveWalkthrough.step.execute": "The contract records the amount in the allowance mapping under the holder, operator, and id, replacing any previous approval.",
+  "sim.approveWalkthrough.step.execute.mobile": "Update allowance",
+  "sim.approveWalkthrough.step.event": "The contract emits Approval and the operator now holds a capped allowance instead of blanket transfer rights.",
+  "sim.approveWalkthrough.step.event.mobile": "Emit Approval event",
+  "sim.approveWalkthrough.step.spend": "When the operator calls safeTransferFrom, the contract subtracts the moved amount from the recorded allowance for that id.",
+  "sim.approveWalkthrough.step.spend.mobile": "Spend allowance"
+}

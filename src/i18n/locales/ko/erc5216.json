@@ -1,0 +1,48 @@
+{
+  "short": "ERC-1155 허용량 확장",
+  "introduction": "ERC-5216은 보유자가 오퍼레이터에게 전체 컬렉션이 아니라 특정 토큰 ID의 제한된 수량만 전송하도록 승인할 수 있게 하는, ERC-1155 표준의 확장을 정의합니다. 이 표준은 2022년 7월 Iván Mañús와 Juan Carlos Cantó가 제안했습니다. ERC-20의 approve 및 allowance 패턴을 차용하여, ID별 지출 한도를 기록하는 approve 호출과 남은 수량을 반환하는 allowance 게터를 추가합니다. 참고: ERC-5216은 Last Call 단계이며, 이는 Final이 되기 전의 마지막 검토 기간입니다.",
+  "designPurpose": "ERC-5216은 ERC-1155의 유일한 승인 메커니즘인 setApprovalForAll이 요구하는 전부 아니면 전무 방식의 신뢰를 제거하기 위해 설계되었습니다. setApprovalForAll은 보유자가 소유한 모든 토큰을 이동할 권한을 오퍼레이터에게 부여합니다. 이 권한을 가진 버그나 악의적인 마켓플레이스는 잔액 전체를 빼갈 수 있습니다. ERC-20 방식의 approve 및 allowance 호출을 재사용함으로써, 이 확장은 보유자가 토큰 ID마다 정확한 수량을 승인하고, 자신의 노출을 제한하며, 사용하지 않은 승인을 취소할 수 있게 하므로, 오퍼레이터는 명시적으로 부여된 양을 초과하여 전송할 수 없습니다.",
+  "commonUsage": "세분화된 ERC-1155 승인은 NFT 및 준대체 가능 마켓플레이스를 대상으로 하며, 여기서 판매자는 특정 토큰 ID를 등록하고 전체 재고가 아니라 판매 중인 수량만 승인하고자 합니다. 컨트랙트는 approve 및 allowance 함수를 ERC-1155 베이스와 결합하고, safeTransferFrom 내부에서 이동한 수량을 차감하며, 인터페이스 ID 0x1be07d74에 대해 supportsInterface가 true를 반환하도록 하여 이를 구현합니다. 많은 ID를 발행하는 게임과 자산 분할 플랫폼도 권한 범위를 한정하기 위해 동일한 패턴을 사용합니다.",
+
+  "fn.approve.desc": "주어진 ID에 대해 호출자의 토큰을 amount까지 전송할 권한을 오퍼레이터에게 부여하며, 해당 오퍼레이터와 ID에 대한 이전 허용량을 덮어씁니다. 오퍼레이터는 호출자 자신이 될 수 없으며, Approval 이벤트가 발생합니다.",
+  "fn.approve.params.operator": "호출자의 토큰을 전송하도록 승인되는 주소.",
+  "fn.approve.params.id": "허용량이 적용되는 ERC-1155 토큰 ID.",
+  "fn.approve.params.amount": "오퍼레이터가 전송할 수 있는 해당 ID 토큰의 최대 수량.",
+
+  "fn.allowance.desc": "오퍼레이터가 현재 계정을 대신하여 전송하도록 승인된 해당 ID 토큰의 수량을 반환합니다.",
+  "fn.allowance.params.account": "승인이 조회되는 토큰 보유자.",
+  "fn.allowance.params.operator": "남은 허용량이 조회되는 오퍼레이터.",
+  "fn.allowance.params.id": "허용량을 조회할 ERC-1155 토큰 ID.",
+  "fn.allowance.returns.amount": "오퍼레이터가 계정을 위해 전송할 수 있는 해당 ID의 남은 수량.",
+
+  "fn.Approval.desc": "계정이 특정 ID를 전송할 오퍼레이터의 권한을 부여하거나 취소할 때 발생하며, 승인된 수량을 기록합니다.",
+  "fn.Approval.params.account": "승인을 부여하거나 취소한 토큰 보유자입니다(indexed).",
+  "fn.Approval.params.operator": "허용량이 변경된 오퍼레이터입니다(indexed).",
+  "fn.Approval.params.id": "이 승인이 적용되는 토큰 ID.",
+  "fn.Approval.params.amount": "해당 오퍼레이터와 ID에 대해 새로 승인된 수량.",
+
+  "node.user": "토큰 보유자",
+  "node.contract": "ERC-5216 토큰",
+  "node.storageAllowances": "허용량 매핑",
+  "node.operator": "승인된 오퍼레이터",
+
+  "edge.callApprove": "approve() 호출",
+  "edge.updateAllowance": "허용량 업데이트",
+  "edge.emitApproval": "Approval 이벤트 발생",
+  "edge.grantAllowance": "제한된 허용량 부여",
+  "edge.spendAllowance": "safeTransferFrom으로 사용",
+
+  "sim.approveWalkthrough.name": "제한적 승인 워크스루",
+  "sim.approveWalkthrough.desc": "하나의 토큰 ID에 대해 오퍼레이터에게 상한이 있는 허용량을 부여하는 approve 호출을 따라가고, 그다음 safeTransferFrom이 이를 사용하는 과정을 살펴봅니다.",
+  "sim.approveWalkthrough.param.operator": "오퍼레이터",
+  "sim.approveWalkthrough.param.id": "토큰 ID",
+  "sim.approveWalkthrough.param.amount": "수량",
+  "sim.approveWalkthrough.step.call": "보유자가 approve(operator, id, amount)를 호출하여 해당 ID의 제한된 수량의 토큰에 대해 오퍼레이터를 승인합니다.",
+  "sim.approveWalkthrough.step.call.mobile": "approve() 호출",
+  "sim.approveWalkthrough.step.execute": "컨트랙트가 보유자, 오퍼레이터, ID를 키로 하여 허용량 매핑에 해당 수량을 기록하며, 이전 승인을 대체합니다.",
+  "sim.approveWalkthrough.step.execute.mobile": "허용량 업데이트",
+  "sim.approveWalkthrough.step.event": "컨트랙트가 Approval을 발생시키며, 이제 오퍼레이터는 포괄적인 전송 권한이 아니라 상한이 있는 허용량을 보유합니다.",
+  "sim.approveWalkthrough.step.event.mobile": "Approval 이벤트 발생",
+  "sim.approveWalkthrough.step.spend": "오퍼레이터가 safeTransferFrom을 호출하면, 컨트랙트가 해당 ID에 대해 기록된 허용량에서 이동한 수량을 차감합니다.",
+  "sim.approveWalkthrough.step.spend.mobile": "허용량 사용"
+}

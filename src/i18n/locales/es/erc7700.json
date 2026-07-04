@@ -1,0 +1,33 @@
+{
+  "short": "Protocolo de Enrutamiento de Almacenamiento Entre Cadenas",
+  "introduction": "ERC-7700, apodado CCIP-Store, define una convención para enrutar las escrituras de almacenamiento hacia proveedores externos en lugar de pagar gas en la red principal. Fue propuesto por Avneet Singh, 0xc0de4c0ffee, Nick Johnson y Makoto Inoue en abril de 2024. Un contrato revierte con un error StorageRoutedToL1, StorageRoutedToL2 o StorageRoutedToDatabase que indica dónde escribir los datos, que los contratos de EIP-3668 (CCIP-Read) leen posteriormente. Nota: ERC-7700 es un Draft (borrador); la especificación aún está en desarrollo activo y puede cambiar sustancialmente.",
+  "designPurpose": "ERC-7700 se diseñó para estandarizar la mitad de escritura del almacenamiento entre cadenas. EIP-3668 (CCIP-Read) ya permite que los contratos obtengan datos de L2 y bases de datos, pero cada servicio tenía que inventar su propia forma de escribir esos datos y demostrarlos en L1, por lo que los esquemas no eran reutilizables entre billeteras y resolvers. CCIP-Store responde a esto con un revert de enrutamiento que indica un destino en L1, L2 o base de datos, además de un firmante determinista y un esquema de aprobación para bases de datos, de modo que las aplicaciones almacenan datos sin conocer el proveedor subyacente.",
+  "commonUsage": "CCIP-Store está dirigido a servicios que mantienen registros similares a los on-chain en almacenamiento más económico, siendo el caso más destacado los resolvers de ENS que guardan registros de dominio en un L2 o una base de datos mientras siguen siendo resolubles desde la red principal. La sección de Motivación menciona la gestión de espacios de nombres y los servicios de identidad digital como los casos de uso principales. Dado que se combina con EIP-3668 para las lecturas, resulta adecuado para cualquier aplicación que desee datos verificables en L1 sin pagar los costos de almacenamiento de L1. Al ser un Draft, la adopción es incipiente y está en gran medida ligada a las herramientas de ENS de los autores.",
+
+  "node.client": "Aplicación Cliente",
+  "node.contract": "Contrato Enrutador L1",
+  "node.router": "Revert del Enrutador de Almacenamiento",
+  "node.gateway": "Puerta de Enlace Fuera de Cadena",
+  "node.storage": "Almacenamiento Externo",
+  "node.resolver": "Resolver de CCIP-Read",
+
+  "edge.submitWrite": "Llamar a la escritura de almacenamiento",
+  "edge.revertRoute": "Revertir con enrutador",
+  "edge.returnRoute": "Devolver destino de ruta",
+  "edge.postData": "Enviar datos firmados por POST",
+  "edge.storeRecord": "Almacenar registro firmado",
+  "edge.fetchData": "Obtener vía CCIP-Read",
+
+  "sim.storeRecordWalkthrough.name": "Enrutamiento de Almacenamiento en Base de Datos",
+  "sim.storeRecordWalkthrough.desc": "Sigue una escritura de registro desde el cliente, a través de un enrutador de base de datos, hasta la recuperación mediante CCIP-Read.",
+  "sim.storeRecordWalkthrough.param.recordKey": "Clave del registro",
+  "sim.storeRecordWalkthrough.param.recordValue": "Valor del registro",
+  "sim.storeRecordWalkthrough.step.call": "El cliente llama a una función de escritura de almacenamiento como setValue(node, key, value) en el contrato enrutador L1.",
+  "sim.storeRecordWalkthrough.step.call.mobile": "Llamar a escritura de almacenamiento",
+  "sim.storeRecordWalkthrough.step.revert": "El contrato revierte con StorageRoutedToDatabase(gatewayUrl), indicando al cliente qué puerta de enlace debe gestionar la escritura.",
+  "sim.storeRecordWalkthrough.step.revert.mobile": "Revertir con enrutador",
+  "sim.storeRecordWalkthrough.step.post": "El cliente firma el calldata, solicita una aprobación para el firmante de datos derivado y envía por POST el registro firmado a la puerta de enlace, que lo almacena.",
+  "sim.storeRecordWalkthrough.step.post.mobile": "Enviar registro firmado por POST",
+  "sim.storeRecordWalkthrough.step.read": "Un resolver de CCIP-Read obtiene posteriormente el registro mediante EIP-3668 y verifica la aprobación y la firma de los datos antes de servirlo.",
+  "sim.storeRecordWalkthrough.step.read.mobile": "Leer y verificar"
+}

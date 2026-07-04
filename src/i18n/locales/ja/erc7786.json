@@ -1,0 +1,54 @@
+{
+  "short": "クロスチェーンメッセージングゲートウェイ",
+  "introduction": "ERC-7786 は、スマートコントラクトが採用済みの任意のブリッジを通じて任意のクロスチェーンデータを送受信するための共通インターフェースとワークフローを定義します。2024年10月に Francisco Giordano、Hadrien Croubois、Ernesto García らによって提案されました。ソースゲートウェイの sendMessage は、ERC-7930 相互運用可能アドレス（Interoperable Address）で指定された受信者へペイロードを送出し、MessageSent を発行します。宛先ゲートウェイは receiveMessage を通じてそれを配送します。ブリッジの機能は、独自の呼び出しではなく bytes4 をキーとする属性として伝えられます。",
+  "designPurpose": "ERC-7786 は、各クロスチェーンメッセージングプロトコルが独自のインターフェースとワークフローを公開しているという断片化を克服するために設計されました。この移植性の欠如は、汎用的なクロスチェーンコントラクトを非現実的にし、アプリケーションを一時停止または非推奨になり得る単一のブリッジに縛り付けます。ERC-7930 アドレスを中心に sendMessage と receiveMessage を標準化することで、この ERC はコントラクトが保存された単一のアドレスを更新するだけでゲートウェイを切り替えられるようにし、同時に共有されたコアの背後で属性がブリッジ固有のオプションを提示します。",
+  "commonUsage": "このインターフェースは、クロスチェーンネイティブなコントラクトとそれらを結ぶゲートウェイを対象とします。すなわち、それを直接実装するプロトコルと、既存のブリッジを交換可能な API の背後にラップするアダプターゲートウェイです。アプリケーションは sendMessage を呼び出して不透明なペイロードを受信者へ渡し、receiveMessage を実装して配送を受け入れます。その際、まず呼び出し元が信頼できるゲートウェイであることを確認します。独自の ERC として標準化された属性（たとえば最小の宛先 gas リミット）は、独自の呼び出しなしにブリッジの機能を要求します。",
+
+  "fn.supportsAttribute.desc": "ゲートウェイが、4バイトのセレクタキーで識別される属性をサポートしているかどうかを返します。サポートはアップグレードによって追加され得ますが、削除すべきではなく、呼び出し元に対する後方互換性を保ちます。",
+  "fn.supportsAttribute.params.selector": "4バイトの属性キーで、Solidity の関数セレクタが推奨されます。",
+  "fn.supportsAttribute.returns.supported": "ゲートウェイが指定された属性キーをサポートしていれば true。",
+
+  "fn.sendMessage.desc": "別のチェーン上の受信者へのメッセージ送信を開始し、ペイロード、任意の呼び出し value、および属性のリストを運びます。未知の属性に対しては UnsupportedAttribute で revert し、MessageSent を発行し、非ゼロの送信識別子を返す場合があります。",
+  "fn.sendMessage.params.recipient": "バイナリの ERC-7930 相互運用可能アドレスとしての宛先チェーンの受信者。宛先が未指定の場合は省略またはゼロにできます。",
+  "fn.sendMessage.params.payload": "受信者へ配送する不透明なバイトペイロード。",
+  "fn.sendMessage.params.attributes": "属性のリストで、各属性は 4バイトのキーとそのエンコードされた値を連結し、ブリッジ固有の機能を要求します。空のリストも有効です。",
+  "fn.sendMessage.returns.sendId": "メッセージ追跡用の一意な非ゼロの送信識別子。ゲートウェイが割り当てない場合はゼロ。",
+
+  "fn.receiveMessage.desc": "別のチェーンから送信されたメッセージを受信者コントラクトへ配送します。宛先ゲートウェイが識別子、送信者、ペイロードを付けて呼び出します。受信者は呼び出し元が信頼できるゲートウェイであることを検証し、receiveMessage セレクタを返さなければなりません。",
+  "fn.receiveMessage.params.receiveId": "呼び出し元ゲートウェイにとっての、配送されたメッセージの一意な識別子、または空。",
+  "fn.receiveMessage.params.sender": "バイナリの ERC-7930 相互運用可能アドレスとしてのソースチェーンの送信者。",
+  "fn.receiveMessage.params.payload": "ソースチェーンから配送された不透明なバイトペイロード。",
+  "fn.receiveMessage.returns.selector": "受け入れを確認するため、IERC7786Recipient.receiveMessage.selector（0x2432ef26）と等しくなければなりません。",
+
+  "fn.MessageSent.desc": "送信者がメッセージ送信を要求したときにソースゲートウェイによって発行され、送信識別子、送信者と受信者のアドレス、ペイロード、value、属性を記録します。",
+  "fn.MessageSent.params.sendId": "sendMessage が返す indexed の送信識別子。無い場合はゼロ。",
+  "fn.MessageSent.params.sender": "バイナリの ERC-7930 相互運用可能アドレスとしてのソースチェーンの送信者。",
+  "fn.MessageSent.params.recipient": "バイナリの ERC-7930 相互運用可能アドレスとしての宛先チェーンの受信者。",
+  "fn.MessageSent.params.payload": "配送される不透明なバイトペイロード。",
+  "fn.MessageSent.params.value": "メッセージとともに送られるネイティブトークンの value。",
+  "fn.MessageSent.params.attributes": "メッセージに付加されたエンコード済み属性のリスト。",
+
+  "node.user": "メッセージ送信者",
+  "node.contract": "ソースゲートウェイ",
+  "node.bridge": "クロスチェーンプロトコル",
+  "node.recipient": "受信者コントラクト",
+
+  "edge.callSendMessage": "sendMessage() を呼び出す",
+  "edge.emitMessageSent": "MessageSent イベントを発行",
+  "edge.relayMessage": "メッセージをリレー",
+  "edge.deliverMessage": "メッセージを配送",
+
+  "sim.sendMessageWalkthrough.name": "クロスチェーンメッセージのウォークスルー",
+  "sim.sendMessageWalkthrough.desc": "メッセージを、送信者からソースゲートウェイとブリッジを経て、受信者の receiveMessage 呼び出しまで追跡します。",
+  "sim.sendMessageWalkthrough.param.recipient": "受信者アドレス",
+  "sim.sendMessageWalkthrough.param.payload": "メッセージペイロード",
+  "sim.sendMessageWalkthrough.param.value": "ネイティブトークンの value",
+  "sim.sendMessageWalkthrough.step.call": "送信者は、受信者の相互運用可能アドレス、ペイロード、および任意の属性を付けて、ソースゲートウェイ上で sendMessage を呼び出します。",
+  "sim.sendMessageWalkthrough.step.call.mobile": "sendMessage() を呼び出す",
+  "sim.sendMessageWalkthrough.step.emit": "ゲートウェイは属性を検証し、送信識別子を記録し、要求されたメッセージを表す MessageSent イベントを発行します。",
+  "sim.sendMessageWalkthrough.step.emit.mobile": "MessageSent イベントを発行",
+  "sim.sendMessageWalkthrough.step.relay": "基盤となるクロスチェーンプロトコルがメッセージを取得し、ソーストランザクションの確定後に宛先チェーンへリレーします。",
+  "sim.sendMessageWalkthrough.step.relay.mobile": "チェーン間をリレー",
+  "sim.sendMessageWalkthrough.step.receive": "宛先ゲートウェイは受信者上で receiveMessage を呼び出し、受信者は信頼できる呼び出し元を検証して、配送を確認するために 0x2432ef26 セレクタを返します。",
+  "sim.sendMessageWalkthrough.step.receive.mobile": "受信者へ配送"
+}

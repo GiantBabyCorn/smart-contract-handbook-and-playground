@@ -1,0 +1,32 @@
+{
+  "short": "Extensión de Suministro de ERC-1155",
+  "introduction": "ERC-5615 define una extensión de reporte de suministro para los contratos multitoken ERC-1155. Fue propuesta por Gavin John en mayo de 2023. La extensión añade dos funciones view: totalSupply, que devuelve cuántos tokens están en circulación para un id determinado, y exists, que informa si un id existe, existió anteriormente o puede existir. Estandariza un patrón que ya se distribuye como el ERC1155Supply de OpenZeppelin, dando a los indexadores y las billeteras una forma predecible de leer el suministro por id sin depender de datos fuera de la cadena.",
+  "designPurpose": "ERC-5615 fue diseñada para dar a ERC-1155 una forma común de exponer el suministro por id, que el estándar base omite. Antes de ella, cada contrato inventaba sus propios getters de suministro o no ofrecía ninguno, por lo que los indexadores y los marketplaces no podían saber de forma fiable cuántas unidades de un id de token se habían acuñado, ni si un id llegaría a existir alguna vez. Al formalizar totalSupply y exists con la misma semántica que la implementación ampliamente utilizada de OpenZeppelin, ERC-5615 permite que cualquier consumidor consulte el suministro a través de una única interfaz predecible.",
+  "commonUsage": "La extensión la utilizan las colecciones y los marketplaces ERC-1155 que muestran el suministro restante o total por id de token, las interfaces de acuñación que limitan las ediciones y los indexadores que rastrean las cantidades en circulación. Como refleja el ERC1155Supply de OpenZeppelin, normalmente se incorpora a un contrato ERC-1155 existente en lugar de desplegarse por sí sola. La función exists se utiliza para distinguir un id con suministro actual cero de uno que nunca podrá acuñarse.",
+
+  "fn.exists.desc": "Devuelve si el id de token dado existe, existió anteriormente o puede existir. Los consumidores lo utilizan para distinguir un id que actualmente tiene suministro cero de uno que nunca podrá acuñarse.",
+  "fn.exists.params.id": "El id de token cuya existencia se está comprobando.",
+  "fn.exists.returns.exists": "true si el id de token existe, existió anteriormente o puede existir; de lo contrario, false.",
+
+  "fn.totalSupply.desc": "Devuelve la cantidad de tokens en circulación para el id dado. Si el id de token no existe, devuelve 0.",
+  "fn.totalSupply.params.id": "El id de token cuyo suministro total se está obteniendo.",
+  "fn.totalSupply.returns.totalSupply": "El suministro total del id de token dado, o 0 si no existe ninguno.",
+
+  "node.user": "Lector de suministro",
+  "node.contract": "Token de suministro ERC-1155",
+  "node.storageSupply": "Almacenamiento de suministro",
+
+  "edge.callTotalSupply": "Llamar a totalSupply()",
+  "edge.callExists": "Llamar a exists()",
+  "edge.readSupply": "Leer el mapping de suministro",
+
+  "sim.totalSupplyWalkthrough.name": "Consultar el suministro del token",
+  "sim.totalSupplyWalkthrough.desc": "Sigue una llamada a totalSupply desde un lector a través del almacenamiento de suministro del contrato, y luego comprueba exists para interpretar un resultado cero.",
+  "sim.totalSupplyWalkthrough.param.id": "Id de token",
+  "sim.totalSupplyWalkthrough.step.call": "Un lector como una billetera o un indexador llama a totalSupply(id) en el contrato ERC-1155 para obtener la cantidad en circulación de un id de token.",
+  "sim.totalSupplyWalkthrough.step.call.mobile": "Llamar a totalSupply()",
+  "sim.totalSupplyWalkthrough.step.read": "El contrato lee el mapping de suministro del id y devuelve la cantidad almacenada, o 0 si no se ha acuñado ningún token con ese id.",
+  "sim.totalSupplyWalkthrough.step.read.mobile": "Leer el mapping de suministro",
+  "sim.totalSupplyWalkthrough.step.exists": "Para interpretar un resultado cero, el lector llama a exists(id), que informa si el id todavía no tiene suministro o si nunca podrá acuñarse.",
+  "sim.totalSupplyWalkthrough.step.exists.mobile": "Comprobar exists()"
+}

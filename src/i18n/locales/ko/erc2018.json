@@ -1,0 +1,85 @@
+{
+  "short": "청산 가능 토큰 표준",
+  "introduction": "ERC-2018은 청산 가능 전송을 위한 ERC-20 확장을 정의하며, 전송은 먼저 주문된 뒤 즉시 정산되지 않고 청산 에이전트에 의해 실행되거나 거부됩니다. 이 표준은 2019년 4월 Julio Faura, Fernando Paris, Daniel Lehrner가 제안했습니다. 주문은 지급인의 토큰을 차감하지 않고 예약하므로, 에이전트는 실행하거나 거부하기 전에 오프체인 검사를 수행할 수 있습니다. 참고: ERC-2018은 Stagnant(정체) 상태입니다. 6개월 이상 활동이 없었고 최종화되지 않을 수 있지만, 역사적 또는 기술적으로 중요한 의미를 유지합니다.",
+  "designPurpose": "ERC-2018은 전송이 항상 단일 온체인 단계로 완료될 수 없는 규제 대상 토큰을 위해 설계되었습니다. KYC와 AML 같은 컴플라이언스 규칙은 오프체인에서 실행해야 할 수 있으므로 전송은 정산되기 전에 승인되어야 하지만, 일반적인 ERC-20 전송은 원자적이며 그러한 중간 상태가 없습니다. 주문과 정산을 분리하고 결정을 청산 에이전트에게 넘김으로써, ERC-2018은 에이전트가 컴플라이언스를 준수하는 전송을 실행하거나 준수하지 않는 전송을 거부할 수 있게 하며, 그동안 주문된 금액은 예약된 상태로 유지되어 이후의 실행이 성공하도록 합니다.",
+  "commonUsage": "청산 가능 토큰은 가치가 이동하기 전에 지급이 컴플라이언스 심사를 통과해야 하는 규제 대상 금융 정산을 대상으로 합니다. 주문된 전송은 청산 에이전트가 이를 실행하여 토큰을 이동시키거나, 이유와 함께 거부하고 예약된 잔액을 해제할 때까지 Ordered 상태와 선택적인 InProcess 상태를 거쳐 대기합니다. 이 표준은 ERC-777의 오퍼레이터 명명 규약을 재사용하여 권한이 있는 오퍼레이터가 계정을 대신하여 전송을 주문할 수 있게 하며, ERC-1996의 hold를 기반으로 하여 예약된 금액이 에이전트가 결정하기 전에 사용될 수 없도록 합니다.",
+
+  "fn.orderTransfer.desc": "호출자로부터 수취인에게로의 청산 가능 전송을 주문하고, 청산 에이전트가 실행하거나 거부할 때까지 해당 금액을 예약합니다. operationId가 이미 사용된 경우 되돌립니다.",
+  "fn.orderTransfer.params.operationId": "청산 가능 전송을 식별하는 고유 ID입니다.",
+  "fn.orderTransfer.params.to": "전송이 실행되면 토큰을 받는 수취인 주소입니다.",
+  "fn.orderTransfer.params.value": "전송할 금액이며, 지급인의 잔액을 초과해서는 안 됩니다.",
+  "fn.orderTransfer.returns.success": "청산 가능 전송이 성공적으로 주문되면 true입니다.",
+
+  "fn.orderTransferFrom.desc": "지급인을 대신하여 수취인을 위해 청산 가능 전송을 주문합니다. 호출자는 지급인에 대해 권한이 있는 오퍼레이터여야 합니다. operationId가 이미 사용된 경우 되돌립니다.",
+  "fn.orderTransferFrom.params.operationId": "청산 가능 전송을 식별하는 고유 ID입니다.",
+  "fn.orderTransferFrom.params.from": "전송이 실행되면 토큰이 예약되고 차감되는 지급인 주소입니다.",
+  "fn.orderTransferFrom.params.to": "전송이 실행되면 토큰을 받는 수취인 주소입니다.",
+  "fn.orderTransferFrom.params.value": "전송할 금액이며, 지급인의 잔액을 초과해서는 안 됩니다.",
+  "fn.orderTransferFrom.returns.success": "청산 가능 전송이 성공적으로 주문되면 true입니다.",
+
+  "fn.cancelTransfer.desc": "주문된 청산 가능 전송을 취소합니다. 주문자만 자신의 주문을 취소할 수 있으며, 청산 에이전트가 이를 InProcess 상태로 옮기기 전에만 가능합니다.",
+  "fn.cancelTransfer.params.operationId": "청산 가능 전송을 식별하는 고유 ID입니다.",
+  "fn.cancelTransfer.returns.success": "청산 가능 전송이 성공적으로 취소되면 true입니다.",
+
+  "fn.processClearableTransfer.desc": "주문된 전송을 InProcess 상태로 옮겨 심사가 진행 중임을 알리고 주문자가 취소하지 못하도록 합니다. 청산 에이전트만 성공적으로 호출할 수 있습니다.",
+  "fn.processClearableTransfer.params.operationId": "청산 가능 전송을 식별하는 고유 ID입니다.",
+  "fn.processClearableTransfer.returns.success": "전송이 InProcess 상태에 진입하면 true입니다.",
+
+  "fn.executeClearableTransfer.desc": "청산 가능 전송을 실행하여 예약된 토큰을 지급인에서 수취인으로 이동합니다. 청산 에이전트만 성공적으로 호출할 수 있습니다.",
+  "fn.executeClearableTransfer.params.operationId": "청산 가능 전송을 식별하는 고유 ID입니다.",
+  "fn.executeClearableTransfer.returns.success": "청산 가능 전송이 성공적으로 실행되면 true입니다.",
+
+  "fn.rejectClearableTransfer.desc": "청산 가능 전송을 거부하여 예약된 토큰을 어떤 이동도 없이 지급인에게 다시 해제합니다. 청산 에이전트만 호출할 수 있으며, 거부 사유를 기록합니다.",
+  "fn.rejectClearableTransfer.params.operationId": "청산 가능 전송을 식별하는 고유 ID입니다.",
+  "fn.rejectClearableTransfer.params.reason": "청산 에이전트가 전송을 거부하는 사유로 제시하는, 사람이 읽을 수 있는 이유입니다.",
+  "fn.rejectClearableTransfer.returns.success": "청산 가능 전송이 성공적으로 거부되면 true입니다.",
+
+  "fn.retrieveClearableTransferData.desc": "지급인, 수취인, 금액, 현재 상태 코드를 포함하여 청산 가능 전송에 저장된 모든 정보를 반환합니다.",
+  "fn.retrieveClearableTransferData.params.operationId": "청산 가능 전송을 식별하는 고유 ID입니다.",
+  "fn.retrieveClearableTransferData.returns.from": "청산 가능 전송의 지급인 주소입니다.",
+  "fn.retrieveClearableTransferData.returns.to": "청산 가능 전송의 수취인 주소입니다.",
+  "fn.retrieveClearableTransferData.returns.value": "주문이 실행되면 전송될 금액입니다.",
+  "fn.retrieveClearableTransferData.returns.status": "청산 가능 전송의 현재 상태 코드입니다.",
+
+  "fn.ClearableTransferOrdered.desc": "청산 가능 전송이 주문될 때 발생하며, 주문자, 지급인, 수취인, 금액을 기록합니다.",
+  "fn.ClearableTransferOrdered.params.orderer": "청산 가능 전송을 주문한 계정입니다.",
+  "fn.ClearableTransferOrdered.params.operationId": "청산 가능 전송을 식별하는 고유 ID입니다.",
+  "fn.ClearableTransferOrdered.params.from": "토큰이 예약되는 지급인입니다.",
+  "fn.ClearableTransferOrdered.params.to": "실행되면 토큰을 받는 수취인입니다.",
+  "fn.ClearableTransferOrdered.params.value": "실행되면 전송될 금액입니다.",
+
+  "fn.ClearableTransferExecuted.desc": "청산 에이전트가 청산 가능 전송을 실행하고 토큰이 수취인에게 이동할 때 발생합니다.",
+  "fn.ClearableTransferExecuted.params.orderer": "청산 가능 전송을 주문한 계정입니다.",
+  "fn.ClearableTransferExecuted.params.operationId": "청산 가능 전송을 식별하는 고유 ID입니다.",
+
+  "fn.ClearableTransferRejected.desc": "청산 에이전트가 청산 가능 전송을 거부할 때 발생하며, 거부 사유를 담습니다.",
+  "fn.ClearableTransferRejected.params.orderer": "청산 가능 전송을 주문한 계정입니다.",
+  "fn.ClearableTransferRejected.params.operationId": "청산 가능 전송을 식별하는 고유 ID입니다.",
+  "fn.ClearableTransferRejected.params.reason": "청산 에이전트가 거부에 대해 제시한 사유입니다.",
+
+  "node.user": "주문자",
+  "node.clearingAgent": "청산 에이전트",
+  "node.contract": "ERC-2018 토큰",
+  "node.storageClearableTransfers": "청산 가능 전송",
+  "node.payee": "수취인",
+
+  "edge.callOrderTransfer": "orderTransfer() 호출",
+  "edge.callExecute": "executeClearableTransfer() 호출",
+  "edge.updateTransfers": "주문 기록 및 잔액 예약",
+  "edge.transferTokens": "예약된 토큰 전송",
+  "edge.emitExecuted": "ClearableTransferExecuted 이벤트 발생",
+
+  "sim.orderTransferWalkthrough.name": "주문 및 실행 워크스루",
+  "sim.orderTransferWalkthrough.desc": "지급인이 주문을 넣는 것부터 청산 에이전트의 실행, 그리고 그 결과로 수취인에게 이루어지는 토큰 전송까지 청산 가능 전송의 흐름을 따라갑니다.",
+  "sim.orderTransferWalkthrough.param.operationId": "오퍼레이션 ID",
+  "sim.orderTransferWalkthrough.param.to": "수취인 주소",
+  "sim.orderTransferWalkthrough.param.value": "전송 금액(wei 단위)",
+  "sim.orderTransferWalkthrough.step.order": "주문자가 orderTransfer(operationId, to, value)를 호출하여 수취인에게 전송을 요청합니다.",
+  "sim.orderTransferWalkthrough.step.order.mobile": "orderTransfer() 호출",
+  "sim.orderTransferWalkthrough.step.record": "컨트랙트는 새로운 청산 가능 전송을 기록하고 지급인의 잔액에서 해당 금액을 예약하므로, 청산 에이전트를 기다리는 동안 다른 곳에 사용될 수 없습니다.",
+  "sim.orderTransferWalkthrough.step.record.mobile": "잔액 예약",
+  "sim.orderTransferWalkthrough.step.execute": "청산 에이전트가 executeClearableTransfer를 호출하면 컨트랙트는 예약된 토큰을 지급인에서 수취인으로 이동합니다.",
+  "sim.orderTransferWalkthrough.step.execute.mobile": "에이전트가 전송 실행",
+  "sim.orderTransferWalkthrough.step.event": "컨트랙트는 ClearableTransferExecuted를 발생시켜 인덱서가 전송이 정산되었음을 기록할 수 있게 합니다.",
+  "sim.orderTransferWalkthrough.step.event.mobile": "Executed 이벤트 발생"
+}

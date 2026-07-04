@@ -1,0 +1,60 @@
+{
+  "short": "Estándar de Token de Verificación de Membresía (MVT)",
+  "introduction": "ERC-1261 define una interfaz estándar para los tokens de verificación de membresía (Membership Verification Token, MVT): tokens no transferibles y revocables que registran si una dirección pertenece a una organización on-chain llamada entidad. Fue propuesto por Chaitanya Potti y Partha Bhattacharya en julio de 2018. El propietario de la entidad asigna y revoca membresías, mientras que los miembros pueden solicitar o renunciar a la suya. Nota: ERC-1261 está en estado Stagnant (estancado): ha estado inactivo durante más de 6 meses y puede que nunca se finalice, pero conserva relevancia histórica o técnica.",
+  "designPurpose": "ERC-1261 se diseñó para llevar la membresía con permisos on-chain sin depender de los saldos de tokens, que los primeros sistemas de gobernanza usaban como sustituto de la elegibilidad aunque un saldo confunde la riqueza con el derecho a participar. A diferencia de los registros de declaraciones como ERC-725/735, donde el sujeto posee sus propias declaraciones y podría ignorar una eliminación, un MVT está controlado por completo por la entidad emisora, que puede asignar, modificar o revocar una membresía y sus atributos en cualquier momento.",
+  "commonUsage": "Dado que los MVT son no transferibles y revocables, se adaptan a casos de uso como tarjetas de membresía, no a activos negociables. La especificación describe aplicaciones previstas como la votación con permisos, donde el número de miembros proporciona un denominador de participación; el cumplimiento normativo que restringe los tokens de valores a direcciones acreditadas; y la emisión de credenciales para pasaportes, licencias o derechos de uso de software. Los atributos por miembro permiten que una votación filtre su base de votantes, y una extensión opcional de metadatos expone el nombre y el símbolo de una organización.",
+
+  "fn.requestMembership.desc": "Permite que cualquier dirección solicite la membresía en la entidad, emitiendo RequestedMembership para que el propietario pueda aprobarla o descartarla. Revierte si el llamador ya posee el token; es payable, por lo que las implementaciones pueden cobrar una comisión.",
+  "fn.requestMembership.params.attributeIndexes": "Índices de los valores de atributo que se asociarán con el posible miembro.",
+
+  "fn.forfeitMembership.desc": "Permite que un miembro actual renuncie voluntariamente a su propia membresía, emitiendo el evento Revoked. Revierte si el llamador no posee el token.",
+
+  "fn.approveRequest.desc": "Lo llama el propietario para aprobar una solicitud de membresía pendiente, asignando el token y emitiendo los eventos ApprovedMembership y Assigned. Revierte si el usuario no tiene una solicitud pendiente o si el llamador no es el propietario.",
+  "fn.approveRequest.params.user": "La dirección cuya solicitud de membresía pendiente se aprueba.",
+
+  "fn.discardRequest.desc": "Lo llama el propietario para rechazar una solicitud de membresía pendiente sin asignar un token. Revierte si el usuario no tiene una solicitud pendiente o si el llamador no es el propietario.",
+  "fn.discardRequest.params.user": "La dirección cuya solicitud de membresía pendiente se descarta.",
+
+  "fn.assignTo.desc": "Lo llama el propietario para asignar la membresía directamente a una dirección, emitiendo el evento Assigned. Revierte si la dirección ya posee el token, es la dirección cero o el llamador no es el propietario.",
+  "fn.assignTo.params.to": "La dirección a la que se asigna el token de membresía.",
+  "fn.assignTo.params.attributeIndexes": "Índices de los valores de atributo registrados para el nuevo miembro.",
+
+  "fn.revokeFrom.desc": "Lo llama el propietario para eliminar la membresía de una dirección, emitiendo el evento Revoked. Revierte si la dirección no es miembro, es la dirección cero o el llamador no es el propietario.",
+  "fn.revokeFrom.params.from": "La dirección del miembro actual cuya membresía se revoca.",
+
+  "fn.isCurrentMember.desc": "Devuelve si una dirección es actualmente miembro de la entidad. Lanza una excepción en las consultas sobre la dirección cero, cuyo token siempre se considera inválido.",
+  "fn.isCurrentMember.params.to": "La dirección cuyo estado de membresía se consulta.",
+  "fn.isCurrentMember.returns.isMember": "true si la dirección posee actualmente un token de membresía válido.",
+
+  "fn.Assigned.desc": "Se emite cuando se asigna un token de membresía a una dirección, ya sea directamente por el propietario o tras la aprobación de una solicitud.",
+  "fn.Assigned.params.to": "La dirección que recibió el token de membresía.",
+  "fn.Assigned.params.attributeIndexes": "Los índices de valor de atributo registrados para el miembro.",
+
+  "fn.Revoked.desc": "Se emite cuando el propietario revoca una membresía o el miembro renuncia a ella.",
+  "fn.Revoked.params.to": "La dirección cuya membresía se revocó.",
+
+  "fn.RequestedMembership.desc": "Se emite cuando una dirección solicita la membresía en la entidad, indicando al propietario que apruebe o descarte la solicitud.",
+  "fn.RequestedMembership.params.to": "La dirección que solicitó la membresía.",
+
+  "node.user": "Propietario de la entidad",
+  "node.contract": "Entidad ERC-1261",
+  "node.storageMembers": "Almacenamiento de membresías",
+  "node.member": "Miembro",
+
+  "edge.callAssign": "Llamar a assignTo()",
+  "edge.updateMembers": "Actualizar membresía",
+  "edge.emitAssigned": "Emitir evento Assigned",
+  "edge.grantMembership": "Otorgar membresía",
+  "edge.callRevoke": "Llamar a revokeFrom()",
+
+  "sim.assignMembership.name": "Asignar membresía",
+  "sim.assignMembership.desc": "Sigue una llamada a assignTo desde el propietario de la entidad, a través del almacenamiento de membresías, hasta el evento Assigned que reconoce al nuevo miembro.",
+  "sim.assignMembership.param.to": "Dirección del nuevo miembro",
+  "sim.assignMembership.param.attributeIndexes": "Índices de atributo",
+  "sim.assignMembership.step.call": "El propietario de la entidad llama a assignTo(_to, _attributeIndexes) en el contrato ERC-1261 para otorgar la membresía a una dirección.",
+  "sim.assignMembership.step.call.mobile": "Llamar a assignTo()",
+  "sim.assignMembership.step.execute": "El contrato registra la dirección como miembro actual y almacena sus índices de atributo en los mapeos de membresía.",
+  "sim.assignMembership.step.execute.mobile": "Registrar membresía",
+  "sim.assignMembership.step.event": "El contrato emite el evento Assigned, y la dirección es ahora un miembro reconocido de la entidad.",
+  "sim.assignMembership.step.event.mobile": "Emitir evento Assigned"
+}

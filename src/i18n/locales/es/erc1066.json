@@ -1,0 +1,32 @@
+{
+  "short": "Códigos de Estado de Contrato Inteligente",
+  "introduction": "ERC-1066 define un conjunto compartido de códigos de estado de un byte para contratos, inspirado en los estados HTTP, de modo que una función pueda devolver un resultado significativo en lugar de un simple true/false o un revert. Fue propuesto por Brooklyn Zelenka, Tom Carchrae y Gleb Naumenko en mayo de 2018. Cada byte combina una categoría en el nibble alto con un motivo en el nibble bajo, tomados de una tabla de 16 por 16, y se devuelve en primer lugar dentro de un retorno múltiple. Nota: ERC-1066 está en estado Stagnant (estancado): ha permanecido inactivo durante más de 6 meses y puede que nunca se finalice, pero conserva relevancia histórica o técnica.",
+  "designPurpose": "ERC-1066 se diseñó para reemplazar la señalización de bajo contexto de la que dependían los contratos: hacer revert ante cualquier cosa que no fuera un éxito, o devolver un true/false opaco que no aporta ningún motivo. Antes de él, cada proyecto inventaba su propio esquema de errores, por lo que los contratos no podían reaccionar a los resultados de otros sin conocer enums a medida. Al estandarizar una tabla finita, similar a HTTP, de códigos de categoría y motivo, ERC-1066 ofrece a los contratos un vocabulario compartido sobre el que ramificar de forma autónoma, manteniendo al mismo tiempo la compatibilidad con revert-con-motivo.",
+  "commonUsage": "ERC-1066 está orientado a contratos que deben comunicar algo más que éxito o fracaso: validadores que informan por qué se bloqueó una transferencia, comprobaciones de permisos que devuelven un código de permitido o detenido, y flujos en los que un contrato ramifica según el resultado de otro. La especificación lo ilustra con un validador de token regulado que devuelve 0x10 (Disallowed, no permitido) o 0x11 (Allowed, permitido). Al ser una propuesta Stagnant, nunca tuvo una adopción amplia en producción, y su capa de traducción legible por humanos se separó en ERC-1444.",
+
+  "node.caller": "Contrato que llama",
+  "node.contract": "Contrato que devuelve estado",
+  "node.storageCodeTable": "Tabla de códigos de estado",
+  "node.storageReturn": "Byte de estado devuelto",
+  "node.consumer": "Consumidor que reacciona",
+  "node.translator": "Capa de traducción",
+
+  "edge.callFunction": "Llamar a la función",
+  "edge.selectCode": "Seleccionar categoría y motivo",
+  "edge.encodeByte": "Codificar byte de estado",
+  "edge.reactToCode": "Reaccionar al código",
+  "edge.translateCode": "Traducir código",
+  "edge.showMessage": "Mostrar mensaje",
+
+  "sim.statusCodeWalkthrough.name": "Recorrido por los códigos de estado",
+  "sim.statusCodeWalkthrough.desc": "Sigue un código de estado desde una llamada a un contrato, pasando por la codificación, hasta un consumidor que reacciona y un mensaje legible por humanos.",
+  "sim.statusCodeWalkthrough.param.outcome": "Resultado de la función",
+  "sim.statusCodeWalkthrough.step.call": "El contrato que llama invoca una función en un contrato que devuelve estado, esperando un código de estado de un byte como primer valor de retorno.",
+  "sim.statusCodeWalkthrough.step.call.mobile": "Llamar a la función",
+  "sim.statusCodeWalkthrough.step.encode": "El contrato elige una categoría y un motivo de la tabla de códigos de 16 por 16 y los empaqueta en un único byte de estado.",
+  "sim.statusCodeWalkthrough.step.encode.mobile": "Codificar byte de estado",
+  "sim.statusCodeWalkthrough.step.return": "El byte de estado se devuelve como primer valor; el consumidor ramifica en función de él, tratando los códigos pares como bloqueantes y los impares como no bloqueantes.",
+  "sim.statusCodeWalkthrough.step.return.mobile": "Reaccionar al código",
+  "sim.statusCodeWalkthrough.step.translate": "Una capa de traducción asigna el código a un mensaje legible por humanos, tal como especificó posteriormente ERC-1444.",
+  "sim.statusCodeWalkthrough.step.translate.mobile": "Mostrar mensaje"
+}

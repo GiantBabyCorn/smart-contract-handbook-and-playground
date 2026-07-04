@@ -1,0 +1,32 @@
+{
+  "short": "URI Format for Ethereum",
+  "introduction": "ERC-831 defines a URI format for Ethereum that uses the ethereum: or eth: scheme as a container for signaling requests to a user's wallet. It was proposed by ligi in January 2018. A URI takes the form ethereum:[prefix-]payload: an optional prefix names the use case and the payload carries its data. When the prefix is omitted, pay- is assumed for compatibility with EIP-67. Note: ERC-831 is Stagnant — it has been inactive for 6+ months and may never be finalized, but remains historically or technically significant.",
+  "designPurpose": "ERC-831 was designed to keep the ethereum: scheme open to many use cases instead of binding it to one. The need arose while refining EIP-681: a container was wanted that does not carry the weight of any single use case. Rather than reserve the whole scheme for the payment case that existed at the time, ERC-831 splits a URI into an optional prefix that names the use case and a payload whose structure each use-case ERC defines on its own, letting new prefixes be added later without blocking the scheme.",
+  "commonUsage": "The URI format is used by wallets, dapps, and QR-code generators that pass requests between loosely coupled applications through hyperlinks, QR codes, emails, or chat messages, so a single link can invoke a user's preferred wallet. The payment case, carried by the pay- prefix and detailed in EIP-681, is the example the specification names; other use-case ERCs may register additional prefixes on the same scheme. Because ERC-831 defines only the container, it serves as a shared entry point for Ethereum requests.",
+
+  "node.requester": "Request Author",
+  "node.uriBuilder": "URI Encoder",
+  "node.ethereumUri": "Ethereum URI",
+  "node.wallet": "Wallet Parser",
+  "node.useCaseHandler": "Use-Case Handler",
+  "node.user": "Wallet User",
+
+  "edge.composeRequest": "Compose request",
+  "edge.encodeUri": "Encode ethereum: URI",
+  "edge.openUri": "Scan or open link",
+  "edge.routePrefix": "Route by prefix",
+  "edge.presentAction": "Present action",
+
+  "sim.uriRoutingWalkthrough.name": "URI Routing Walkthrough",
+  "sim.uriRoutingWalkthrough.desc": "Follow a request from an ethereum: URI through a wallet's prefix routing to the matching use-case handler.",
+  "sim.uriRoutingWalkthrough.param.prefix": "Use-case prefix",
+  "sim.uriRoutingWalkthrough.param.target": "Target address",
+  "sim.uriRoutingWalkthrough.step.compose": "A dapp or payee composes a request, choosing the use-case prefix and the payload data it needs to convey.",
+  "sim.uriRoutingWalkthrough.step.compose.mobile": "Compose request",
+  "sim.uriRoutingWalkthrough.step.encode": "The request is encoded into an ethereum: URI as scheme, optional prefix, and payload, ready to embed in a QR code or link.",
+  "sim.uriRoutingWalkthrough.step.encode.mobile": "Encode URI",
+  "sim.uriRoutingWalkthrough.step.open": "The user scans or opens the link; their wallet recognizes the ethereum: scheme and reads the prefix and payload.",
+  "sim.uriRoutingWalkthrough.step.open.mobile": "Open the link",
+  "sim.uriRoutingWalkthrough.step.route": "The wallet routes on the pay- prefix to the EIP-681 handler, which parses the payload and presents the resulting action for the user to confirm.",
+  "sim.uriRoutingWalkthrough.step.route.mobile": "Route by prefix"
+}

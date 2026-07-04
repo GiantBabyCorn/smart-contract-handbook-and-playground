@@ -1,0 +1,32 @@
+{
+  "short": "账户抽象验证范围规则",
+  "introduction": "ERC-7562 定义了打包者在将账户抽象 UserOperation 纳入共享内存池之前，于链下应用的验证范围规则。它由 Yoav Weiss、Dror Tirosh、Alex Forshtat 与 Shahaf Nacson 于 2023 年 9 月提出。这些规则限制了一个验证帧可以运行哪些 opcode、可以访问哪些存储槽，从而使互不相关的操作无法低成本地使彼此失效。注意：ERC-7562 目前为 Draft（草案），规范仍在积极开发中，可能发生重大变更。",
+  "designPurpose": "ERC-7562 的设计目标，是让账户抽象内存池具备与普通 EOA 内存池同等的抗拒绝服务能力。由于验证会在可变存储上运行任意 EVM 代码，若不加约束，互不相关的 UserOperation 可能会大批量地使彼此失效。这些规则为每个验证帧建立沙箱：屏蔽 TIMESTAMP、NUMBER 等环境类 opcode，将存储访问限定在与账户关联的存储槽内，并要求全局共享的实体缴纳质押金，以便对行为不端者进行限流。",
+  "commonUsage": "这些规则由运营账户抽象内存池的打包者与区块构建者实现，主要面向 ERC-4337 UserOperation 与 RIP-7560 原生账户抽象。打包者会追踪每个 UserOperation 的验证阶段，并在传播之前拒绝任何违反 opcode、存储或信誉规则的操作。质押模型也影响着 paymaster、factory 与 aggregator 合约的编写方式，因为只有已质押的实体才能访问账户自身存储槽以外的存储。",
+
+  "node.sender": "操作发送方",
+  "node.contract": "打包者验证",
+  "node.storageAssociated": "关联存储",
+  "node.storageReputation": "信誉计数器",
+  "node.mempool": "规范内存池",
+  "node.peer": "对等打包者",
+
+  "edge.submitOp": "提交 UserOperation",
+  "edge.checkStorage": "检查存储范围",
+  "edge.updateReputation": "更新信誉",
+  "edge.acceptOp": "纳入内存池",
+  "edge.propagate": "传播给对等节点",
+
+  "sim.validateOpWalkthrough.name": "验证 UserOperation",
+  "sim.validateOpWalkthrough.desc": "跟踪一个 UserOperation，从提交开始，历经 opcode 与存储范围规则以及信誉检查，最终进入共享内存池。",
+  "sim.validateOpWalkthrough.param.entity": "实体类型",
+  "sim.validateOpWalkthrough.param.staked": "实体已质押",
+  "sim.validateOpWalkthrough.step.submit": "发送方向打包者提交一个 UserOperation，打包者在将其加入内存池之前，开始追踪其验证阶段。",
+  "sim.validateOpWalkthrough.step.submit.mobile": "提交 UserOperation",
+  "sim.validateOpWalkthrough.step.trace": "打包者执行 opcode 规则，并检查验证帧仅访问该账户自身的存储，或与其地址关联的存储槽。",
+  "sim.validateOpWalkthrough.step.trace.mobile": "检查范围规则",
+  "sim.validateOpWalkthrough.step.reputation": "打包者递增该实体的 opsSeen 计数器，并评估其纳入率，以判定该实体处于正常（OK）、限流（throttled）还是封禁（banned）状态。",
+  "sim.validateOpWalkthrough.step.reputation.mobile": "更新信誉",
+  "sim.validateOpWalkthrough.step.accept": "通过所有规则后，该 UserOperation 被纳入规范内存池，并通过 P2P 网络传播给对等打包者。",
+  "sim.validateOpWalkthrough.step.accept.mobile": "纳入并传播"
+}

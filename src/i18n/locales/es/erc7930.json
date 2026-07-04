@@ -1,0 +1,32 @@
+{
+  "short": "Formato de Dirección Interoperable Específico de Cadena",
+  "introduction": "ERC-7930 define un formato binario compacto que codifica una dirección de destino junto con la cadena a la que pertenece, produciendo una única Dirección Interoperable canónica. Fue propuesto por Teddy, Joxes, Nick Johnson y otros en febrero de 2025. El formato es un sobre versionado y con prefijo de longitud que transporta una versión, un tipo y una referencia de cadena, y la dirección; el estándar complementario CAIP-350 define cómo cada espacio de nombres los serializa. Nota: ERC-7930 está en estado Review; la interfaz aún puede cambiar antes de que se finalice.",
+  "designPurpose": "ERC-7930 se diseñó para poner fin a las formas improvisadas en que los protocolos combinan una dirección con su cadena. El formato de dirección de Ethereum, ERC-55, no lleva información de cadena, por lo que cada protocolo cross-chain inventó sus propios campos y convenciones, fragmentando las herramientas y añadiendo riesgo. Al vincular la identificación de la cadena y la dirección en bruto en una única carga útil binaria canónica, lo bastante compacta para su uso on-chain y extensible más allá de las cadenas EVM mediante los perfiles CAIP-350, el estándar ofrece a los sistemas de interoperabilidad un formato compartido.",
+  "commonUsage": "Las Direcciones Interoperables tienen como objetivo contratos inteligentes que deben referenciar una cuenta en otra cadena, como el paso de mensajes cross-chain y los sistemas de intención. Una dirección de longitud cero convierte la carga útil en un Identificador de Cadena que nombra únicamente una cadena, mientras que una referencia de cadena de longitud cero denota una dirección en cualquier cadena compatible. Dado que la forma binaria no está pensada para su visualización, ERC-7828 superpone un Nombre Interoperable legible por humanos, y quienes lo implementan y muestran el valor en bruto lo representan como una cadena hexadecimal en minúsculas.",
+
+  "node.user": "Origen de la Dirección",
+  "node.caip350": "Perfil CAIP-350",
+  "node.encoder": "Codificador de Dirección Interoperable",
+  "node.storageEnvelope": "Campos del Sobre",
+  "node.storageResult": "Dirección Interoperable",
+  "node.consumer": "Protocolo Cross-Chain",
+
+  "edge.submitTarget": "Enviar dirección y cadena",
+  "edge.provideRules": "Proporcionar reglas de serialización",
+  "edge.assembleFields": "Ensamblar campos",
+  "edge.concatenate": "Concatenar en la carga útil",
+  "edge.deliverAddress": "Entregar dirección interoperable",
+
+  "sim.encodeAddressWalkthrough.name": "Codificar una Dirección Interoperable",
+  "sim.encodeAddressWalkthrough.desc": "Sigue una dirección de destino y una cadena mientras el codificador serializa cada campo según CAIP-350 y los concatena en una única carga útil binaria.",
+  "sim.encodeAddressWalkthrough.param.address": "Dirección de destino",
+  "sim.encodeAddressWalkthrough.param.chain": "Cadena de destino",
+  "sim.encodeAddressWalkthrough.step.submit": "Una aplicación envía una dirección de destino y la cadena a la que pertenece para codificarla en una Dirección Interoperable.",
+  "sim.encodeAddressWalkthrough.step.submit.mobile": "Enviar dirección y cadena",
+  "sim.encodeAddressWalkthrough.step.serialize": "El codificador lee el perfil CAIP-350 correspondiente al espacio de nombres de la cadena y rellena la versión, el tipo de cadena y los campos de referencia de cadena y dirección con prefijo de longitud.",
+  "sim.encodeAddressWalkthrough.step.serialize.mobile": "Serializar campos",
+  "sim.encodeAddressWalkthrough.step.concatenate": "Los seis campos se concatenan en una única carga útil binaria con prefijo de longitud, aquí la codificación de 27 bytes de la dirección de la red principal de Ethereum.",
+  "sim.encodeAddressWalkthrough.step.concatenate.mobile": "Concatenar carga útil",
+  "sim.encodeAddressWalkthrough.step.deliver": "La Dirección Interoperable resultante se entrega a un protocolo cross-chain, que puede almacenarla o transmitirla como una única referencia sin ambigüedad.",
+  "sim.encodeAddressWalkthrough.step.deliver.mobile": "Entregar al protocolo"
+}

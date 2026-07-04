@@ -1,0 +1,81 @@
+{
+  "short": "Estándar de Token Desembolsable",
+  "introduction": "ERC-2021 define una extensión del estándar de tokens ERC-20 que permite a un propietario de billetera solicitar un desembolso desde su saldo mediante una cadena de instrucciones de pago. Fue propuesto por Fernando Paris, Julio Faura y Daniel Lehrner en mayo de 2019. La orden coloca el importe en una retención ERC-1996, que el operador ejecuta más tarde, quemando los tokens una vez que el pago fuera de cadena se liquida. Nota: ERC-2021 está Stagnant (estancado): ha estado inactivo durante más de 6 meses y puede que nunca se finalice, pero conserva relevancia histórica o técnica.",
+  "designPurpose": "ERC-2021 se diseñó para llevar a la cadena el paso de desembolso del ciclo de vida de un token, ya que antes los desembolsos de tokens requerían una transacción centralizada aparte para fijar el destino antes de quemar los tokens. Al permitir que el propietario de la billetera envíe la orden a través del libro mayor, el estándar registra en la cadena el estado de cada desembolso, mientras que los detalles de enrutamiento viajan en una cadena de instrucciones que se aconseja a los implementadores mantener fuera de la cadena o cifrada. El importe permanece en una retención ERC-1996, inutilizable hasta que el operador lo liquide.",
+  "commonUsage": "Los tokens desembolsables están dirigidos a entornos regulados e institucionales donde canjear tokens por dinero fuera de cadena debe ser auditable: un titular de cuenta ordena un desembolso, y el emisor o su agente lo cumple ejecutando la retención subyacente y quemando los tokens, o lo rechaza. La interfaz también define la autorización de operadores, permitiendo que un ordenante aprobado envíe solicitudes en nombre de un propietario de billetera, y una consulta retrievePayoutData que expone el importe, las instrucciones y el código de estado actual de cada solicitud.",
+
+  "fn.orderPayout.desc": "Crea una solicitud de desembolso para la propia billetera del llamante, colocando el valor solicitado en retención e iniciando el flujo de trabajo del operador. Revierte si el operationId ya se ha utilizado.",
+  "fn.orderPayout.params.operationId": "El ID único que identifica la solicitud de desembolso.",
+  "fn.orderPayout.params.value": "La cantidad de tokens que se desembolsará.",
+  "fn.orderPayout.params.instructions": "Una cadena que contiene las instrucciones de pago que el operador usa para enrutar los fondos.",
+  "fn.orderPayout.returns.success": "True cuando la solicitud de desembolso se creó correctamente.",
+
+  "fn.orderPayoutFrom.desc": "Crea una solicitud de desembolso en nombre de otro propietario de billetera, que debe haber autorizado previamente al llamante como operador de desembolsos. Revierte si el operationId ya se ha utilizado.",
+  "fn.orderPayoutFrom.params.operationId": "El ID único que identifica la solicitud de desembolso.",
+  "fn.orderPayoutFrom.params.walletToBePaidOut": "El propietario de la billetera en cuyo nombre se ordena el desembolso y cuyos tokens se desembolsan.",
+  "fn.orderPayoutFrom.params.value": "La cantidad de tokens que se desembolsará.",
+  "fn.orderPayoutFrom.params.instructions": "Una cadena que contiene las instrucciones de pago que el operador usa para enrutar los fondos.",
+  "fn.orderPayoutFrom.returns.success": "True cuando la solicitud de desembolso se creó correctamente.",
+
+  "fn.cancelPayout.desc": "Cancela una solicitud de desembolso que aún está en el estado Ordered y libera la retención. Solo el propietario de la billetera o el ordenante pueden cancelar, y únicamente antes de que el operador marque la solicitud como InProcess.",
+  "fn.cancelPayout.params.operationId": "El ID único de la solicitud de desembolso que se cancelará.",
+  "fn.cancelPayout.returns.success": "True cuando la solicitud de desembolso se canceló correctamente.",
+
+  "fn.processPayout.desc": "Marca una solicitud de desembolso como InProcess. Una vez en proceso, el ordenante ya no puede cancelar la solicitud.",
+  "fn.processPayout.params.operationId": "El ID único de la solicitud de desembolso que se marcará como en proceso.",
+  "fn.processPayout.returns.success": "True cuando la solicitud de desembolso se puso en proceso correctamente.",
+
+  "fn.putFundsInSuspenseInPayout.desc": "Ejecuta la retención subyacente y mueve los tokens a una billetera transitoria (suspense wallet), colocando el desembolso en el estado FundsInSuspense. Solo puede hacerse mientras la solicitud está InProcess.",
+  "fn.putFundsInSuspenseInPayout.params.operationId": "El ID único de la solicitud de desembolso que se pondrá en estado transitorio.",
+  "fn.putFundsInSuspenseInPayout.returns.success": "True cuando los fondos se pusieron en estado transitorio correctamente.",
+
+  "fn.executePayout.desc": "Quema los tokens retenidos y marca la solicitud de desembolso como Executed, completándola una vez que se ha realizado el pago fuera de cadena correspondiente.",
+  "fn.executePayout.params.operationId": "El ID único de la solicitud de desembolso que se ejecutará.",
+  "fn.executePayout.returns.success": "True cuando el desembolso se ejecutó correctamente.",
+
+  "fn.rejectPayout.desc": "Rechaza una solicitud de desembolso, liberando la retención de vuelta al propietario de la billetera y registrando un motivo. Puede llamarse antes o después de que la solicitud se marque como InProcess.",
+  "fn.rejectPayout.params.operationId": "El ID único de la solicitud de desembolso que se rechazará.",
+  "fn.rejectPayout.params.reason": "El motivo por el que se rechazó el desembolso; pueden usarse los códigos de estado ERC-1066.",
+  "fn.rejectPayout.returns.success": "True cuando el desembolso se rechazó correctamente.",
+
+  "fn.retrievePayoutData.desc": "Devuelve los datos almacenados de una solicitud de desembolso, incluida la billetera debitada, el importe, las instrucciones y el estado actual. Solo el operador, el propietario de la billetera o el ordenante pueden leerlos.",
+  "fn.retrievePayoutData.params.operationId": "El ID único de la solicitud de desembolso que se consultará.",
+  "fn.retrievePayoutData.returns.walletToDebit": "La billetera cuyo saldo se desembolsa.",
+  "fn.retrievePayoutData.returns.value": "La cantidad de tokens que se desembolsará.",
+  "fn.retrievePayoutData.returns.instructions": "La cadena de instrucciones de pago proporcionada con la solicitud.",
+  "fn.retrievePayoutData.returns.status": "El código de estado actual de la solicitud de desembolso.",
+
+  "fn.PayoutOrdered.desc": "Se emite cuando un propietario de billetera u ordenante crea una solicitud de desembolso, registrando su ordenante, billetera, importe e instrucciones.",
+  "fn.PayoutOrdered.params.orderer": "La dirección que ordenó el desembolso.",
+  "fn.PayoutOrdered.params.operationId": "El ID único que identifica la solicitud de desembolso.",
+  "fn.PayoutOrdered.params.walletToDebit": "La billetera para la que se solicita el desembolso.",
+  "fn.PayoutOrdered.params.value": "El importe que se desembolsará.",
+  "fn.PayoutOrdered.params.instructions": "La cadena de instrucciones de pago proporcionada con la solicitud.",
+
+  "fn.PayoutExecuted.desc": "Se emite cuando el operador ejecuta una solicitud de desembolso, quemando los tokens retenidos después de que se liquida el pago fuera de cadena.",
+  "fn.PayoutExecuted.params.orderer": "La dirección que ordenó el desembolso.",
+  "fn.PayoutExecuted.params.operationId": "El ID único que identifica la solicitud de desembolso.",
+
+  "node.user": "Propietario de la billetera",
+  "node.operator": "Operador de tokens",
+  "node.contract": "Token ERC-2021",
+  "node.storagePayouts": "Desembolsos y saldos retenidos",
+
+  "edge.callOrderPayout": "Llamar a orderPayout()",
+  "edge.callExecutePayout": "Llamar a executePayout()",
+  "edge.updatePayouts": "Registrar desembolso y retener fondos",
+  "edge.emitPayoutExecuted": "Emitir evento PayoutExecuted",
+
+  "sim.orderPayoutWalkthrough.name": "Recorrido de orden y ejecución de desembolso",
+  "sim.orderPayoutWalkthrough.desc": "Sigue un desembolso desde la orden de un propietario de billetera, pasando por la retención ERC-1996, hasta que el operador lo ejecuta y quema los tokens.",
+  "sim.orderPayoutWalkthrough.param.value": "Importe del desembolso (en wei)",
+  "sim.orderPayoutWalkthrough.param.instructions": "Instrucciones de pago",
+  "sim.orderPayoutWalkthrough.step.order": "El propietario de la billetera llama a orderPayout(operationId, value, instructions) para solicitar un desembolso desde su saldo.",
+  "sim.orderPayoutWalkthrough.step.order.mobile": "Llamar a orderPayout()",
+  "sim.orderPayoutWalkthrough.step.hold": "El contrato registra la solicitud en el estado Ordered y coloca el valor en una retención ERC-1996, de modo que ya no puede gastarse.",
+  "sim.orderPayoutWalkthrough.step.hold.mobile": "Retener los fondos",
+  "sim.orderPayoutWalkthrough.step.execute": "El operador de tokens procesa la solicitud, ejecuta la retención y quema los tokens retenidos, pasando el desembolso al estado Executed.",
+  "sim.orderPayoutWalkthrough.step.execute.mobile": "El operador ejecuta el desembolso",
+  "sim.orderPayoutWalkthrough.step.event": "El contrato emite PayoutExecuted para que los indexadores puedan registrar que el desembolso se ha liquidado.",
+  "sim.orderPayoutWalkthrough.step.event.mobile": "Emitir evento PayoutExecuted"
+}

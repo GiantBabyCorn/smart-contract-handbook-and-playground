@@ -1,0 +1,41 @@
+{
+  "short": "합의 기반 소울바운드 토큰 표준",
+  "introduction": "ERC-5484는 ERC-721을 확장하여 합의 기반 소울바운드 토큰(SBT), 즉 발행 전에 양 당사자가 소각 권한에 합의하는 전송 불가능한 NFT를 만들기 위한 인터페이스를 정의합니다. 2022년 8월 Buzz Cai가 제안했습니다. 발행 전에 발행자와 수신자는 소각 권한(IssuerOnly, OwnerOnly, Both 또는 Neither)에 합의하며, 이는 이후 변경할 수 없습니다. 컨트랙트는 ERC-721 Transfer 이벤트와 함께 Issued 이벤트를 발생시키고, SBT를 일반 NFT와 구분하는 burnAuth 조회를 제공합니다.",
+  "designPurpose": "ERC-5484는 지갑, 익스플로러, 서비스가 소울바운드 토큰을 일관되게 처리할 수 있도록 공통 인터페이스를 제공하기 위해 설계되었습니다. 초기 소울바운드 구현은 ERC-721을 확장했지만 모든 전송에서 단순히 revert할 뿐, 전송 불가능성을 감지하거나 누가 토큰을 소각할 수 있는지 알 수 있는 표준적인 방법이 없었습니다. ERC-5484는 발행 시 토큰별 소각 권한을 고정하고, 사전에 수신자의 동의를 요구하며, burnAuth getter와 Issued 이벤트를 추가하여 제3자가 ERC-165 감지를 통해 이를 식별할 수 있도록 합니다.",
+  "commonUsage": "합의 기반 소울바운드 토큰은 자격 증명, 멤버십, 인증, 신용 기록 등 토큰이 자유롭게 거래되기보다 하나의 주소에 묶여 있어야 하는 경우를 위한 것입니다. 소각 권한은 사용 사례별로 선택합니다. IssuerOnly는 취소 가능한 대출 기록에, OwnerOnly는 보유자가 폐기할 수 있는 멤버십에, Both는 자격 증명에, Neither는 영구적인 신용 이력에 적합합니다. SBT는 여전히 ERC-721 토큰이므로 기존 NFT 도구는 전송 전에 인터페이스를 확인하면서 이를 표시할 수 있습니다.",
+
+  "fn.burnAuth.desc": "토큰의 소각 권한을 반환하며, 어떤 당사자가 이를 소각할 수 있는지(IssuerOnly, OwnerOnly, Both 또는 Neither)를 나타냅니다. 할당되지 않은 token ID에 대한 조회는 revert합니다.",
+  "fn.burnAuth.params.tokenId": "조회할 토큰의 식별자.",
+  "fn.burnAuth.returns.burnAuth": "발행 시 토큰에 대해 고정된 불변의 소각 권한.",
+
+  "fn.Issued.desc": "소울바운드 토큰이 발행될 때 ERC-721 Transfer 이벤트에 더해 발생하여, 제3자가 SBT 발행을 일반 NFT 전송과 구분할 수 있도록 합니다.",
+  "fn.Issued.params.from": "토큰의 발행자.",
+  "fn.Issued.params.to": "토큰의 수신자.",
+  "fn.Issued.params.tokenId": "발행된 토큰의 식별자.",
+  "fn.Issued.params.burnAuth": "이 토큰에 대해 합의된 소각 권한으로, 발행 시 고정됩니다.",
+
+  "node.issuer": "발행자",
+  "node.contract": "소울바운드 토큰 컨트랙트",
+  "node.storageBurnAuth": "소각 권한 스토리지",
+  "node.receiver": "수신자",
+
+  "edge.issue": "소울바운드 토큰 발행",
+  "edge.storeBurnAuth": "소각 권한 저장",
+  "edge.mintToken": "수신자에게 토큰 발행",
+  "edge.emitIssued": "Issued 이벤트 발생",
+  "edge.queryBurnAuth": "burnAuth() 호출",
+
+  "sim.issueTokenWalkthrough.name": "소울바운드 토큰 발행",
+  "sim.issueTokenWalkthrough.desc": "발행자에서 시작하여 스토리지와 Issued 이벤트를 거쳐 burnAuth 조회에 이르기까지, 합의 기반 소울바운드 토큰의 발행 과정을 따라갑니다.",
+  "sim.issueTokenWalkthrough.param.to": "수신자 주소",
+  "sim.issueTokenWalkthrough.param.tokenId": "토큰 ID",
+  "sim.issueTokenWalkthrough.param.burnAuth": "소각 권한",
+  "sim.issueTokenWalkthrough.step.issue": "발행자는 선택된 소각 권한에 이미 동의한 수신자에게 소울바운드 토큰을 발행합니다.",
+  "sim.issueTokenWalkthrough.step.issue.mobile": "토큰 발행",
+  "sim.issueTokenWalkthrough.step.store": "컨트랙트는 토큰의 불변 소각 권한을 기록하고 소유권을 수신자에게 할당합니다.",
+  "sim.issueTokenWalkthrough.step.store.mobile": "소각 권한 저장",
+  "sim.issueTokenWalkthrough.step.event": "컨트랙트는 SBT 발행을 표시하기 위해 ERC-721 Transfer 이벤트와 함께 Issued(from, to, tokenId, burnAuth)를 발생시킵니다.",
+  "sim.issueTokenWalkthrough.step.event.mobile": "Issued 이벤트 발생",
+  "sim.issueTokenWalkthrough.step.query": "제3자는 조치를 취하기 전에 burnAuth(tokenId)를 호출하여 어떤 당사자가 토큰을 소각하도록 허용되는지 읽습니다.",
+  "sim.issueTokenWalkthrough.step.query.mobile": "burnAuth() 조회"
+}

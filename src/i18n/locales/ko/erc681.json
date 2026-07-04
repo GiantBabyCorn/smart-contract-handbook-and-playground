@@ -1,0 +1,32 @@
+{
+  "short": "트랜잭션 요청을 위한 URL 형식",
+  "introduction": "ERC-681은 이더리움 트랜잭션 요청, 특히 ether 및 ERC-20 토큰 결제 요청을 인코딩하는 URL 형식을 정의하여 QR 코드, 하이퍼링크, 이메일 또는 채팅 메시지에 삽입할 수 있게 합니다. 이 표준은 2017년 8월 Daniel A. Nagy에 의해 제안되었습니다. 요청은 ethereum: 스킴 뒤에 대상 주소, 선택적 체인 ID, 선택적 함수 이름, 그리고 value, gas, ABI로 타입이 지정된 인수와 같은 쿼리 매개변수를 사용합니다. URL을 열면 사용자의 지갑이 미리 채워진 트랜잭션과 함께 실행되어 확인을 요청합니다.",
+  "designPurpose": "ERC-681은 Bitcoin 스타일 결제 URL의 편리함을 이더리움에 도입하기 위해 설계되었습니다. 그 이전에는 완전히 매개변수화된 트랜잭션을 지갑에 전달하는 표준적인 방법이 없었기 때문에, 발신자는 주소와 금액을 손으로 복사해야 했고 이는 오류와 피싱을 유발했습니다. 대상 주소, 선택적 체인 ID, 함수 이름, 타입이 지정된 매개변수를 포함하는 ethereum: URL을 표준화함으로써, ERC-681은 모든 채널이 지갑에서 파싱하여 확인을 위해 제시할 수 있는 요청을 전달할 수 있게 하며, 동시에 모든 금액을 사용자가 편집할 수 있도록 남겨둡니다.",
+  "commonUsage": "결제 요청 URL은 특정 주소와 금액에 대한 ethereum: 링크 또는 QR 코드를 렌더링하는 지갑, POS 시스템, 기부 페이지에서 사용됩니다. 네이티브 토큰 형식은 value 매개변수를 통해 ether를 요청하고, 토큰 형식은 address 및 uint256 인수를 사용하여 ERC-20 컨트랙트의 transfer 함수를 대상으로 합니다. ERC-137을 통해 해석되는 ENS 이름은 16진수 주소를 대신할 수 있지만, 클라이언트는 피싱 위험을 줄이기 위해 원시 0x 주소를 우선합니다.",
+
+  "node.payee": "결제 요청자",
+  "node.urlBuilder": "URL 인코더",
+  "node.paymentUrl": "이더리움 결제 URL",
+  "node.wallet": "결제자 지갑",
+  "node.payer": "결제자",
+  "node.transaction": "서명된 트랜잭션",
+
+  "edge.buildRequest": "결제 요청 구성",
+  "edge.encodeUrl": "ethereum: URL 인코딩",
+  "edge.scanUrl": "링크 스캔 또는 열기",
+  "edge.confirm": "확인 및 서명",
+  "edge.buildTx": "트랜잭션 구성",
+
+  "sim.paymentRequestWalkthrough.name": "결제 요청 둘러보기",
+  "sim.paymentRequestWalkthrough.desc": "ethereum: URL에서 결제자의 지갑을 거쳐 서명된 트랜잭션에 이르기까지 결제 요청을 따라갑니다.",
+  "sim.paymentRequestWalkthrough.param.targetAddress": "수취인 주소",
+  "sim.paymentRequestWalkthrough.param.value": "wei 단위 금액",
+  "sim.paymentRequestWalkthrough.step.build": "결제 요청자가 수취인 주소와 결제를 요청할 금액을 선택합니다.",
+  "sim.paymentRequestWalkthrough.step.build.mobile": "요청 구성",
+  "sim.paymentRequestWalkthrough.step.encode": "주소, 체인 ID, value가 ethereum: URL로 인코딩되어 QR 코드 또는 하이퍼링크로 표시될 수 있습니다.",
+  "sim.paymentRequestWalkthrough.step.encode.mobile": "URL 인코딩",
+  "sim.paymentRequestWalkthrough.step.scan": "결제자가 링크를 스캔하거나 열면, 지갑이 URL을 파싱하여 미리 채워지고 편집 가능한 트랜잭션을 확인을 위해 제시합니다.",
+  "sim.paymentRequestWalkthrough.step.scan.mobile": "스캔 및 확인",
+  "sim.paymentRequestWalkthrough.step.send": "결제자가 확인하면, 지갑이 트랜잭션에 서명하고 브로드캐스트하여 요청된 value를 대상 주소로 전송합니다.",
+  "sim.paymentRequestWalkthrough.step.send.mobile": "서명 및 전송"
+}

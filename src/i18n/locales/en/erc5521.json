@@ -1,0 +1,64 @@
+{
+  "short": "Referable NFT Relationship Extension",
+  "introduction": "ERC-5521 is an extension of ERC-721 that lets non-fungible tokens record reference relationships to other NFTs. It was proposed by Saber Yu and co-authors in August 2022. The standard adds a referring list pointing to the NFTs a token cites and a referred list of the NFTs that cite it, together with a block-level createdTimestamp. Because a reference must point to an earlier token, the relationships form a directed acyclic graph that wallets and indexers can query, trace, and analyze.",
+  "designPurpose": "ERC-5521 was designed to connect NFTs that build on one another, which ERC-721 leaves as isolated, one-off tokens. Before it, an NFT carried no on-chain link to the works it derived from, so creators could not trace lineage or accrue value as pieces were reused. The standard records references on-chain as referring and referred lists and stamps each token with its creation time, so any contract can reconstruct the citation graph. Requiring references to point only to earlier tokens keeps the graph acyclic.",
+  "commonUsage": "Referable NFTs are intended for settings where creative works build on earlier ones: an artist deriving a piece from a previous NFT, a musician remixing referenced tracks, or a citation graph where later tokens credit their sources. Because references can cross contracts through the TargetContract interface, a token can cite NFTs in other collections after checking ERC-165 support. The extension is added to an ERC-721 contract, and the referring and referred lists let marketplaces and explorers display provenance.",
+
+  "fn.setNode.desc": "Sets the referring list of an rNFT and updates the referred list of every NFT it points to, recording the relationships and stamping the token with the current block timestamp. Emits UpdateNode for each changed node.",
+  "fn.setNode.params.tokenId": "The rNFT whose references are being set.",
+  "fn.setNode.params.addresses": "The contract addresses holding the rNFTs being referred to.",
+  "fn.setNode.params.tokenIds": "For each address, the list of token IDs that this rNFT refers to.",
+
+  "fn.setNodeReferredExternal.desc": "Called on a target contract to add tokenId to the referred list of the given rNFTs, letting a reference span two contracts. Invoked only after the caller confirms the target supports the interface.",
+  "fn.setNodeReferredExternal.params._address": "The address of the contract making the external reference.",
+  "fn.setNodeReferredExternal.params.tokenId": "The referring rNFT that is added to each target's referred list.",
+  "fn.setNodeReferredExternal.params._tokenIds": "The token IDs on the target contract that are being referred to.",
+
+  "fn.referringOf.desc": "Returns the referring list of an rNFT: the contract addresses and, for each, the token IDs that this NFT points to. Supports cross-contract lookups when the address is not this contract.",
+  "fn.referringOf.params._address": "The contract address associated with the queried rNFT.",
+  "fn.referringOf.params.tokenId": "The rNFT whose referring list is requested.",
+  "fn.referringOf.returns.addresses": "The contract addresses of the referred NFTs.",
+  "fn.referringOf.returns.tokenIds": "For each address, the token IDs this rNFT refers to.",
+
+  "fn.referredOf.desc": "Returns the referred list of an rNFT: the contract addresses and token IDs of the NFTs that point to it. Supports cross-contract lookups when the address is not this contract.",
+  "fn.referredOf.params._address": "The contract address associated with the queried rNFT.",
+  "fn.referredOf.params.tokenId": "The rNFT whose referred list is requested.",
+  "fn.referredOf.returns.addresses": "The contract addresses of the referring NFTs.",
+  "fn.referredOf.returns.tokenIds": "For each address, the token IDs that refer to this rNFT.",
+
+  "fn.createdTimestampOf.desc": "Returns the block timestamp recorded when the rNFT was created, which the standard uses to order references so that a token can only refer to predecessors.",
+  "fn.createdTimestampOf.params._address": "The contract address associated with the queried rNFT.",
+  "fn.createdTimestampOf.params.tokenId": "The rNFT whose creation timestamp is requested.",
+  "fn.createdTimestampOf.returns.timestamp": "The block timestamp at which the rNFT was created.",
+
+  "fn.UpdateNode.desc": "Emitted whenever setNode changes a node, carrying the token, its owner, and its full referring and referred lists so indexers can track the reference graph.",
+  "fn.UpdateNode.params.tokenId": "The rNFT whose relationships changed.",
+  "fn.UpdateNode.params.owner": "The owner of the changed rNFT.",
+  "fn.UpdateNode.params._address_referringList": "The contract addresses in the token's referring list.",
+  "fn.UpdateNode.params._tokenIds_referringList": "The token IDs, per address, that the token refers to.",
+  "fn.UpdateNode.params._address_referredList": "The contract addresses in the token's referred list.",
+  "fn.UpdateNode.params._tokenIds_referredList": "The token IDs, per address, that refer to the token.",
+
+  "node.user": "rNFT Creator",
+  "node.contract": "ERC-5521 rNFT",
+  "node.storageRelationship": "Relationship Storage",
+  "node.targetContract": "Referenced rNFT Contract",
+
+  "edge.callSetNode": "Call setNode()",
+  "edge.updateRelationship": "Update relationships",
+  "edge.referExternal": "Refer external rNFTs",
+  "edge.emitUpdateNode": "Emit UpdateNode event",
+
+  "sim.setNodeWalkthrough.name": "Set Node Walkthrough",
+  "sim.setNodeWalkthrough.desc": "Follow a setNode call as a new rNFT records its referring list, updates the predecessors it references, and emits UpdateNode.",
+  "sim.setNodeWalkthrough.param.tokenId": "New rNFT ID",
+  "sim.setNodeWalkthrough.param.referredTokenId": "Referenced rNFT ID",
+  "sim.setNodeWalkthrough.step.call": "The creator calls setNode(tokenId, addresses, tokenIds) on the rNFT contract to reference one or more existing tokens.",
+  "sim.setNodeWalkthrough.step.call.mobile": "Call setNode()",
+  "sim.setNodeWalkthrough.step.referring": "The contract records the referring list for the new token and stamps it with the current block timestamp in relationship storage.",
+  "sim.setNodeWalkthrough.step.referring.mobile": "Record references",
+  "sim.setNodeWalkthrough.step.referred": "For each referenced token, the contract adds this token to its referred list, calling setNodeReferredExternal on other contracts when the reference crosses contracts.",
+  "sim.setNodeWalkthrough.step.referred.mobile": "Update referred lists",
+  "sim.setNodeWalkthrough.step.event": "The contract emits UpdateNode for each changed token so indexers can update the reference graph.",
+  "sim.setNodeWalkthrough.step.event.mobile": "Emit UpdateNode event"
+}

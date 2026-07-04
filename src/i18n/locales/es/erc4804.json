@@ -1,0 +1,32 @@
+{
+  "short": "Traducción de URL Web3 a Mensaje de Llamada EVM",
+  "introduction": "ERC-4804 define una traducción estándar de una URL web3:// de estilo HTTP a un mensaje de llamada EVM, de modo que los clientes puedan leer contenido on-chain mediante URL legibles por humanos en lugar de calldata en bruto. Fue propuesto por Qi Zhou, Chao Pi y Sam Wilson en febrero de 2022. La URL codifica un nombre o dirección de contrato, un id de cadena opcional, un método y argumentos; un resolvedor analiza estos campos, resuelve cualquier sufijo de servicio de nombres como .eth a una dirección y construye una llamada de solo lectura (view) cuyos datos devueltos se muestran como contenido web.",
+  "designPurpose": "ERC-4804 fue diseñado para eliminar los proxies de Web2 que normalmente se interponen entre los usuarios y los datos on-chain. Antes de él, leer el contenido de un contrato implicaba confiar en un sitio web dApp, un proveedor de nodos o un explorador de bloques para traducir una solicitud en una llamada EVM, todo fuera del control del usuario. Al fijar una gramática de URL y una convención de modo de resolución, ERC-4804 permite que cualquier cliente convierta una URL web3:// directamente en una llamada view, de modo que se puedan obtener HTML, SVG y otros recursos on-chain sin un intermediario de confianza.",
+  "commonUsage": "El esquema se utiliza para servir sitios web y medios completamente on-chain, donde una dirección o un nombre ENS más una ruta se asignan a un método de contrato que devuelve HTML, SVG o JSON. Los navegadores y las puertas de enlace que entienden web3:// resuelven el nombre, eligen el modo de resolución automático o manual y muestran el resultado como una página web ordinaria. Se combina de forma natural con ERC-5219, que formaliza la interfaz de contrato de solicitud-respuesta que implementan muchos recursos web3://.",
+
+  "node.browser": "Cliente Web3",
+  "node.resolver": "Resolvedor de URL Web3",
+  "node.url": "URL Web3 Analizada",
+  "node.nameService": "Servicio de Nombres (ENS)",
+  "node.callMessage": "Mensaje de Llamada EVM",
+  "node.target": "Contrato Objetivo",
+
+  "edge.submitUrl": "Enviar URL web3://",
+  "edge.parseUrl": "Analizar gramática de URL",
+  "edge.resolveName": "Resolver nombre de contrato",
+  "edge.buildMessage": "Construir mensaje EVM",
+  "edge.callTarget": "Enviar llamada view",
+  "edge.returnContent": "Devolver contenido",
+
+  "sim.resolveUrlWalkthrough.name": "Resolver una URL Web3",
+  "sim.resolveUrlWalkthrough.desc": "Muestra cómo un resolvedor analiza una URL web3://, resuelve el nombre, construye un mensaje de llamada EVM y devuelve el contenido renderizado.",
+  "sim.resolveUrlWalkthrough.param.url": "URL Web3",
+  "sim.resolveUrlWalkthrough.step.submit": "El cliente envía una URL web3:// a un resolvedor que entiende el esquema.",
+  "sim.resolveUrlWalkthrough.step.submit.mobile": "Enviar URL web3://",
+  "sim.resolveUrlWalkthrough.step.parse": "El resolvedor analiza la URL en su nombre de contrato, método y argumentos, y luego resuelve el nombre a una dirección a través del servicio de nombres.",
+  "sim.resolveUrlWalkthrough.step.parse.mobile": "Analizar y resolver nombre",
+  "sim.resolveUrlWalkthrough.step.build": "El resolvedor ensambla un mensaje de llamada EVM, estableciendo To en la dirección resuelta y Calldata en la llamada al método codificada en ABI.",
+  "sim.resolveUrlWalkthrough.step.build.mobile": "Construir mensaje de llamada",
+  "sim.resolveUrlWalkthrough.step.call": "La llamada de solo lectura (view) se ejecuta en el contrato objetivo, y los bytes devueltos se renderizan de vuelta en el cliente como contenido web.",
+  "sim.resolveUrlWalkthrough.step.call.mobile": "Llamar y renderizar"
+}

@@ -1,0 +1,85 @@
+{
+  "short": "Estándar de Token Compensable",
+  "introduction": "ERC-2018 define una extensión de ERC-20 para transferencias compensables, en las que una transferencia se ordena primero y luego un agente de compensación la ejecuta o la rechaza, en lugar de liquidarse de inmediato. Fue propuesto por Julio Faura, Fernando Paris y Daniel Lehrner en abril de 2019. Ordenar reserva los tokens del pagador sin deducirlos, de modo que el agente puede realizar comprobaciones fuera de la cadena antes de ejecutarla o rechazarla. Nota: ERC-2018 está en estado Stagnant (estancado): ha estado inactivo durante más de 6 meses y puede que nunca se finalice, pero conserva importancia histórica o técnica.",
+  "designPurpose": "ERC-2018 se diseñó para tokens regulados cuyas transferencias no siempre pueden completarse en un único paso en la cadena. Las reglas de cumplimiento como KYC y AML pueden necesitar ejecutarse fuera de la cadena, por lo que una transferencia debe aprobarse antes de liquidarse, pero una transferencia ERC-20 corriente es atómica y no tiene ese estado intermedio. Al separar la orden de la liquidación y entregar la decisión a un agente de compensación, ERC-2018 permite que el agente ejecute una transferencia conforme o rechace una que no lo sea, mientras el importe ordenado permanece reservado para que la ejecución posterior tenga éxito.",
+  "commonUsage": "Los tokens compensables se orientan a la liquidación financiera regulada, donde un pago debe superar una revisión de cumplimiento antes de que el valor se mueva. Una transferencia ordenada espera a través de un estado Ordered y un estado InProcess opcional hasta que un agente de compensación la ejecuta, moviendo los tokens, o la rechaza con un motivo y libera el saldo reservado. El estándar reutiliza la convención de nomenclatura de operadores de ERC-777, de modo que un operador autorizado puede ordenar transferencias en nombre de una cuenta, y se apoya en los holds de ERC-1996 para que un importe reservado no pueda gastarse antes de que el agente decida.",
+
+  "fn.orderTransfer.desc": "Ordena una transferencia compensable del llamador al beneficiario, reservando el importe hasta que un agente de compensación la ejecute o la rechace. Revierte si el operationId ya se ha utilizado.",
+  "fn.orderTransfer.params.operationId": "El ID único que identifica la transferencia compensable.",
+  "fn.orderTransfer.params.to": "La dirección del beneficiario que recibe los tokens si la transferencia se ejecuta.",
+  "fn.orderTransfer.params.value": "El importe a transferir; no debe superar el saldo del pagador.",
+  "fn.orderTransfer.returns.success": "true cuando la transferencia compensable se ordenó correctamente.",
+
+  "fn.orderTransferFrom.desc": "Ordena una transferencia compensable en nombre del pagador a favor del beneficiario. El llamador debe ser un operador autorizado del pagador. Revierte si el operationId ya se ha utilizado.",
+  "fn.orderTransferFrom.params.operationId": "El ID único que identifica la transferencia compensable.",
+  "fn.orderTransferFrom.params.from": "La dirección del pagador cuyos tokens se reservan y se toman si la transferencia se ejecuta.",
+  "fn.orderTransferFrom.params.to": "La dirección del beneficiario que recibe los tokens si la transferencia se ejecuta.",
+  "fn.orderTransferFrom.params.value": "El importe a transferir; no debe superar el saldo del pagador.",
+  "fn.orderTransferFrom.returns.success": "true cuando la transferencia compensable se ordenó correctamente.",
+
+  "fn.cancelTransfer.desc": "Cancela una transferencia compensable ordenada. Solo el ordenante puede cancelar su propia orden, y únicamente antes de que el agente de compensación la haya movido al estado InProcess.",
+  "fn.cancelTransfer.params.operationId": "El ID único que identifica la transferencia compensable.",
+  "fn.cancelTransfer.returns.success": "true cuando la transferencia compensable se canceló correctamente.",
+
+  "fn.processClearableTransfer.desc": "Mueve una transferencia ordenada al estado InProcess, indicando que la revisión está en curso e impidiendo que el ordenante la cancele. Solo un agente de compensación puede llamarla con éxito.",
+  "fn.processClearableTransfer.params.operationId": "El ID único que identifica la transferencia compensable.",
+  "fn.processClearableTransfer.returns.success": "true cuando la transferencia entró en el estado InProcess.",
+
+  "fn.executeClearableTransfer.desc": "Ejecuta una transferencia compensable, moviendo los tokens reservados del pagador al beneficiario. Solo un agente de compensación puede llamarla con éxito.",
+  "fn.executeClearableTransfer.params.operationId": "El ID único que identifica la transferencia compensable.",
+  "fn.executeClearableTransfer.returns.success": "true cuando la transferencia compensable se ejecutó correctamente.",
+
+  "fn.rejectClearableTransfer.desc": "Rechaza una transferencia compensable, liberando los tokens reservados de vuelta al pagador sin ningún movimiento. Solo un agente de compensación puede llamarla, y registra un motivo para el rechazo.",
+  "fn.rejectClearableTransfer.params.operationId": "El ID único que identifica la transferencia compensable.",
+  "fn.rejectClearableTransfer.params.reason": "Un motivo legible por humanos que da el agente de compensación para rechazar la transferencia.",
+  "fn.rejectClearableTransfer.returns.success": "true cuando la transferencia compensable se rechazó correctamente.",
+
+  "fn.retrieveClearableTransferData.desc": "Devuelve toda la información almacenada de una transferencia compensable, incluidos su pagador, beneficiario, importe y código de estado actual.",
+  "fn.retrieveClearableTransferData.params.operationId": "El ID único que identifica la transferencia compensable.",
+  "fn.retrieveClearableTransferData.returns.from": "La dirección del pagador de la transferencia compensable.",
+  "fn.retrieveClearableTransferData.returns.to": "La dirección del beneficiario de la transferencia compensable.",
+  "fn.retrieveClearableTransferData.returns.value": "El importe que se transferirá si la orden se ejecuta.",
+  "fn.retrieveClearableTransferData.returns.status": "El código de estado actual de la transferencia compensable.",
+
+  "fn.ClearableTransferOrdered.desc": "Se emite cuando se ordena una transferencia compensable, registrando su ordenante, pagador, beneficiario e importe.",
+  "fn.ClearableTransferOrdered.params.orderer": "La cuenta que ordenó la transferencia compensable.",
+  "fn.ClearableTransferOrdered.params.operationId": "El ID único que identifica la transferencia compensable.",
+  "fn.ClearableTransferOrdered.params.from": "El pagador cuyos tokens se reservan.",
+  "fn.ClearableTransferOrdered.params.to": "El beneficiario que recibe los tokens si se ejecuta.",
+  "fn.ClearableTransferOrdered.params.value": "El importe que se transferirá si se ejecuta.",
+
+  "fn.ClearableTransferExecuted.desc": "Se emite cuando un agente de compensación ejecuta una transferencia compensable y los tokens se mueven al beneficiario.",
+  "fn.ClearableTransferExecuted.params.orderer": "La cuenta que ordenó la transferencia compensable.",
+  "fn.ClearableTransferExecuted.params.operationId": "El ID único que identifica la transferencia compensable.",
+
+  "fn.ClearableTransferRejected.desc": "Se emite cuando un agente de compensación rechaza una transferencia compensable, llevando el motivo del rechazo.",
+  "fn.ClearableTransferRejected.params.orderer": "La cuenta que ordenó la transferencia compensable.",
+  "fn.ClearableTransferRejected.params.operationId": "El ID único que identifica la transferencia compensable.",
+  "fn.ClearableTransferRejected.params.reason": "El motivo que da el agente de compensación para el rechazo.",
+
+  "node.user": "Ordenante",
+  "node.clearingAgent": "Agente de compensación",
+  "node.contract": "Token ERC-2018",
+  "node.storageClearableTransfers": "Transferencias compensables",
+  "node.payee": "Beneficiario",
+
+  "edge.callOrderTransfer": "Llamar a orderTransfer()",
+  "edge.callExecute": "Llamar a executeClearableTransfer()",
+  "edge.updateTransfers": "Registrar orden y reservar saldo",
+  "edge.transferTokens": "Transferir tokens reservados",
+  "edge.emitExecuted": "Emitir evento ClearableTransferExecuted",
+
+  "sim.orderTransferWalkthrough.name": "Recorrido de orden y ejecución",
+  "sim.orderTransferWalkthrough.desc": "Sigue una transferencia compensable desde una orden colocada por el pagador, pasando por la ejecución del agente de compensación, hasta la transferencia de tokens resultante al beneficiario.",
+  "sim.orderTransferWalkthrough.param.operationId": "ID de operación",
+  "sim.orderTransferWalkthrough.param.to": "Dirección del beneficiario",
+  "sim.orderTransferWalkthrough.param.value": "Importe de la transferencia (en wei)",
+  "sim.orderTransferWalkthrough.step.order": "El ordenante llama a orderTransfer(operationId, to, value) para solicitar una transferencia al beneficiario.",
+  "sim.orderTransferWalkthrough.step.order.mobile": "Llamar a orderTransfer()",
+  "sim.orderTransferWalkthrough.step.record": "El contrato registra la nueva transferencia compensable y reserva el importe del saldo del pagador, de modo que no puede gastarse en otro lugar mientras espera al agente de compensación.",
+  "sim.orderTransferWalkthrough.step.record.mobile": "Reservar saldo",
+  "sim.orderTransferWalkthrough.step.execute": "El agente de compensación llama a executeClearableTransfer y el contrato mueve los tokens reservados del pagador al beneficiario.",
+  "sim.orderTransferWalkthrough.step.execute.mobile": "El agente ejecuta la transferencia",
+  "sim.orderTransferWalkthrough.step.event": "El contrato emite ClearableTransferExecuted para que los indexadores puedan registrar que la transferencia se ha liquidado.",
+  "sim.orderTransferWalkthrough.step.event.mobile": "Emitir evento Executed"
+}

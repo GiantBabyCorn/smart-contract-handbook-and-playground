@@ -1,0 +1,57 @@
+{
+  "short": "スマートコントラクト実行可能提案インターフェース",
+  "introduction": "ERC-5247 は、スマートコントラクトの実行可能提案のためのインターフェースを定義します。これは、記録しておき後で実行できるオンチェーン呼び出しのまとまりです。この標準は 2022年7月に Zainan Victor Zhou によって提案されました。提案は targets、values、gas リミット、calldata の並列配列としてパッケージ化されるため、任意の数の呼び出しを含めることができます。createProposal はこのまとまりを記録して提案 id を返し、executeProposal は保存されたすべての呼び出しをディスパッチします。注意：ERC-5247 は Review ステータスにあり、最終化される前にインターフェースが変更される可能性があります。",
+  "designPurpose": "ERC-5247 は、実行されるコードと実行するという行為そのものを分離するために設計されました。それ以前は、DAO や委任システムはそれぞれ独自の形式で提案内容をエンコードしていたため、ツールが実装をまたいで提案を組み立てたり検査したりすることができませんでした。ERC-5247 は、targets、values、gas リミット、calldata の並列配列に基づく単一の createProposal と executeProposal のインターフェースを標準化することで、提案をまず組み立て、任意のメカニズムで承認し、その後単一のオンチェーンアクションとして実行できるようにします。",
+  "commonUsage": "実行可能提案は DAO ガバナンスに適しています。提案者が提案を記録し、メンバーは ERC-1202 のような別個の投票インターフェースを通じてそれに投票し、合意が形成されると承認されたまとまりが実行されます。この、まず作成してから実行するというパターンは、委任や受託の取り決め、あるいは相手方が受け入れて実行することを選べる条件付きオファーにも適しています。このインターフェースは提案の保存と実行を分離するため、スタンドアロンのフォワーダーとしてデプロイすることも、既存のガバナンスコントラクトに組み込むこともできます。",
+
+  "fn.createProposal.desc": "ターゲットアドレス、ether の値、gas リミット、calldata の並列配列から新しい実行可能提案を記録し、登録された id を返します。ProposalCreated イベントを発行します。",
+  "fn.createProposal.params.proposalId": "提案に対して呼び出し側が提案する識別子。実装はそれを採用することも、独自の id を割り当てることもできます。",
+  "fn.createProposal.params.targets": "提案内の各呼び出しの送信先となるコントラクトアドレス。",
+  "fn.createProposal.params.values": "対応する各呼び出しとともに送信する ether の量（wei 単位）。",
+  "fn.createProposal.params.gasLimits": "対応する各呼び出しに適用する gas リミット。",
+  "fn.createProposal.params.calldatas": "対応する各呼び出しの ABI エンコードされた calldata。",
+  "fn.createProposal.params.extraParams": "実装が定義する追加パラメータ。",
+  "fn.createProposal.returns.registeredProposalId": "提案が実際に登録された識別子。",
+
+  "fn.executeProposal.desc": "以前に記録された提案を実行し、保存された各呼び出しを順にディスパッチします。ProposalExecuted イベントを発行します。",
+  "fn.executeProposal.params.proposalId": "実行する提案の識別子。",
+  "fn.executeProposal.params.extraParams": "実装が定義する追加パラメータ。",
+
+  "fn.ProposalCreated.desc": "新しい提案が作成されたときに発行され、オフチェーンサービスがインデックスできるように提案の完全な内容を伝えます。",
+  "fn.ProposalCreated.params.proposer": "提案を作成したアドレス。",
+  "fn.ProposalCreated.params.proposalId": "作成された提案の識別子。",
+  "fn.ProposalCreated.params.targets": "提案の呼び出しのターゲットアドレス。",
+  "fn.ProposalCreated.params.values": "提案の呼び出しの ether の値。",
+  "fn.ProposalCreated.params.gasLimits": "提案の呼び出しの gas リミット。",
+  "fn.ProposalCreated.params.calldatas": "提案の呼び出しの calldata。",
+  "fn.ProposalCreated.params.extraParams": "実装が定義する追加パラメータ。",
+
+  "fn.ProposalExecuted.desc": "提案が実行されたときに発行されます。",
+  "fn.ProposalExecuted.params.executor": "提案を実行したアドレス。",
+  "fn.ProposalExecuted.params.proposalId": "実行された提案の識別子。",
+  "fn.ProposalExecuted.params.extraParams": "実装が定義する追加パラメータ。",
+
+  "node.user": "提案者",
+  "node.contract": "ERC-5247 レジストリ",
+  "node.storageProposals": "提案ストレージ",
+
+  "edge.callCreateProposal": "createProposal() を呼び出す",
+  "edge.callExecuteProposal": "executeProposal() を呼び出す",
+  "edge.storeProposal": "提案を保存する",
+  "edge.emitProposalCreated": "ProposalCreated イベントを発行する",
+  "edge.emitProposalExecuted": "ProposalExecuted イベントを発行する",
+
+  "sim.createProposalWalkthrough.name": "提案の作成と実行",
+  "sim.createProposalWalkthrough.desc": "実行可能提案を、作成からストレージと ProposalCreated イベントを経て、オンチェーン実行まで追跡します。",
+  "sim.createProposalWalkthrough.param.proposalId": "提案 id",
+  "sim.createProposalWalkthrough.param.target": "ターゲットアドレス",
+  "sim.createProposalWalkthrough.param.value": "ether の値（wei 単位）",
+  "sim.createProposalWalkthrough.step.call": "提案者は、実行する呼び出しを記述した targets、values、gas リミット、calldata の並列配列とともに createProposal を呼び出します。",
+  "sim.createProposalWalkthrough.step.call.mobile": "createProposal() を呼び出す",
+  "sim.createProposalWalkthrough.step.store": "レジストリコントラクトは、後で実行するために登録された提案 id のもとに提案内容を保存します。",
+  "sim.createProposalWalkthrough.step.store.mobile": "提案を保存する",
+  "sim.createProposalWalkthrough.step.created": "コントラクトは、投票サービスやインデックスサービスが取得できるように、完全な提案内容とともに ProposalCreated を発行します。",
+  "sim.createProposalWalkthrough.step.created.mobile": "ProposalCreated を発行する",
+  "sim.createProposalWalkthrough.step.execute": "承認されると、実行者は executeProposal を呼び出し、レジストリは保存された各呼び出しをディスパッチし、ProposalExecuted イベントが発行されます。",
+  "sim.createProposalWalkthrough.step.execute.mobile": "提案を実行する"
+}

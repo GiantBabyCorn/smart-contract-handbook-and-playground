@@ -1,0 +1,32 @@
+{
+  "short": "자주 사용되는 토큰을 위한 커스텀 에러",
+  "introduction": "ERC-6093은 자주 사용되는 세 가지 토큰 표준인 ERC-20, ERC-721, ERC-1155를 위한 Solidity 커스텀 에러의 표준 집합을 정의합니다. 2022년 12월 Ernesto García, Francisco Giordano, Hadrien Croubois가 제안했습니다. 이 표준들은 Solidity가 v0.8.4에서 커스텀 에러를 추가하기 전에 확정되었기 때문에 자체 에러를 포함하지 않습니다. ERC-6093은 도메인 접두사, Invalid나 Insufficient 같은 에러 접두사, 그리고 실패한 대상으로 구성된 이름으로 그 공백을 메웁니다.",
+  "designPurpose": "ERC-6093은 토큰 트랜잭션이 실패한 이유를 설명하기 위해 지갑이 과거에 파싱하던 자유 형식의 리버트 문자열을 대체하기 위해 설계되었습니다. 리버트 문자열은 구현마다 일관성이 없고, 기계가 읽을 수 있는 인수를 담지 못하며, 배포 바이트코드를 늘립니다. 도메인-에러 접두사-대상이라는 고정된 문법을 따르고 주소나 금액 같은 타입이 지정된 인수를 담는 커스텀 에러를 표준화함으로써, ERC-6093은 커스텀 에러의 gas 및 크기 절감을 유지하면서도 클라이언트가 실패와 그 원인을 일관되게 디코딩할 수 있게 합니다.",
+  "commonUsage": "이 에러들은 유효하지 않은 전송이나 승인 시 리버트하는 모든 ERC-20, ERC-721, ERC-1155 구현과, 그러한 리버트를 디코딩하는 지갑, 탐색기, 테스트 도구를 대상으로 합니다. OpenZeppelin의 토큰 컨트랙트는 ERC-6093 에러 집합을 채택하므로, 프런트엔드는 실패한 호출을 잔액 부족이나 유효하지 않은 수신자와 같은 정확한 원인에 대응시킬 수 있습니다. 이 EIP는 에러 시그니처만 정의하며, 구현이 언제 리버트해야 하는지는 강제하지 않습니다.",
+
+  "node.user": "토큰 호출자",
+  "node.token": "토큰 컨트랙트",
+  "node.storageState": "토큰 상태",
+  "node.storageError": "리버트 데이터",
+  "node.decoder": "에러 디코더",
+  "node.wallet": "지갑 UI",
+
+  "edge.callToken": "transfer() 호출",
+  "edge.checkState": "잔액 확인",
+  "edge.revertError": "커스텀 에러로 리버트",
+  "edge.decodeError": "셀렉터와 인수 디코딩",
+  "edge.showMessage": "구조화된 메시지 표시",
+
+  "sim.errorDecodingWalkthrough.name": "커스텀 에러 디코딩 워크스루",
+  "sim.errorDecodingWalkthrough.desc": "실패하는 전송을 따라가며 토큰 컨트랙트가 ERC-6093 커스텀 에러로 리버트하고 지갑이 이를 구조화된 메시지로 디코딩하는 과정을 살펴봅니다.",
+  "sim.errorDecodingWalkthrough.param.sender": "발신자",
+  "sim.errorDecodingWalkthrough.param.amount": "전송 금액",
+  "sim.errorDecodingWalkthrough.step.call": "호출자가 발신자의 잔액보다 큰 금액의 토큰 전송을 호출합니다.",
+  "sim.errorDecodingWalkthrough.step.call.mobile": "transfer() 호출",
+  "sim.errorDecodingWalkthrough.step.check": "토큰 컨트랙트가 상태에서 발신자의 잔액을 읽어, 전송에 필요한 금액보다 적다는 것을 확인합니다.",
+  "sim.errorDecodingWalkthrough.step.check.mobile": "잔액 확인",
+  "sim.errorDecodingWalkthrough.step.revert": "컨트랙트는 리버트 문자열 대신 ERC20InsufficientBalance(sender, balance, needed)로 리버트하며, 인수를 리버트 데이터에 인코딩합니다.",
+  "sim.errorDecodingWalkthrough.step.revert.mobile": "에러로 리버트",
+  "sim.errorDecodingWalkthrough.step.decode": "지갑은 커스텀 에러의 셀렉터와 인수를 디코딩하여, 실패 이유를 설명하는 구조화된 메시지를 사용자에게 표시합니다.",
+  "sim.errorDecodingWalkthrough.step.decode.mobile": "디코딩 후 표시"
+}

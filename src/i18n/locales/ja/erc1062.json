@@ -1,0 +1,32 @@
+{
+  "short": "IPFS コンテンツハッシュを ENS リゾルバーにマッピング",
+  "introduction": "ERC-1062 は、可読な名前が分散型ファイルを指すように、IPFS コンテンツハッシュを ENS リゾルバーに保存するための規約を定義します。この規格は 2018年5月に Phyrex Tsai と Portal Network チームによって提案されました。IPFS ハッシュは Base58 を使用し、Ethereum は hex を保存するため、この標準はバイナリバッファを介して両者を橋渡しし、setMultihash で hex を保存し、読み取り時にそれを逆変換します。注記：ERC-1062 は Stagnant（停滞）です。6か月以上活動がなく、最終化されない可能性がありますが、歴史的または技術的に重要な意味を持ち続けています。",
+  "designPurpose": "ERC-1062 は、生の IPFS ハッシュではなく可読な名前を通じて分散型ウェブサイトにアクセスできるようにするために設計されました。IPFS は誰も記憶できない長い Base58 のフィンガープリントでコンテンツをアドレス指定し、ENS は名前をオンチェーンのレコードにマッピングしますが、IPFS ハッシュをリゾルバーに保存したり読み戻したりする合意された方法はありませんでした。この標準は Base58 から hex への変換を固定し、リゾルバーの既存の setMultihash と multihash メソッドを再利用することで、ブラウザが portal.eth のような名前を IPFS ドキュメントに解決し、ウェブページとして表示できるようにします。",
+  "commonUsage": "ERC-1062 は初期段階を越えて進むことがなかったため、デプロイされた標準というよりも、分散型コンテンツ解決のための設計図と見なすのが適切です。そのリファレンス実装は Portal Network のブラウザ拡張機能で、ユーザーが ENS 名を入力すると、DNS ドメインのようにリンクされた IPFS リソースを取得できます。Base58 から hex への変換は multihashes という JavaScript ライブラリに依存しており、新しいインターフェースを定義するのではなく、ENS パブリックリゾルバーの既存の setMultihash と multihash メソッドを再利用します。",
+
+  "node.publisher": "コンテンツ発行者",
+  "node.encoder": "Base58 から hex へのエンコーダー",
+  "node.resolver": "ENS パブリックリゾルバー",
+  "node.storageMultihash": "Multihash レコード",
+  "node.decoder": "hex から Base58 へのデコーダー",
+  "node.browser": "Web3 ブラウザ",
+
+  "edge.provideHash": "Base58 ハッシュを提供",
+  "edge.callSetMultihash": "setMultihash() を呼び出す",
+  "edge.storeMultihash": "hex multihash を保存",
+  "edge.readMultihash": "multihash() 経由で読み取り",
+  "edge.returnAddress": "Base58 アドレスを返す",
+
+  "sim.ipfsResolutionWalkthrough.name": "IPFS 解決ウォークスルー",
+  "sim.ipfsResolutionWalkthrough.desc": "IPFS ハッシュを、ENS 名の所有者からリゾルバーの multihash レコードを経て、ブラウザが読み込める Base58 アドレスまで追跡します。",
+  "sim.ipfsResolutionWalkthrough.param.name": "ENS 名",
+  "sim.ipfsResolutionWalkthrough.param.ipfsHash": "IPFS Base58 ハッシュ",
+  "sim.ipfsResolutionWalkthrough.step.publish": "ENS 名の所有者は、コンテンツの Base58 IPFS ハッシュを、オンチェーン保存用に準備するエンコーダーに渡します。",
+  "sim.ipfsResolutionWalkthrough.step.publish.mobile": "IPFS ハッシュを提供",
+  "sim.ipfsResolutionWalkthrough.step.store": "エンコーダーはハッシュを hex に変換して setMultihash を呼び出し、ENS リゾルバーはその名前のレコードに multihash バイトを書き込みます。",
+  "sim.ipfsResolutionWalkthrough.step.store.mobile": "multihash を保存",
+  "sim.ipfsResolutionWalkthrough.step.read": "名前を解決するクライアントは、multihash を通じて保存されたバイトを読み取り、hex 値をデコーダーに渡します。",
+  "sim.ipfsResolutionWalkthrough.step.read.mobile": "multihash を読み取り",
+  "sim.ipfsResolutionWalkthrough.step.render": "デコーダーは hex を Base58 IPFS アドレスに戻し、ブラウザが分散型コンテンツを取得して表示できるようにします。",
+  "sim.ipfsResolutionWalkthrough.step.render.mobile": "コンテンツを読み込む"
+}

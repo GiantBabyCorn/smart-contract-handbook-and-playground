@@ -1,0 +1,29 @@
+{
+  "short": "コンパクトな署名表現",
+  "introduction": "ERC-2098 は、Ethereum の secp256k1 署名をコンパクトな64バイトで表現する方式を定義し、従来の65バイトの (r, s, v) 三つ組を r と yParityAndS という2つの32バイトワードに置き換えます。2019年3月に Richard Moore と Nick Johnson によって提案されました。このエンコードは、正規な署名では s 値の最上位ビットが0になることを利用しており、その空いた上位ビットに yParity ビットを格納することで yParityAndS = (yParity << 255) | s とします。デコード時にはこれを逆にたどり、ecrecover 用に r、s、yParity を復元します。",
+  "designPurpose": "ERC-2098 は、スペースと gas を浪費する署名ペイロードを縮小するために設計されました。正規な署名には65バイトが必要ですが、256ビットの EVM ワードにパディングされると、31バイトのゼロが挿入されて96バイトを占有し、さらに RLP エンコードされたトランザクションは yParity のために平均1.5バイト余分に消費します。yParity ビットを s の常にゼロである上位ビットに詰め込むことで、この標準は完全な署名を整列した2つの32バイトワードに収め、情報を一切失うことなく calldata のサイズと署名を渡す gas コストを削減します。",
+  "commonUsage": "コンパクト署名は、署名が calldata として運ばれ、かつスペースが重要となるあらゆる場面で使われます。メタトランザクションのリレイヤー、マルチシグウォレット、permit 形式の承認などです。ethers.js ライブラリは、パックされた形式を内部の分割署名プロパティとして公開しており、復元ユーティリティは ecrecover を呼び出す前に、従来の (r, s, v) 形式に加えて (r, yParityAndS) レイアウトも受け付けます。この表現は純粋なエンコードにすぎないため、すでに ECDSA 署名に依存しているあらゆる方式と組み合わせられます。",
+
+  "node.signer": "署名者",
+  "node.encoder": "コンパクトエンコーダー",
+  "node.compactSig": "コンパクト署名",
+  "node.verifier": "オンチェーン検証者",
+  "node.recovered": "復元された署名者",
+
+  "edge.sign": "ダイジェストに署名",
+  "edge.pack": "64バイトにパック",
+  "edge.submit": "コンパクト署名を送信",
+  "edge.recover": "署名者を復元",
+
+  "sim.compactEncoding.name": "コンパクト署名エンコード",
+  "sim.compactEncoding.desc": "署名を正規の (r, s, v) 形式からコンパクトなパッキングを経てオンチェーンでの復元まで追跡します。",
+  "sim.compactEncoding.param.yParity": "yParity ビット",
+  "sim.compactEncoding.step.sign": "署名者は、r、s、yParity の各要素からなる正規な secp256k1 署名を生成します。",
+  "sim.compactEncoding.step.sign.mobile": "ダイジェストに署名",
+  "sim.compactEncoding.step.pack": "エンコーダーは yParity を s の最上位ビットに格納し、r と yParityAndS を2つの32バイトワードとして生成します。",
+  "sim.compactEncoding.step.pack.mobile": "64バイトにパック",
+  "sim.compactEncoding.step.submit": "64バイトのコンパクト署名が (r, yParityAndS) のペアとしてオンチェーンに送信されます。",
+  "sim.compactEncoding.step.submit.mobile": "署名を送信",
+  "sim.compactEncoding.step.recover": "検証者は yParityAndS から yParity と s を取り出し、ecrecover を呼び出して署名者アドレスを復元します。",
+  "sim.compactEncoding.step.recover.mobile": "署名者を復元"
+}

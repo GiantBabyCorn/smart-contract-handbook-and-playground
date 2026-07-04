@@ -1,0 +1,48 @@
+{
+  "short": "ERC-1155 授權額度擴充",
+  "introduction": "ERC-5216 定義了對 ERC-1155 標準的一項擴充，讓持有者可以授權某個操作者轉移特定代幣 ID 的有限數量，而不是授權其名下的整個集合。該標準由 Iván Mañús 與 Juan Carlos Cantó 於 2022 年 7 月提出。它借鑑 ERC-20 的 approve 與 allowance 模式，新增一個記錄每個 ID 支出上限的 approve 呼叫，以及一個用於讀取剩餘額度的 allowance getter。注意：ERC-5216 處於 Last Call 階段，即成為 Final 之前的最後審查窗口。",
+  "designPurpose": "ERC-5216 的設計目標是消除 ERC-1155 唯一的授權機制 setApprovalForAll 所要求的全有或全無式信任——該機制會授權操作者轉移持有者擁有的每一個代幣。持有該權限的漏洞或惡意市場可能會掏空整個餘額。透過複用 ERC-20 風格的 approve 與 allowance 呼叫，該擴充讓持有者可以為每個代幣 ID 授權確切的數量、限制自身的風險敞口，並撤銷未使用的授權，因此操作者永遠無法轉移超過明確授予的數量。",
+  "commonUsage": "細粒度的 ERC-1155 授權面向 NFT 與半同質化市場，賣家在這些市場中上架特定的代幣 ID，並希望只授權正在出售的數量，而不是其全部庫存。合約的實作方式是將 approve 與 allowance 函式與 ERC-1155 基礎合約配對，在 safeTransferFrom 內部扣減已轉移的數量，並讓 supportsInterface 對介面 ID 0x1be07d74 回傳 true。鑄造大量 ID 的遊戲與資產碎片化平台使用相同的模式來限定權限範圍。",
+
+  "fn.approve.desc": "授予操作者權限，使其可以轉移呼叫者在給定 ID 下最多 amount 數量的代幣，並覆蓋該操作者與該 ID 之前的任何授權額度。操作者不能是呼叫者本身，並且會觸發 Approval 事件。",
+  "fn.approve.params.operator": "被授權轉移呼叫者代幣的地址。",
+  "fn.approve.params.id": "該授權額度所適用的 ERC-1155 代幣 ID。",
+  "fn.approve.params.amount": "操作者可以轉移的該 ID 代幣的最大數量。",
+
+  "fn.allowance.desc": "回傳操作者目前被授權代表帳戶轉移的給定 ID 代幣的數量。",
+  "fn.allowance.params.account": "被查詢授權的代幣持有者。",
+  "fn.allowance.params.operator": "被查詢剩餘授權額度的操作者。",
+  "fn.allowance.params.id": "要查詢授權額度的 ERC-1155 代幣 ID。",
+  "fn.allowance.returns.amount": "操作者可為帳戶轉移的該 ID 的剩餘數量。",
+
+  "fn.Approval.desc": "當帳戶授予或撤銷操作者轉移特定 ID 的權限時觸發，並記錄已授權的數量。",
+  "fn.Approval.params.account": "授予或撤銷該授權的代幣持有者（indexed）。",
+  "fn.Approval.params.operator": "授權額度發生變化的操作者（indexed）。",
+  "fn.Approval.params.id": "該授權所適用的代幣 ID。",
+  "fn.Approval.params.amount": "為該操作者與 ID 新授權的數量。",
+
+  "node.user": "代幣持有者",
+  "node.contract": "ERC-5216 代幣",
+  "node.storageAllowances": "授權額度映射",
+  "node.operator": "已授權操作者",
+
+  "edge.callApprove": "呼叫 approve()",
+  "edge.updateAllowance": "更新授權額度",
+  "edge.emitApproval": "觸發 Approval 事件",
+  "edge.grantAllowance": "授予有限額度",
+  "edge.spendAllowance": "透過 safeTransferFrom 花費",
+
+  "sim.approveWalkthrough.name": "有限授權演練",
+  "sim.approveWalkthrough.desc": "跟隨一次 approve 呼叫，為某個操作者授予單一代幣 ID 的封頂額度，然後觀察 safeTransferFrom 如何花費它。",
+  "sim.approveWalkthrough.param.operator": "操作者",
+  "sim.approveWalkthrough.param.id": "代幣 ID",
+  "sim.approveWalkthrough.param.amount": "數量",
+  "sim.approveWalkthrough.step.call": "持有者呼叫 approve(operator, id, amount)，為操作者授權該 ID 下有限數量的代幣。",
+  "sim.approveWalkthrough.step.call.mobile": "呼叫 approve()",
+  "sim.approveWalkthrough.step.execute": "合約在授權額度映射中以持有者、操作者與 ID 為鍵記錄該數量，替換任何先前的授權。",
+  "sim.approveWalkthrough.step.execute.mobile": "更新授權額度",
+  "sim.approveWalkthrough.step.event": "合約觸發 Approval，操作者現在持有的是封頂額度，而不是全面的轉移權限。",
+  "sim.approveWalkthrough.step.event.mobile": "觸發 Approval 事件",
+  "sim.approveWalkthrough.step.spend": "當操作者呼叫 safeTransferFrom 時，合約會從該 ID 記錄的授權額度中扣減已轉移的數量。",
+  "sim.approveWalkthrough.step.spend.mobile": "花費授權額度"
+}

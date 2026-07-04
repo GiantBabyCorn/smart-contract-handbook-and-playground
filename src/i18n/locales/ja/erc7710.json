@@ -1,0 +1,32 @@
+{
+  "short": "スマートコントラクト委任インターフェース",
+  "introduction": "ERC-7710は、スマートコントラクト委任のための最小限のインターフェースを定義し、委任者が委任マネージャー（Delegation Manager）に自身に代わって行動する権限を与えられるようにします。この規格はRyan McPeck、Dan Finlay、Rob Dawson、Derek Chiangによって2024年5月に提案されました。受任者は、自身の権限を証明する権限コンテキストに加えてERC-7579のモードとcalldataを渡してredeemDelegationsを呼び出します。マネージャーはそれを検証し、委任者を駆動してアクションを実行させます。注意：ERC-7710はDraftであり、仕様は現在も活発に開発が進められており、大きく変更される可能性があります。",
+  "designPurpose": "ERC-7710は、あるコントラクトが別のコントラクトの機能を利用するためにこれまで必要とされていた、ハードコードされた権限や専用の仲介コントラクトを置き換えるために設計されました。これらは複雑さとgasコストを増大させていました。また、ユーザーが単一のポリシー制約付き委任を付与できるようにすることで、対話のたびに署名し直す手間も解消します。このインターフェースはredeemDelegationsのみを規定し、ERC-7579の実行エンコーディングを借用しているため、既存のスマートアカウントは新しい実行メソッドを実装することなく委任者として振る舞えます。",
+  "commonUsage": "この規格は、長期間有効なセッションと制限された権限を想定しています。繰り返しの署名を避ける永続的なdAppセッション、AIエージェントや自動化システムに付与されるスコープ付き権限、特定の機能を持つ共有可能な招待リンク、そして定義されたポリシーの範囲内で行動するサードパーティの受任者などです。この規格は行使のみを対象とし、委任の作成は範囲外としているため、通常は署名・caveat・失効を扱うMetaMask Delegation Frameworkのようなフレームワークと組み合わせて使用されます。",
+
+  "fn.redeemDelegations.desc": "受任者が1つ以上の委任を行使するために呼び出します。マネージャーは各権限コンテキストを検証し、認可されていれば委任者を介して対応するERC-7579のモードとcalldataを実行します。配列の長さが一致しない場合はrevertします。",
+  "fn.redeemDelegations.params.permissionContexts": "各委任ごとのデータで、呼び出し元が各委任者に代わって行動する権限を証明します。その構造は個々の委任マネージャーによって定義されます。",
+  "fn.redeemDelegations.params.modes": "ERC-7579実行モードの配列で、各モードは対応する実行に対して単一呼び出しやバッチ呼び出しといった呼び出し動作をエンコードします。",
+  "fn.redeemDelegations.params.executionCallData": "ERC-7579でエンコードされた実行の配列で、各要素には通常、委任者に代わって実行するターゲット、value、calldataが含まれます。",
+
+  "node.delegate": "受任者（行使者）",
+  "node.contract": "委任マネージャー",
+  "node.delegator": "委任者",
+  "node.target": "ターゲットコントラクト",
+
+  "edge.callRedeem": "redeemDelegations()を呼び出す",
+  "edge.callDelegator": "委任者を呼び出す",
+  "edge.executeAction": "アクションを実行する",
+
+  "sim.redeemDelegationWalkthrough.name": "委任を行使する",
+  "sim.redeemDelegationWalkthrough.desc": "受任者が委任マネージャーを通じて委任を行使し、委任者がターゲットコントラクト上でアクションを実行するまでの流れを追います。",
+  "sim.redeemDelegationWalkthrough.param.delegator": "委任者アカウント",
+  "sim.redeemDelegationWalkthrough.param.target": "ターゲットコントラクト",
+  "sim.redeemDelegationWalkthrough.param.mode": "実行モード",
+  "sim.redeemDelegationWalkthrough.step.call": "受任者は委任マネージャー上でredeemDelegationsを呼び出し、実行したいアクションのための権限コンテキスト、実行モード、calldataを渡します。",
+  "sim.redeemDelegationWalkthrough.step.call.mobile": "redeemDelegations()を呼び出す",
+  "sim.redeemDelegationWalkthrough.step.validate": "マネージャーは各権限コンテキストが有効な権限を証明していることを検証します。すべての委任が有効であれば対応する委任者を呼び出し、そうでなければバッチ全体がrevertします。",
+  "sim.redeemDelegationWalkthrough.step.validate.mobile": "権限を検証する",
+  "sim.redeemDelegationWalkthrough.step.execute": "委任者はターゲットコントラクト上でERC-7579でエンコードされたアクションを実行し、受任者が使用を認可された機能を完了します。",
+  "sim.redeemDelegationWalkthrough.step.execute.mobile": "ターゲットで実行"
+}

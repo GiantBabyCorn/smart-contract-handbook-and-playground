@@ -1,0 +1,32 @@
+{
+  "short": "交易请求的 URL 格式",
+  "introduction": "ERC-681 定义了一种 URL 格式，用于编码以太坊交易请求，尤其是以太币和 ERC-20 代币的支付请求，使其可以嵌入二维码、超链接、电子邮件或聊天消息中。它由 Daniel A. Nagy 于 2017 年 8 月提出。一个请求使用 ethereum: 方案，后接目标地址、可选的链 ID、可选的函数名，以及 value、gas、ABI 类型化参数等查询参数。打开该 URL 会启动用户的钱包，并预填一笔待确认的交易。",
+  "designPurpose": "ERC-681 旨在将比特币风格支付 URL 的便利性带到以太坊。在此之前，没有标准的方式将一笔完全参数化的交易交给钱包，因此发送方需要手动复制地址和金额，容易出错并招致钓鱼攻击。通过将带有目标地址、可选链 ID、函数名和类型化参数的 ethereum: URL 标准化，ERC-681 让任何渠道都能传递一个钱包可以解析并呈现以供确认的请求，同时让每个金额都可由用户编辑。",
+  "commonUsage": "支付请求 URL 被钱包、销售点（POS）系统和捐赠页面所使用，它们为特定的地址和金额生成 ethereum: 链接或二维码。原生代币形式通过 value 参数请求以太币，而代币形式则以 address 和 uint256 参数指向某个 ERC-20 合约的 transfer 函数。通过 ERC-137 解析的 ENS 名称可以代替十六进制地址，不过客户端会优先采用原始 0x 地址以降低钓鱼风险。",
+
+  "node.payee": "支付请求方",
+  "node.urlBuilder": "URL 编码器",
+  "node.paymentUrl": "以太坊支付 URL",
+  "node.wallet": "支付方钱包",
+  "node.payer": "支付方",
+  "node.transaction": "已签署交易",
+
+  "edge.buildRequest": "构建支付请求",
+  "edge.encodeUrl": "编码 ethereum: URL",
+  "edge.scanUrl": "扫描或打开链接",
+  "edge.confirm": "确认并签署",
+  "edge.buildTx": "构建交易",
+
+  "sim.paymentRequestWalkthrough.name": "支付请求演练",
+  "sim.paymentRequestWalkthrough.desc": "跟随一个支付请求，从 ethereum: URL 经过支付方的钱包，直到一笔已签署的交易。",
+  "sim.paymentRequestWalkthrough.param.targetAddress": "收款人地址",
+  "sim.paymentRequestWalkthrough.param.value": "以 wei 计的金额",
+  "sim.paymentRequestWalkthrough.step.build": "支付请求方选择一个收款人地址和要请求支付的金额。",
+  "sim.paymentRequestWalkthrough.step.build.mobile": "构建请求",
+  "sim.paymentRequestWalkthrough.step.encode": "地址、链 ID 和 value 被编码为一个 ethereum: URL，可以显示为二维码或超链接。",
+  "sim.paymentRequestWalkthrough.step.encode.mobile": "编码 URL",
+  "sim.paymentRequestWalkthrough.step.scan": "支付方扫描或打开链接；钱包解析该 URL，并呈现一笔预填且可编辑的交易以供确认。",
+  "sim.paymentRequestWalkthrough.step.scan.mobile": "扫描并确认",
+  "sim.paymentRequestWalkthrough.step.send": "支付方确认后，钱包对一笔交易进行签署并广播，将请求的 value 发送到目标地址。",
+  "sim.paymentRequestWalkthrough.step.send.mobile": "签署并发送"
+}

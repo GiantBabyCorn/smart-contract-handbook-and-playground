@@ -1,0 +1,27 @@
+{
+  "short": "메서드 동작의 일반적 확장성",
+  "introduction": "ERC-5750은 컨트랙트 메서드의 마지막 매개변수인 동적 크기의 bytes 필드를 동작 확장을 위한 열린 슬롯으로 지정하여 메서드를 확장 가능하게 만드는 규약을 정의합니다. 이 표준은 2022년 10월 Zainan Victor Zhou가 제안했습니다. 준수 메서드는 향후 필요할 때마다 새로운 메서드를 추가하는 대신, 서명, 논스, 커밋먼트와 같은 임의의 페이로드를 담는 끝의 bytes 인수를 받습니다. 해당 필드가 비어 있으면 메서드는 그것이 없는 오버로드된 동일 이름 메서드와 완전히 동일하게 동작해야 합니다.",
+  "designPurpose": "ERC-5750은 기존 호출자를 깨뜨리지 않으면서 메서드 인터페이스를 발전시킬 수 있도록 설계되었습니다. 그 이전에는 함수를 확장하려면 새로운 메서드를 고안하여 그에 따르는 온갖 명명과 함수 시그니처 문제를 떠안거나, 기존 매개변수를 용도 변경하여 모호함의 위험을 감수해야 했습니다. 이 표준은 비구조화된 확장 데이터를 위해 끝의 bytes 매개변수 하나를 예약함으로써, 데이터가 비어 있을 때의 동작을 일반 메서드와 동일하게 유지하면서도 향후 어떤 방식이든 인코딩할 수 있는 순방향 호환 확장 통로를 모든 메서드에 제공합니다.",
+  "commonUsage": "이미 여러 확립된 표준이 준수 메서드를 포함하고 있습니다. ERC-721과 ERC-1155의 safeTransferFrom 함수, 그리고 ERC-777의 burn 및 send 함수는 모두 끝에 bytes 타입의 data 매개변수를 배치합니다. 더 새로운 설계는 이 규약을 채택하여 서명을 첨부하거나, commit-reveal 방식을 위한 솔트, 논스, 커밋먼트를 담거나, 수신자 콜백으로 데이터를 전달합니다. 또한 이 표준은 ERC-2535의 diamondCut처럼 끝의 bytes가 이미 실질적인 역할을 하는 메서드를 준수하려면 오버로드가 필요한 것으로 표시합니다.",
+
+  "node.user": "호출자",
+  "node.contract": "준수 컨트랙트",
+  "node.storageData": "확장 페이로드",
+  "node.extension": "확장 동작",
+
+  "edge.callMethod": "data와 함께 methodName1() 호출",
+  "edge.readData": "data 매개변수 읽기",
+  "edge.invokeExtension": "확장 동작 호출",
+  "edge.forwardData": "페이로드 전달",
+
+  "sim.extensionCallWalkthrough.name": "메서드 확장 워크스루",
+  "sim.extensionCallWalkthrough.desc": "끝의 bytes 페이로드가 확장 동작을 트리거하는 준수 메서드 호출을 따라가 봅니다.",
+  "sim.extensionCallWalkthrough.param.param1": "메서드 매개변수",
+  "sim.extensionCallWalkthrough.param.data": "확장 페이로드",
+  "sim.extensionCallWalkthrough.step.call": "호출자가 준수 컨트랙트의 methodName1을 호출하면서 끝의 bytes data 매개변수로 확장 페이로드를 덧붙입니다.",
+  "sim.extensionCallWalkthrough.step.call.mobile": "data와 함께 호출",
+  "sim.extensionCallWalkthrough.step.execute": "컨트랙트는 핵심 동작을 실행하고 끝의 data 매개변수를 읽습니다. 해당 필드가 비어 있으면 이 호출은 매개변수가 없는 동일 이름 메서드와 동일하게 동작합니다.",
+  "sim.extensionCallWalkthrough.step.execute.mobile": "data 매개변수 읽기",
+  "sim.extensionCallWalkthrough.step.extension": "컨트랙트는 페이로드를 디코딩하고 서명 검증이나 커밋먼트 기록과 같은 확장 동작을 호출합니다.",
+  "sim.extensionCallWalkthrough.step.extension.mobile": "확장 호출"
+}

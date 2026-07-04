@@ -1,0 +1,32 @@
+{
+  "short": "Account Abstraction Validation Scope Rules",
+  "introduction": "ERC-7562 defines the validation-scope rules that bundlers apply off-chain before admitting Account Abstraction UserOperations into a shared mempool. It was proposed by Yoav Weiss, Dror Tirosh, Alex Forshtat, and Shahaf Nacson in September 2023. The rules limit which opcodes a validation frame may run and which storage slots it may access, so unrelated operations cannot cheaply invalidate one another. Note: ERC-7562 is a Draft; the specification is still under active development and may change substantially.",
+  "designPurpose": "ERC-7562 was designed to keep an Account Abstraction mempool as denial-of-service resistant as the ordinary EOA mempool. Because validation runs arbitrary EVM code over mutable storage, unrelated UserOperations could otherwise invalidate each other in bulk. The rules sandbox each validation frame: they block environment opcodes such as TIMESTAMP and NUMBER, confine storage access to slots associated with the account, and require globally shared entities to post a stake so misbehaving ones can be throttled.",
+  "commonUsage": "These rules are implemented by the bundlers and block builders that operate Account Abstraction mempools, primarily for ERC-4337 UserOperations and RIP-7560 native Account Abstraction. A bundler traces the validation phase of each UserOperation and rejects any that violates the opcode, storage, or reputation rules before propagating it. The staking model also shapes how paymaster, factory, and aggregator contracts are written, since only staked entities may access storage beyond the account's own slots.",
+
+  "node.sender": "Operation Sender",
+  "node.contract": "Bundler Validation",
+  "node.storageAssociated": "Associated Storage",
+  "node.storageReputation": "Reputation Counters",
+  "node.mempool": "Canonical Mempool",
+  "node.peer": "Peer Bundlers",
+
+  "edge.submitOp": "Submit UserOperation",
+  "edge.checkStorage": "Check storage scope",
+  "edge.updateReputation": "Update reputation",
+  "edge.acceptOp": "Accept into mempool",
+  "edge.propagate": "Propagate to peers",
+
+  "sim.validateOpWalkthrough.name": "Validating a UserOperation",
+  "sim.validateOpWalkthrough.desc": "Follow a UserOperation from submission through the opcode and storage scope rules and the reputation check into the shared mempool.",
+  "sim.validateOpWalkthrough.param.entity": "Entity type",
+  "sim.validateOpWalkthrough.param.staked": "Entity is staked",
+  "sim.validateOpWalkthrough.step.submit": "The sender submits a UserOperation to a bundler, which begins tracing its validation phase before adding it to the mempool.",
+  "sim.validateOpWalkthrough.step.submit.mobile": "Submit UserOperation",
+  "sim.validateOpWalkthrough.step.trace": "The bundler enforces the opcode rules and checks that the validation frame only touches the account's own storage or slots associated with its address.",
+  "sim.validateOpWalkthrough.step.trace.mobile": "Check scope rules",
+  "sim.validateOpWalkthrough.step.reputation": "The bundler increments the entity's opsSeen counter and evaluates its inclusion rate to decide whether the entity is OK, throttled, or banned.",
+  "sim.validateOpWalkthrough.step.reputation.mobile": "Update reputation",
+  "sim.validateOpWalkthrough.step.accept": "Having passed every rule, the UserOperation is accepted into the canonical mempool and propagated to peer bundlers over the P2P network.",
+  "sim.validateOpWalkthrough.step.accept.mobile": "Accept and propagate"
+}

@@ -1,0 +1,41 @@
+{
+  "short": "Estándar de Token Soulbound Consensuado",
+  "introduction": "ERC-5484 define una interfaz que extiende ERC-721 para crear tokens soulbound consensuados (SBT): NFT no transferibles cuyo permiso de quema es acordado por ambas partes antes de la emisión. Fue propuesto por Buzz Cai en agosto de 2022. Antes de la emisión, el emisor y el receptor acuerdan una autorización de quema (IssuerOnly, OwnerOnly, Both o Neither) que es inmutable a partir de entonces. El contrato emite un evento Issued junto con el evento Transfer de ERC-721 y expone una consulta burnAuth que distingue los SBT de los NFT ordinarios.",
+  "designPurpose": "ERC-5484 se diseñó para dar a los tokens soulbound una interfaz compartida, de modo que billeteras, exploradores y servicios puedan tratarlos de forma coherente. Las implementaciones soulbound anteriores extendían ERC-721 pero simplemente revertían en cada transferencia, sin una forma estándar de detectar la no transferibilidad ni de saber quién puede destruir el token. ERC-5484 fija una autorización de quema por token en el momento de la emisión, requiere el consentimiento previo del receptor y añade un getter burnAuth más un evento Issued para que terceros puedan identificarlos mediante la detección de ERC-165.",
+  "commonUsage": "Los tokens soulbound consensuados están destinados a credenciales, membresías, certificaciones y registros de crédito, casos en los que un token debe permanecer vinculado a una sola dirección en lugar de negociarse libremente. La autorización de quema se elige según el caso de uso: IssuerOnly conviene a registros de préstamos revocables, OwnerOnly a membresías que el titular puede descartar, Both a credenciales y Neither a un historial de crédito permanente. Dado que los SBT siguen siendo tokens ERC-721, las herramientas de NFT existentes pueden mostrarlos comprobando la interfaz antes de cualquier transferencia.",
+
+  "fn.burnAuth.desc": "Devuelve la autorización de quema de un token, indicando qué partes pueden destruirlo: IssuerOnly, OwnerOnly, Both o Neither. Las consultas de token ID no asignados revierten.",
+  "fn.burnAuth.params.tokenId": "El identificador del token que se consulta.",
+  "fn.burnAuth.returns.burnAuth": "La autorización de quema inmutable fijada para el token en el momento de la emisión.",
+
+  "fn.Issued.desc": "Se emite cuando se emite un token soulbound, además del evento Transfer de ERC-721, para que terceros puedan distinguir la emisión de un SBT de una transferencia de NFT ordinaria.",
+  "fn.Issued.params.from": "El emisor del token.",
+  "fn.Issued.params.to": "El receptor del token.",
+  "fn.Issued.params.tokenId": "El identificador del token emitido.",
+  "fn.Issued.params.burnAuth": "La autorización de quema acordada para este token, fijada en el momento de la emisión.",
+
+  "node.issuer": "Emisor",
+  "node.contract": "Contrato de Token Soulbound",
+  "node.storageBurnAuth": "Almacenamiento de Autorización de Quema",
+  "node.receiver": "Receptor",
+
+  "edge.issue": "Emitir token soulbound",
+  "edge.storeBurnAuth": "Almacenar autorización de quema",
+  "edge.mintToken": "Acuñar token para el receptor",
+  "edge.emitIssued": "Emitir evento Issued",
+  "edge.queryBurnAuth": "Llamar a burnAuth()",
+
+  "sim.issueTokenWalkthrough.name": "Emitir Token Soulbound",
+  "sim.issueTokenWalkthrough.desc": "Sigue la emisión de un token soulbound consensuado, desde el emisor, pasando por el almacenamiento y el evento Issued, hasta una consulta burnAuth.",
+  "sim.issueTokenWalkthrough.param.to": "Dirección del receptor",
+  "sim.issueTokenWalkthrough.param.tokenId": "ID del Token",
+  "sim.issueTokenWalkthrough.param.burnAuth": "Autorización de quema",
+  "sim.issueTokenWalkthrough.step.issue": "El emisor emite un token soulbound al receptor, que ya ha consentido la autorización de quema elegida.",
+  "sim.issueTokenWalkthrough.step.issue.mobile": "Emitir token",
+  "sim.issueTokenWalkthrough.step.store": "El contrato registra la autorización de quema inmutable del token y asigna la propiedad al receptor.",
+  "sim.issueTokenWalkthrough.step.store.mobile": "Almacenar autorización",
+  "sim.issueTokenWalkthrough.step.event": "El contrato emite Issued(from, to, tokenId, burnAuth) junto con el evento Transfer de ERC-721 para señalar la emisión del SBT.",
+  "sim.issueTokenWalkthrough.step.event.mobile": "Emitir evento Issued",
+  "sim.issueTokenWalkthrough.step.query": "Un tercero llama a burnAuth(tokenId) para leer qué parte puede quemar el token antes de actuar sobre él.",
+  "sim.issueTokenWalkthrough.step.query.mobile": "Consultar burnAuth()"
+}

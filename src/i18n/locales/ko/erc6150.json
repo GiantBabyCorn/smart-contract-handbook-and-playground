@@ -1,0 +1,52 @@
+{
+  "short": "파일 시스템형 계층 구조 NFT",
+  "introduction": "ERC-6150은 NFT를 파일 시스템과 유사한 계층 구조로 배치하는 ERC-721의 확장을 정의합니다. 각 토큰은 하나의 부모와 임의 개수의 자식을 가지는 노드입니다. 이는 Keegan Lee, msfew, Kartin, qizhou가 2022년 12월에 제안했습니다. 토큰 ID가 0이면 부모가 없음을 의미하므로, 실제 노드는 모두 0보다 큰 ID를 가지며 루트는 부모로 0을 반환합니다. 이 인터페이스는 노드의 부모와 자식을 읽고 해당 노드가 루트인지 리프인지 판별하는 읽기 함수와, 각 새 노드를 표시하는 Minted 이벤트를 추가합니다.",
+  "designPurpose": "ERC-6150은 애플리케이션이 ERC-721에 임시방편으로 덧붙이던 부모 포인터나 별도 레지스트리 대신, 트리 구조 데이터를 단일 컨트랙트를 통해 온체인에 담기 위해 설계되었습니다. 계층 구조는 파일 시스템이나 eBay, Reddit 같은 사이트의 카테고리 트리에서 흔하지만, 일반적인 NFT는 토큰 간의 관계를 표현하지 못합니다. Minted 이벤트와 parentOf, childrenOf, isRoot, isLeaf 쿼리를 표준화함으로써, 이 설계는 트리를 온체인에 유지하여 어떤 프런트엔드든 허가 없이 순회할 수 있게 합니다.",
+  "commonUsage": "ERC-6150은 데이터가 본질적으로 트리 형태인 애플리케이션을 대상으로 합니다. Reddit 같은 온체인 포럼, 리스트로 구성된 소셜 피드, 온체인 기업의 조직도, eBay 같은 전자상거래 카테고리 트리 등입니다. 각 디렉터리나 카테고리 자체가 NFT이므로, 한 브랜치의 소유권을 이전하거나 DAO가 관리할 수 있습니다. 명세는 자식 열거, 리프 노드 소각, 노드의 부모 재지정, 노드별 접근 제어를 위한 선택적 확장을 정의하므로, 구현자는 필요한 것만 추가합니다.",
+
+  "fn.parentOf.desc": "주어진 노드의 부모 토큰을 반환합니다. 토큰 ID 0은 토큰에 부모가 없음을 의미하도록 예약되어 있으므로, 루트 노드는 0을 반환합니다.",
+  "fn.parentOf.params.tokenId": "부모를 조회할 자식 토큰.",
+  "fn.parentOf.returns.parentId": "부모 토큰의 ID이며, 노드가 루트인 경우 0.",
+
+  "fn.childrenOf.desc": "주어진 노드 바로 아래에 있는 자식 토큰의 배열을 반환합니다. 리프 노드는 빈 배열을 반환합니다.",
+  "fn.childrenOf.params.tokenId": "직접 자식을 나열할 부모 토큰.",
+  "fn.childrenOf.returns.childrenIds": "부모가 tokenId인 토큰들의 ID.",
+
+  "fn.isRoot.desc": "주어진 토큰이 루트 노드, 즉 부모가 없는 경우 true를 반환합니다. 루트는 계층 구조의 최상위 항목입니다.",
+  "fn.isRoot.params.tokenId": "검사할 토큰.",
+  "fn.isRoot.returns.root": "토큰이 부모가 없는 루트 노드이면 true.",
+
+  "fn.isLeaf.desc": "주어진 토큰이 리프 노드, 즉 자식이 없는 경우 true를 반환합니다. 리프는 계층 구조의 최하단에 위치합니다.",
+  "fn.isLeaf.params.tokenId": "검사할 토큰.",
+  "fn.isLeaf.returns.leaf": "토큰이 자식이 없는 리프 노드이면 true.",
+
+  "fn.Minted.desc": "부모 아래에 새 토큰이 발행될 때 발생합니다. parentId가 0이면 발행된 토큰이 루트임을 나타내며, 발행되는 토큰 ID는 0보다 커야 합니다.",
+  "fn.Minted.params.minter": "토큰을 발행한 주소.",
+  "fn.Minted.params.to": "발행된 토큰을 받은 주소.",
+  "fn.Minted.params.parentId": "부모 토큰의 ID이며, 발행된 토큰이 루트인 경우 0.",
+  "fn.Minted.params.tokenId": "새로 발행된 토큰의 ID이며, 0보다 커야 합니다.",
+
+  "node.user": "NFT 소유자",
+  "node.contract": "계층형 NFT 컨트랙트",
+  "node.storageHierarchy": "계층 스토리지",
+  "node.recipient": "자식 노드 수신자",
+
+  "edge.mintChild": "자식 노드 발행",
+  "edge.updateHierarchy": "계층 구조 업데이트",
+  "edge.emitMinted": "Minted 이벤트 발생",
+  "edge.assignChild": "자식 노드 할당",
+  "edge.callParentOf": "parentOf() 호출",
+  "edge.callChildrenOf": "childrenOf() 호출",
+
+  "sim.mintChild.name": "자식 노드 발행",
+  "sim.mintChild.desc": "부모 아래에 자식 노드를 발행하는 과정을 소유자의 호출부터 계층 스토리지 업데이트를 거쳐 Minted 이벤트까지 따라갑니다.",
+  "sim.mintChild.param.parentId": "부모 토큰 ID",
+  "sim.mintChild.param.tokenId": "새 자식 토큰 ID",
+  "sim.mintChild.param.to": "수신자 주소",
+  "sim.mintChild.step.call": "소유자가 부모 1 아래에 새 토큰을 발행하며, 수신자 주소와 새 자식 토큰 ID를 계층형 NFT 컨트랙트에 전달합니다.",
+  "sim.mintChild.step.call.mobile": "자식 노드 발행",
+  "sim.mintChild.step.execute": "컨트랙트는 새 토큰을 부모에 연결하여 부모 포인터를 기록하고 자식을 부모의 자식 목록에 추가합니다.",
+  "sim.mintChild.step.execute.mobile": "계층 구조 업데이트",
+  "sim.mintChild.step.event": "컨트랙트는 Minted(minter, to, parentId, tokenId)를 발생시키고 새 자식 노드를 수신자에게 할당합니다.",
+  "sim.mintChild.step.event.mobile": "Minted 이벤트 발생"
+}

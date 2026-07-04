@@ -1,0 +1,68 @@
+{
+  "short": "NFT 권리 관리",
+  "introduction": "ERC-5218은 저작권 라이선스를 온체인에 기록하고 이를 ERC-721 NFT에 연결하기 위한 인터페이스를 정의합니다. 이 표준은 James Grimmelmann, Yan Ji, Tyler Kell이 2022년 7월에 제안했습니다. 각 NFT에는 소유자가 보유하는 루트 라이선스가 있으며, 소유자는 트리를 형성하는 서브라이선스를 부여할 수 있습니다. 모든 라이선스는 약관 URI를 가리키며 생성, 전송, 취소하거나 활성 여부를 확인할 수 있습니다. 참고: ERC-5218은 Stagnant(정체) 상태입니다. 6개월 이상 활동이 없었고 최종 확정되지 않을 수 있지만, 역사적 또는 기술적으로 중요한 의미가 있습니다.",
+  "designPurpose": "ERC-5218은 NFT를 소유하는 것과 그것이 나타내는 저작물에 대한 법적 권리를 보유하는 것 사이의 간극을 좁히기 위해 설계되었습니다. 그 이전에는 NFT 라이선스가 오프체인에 존재했고 토큰은 어떤 권리가 적용되는지 나타내지 못했으며, 서브라이선스는 추적할 수 없었고 일부 프로젝트는 라이선스를 대신하기 위해 별도의 NFT를 발행하기도 했습니다. 모든 라이선스를 라이선스 식별자와 토큰 식별자를 키로 하는 온체인 트리에 기록하고 각각에 약관 URI와 취소 권한자를 부여함으로써, 이 표준은 창작자, 보유자, 감사자가 이벤트 로그를 통해 전체 권리 이력을 추적할 수 있게 합니다.",
+  "commonUsage": "ERC-5218은 이미지, 음악 또는 기타 미디어와 같은 창작물을 토큰에 첨부하고 라이선스를 명시적이고 전송 가능하게 만들고자 하는 NFT 프로젝트를 위한 것입니다. 준수 컨트랙트는 ERC-721을 상속하고 supportsInterface에 대해 0xac7b5ca9를 반환하므로, 마켓플레이스와 익스플로러가 라이선스 지원을 감지하고 각 URI에서 약관을 확인할 수 있습니다. 이 명세는 Final 상태에 도달하지 못했기 때문에 온체인 채택은 제한적이며, 주로 권리 관리를 위한 참조 설계로 자리합니다.",
+
+  "fn.isLicenseActive.desc": "지정된 라이선스가 현재 활성 상태인지 여부를 반환합니다. 존재하지 않거나 취소된 라이선스는 비활성이며, 상위 라이선스 중 하나가 취소된 경우에도 해당 라이선스는 비활성으로 간주됩니다.",
+  "fn.isLicenseActive.params.licenseId": "조회 대상 라이선스의 식별자.",
+  "fn.isLicenseActive.returns.active": "라이선스가 활성이면 true, 그렇지 않으면 false.",
+
+  "fn.getLicenseIdByTokenId.desc": "지정된 NFT에 연결된 루트 라이선스 식별자를 반환합니다. 해당 NFT에 루트 라이선스가 없으면 어떤 라이선스도 가리키지 않는 특수 식별자(예: 0)를 반환합니다.",
+  "fn.getLicenseIdByTokenId.params.tokenId": "루트 라이선스를 조회할 NFT의 식별자.",
+  "fn.getLicenseIdByTokenId.returns.licenseId": "해당 NFT의 루트 라이선스 식별자이며, 존재하지 않으면 0.",
+
+  "fn.createLicense.desc": "NFT에 새 라이선스를 생성하고 그 식별자를 반환합니다. 루트 라이선스는 NFT 소유자가 생성할 수 있고, 서브라이선스는 활성 부모 라이선스의 보유자가 생성할 수 있습니다. CreateLicense 이벤트를 발생시킵니다.",
+  "fn.createLicense.params.tokenId": "라이선스가 발행되는 대상 NFT.",
+  "fn.createLicense.params.parentLicenseId": "부모 라이선스 식별자이며, 루트 라이선스의 경우 0과 같은 특수 값.",
+  "fn.createLicense.params.licenseHolder": "새 라이선스를 보유할 주소.",
+  "fn.createLicense.params.uri": "라이선스 약관을 가리키는 URI.",
+  "fn.createLicense.params.revoker": "라이선스를 취소할 수 있는 권한이 있는 주소.",
+  "fn.createLicense.returns.licenseId": "생성된 라이선스에 할당된 식별자.",
+
+  "fn.revokeLicense.desc": "활성 라이선스를 취소합니다. 해당 라이선스에 지정된 취소 권한자만 호출할 수 있습니다. 루트 라이선스를 취소하면 NFT가 창작자에게 반환되며, 취소된 라이선스 아래의 서브라이선스도 함께 비활성이 됩니다.",
+  "fn.revokeLicense.params.licenseId": "취소할 라이선스의 식별자.",
+
+  "fn.transferSublicense.desc": "활성 서브라이선스를 새 보유자에게 전송합니다. 현재 보유자만 호출할 수 있습니다. 루트 라이선스는 ERC-721 전송을 통해 NFT와 함께 이동하므로 이 방식으로는 전송되지 않습니다.",
+  "fn.transferSublicense.params.licenseId": "전송할 서브라이선스의 식별자.",
+  "fn.transferSublicense.params.licenseHolder": "새 서브라이선스 보유자의 주소.",
+
+  "fn.CreateLicense.desc": "어떤 메커니즘으로든 새 라이선스가 생성될 때 발생하며, 그 식별자, NFT, 부모 라이선스, 보유자, 약관 URI, 취소 권한자를 기록합니다.",
+  "fn.CreateLicense.params.licenseId": "새로 생성된 라이선스의 식별자.",
+  "fn.CreateLicense.params.tokenId": "라이선스가 발행되는 대상 NFT.",
+  "fn.CreateLicense.params.parentLicenseId": "부모 라이선스 식별자이며, 루트 라이선스의 경우 0.",
+  "fn.CreateLicense.params.licenseHolder": "새 라이선스를 보유하는 주소.",
+  "fn.CreateLicense.params.uri": "라이선스 약관을 가리키는 URI.",
+  "fn.CreateLicense.params.revoker": "라이선스를 취소할 수 있는 권한이 있는 주소.",
+
+  "fn.RevokeLicense.desc": "라이선스가 취소될 때 발생합니다. 일부 약관에서는 상위 라이선스에 대한 단일 이벤트가 그 모든 서브라이선스의 취소를 의미합니다.",
+  "fn.RevokeLicense.params.licenseId": "취소된 라이선스의 식별자.",
+
+  "fn.TransferLicense.desc": "라이선스가 새 보유자에게 전송될 때 발생하며, 루트 라이선스가 해당 NFT와 함께 새 소유자에게 이동하는 경우도 포함합니다.",
+  "fn.TransferLicense.params.licenseId": "전송된 라이선스의 식별자.",
+  "fn.TransferLicense.params.licenseHolder": "새 라이선스 보유자의 주소.",
+
+  "node.user": "NFT 소유자",
+  "node.contract": "ERC-5218 컨트랙트",
+  "node.storageLicenses": "라이선스 스토리지",
+  "node.licenseHolder": "라이선스 보유자",
+
+  "edge.callCreateLicense": "createLicense() 호출",
+  "edge.recordLicense": "라이선스 기록",
+  "edge.emitCreateLicense": "CreateLicense 이벤트 발생",
+  "edge.grantLicense": "라이선스 부여",
+
+  "sim.createLicenseWalkthrough.name": "라이선스 생성 워크스루",
+  "sim.createLicenseWalkthrough.desc": "createLicense 호출을 NFT 소유자로부터 스토리지를 거쳐 라이선스 보유자와 CreateLicense 이벤트까지 따라갑니다.",
+  "sim.createLicenseWalkthrough.param.tokenId": "토큰 ID",
+  "sim.createLicenseWalkthrough.param.parentLicenseId": "부모 라이선스 ID",
+  "sim.createLicenseWalkthrough.param.licenseHolder": "라이선스 보유자",
+  "sim.createLicenseWalkthrough.step.call": "NFT 소유자가 컨트랙트에서 createLicense()를 호출하면서 토큰 ID, 부모 라이선스, 보유자, 약관 URI, 취소 권한자를 전달합니다.",
+  "sim.createLicenseWalkthrough.step.call.mobile": "createLicense() 호출",
+  "sim.createLicenseWalkthrough.step.execute": "컨트랙트는 새로운 License 항목을 기록하고, 루트 라이선스의 경우 _licenseIds 매핑에서 이를 NFT에 연결합니다.",
+  "sim.createLicenseWalkthrough.step.execute.mobile": "라이선스 기록",
+  "sim.createLicenseWalkthrough.step.grant": "새 라이선스는 지정된 보유자에게 할당되며, 해당 보유자는 라이선스 URI에 기술된 온체인 권리를 얻습니다.",
+  "sim.createLicenseWalkthrough.step.grant.mobile": "보유자에게 할당",
+  "sim.createLicenseWalkthrough.step.event": "컨트랙트는 CreateLicense를 발생시켜 인덱서와 감사자가 해당 NFT의 전체 라이선스 트리를 추적할 수 있게 합니다.",
+  "sim.createLicenseWalkthrough.step.event.mobile": "CreateLicense 이벤트 발생"
+}

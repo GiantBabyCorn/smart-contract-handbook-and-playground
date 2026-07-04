@@ -1,0 +1,35 @@
+{
+  "short": "Indexación Interoperable de Medios Digitales",
+  "introduction": "ERC-7053 define un método de indexación interoperable para registrar, descubrir y recuperar el historial de medios digitales en cadenas de bloques compatibles con EVM. Fue propuesto por Bofu Chen y Tammy Yang en mayo de 2023. El estándar vincula un identificador de contenido (CID) descentralizado para cada archivo multimedia con una función commit que emite un evento Commit y registra el número de bloque de cada commit, lo que permite que cualquier sistema asocie todos los datos on-chain sobre el mismo contenido y lo rastree desde su creación hasta su estado actual.",
+  "designPurpose": "ERC-7053 se diseñó para eliminar la fragmentación causada por la falta de un identificador universal e interoperable para el contenido de medios digitales. Antes de él, los metadatos de un archivo, su ubicación de almacenamiento y su procedencia residían en sistemas separados sin una clave compartida, lo que dificultaba la recuperación entre contratos y entre cadenas. Al anclar cada archivo a un identificador de contenido criptográfico y estandarizar una única función commit con un evento Commit indexado, ofrece a cada sistema una forma predecible de indexar y buscar el mismo contenido.",
+  "commonUsage": "ERC-7053 está pensado para plataformas de medios digitales, registros de procedencia e indexadores de contenido que rastrean el historial de imágenes, video y otros archivos on-chain. Dado que el evento Commit indexa tanto el recorder como el CID del activo, los servicios off-chain pueden suscribirse a él y reconstruir una línea de tiempo completa para cada activo. La especificación también describe cómo indexar los medios referenciados por NFT convirtiendo el archivo detrás de un tokenURI en el mismo CID, de modo que las colecciones ERC-721 y ERC-1155 puedan compartir un mismo esquema.",
+
+  "fn.commit.desc": "Registra un commit para el activo identificado por assetCid. Emite un evento Commit y registra el número de bloque del commit para el assetCid proporcionado, y luego devuelve ese número de bloque.",
+  "fn.commit.params.assetCid": "El identificador de contenido (CID) del activo sobre el que se realiza el commit.",
+  "fn.commit.params.commitData": "Los datos asociados al commit.",
+  "fn.commit.returns.blockNumber": "El número de bloque en el que se realizó el commit.",
+
+  "fn.Commit.desc": "Se emite cuando se realiza un nuevo commit, de modo que los indexadores puedan rastrear el recorder, el activo y los datos del commit. El recorder y assetCid están indexados para el filtrado.",
+  "fn.Commit.params.recorder": "La dirección de la cuenta que realiza el commit.",
+  "fn.Commit.params.assetCid": "El identificador de contenido del activo sobre el que se realiza el commit.",
+  "fn.Commit.params.commitData": "Los datos asociados al commit.",
+
+  "node.user": "Registrador",
+  "node.contract": "Registro de Commits",
+  "node.storageLogs": "Bitácora de Commits",
+
+  "edge.callCommit": "Llamar a commit()",
+  "edge.updateLogs": "Registrar número de bloque",
+  "edge.emitCommit": "Emitir evento Commit",
+
+  "sim.commitWalkthrough.name": "Recorrido del Commit de Medios",
+  "sim.commitWalkthrough.desc": "Recorre una llamada de commit desde el registrador, pasando por el mapeo de logs, hasta el evento Commit.",
+  "sim.commitWalkthrough.param.assetCid": "CID del activo",
+  "sim.commitWalkthrough.param.commitData": "Datos del commit",
+  "sim.commitWalkthrough.step.call": "El registrador llama a commit(assetCid, commitData) en el contrato de registro para indexar un archivo multimedia.",
+  "sim.commitWalkthrough.step.call.mobile": "Llamar a commit()",
+  "sim.commitWalkthrough.step.execute": "El contrato agrega el número de bloque actual a la entrada de recordLogs correspondiente al CID del activo, construyendo su historial on-chain.",
+  "sim.commitWalkthrough.step.execute.mobile": "Registrar número de bloque",
+  "sim.commitWalkthrough.step.event": "El contrato emite Commit(recorder, assetCid, commitData) para que los indexadores off-chain puedan actualizar su línea de tiempo del activo.",
+  "sim.commitWalkthrough.step.event.mobile": "Emitir evento Commit"
+}

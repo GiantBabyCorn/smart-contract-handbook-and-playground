@@ -100,11 +100,16 @@ def build_standard_block(row: dict) -> str:
     if curated:
         name, category, sort_order = curated
     else:
-        name = row.get("title") or f"ERC-{row.get('eip')}"
-        # siteCategory is written by scaffold_entry.py for manual rows; batch
-        # authoring will supply it for generated rows. Default: TBD 'utility'.
+        # Generated entries use the compact "ERC-<N>" name (matching the curated
+        # 22 and the sidebar/catalog convention); the wordy catalog title lives
+        # in the entry's `<slug>.short` string instead. Unofficial rows without
+        # an EIP number fall back to the catalog title.
+        eip = row.get("eip")
+        name = f"ERC-{eip}" if eip else (row.get("title") or slug.upper())
+        # siteCategory is written by scaffold_entry.py for manual rows and by
+        # publish_batch.py (from the authored data file) for generated rows.
         category = row.get("siteCategory") or "utility"
-        sort_order = 10000 + (row.get("eip") or 0)
+        sort_order = 10000 + (eip or 0)
 
     lines = [
         "  {",

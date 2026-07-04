@@ -1,0 +1,26 @@
+{
+  "short": "階層的 BLS12-381 鍵生成",
+  "introduction": "ERC-2333 は、単一のエントロピーシードから BLS12-381 秘密鍵の階層的なツリーを導出する方法を定義します。2019 年 9 月に Carl Beekhuizen によって提案されました。マスター鍵がルートに位置し、各子鍵は親の鍵と 32 ビットのインデックスから計算されるため、1 つの祖先から多数の鍵が派生します。導出はエントロピーを SHA256 でハッシュした中間的な Lamport 鍵を経由させ、これがポスト量子バックアップも兼ねます。注：ERC-2333 は Review ステータスであり、確定するまでインターフェースが変更される可能性があります。",
+  "designPurpose": "ERC-2333 が設計されたのは、Ethereum が secp256k1 鍵に通常用いる BIP32 スキームが BLS12-381 には安全でないためです。BIP32 が生成する鍵の 54% 超が曲線の部分群の位数を超えて無効になってしまいます。これを避けるため、本標準は IETF の BLS 署名ドラフトの KeyGen 関数である HKDF_mod_r を使って、各親鍵を有効な秘密鍵の範囲へハッシュします。導出方法を早期に標準化することでツールどうしの相互運用も可能になり、また UTXO 型の非ハードンド鍵よりも署名に適したハードンド鍵のみを使用します。",
+  "commonUsage": "このスキームは BLS12-381 鍵の生成と管理を目的としており、最も代表的なのは Ethereum のビーコンチェーン（Beacon Chain）で使われるバリデータ鍵です。ここでは 1 つのニーモニックシードで鍵のファミリー全体をバックアップできます。仕様はそのシードを BIP-39 の方法で導出することを推奨しており、これに従うウォレットや鍵生成ツールは異なるプログラム間でも同じ鍵を復元できます。各鍵に必要なのは親鍵と子インデックスだけなので、単一の祖先から用途ごとに複数の鍵グループを用意できます。",
+
+  "node.user": "シード所有者",
+  "node.scheme": "鍵導出スキーム",
+  "node.storageTree": "鍵ツリー",
+
+  "edge.provideSeed": "シードを提供",
+  "edge.storeMaster": "マスター鍵を保存",
+  "edge.deriveChild": "子鍵を導出",
+  "edge.populateTree": "鍵ツリーに追加",
+
+  "sim.deriveKeysWalkthrough.name": "鍵導出ウォークスルー",
+  "sim.deriveKeysWalkthrough.desc": "シードをたどりながら、スキームがマスター鍵を導出し、続いてツリー内で子鍵を導出する様子を確認します。",
+  "sim.deriveKeysWalkthrough.param.seed": "エントロピーシード",
+  "sim.deriveKeysWalkthrough.param.index": "子インデックス",
+  "sim.deriveKeysWalkthrough.step.seed": "シード所有者は、導出スキームのエントリーポイントである derive_master_SK にエントロピーシードを提供します。",
+  "sim.deriveKeysWalkthrough.step.seed.mobile": "シードを提供",
+  "sim.deriveKeysWalkthrough.step.master": "スキームはシードをハッシュして BLS 秘密鍵の範囲に収め、その結果をマスター鍵としてツリーのルートに保存します。",
+  "sim.deriveKeysWalkthrough.step.master.mobile": "マスター鍵を導出",
+  "sim.deriveKeysWalkthrough.step.child": "マスター鍵を親として 32 ビットのインデックスを用い、derive_child_SK がツリーに追加する子鍵を計算します。",
+  "sim.deriveKeysWalkthrough.step.child.mobile": "子鍵を導出"
+}

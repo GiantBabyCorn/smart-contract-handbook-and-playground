@@ -1,0 +1,31 @@
+{
+  "short": "ENS リゾルバー向けの contenthash フィールド",
+  "introduction": "ERC-1577 は ENS リゾルバー向けの contenthash フィールドを定義し、人間が読める ENS 名を IPFS や Swarm などのネットワーク上のコンテンツアドレスにマッピングします。この規格は 2018年11月に Dean Eigenmann と Nick Johnson によって提案されました。値は <protoCode uvarint><value> という形式の multicodec です。protoCode がストレージシステムを識別し、残りのバイトがコンテンツアドレスになります。注記：ERC-1577 は Stagnant（停滞）です。6か月以上活動がなく、最終化されない可能性がありますが、歴史的または技術的に重要な意味を持ち続けています。",
+  "designPurpose": "ERC-1577 は、名前をオフチェーンのコンテンツに向けるための、明確に定義された1つのフィールドを ENS に提供するために設計されました。それ以前は、クライアントは場当たり的な content フィールドや multihash フィールドを通じて名前を IPFS や Swarm のハッシュへ解決していましたが、これらのフィールドはある値がどのネットワークや形式を使っているかを記録していなかったため、クライアントは対象をどのように取得すればよいか判断できませんでした。値を multicodec——protoCode プレフィックスの後に符号化されたアドレスが続く形式——にすることで、この規格は1つのリゾルバーが多数のプロトコルに対応できるようにし、各クライアントは protoCode を読み取ってアドレスを解決します。",
+  "commonUsage": "contenthash フィールドは、ENS 名を分散型ウェブサイトに解決するウォレットやブラウザーによって読み取られ、仕様で名前が挙げられている MetaMask と Status のクライアントもこれに含まれます。これは .eth のウェブサイトホスティングを支えており、名前が IPFS または Swarm のサイトに解決され、クライアントは符号化されたアドレスからそれを取得します。符号化ライブラリは multicodec 値をデコードおよび再エンコードするため、アプリケーションは単一のプロトコルをハードコードすることなく対象を辿ることができ、リゾルバーは 0xbc1c58d1 というインターフェース識別子を通じて対応を表明します。",
+
+  "node.user": "ドメイン所有者",
+  "node.encoder": "contenthash エンコーダー",
+  "node.storageContenthash": "リゾルバー contenthash",
+  "node.resolver": "ENS リゾルバー",
+  "node.decoder": "Multicodec デコーダー",
+  "node.network": "コンテンツネットワーク",
+
+  "edge.submitAddress": "コンテンツアドレスを送信",
+  "edge.encodeContenthash": "contenthash をエンコード",
+  "edge.readContenthash": "contenthash を読み取り",
+  "edge.returnContenthash": "contenthash を返す",
+  "edge.fetchContent": "デコードしてコンテンツを取得",
+
+  "sim.resolveWalkthrough.name": "contenthash 解決ウォークスルー",
+  "sim.resolveWalkthrough.desc": "エンコードから ENS リゾルバーを経て、デコードされた IPFS または Swarm の取得まで、contenthash 値の流れを追います。",
+  "sim.resolveWalkthrough.param.protocol": "ストレージプロトコル",
+  "sim.resolveWalkthrough.step.submit": "ドメイン所有者は、contenthash フィールドにエンコードするためのコンテンツアドレスを送信します。",
+  "sim.resolveWalkthrough.step.submit.mobile": "コンテンツアドレスを送信",
+  "sim.resolveWalkthrough.step.encode": "アドレスは multicodec 値——protoCode プレフィックスの後に符号化されたコンテンツアドレスが続く——にパックされ、リゾルバーに保存されます。",
+  "sim.resolveWalkthrough.step.encode.mobile": "エンコードして保存",
+  "sim.resolveWalkthrough.step.resolve": "アプリケーションが ENS リゾルバーに問い合わせると、リゾルバーはデコード用に保存された contenthash バイトを返します。",
+  "sim.resolveWalkthrough.step.resolve.mobile": "contenthash を解決",
+  "sim.resolveWalkthrough.step.decode": "クライアントは protoCode（IPFS の場合は 0xe3）を読み取ってプロトコルを選択し、そのネットワークからコンテンツを取得します。",
+  "sim.resolveWalkthrough.step.decode.mobile": "デコードして取得"
+}

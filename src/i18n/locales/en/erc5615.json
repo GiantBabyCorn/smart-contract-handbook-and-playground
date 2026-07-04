@@ -1,0 +1,32 @@
+{
+  "short": "ERC-1155 Supply Extension",
+  "introduction": "ERC-5615 defines a supply-reporting extension for ERC-1155 multi-token contracts. It was proposed by Gavin John in May 2023. The extension adds two view functions: totalSupply, which returns how many tokens are in circulation for a given id, and exists, which reports whether an id exists, previously existed, or may exist. It standardizes a pattern already shipped as OpenZeppelin's ERC1155Supply, giving indexers and wallets a predictable way to read per-id supply without depending on off-chain data.",
+  "designPurpose": "ERC-5615 was designed to give ERC-1155 a common way to expose per-id supply, which the base standard omits. Before it, contracts each invented their own supply getters or offered none, so indexers and marketplaces could not reliably tell how many units of a token id had been minted, or whether an id would ever exist. By formalizing totalSupply and exists with the same semantics as the widely used OpenZeppelin implementation, ERC-5615 lets any consumer query supply through one predictable interface.",
+  "commonUsage": "The extension is used by ERC-1155 collections and marketplaces that display remaining or total supply per token id, by minting interfaces that cap editions, and by indexers that track circulating amounts. Because it mirrors OpenZeppelin's ERC1155Supply, it is typically mixed into an existing ERC-1155 contract rather than deployed on its own. The exists function is used to distinguish an id with zero current supply from one that can never be minted.",
+
+  "fn.exists.desc": "Returns whether the given token id exists, previously existed, or may exist. Consumers use it to distinguish an id that currently has zero supply from one that can never be minted.",
+  "fn.exists.params.id": "The token id whose existence is being checked.",
+  "fn.exists.returns.exists": "True if the token id exists, previously existed, or may exist; otherwise false.",
+
+  "fn.totalSupply.desc": "Returns the number of tokens in circulation for the given id. If the token id does not exist, it returns 0.",
+  "fn.totalSupply.params.id": "The token id whose total supply is being fetched.",
+  "fn.totalSupply.returns.totalSupply": "The total supply of the given token id, or 0 if none exist.",
+
+  "node.user": "Supply Reader",
+  "node.contract": "ERC-1155 Supply Token",
+  "node.storageSupply": "Supply Storage",
+
+  "edge.callTotalSupply": "Call totalSupply()",
+  "edge.callExists": "Call exists()",
+  "edge.readSupply": "Read supply mapping",
+
+  "sim.totalSupplyWalkthrough.name": "Query Token Supply",
+  "sim.totalSupplyWalkthrough.desc": "Follow a totalSupply call from a reader through the contract's supply storage, then check exists to interpret a zero result.",
+  "sim.totalSupplyWalkthrough.param.id": "Token id",
+  "sim.totalSupplyWalkthrough.step.call": "A reader such as a wallet or indexer calls totalSupply(id) on the ERC-1155 contract to fetch the circulating amount for a token id.",
+  "sim.totalSupplyWalkthrough.step.call.mobile": "Call totalSupply()",
+  "sim.totalSupplyWalkthrough.step.read": "The contract reads the supply mapping for the id and returns the stored amount, or 0 if no tokens with that id have been minted.",
+  "sim.totalSupplyWalkthrough.step.read.mobile": "Read supply mapping",
+  "sim.totalSupplyWalkthrough.step.exists": "To interpret a zero result, the reader calls exists(id), which reports whether the id has no supply yet or can never be minted.",
+  "sim.totalSupplyWalkthrough.step.exists.mobile": "Check exists()"
+}

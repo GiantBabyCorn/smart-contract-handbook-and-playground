@@ -1,0 +1,28 @@
+{
+  "short": "面向 ERC-5219 的 ERC-4804 解析模式",
+  "introduction": "ERC-6944 定义了一个解析模式值，让 ERC-4804 客户端能够通过 ERC-5219 接口解析合约的 web3:// 请求。该提案由 Gavin John 与 Qi Zhou 于 2023 年 4 月提出。合约通过实现 IERC5219Resolver 来表明支持，其 resolveMode() 函数返回常量 bytes32 值「5219」；ERC-4804 网关读取该值后即使用 ERC-5219 的 request() 方法。注意：ERC-6944 目前为 Draft（草案）状态，规范仍在积极开发中，可能发生重大变更。",
+  "designPurpose": "ERC-6944 的设计目标是让 ERC-5219 能够作为 ERC-4804 的 web3:// 方案中的一种解析模式使用。ERC-4804 客户端需要知道每个合约期望以何种方式解析其请求，但在此提案之前，并没有针对 ERC-5219 request() 接口的标志位，只有内置的自动模式和手动模式。ERC-6944 用一个 pure 函数 resolveMode() 填补了这一空白，该函数返回固定的 bytes32 常量「5219」。它避免了对 ERC-165 的依赖，因为客户端可以直接调用 resolveMode() 自行检查兼容性。",
+  "commonUsage": "ERC-6944 由那些通过 ERC-5219 托管链上前端、并希望浏览器和网关能通过 web3:// URL 访问它的合约实现。该值由 web3:// 网关软件读取，也由代表用户解析 ERC-4804 地址的钱包或浏览器扩展读取。由于 resolveMode() 是 pure 函数且返回一个编译期常量，实现通常会继承一个将「5219」返回值硬编码的小型抽象合约，不增加任何存储，且只给宿主合约带来微不足道的 gas 开销。",
+
+  "fn.resolveMode.desc": "返回合约的 ERC-4804 解析模式。这是一个 pure 函数，必须返回常量 bytes32 值「5219」（不区分大小写），以表明请求应通过 ERC-5219 的 request() 接口来解析。",
+  "fn.resolveMode.returns.mode": "解析模式标识符，固定为 bytes32 值「5219」，代表 ERC-5219 解析。",
+
+  "node.user": "Web3 网关",
+  "node.contract": "ERC-5219 解析器",
+  "node.storageMode": "解析模式值",
+  "node.browser": "用户浏览器",
+
+  "edge.callResolveMode": "调用 resolveMode()",
+  "edge.readMode": "读取解析模式",
+  "edge.serveResponse": "提供 ERC-5219 响应",
+
+  "sim.resolveModeWalkthrough.name": "解析模式演练",
+  "sim.resolveModeWalkthrough.desc": "跟随一个 ERC-4804 客户端调用 resolveMode()，并了解如何通过 ERC-5219 解析该合约。",
+  "sim.resolveModeWalkthrough.param.target": "解析器合约",
+  "sim.resolveModeWalkthrough.step.call": "web3:// 网关在目标合约上调用 resolveMode()，以了解应如何解析其请求。",
+  "sim.resolveModeWalkthrough.step.call.mobile": "调用 resolveMode()",
+  "sim.resolveModeWalkthrough.step.resolve": "合约返回固定的 bytes32 常量「5219」，表明自身是一个 ERC-5219 解析器。",
+  "sim.resolveModeWalkthrough.step.resolve.mobile": "返回模式 5219",
+  "sim.resolveModeWalkthrough.step.serve": "看到「5219」模式后，网关通过 ERC-5219 解析请求，并向浏览器提供响应。",
+  "sim.resolveModeWalkthrough.step.serve.mobile": "通过 ERC-5219 提供"
+}

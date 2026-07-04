@@ -1,0 +1,32 @@
+{
+  "short": "Mixed-Case Checksum Address Encoding",
+  "introduction": "ERC-55 defines a backward-compatible checksum for Ethereum addresses that encodes error-detection bits in the letter case of the hex digits. It was proposed by Vitalik Buterin and Alex Van de Sande in January 2016. The address is lowercased to its 40-character hex form and hashed with Keccak-256 as an ASCII string; each hex letter is uppercased when the matching hash nibble is 8 or higher, and lowercase otherwise. Decimal digits stay unchanged, so the address keeps its length while adding about 15 check bits.",
+  "designPurpose": "ERC-55 was designed to catch mistyped Ethereum addresses without changing their length or breaking existing tools. Plain hex addresses carry no redundancy, so a single altered character yields another valid-looking address and funds can be lost. Rather than appending a checksum, ERC-55 reuses the case of the a-f letters as a per-character check. Because most parsers accept mixed-case hex, checksummed addresses work in older software, while clients that support it reject any address whose casing fails the hash.",
+  "commonUsage": "Mixed-case checksums appear almost everywhere an Ethereum address is shown to a person: wallets, block explorers, and libraries such as web3.js and ethers.js render and validate addresses in this form. Because the encoding is a pure function of the address, it needs no on-chain contract or storage; software applies it when displaying an address and warns or rejects when the casing fails the check. The specification's all-caps, all-lowercase, and normal test vectors are commonly used to verify implementations.",
+
+  "node.user": "Address Source",
+  "node.encoder": "Checksum Encoder",
+  "node.storageHash": "Keccak-256 Hash",
+  "node.storageResult": "Checksummed Address",
+  "node.verifier": "Checksum Verifier",
+  "node.consumer": "Verifying Wallet",
+
+  "edge.submitAddress": "Submit lowercase address",
+  "edge.hashAddress": "Hash lowercase hex",
+  "edge.applyCasing": "Apply letter casing",
+  "edge.readHash": "Read hash bits",
+  "edge.checkChecksum": "Check casing",
+  "edge.deliverAddress": "Deliver validated address",
+
+  "sim.checksumWalkthrough.name": "Checksum Encoding Walkthrough",
+  "sim.checksumWalkthrough.desc": "Follow a lowercase address as the encoder hashes it, applies the ERC-55 letter casing, and a client verifies the result.",
+  "sim.checksumWalkthrough.param.address": "Lowercase address",
+  "sim.checksumWalkthrough.step.submit": "A wallet or application submits a plain lowercase hexadecimal address to the checksum encoder.",
+  "sim.checksumWalkthrough.step.submit.mobile": "Submit address",
+  "sim.checksumWalkthrough.step.hash": "The encoder treats the 40-character hex address as ASCII and computes its Keccak-256 hash, which supplies the casing bits.",
+  "sim.checksumWalkthrough.step.hash.mobile": "Hash lowercase hex",
+  "sim.checksumWalkthrough.step.case": "Each hex letter is uppercased when its matching hash nibble is 8 or higher and left lowercase otherwise, producing the mixed-case address.",
+  "sim.checksumWalkthrough.step.case.mobile": "Apply letter casing",
+  "sim.checksumWalkthrough.step.verify": "A verifying client re-derives the casing from the hash and compares it, accepting the address only when every letter matches.",
+  "sim.checksumWalkthrough.step.verify.mobile": "Verify checksum"
+}

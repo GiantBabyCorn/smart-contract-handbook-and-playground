@@ -1,0 +1,44 @@
+{
+  "short": "用于 DNS 记录的 ENS 解析器配置文件",
+  "introduction": "ERC-1185 为以太坊域名服务（ENS）定义了一个用于存储和查找 DNS 记录的解析器配置文件。它由 Jim McDonald 于 2018 年 6 月提出。该配置文件以记录集为操作对象，每个记录集由域名、名称和资源类型三元组标识，并以 DNS wire format 保存零个或多个值。两个函数写入记录，两个视图函数读取记录，使 ENS 能够充当 DNS 信息的权威存储。注意：ERC-1185 处于 Review 状态，其接口在最终确定前仍可能变化。",
+  "designPurpose": "ERC-1185 的设计目的是让 ENS 充当权威 DNS 数据的去中心化存储，使域名所有者能够完全控制其记录，而不会将所有权与权威解析服务混为一谈。传统 DNS 将一个区域的所有记录保存在单个文件中，这种方式很简单，但移植到 ENS 后会使微小的改动在 gas 上代价高昂。为避免这种情况，该配置文件以域名、名称和资源三元组为键分别存储各个记录集，从而无需重写整个区域即可更新单条记录。",
+  "commonUsage": "ENS 解析器合约实现此配置文件以公开 DNS 数据，钱包、网关和支持 DNS 的软件会查询这些数据，将名称解析为诸如 A 或 CNAME 之类的记录。域名所有者调用 setDNSRecords 来发布记录，并调用 clearDNSZone 在单笔交易中重置一个区域，而解析器则调用 hasDNSRecords 来进行 RFC 4592 定义的通配符查找。由于此配置文件复用了 ERC-137 解析器模型和 ERC-165 接口检测，因此通常会将其添加到现有的解析器中，而不是单独部署。",
+
+  "fn.setDNSRecords.desc": "为给定的 ENS node 设置、更新或清除一个或多个 DNS 记录。记录以 DNS wire format 提供，任何未附带值的记录都会被清除，且同一记录集中的记录必须连续。",
+  "fn.setDNSRecords.params.node": "要设置记录的完全限定 ENS 域名的 namehash。",
+  "fn.setDNSRecords.params.data": "以 DNS wire format 表示的一个或多个 DNS 记录；未提供值的记录会清除该记录。",
+
+  "fn.clearDNSZone.desc": "通过递增区域的版本号，在单次操作中移除该域名的所有 DNS 记录，从而无需使用 setDNSRecords 逐条清除每个记录。",
+  "fn.clearDNSZone.params.node": "要清除记录的完全限定 ENS 域名的 namehash。",
+
+  "fn.dnsRecords.desc": "以 DNS wire format 返回给定 node、name 和 resource 的所有匹配 DNS 记录；若不存在任何记录，则不返回内容。",
+  "fn.dnsRecords.params.node": "要查询的完全限定 ENS 域名的 namehash。",
+  "fn.dnsRecords.params.name": "以 DNS wire format 表示的记录名称的 keccak256 哈希值。",
+  "fn.dnsRecords.params.resource": "DNS 资源记录类型 ID，如 RFC 1035 及后续 RFC 中所定义。",
+  "fn.dnsRecords.returns.records": "以 DNS wire format 表示的匹配记录；若不存在则为空。",
+
+  "fn.hasDNSRecords.desc": "报告域名中是否存在所提供 name 的任何记录。DNS 解析器在处理 RFC 4592 定义的通配符资源时使用。",
+  "fn.hasDNSRecords.params.node": "要查询的完全限定 ENS 域名的 namehash。",
+  "fn.hasDNSRecords.params.name": "以 DNS wire format 表示的记录名称的 keccak256 哈希值。",
+  "fn.hasDNSRecords.returns.exists": "如果该 node 和 name 存在任何记录，则为 true，否则为 false。",
+
+  "node.user": "域名所有者",
+  "node.contract": "DNS 解析器",
+  "node.storageRecords": "记录存储",
+
+  "edge.callSetRecords": "调用 setDNSRecords()",
+  "edge.queryRecords": "调用 dnsRecords()",
+  "edge.updateRecords": "更新记录",
+  "edge.emitChanged": "触发 DNSRecordChanged 事件",
+
+  "sim.setRecordsWalkthrough.name": "设置 DNS 记录演练",
+  "sim.setRecordsWalkthrough.desc": "跟随一次 setDNSRecords 调用，从域名所有者经过记录存储，直到 DNSRecordChanged 事件。",
+  "sim.setRecordsWalkthrough.param.domain": "域名",
+  "sim.setRecordsWalkthrough.param.recordType": "要设置的记录",
+  "sim.setRecordsWalkthrough.step.call": "域名所有者在解析器上调用 setDNSRecords(node, data)，传入该域名的 namehash 以及以 DNS wire format 表示的记录。",
+  "sim.setRecordsWalkthrough.step.call.mobile": "调用 setDNSRecords()",
+  "sim.setRecordsWalkthrough.step.execute": "解析器解析 wire format 数据，并将记录集写入该域名当前版本下的 records 映射中。",
+  "sim.setRecordsWalkthrough.step.execute.mobile": "存储记录集",
+  "sim.setRecordsWalkthrough.step.event": "解析器触发 DNSRecordChanged(node, name, resource, record)，以便链下解析器和索引器刷新其视图。",
+  "sim.setRecordsWalkthrough.step.event.mobile": "触发 DNSRecordChanged"
+}

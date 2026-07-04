@@ -1,0 +1,35 @@
+{
+  "short": "チェーンID による大文字小文字混在チェックサムアドレスのエンコーディング",
+  "introduction": "ERC-1191 は、ハッシュ計算に EIP-155 のチェーンID をオプションで加えることで、ERC-55 の大文字小文字混在アドレスチェックサムを拡張します。2018年3月に Juliano Rizzo によって提案されました。チェーンID がこのバリアントを選択したネットワークに属する場合、Keccak-256 ハッシュを計算する前にアドレスの先頭にチェーンID と '0x' セパレータを付加し、そのハッシュが ERC-55 の文字の大文字・小文字ルールを決定します。注意：ERC-1191 は Last Call（Final になる前の最終レビュー期間）の段階にあります。",
+  "designPurpose": "ERC-1191 は、ある Ethereum ベースのネットワークで有効なアドレスが別のネットワークで使用された際に資金が失われるのを防ぐために設計されました。ERC-55 は入力ミスを検出しますが、すべてのネットワークを同一に扱うため、テストネットや兄弟チェーン向けに生成されたアドレスでもメインネットでチェックサムを通過してしまいます。ERC-1191 はオプトインしたネットワークについてチェーンID をハッシュ入力に混ぜ込むため、あるチェーンID 向けにチェックサム化されたアドレスは別のチェーンID では検証に失敗し、既存の ERC-55 コードへの最小限の変更でウォレットがネットワーク間の誤りを検出できるようになります。",
+  "commonUsage": "ERC-1191 は、ウォレットやライブラリがアドレスを表示または検証する際にオフチェーンで適用されるため、オンチェーンのコントラクトやストレージを必要としません。仕様では、このバリアントを選択したネットワークとして RSK Mainnet（チェーンID 30）と RSK Testnet（チェーンID 31）が挙げられており、そのテストベクターはこれらのチェーンおよび Ethereum メインネットに対する期待される大文字・小文字を示しています。仕様に記載されている実装には、MyCrypto、MyEtherWallet、web3.js、および Ledger と Trezor のハードウェアウォレットが含まれます。",
+
+  "node.user": "アドレスソース",
+  "node.encoder": "チェックサムエンコーダー",
+  "node.storageInput": "チェーンプレフィックス付き入力",
+  "node.storageHash": "Keccak-256 ハッシュ",
+  "node.storageResult": "チェックサム付きアドレス",
+  "node.verifier": "ネットワーク検証器",
+  "node.consumer": "検証ウォレット",
+
+  "edge.submitAddress": "アドレスとチェーンID を送信",
+  "edge.prefixChainId": "チェーンID を先頭に付加",
+  "edge.hashInput": "プレフィックス付き入力をハッシュ化",
+  "edge.applyCasing": "文字の大文字・小文字を適用",
+  "edge.readHash": "ハッシュビットを読み取り",
+  "edge.checkCasing": "大文字・小文字を確認",
+  "edge.deliverAddress": "検証済みアドレスを引き渡し",
+
+  "sim.checksumWalkthrough.name": "チェーンID チェックサムのウォークスルー",
+  "sim.checksumWalkthrough.desc": "アドレスとチェーンID を追いながら、エンコーダーがチェーンID を先頭に付加し、入力をハッシュ化し、ERC-1191 の大文字・小文字を適用し、ネットワーククライアントが結果を検証する様子を確認します。",
+  "sim.checksumWalkthrough.param.address": "小文字のアドレス",
+  "sim.checksumWalkthrough.param.chainId": "ネットワークのチェーンID",
+  "sim.checksumWalkthrough.step.submit": "ウォレットが、所属するネットワークのチェーンID とともに小文字のアドレスを送信します。",
+  "sim.checksumWalkthrough.step.submit.mobile": "アドレスとチェーンを送信",
+  "sim.checksumWalkthrough.step.prefix": "オプトインしたチェーンID の場合、エンコーダーはアドレスの先頭にチェーンID と '0x' セパレータを付加し、その文字列の Keccak-256 ハッシュを計算します。",
+  "sim.checksumWalkthrough.step.prefix.mobile": "チェーンID を付加しハッシュ化",
+  "sim.checksumWalkthrough.step.case": "各16進の文字は、対応するハッシュのニブルが8以上のとき大文字になり、そうでなければ小文字のままとなり、チェーン固有の大文字小文字混在アドレスが生成されます。",
+  "sim.checksumWalkthrough.step.case.mobile": "文字の大文字・小文字を適用",
+  "sim.checksumWalkthrough.step.verify": "同じネットワーク上のクライアントは、チェーンプレフィックス付きハッシュから大文字・小文字を再導出し、すべての文字が一致する場合にのみアドレスを受け入れます。",
+  "sim.checksumWalkthrough.step.verify.mobile": "チェックサムを検証"
+}

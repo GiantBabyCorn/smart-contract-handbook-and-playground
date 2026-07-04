@@ -1,0 +1,42 @@
+{
+  "short": "ENS Reverse Resolution of Ethereum Addresses",
+  "introduction": "ERC-181 defines a registrar and resolver interface for reverse resolution in the Ethereum Name Service (ENS), mapping an Ethereum address back to a human-readable name. It was proposed by Nick Johnson in December 2016. Reverse records live under the reserved addr.reverse domain: an address's record is stored at its lowercase hexadecimal form followed by .addr.reverse. A registrar owning that domain lets each account claim its own reverse node, and a resolver exposes a name method returning the ENS name for a node.",
+  "designPurpose": "ERC-181 was designed to add reverse lookups to ENS, which originally supported only forward resolution from a name to an address. Because anyone can point a name at an address they do not own, a forward record alone cannot prove that an address endorses a given name. ERC-181 derives each address's reverse node deterministically from its hex encoding and places a registrar over addr.reverse that only lets an account claim the record for its own address, so resolvers can trust the name was set by the address's owner.",
+  "commonUsage": "Reverse resolution is used by wallets, block explorers, and dashboards that display a short ENS name such as alice.eth in place of a raw hexadecimal address. The claim function also lets a contract delegate reverse-record setup to its deployer in a single constructor call, so deployed contracts can present a readable name. Because reverse records are keyed by the address's hex encoding, contracts performing on-chain reverse lookups must hex-encode the address themselves before querying ENS.",
+
+  "fn.claim.desc": "Instructs the ENS registry to transfer ownership of the caller's reverse record, hex(caller) + '.addr.reverse', to the given owner address, and returns the namehash of that record.",
+  "fn.claim.params.owner": "The address to set as the owner of the caller's reverse record in ENS.",
+  "fn.claim.returns.node": "The ENS namehash of the reverse record whose ownership was transferred.",
+
+  "fn.claimWithResolver.desc": "Sets the resolver for the caller's reverse record and transfers ownership of it to the given owner in one call, then returns the record's namehash. Passing zero as the resolver leaves the current one unchanged.",
+  "fn.claimWithResolver.params.owner": "The address to set as the owner of the reverse record.",
+  "fn.claimWithResolver.params.resolver": "The resolver address to set for the record; zero leaves the current resolver unchanged.",
+  "fn.claimWithResolver.returns.node": "The ENS namehash of the reverse record.",
+
+  "fn.setName.desc": "Points the caller's reverse record at a default resolver and writes the given name into it, creating a reverse record in a single transaction. Returns the record's namehash.",
+  "fn.setName.params.name": "The ENS name to store as the caller's reverse record.",
+  "fn.setName.returns.node": "The ENS namehash of the reverse record.",
+
+  "fn.name.desc": "Resolver method that returns the ENS name recorded for the given node, or the empty string when none is set. Its ERC-165 interface ID is 0x691f3431.",
+  "fn.name.params.node": "The namehash of the reverse record to look up.",
+  "fn.name.returns.name": "The ENS name registered for the node, or an empty string if unset.",
+
+  "node.user": "Address Owner",
+  "node.contract": "Reverse Registrar",
+  "node.storageReverse": "Reverse Records",
+
+  "edge.callClaim": "Call claim()",
+  "edge.callSetName": "Call setName()",
+  "edge.updateReverse": "Update reverse record",
+
+  "sim.setNameWalkthrough.name": "Set Reverse Name Walkthrough",
+  "sim.setNameWalkthrough.desc": "Follow a setName call as the reverse registrar claims the caller's reverse node and stores an ENS name for it.",
+  "sim.setNameWalkthrough.param.caller": "Address owner",
+  "sim.setNameWalkthrough.param.name": "ENS name",
+  "sim.setNameWalkthrough.step.call": "An account calls setName(name) on the reverse registrar to set the ENS name for its own address in a single transaction.",
+  "sim.setNameWalkthrough.step.call.mobile": "Call setName()",
+  "sim.setNameWalkthrough.step.claim": "The registrar computes the caller's reverse node from hex(caller) + '.addr.reverse', claims ownership of it, and points it at the default resolver.",
+  "sim.setNameWalkthrough.step.claim.mobile": "Claim reverse node",
+  "sim.setNameWalkthrough.step.store": "The default resolver writes the supplied name into its name mapping for the reverse node, so lookups now return the human-readable name.",
+  "sim.setNameWalkthrough.step.store.mobile": "Store ENS name"
+}

@@ -1,0 +1,68 @@
+{
+  "short": "dType Storage Extension for the EVM",
+  "introduction": "ERC-2157 defines an optional storage extension for dType, the decentralized type system from ERC-1900, standardizing the ABI of the contracts that store type instances. It was proposed by Loredana Cirstea and Christian Tzurcanu in June 2019. Each storage contract exposes a common CRUD interface that makes every record addressable by a deterministic identifier or by index. Note: ERC-2157 is Stagnant — it has been inactive for 6+ months and may never be finalized, but remains historically or technically significant.",
+  "designPurpose": "ERC-2157 was designed to give Ethereum deterministic addressability for public data. ERC-1900 standardized type definitions but left data retrieval to off-chain blockchain analysis or centralized caches like block explorers, so on-chain contracts could not reliably locate another project's instances. By fixing a common storage ABI and a TypeRootContract that ties each type to its library and storage, ERC-2157 lets any contract or tool follow a known path to a record and reconstruct its ABI from the dType registry.",
+  "commonUsage": "The extension targets applications built on shared public data: decentralized marketplaces that read product records straight from a known storage contract, data bridges that sync type instances between Ethereum shards or across chains, and tooling that infers a contract's ABI from the registry. The proposal defers access and mutability controls to a future extension. Because ERC-2157 never reached Final status, it saw only reference-implementation work rather than production adoption.",
+
+  "fn.insert.desc": "Stores a new type instance, writing it into the record mapping and appending it to the index array. Returns the primary identifier computed by the type library's getIdentifier function and emits a LogNew event.",
+  "fn.insert.params.data": "The type instance to store, typed by the contract's type library.",
+  "fn.insert.returns.identifier": "The record's primary identifier, derived from its values by getIdentifier.",
+
+  "fn.insertBytes.desc": "Stores a new type instance supplied as ABI-encoded bytes, decoding it with the type library before writing the record.",
+  "fn.insertBytes.params.data": "The ABI-encoded type instance to store.",
+  "fn.insertBytes.returns.identifier": "The primary identifier of the stored record.",
+
+  "fn.remove.desc": "Deletes the record with the given identifier and frees its storage slot, returning the index the record occupied.",
+  "fn.remove.params.identifier": "The primary identifier of the record to remove.",
+  "fn.remove.returns.index": "The index the removed record occupied in the index array.",
+
+  "fn.update.desc": "Overwrites the record stored under the given identifier with new type instance values, returning the identifier of the updated record.",
+  "fn.update.params.identifier": "The primary identifier of the record to update.",
+  "fn.update.params.data": "The new type instance values to store.",
+  "fn.update.returns.identifier": "The identifier of the updated record.",
+
+  "fn.isStored.desc": "Reports whether a record with the given identifier exists in the storage contract.",
+  "fn.isStored.params.identifier": "The primary identifier to check.",
+  "fn.isStored.returns.stored": "True if a record with the identifier exists.",
+
+  "fn.getByHash.desc": "Returns the type instance stored under the given primary identifier.",
+  "fn.getByHash.params.identifier": "The primary identifier of the record to fetch.",
+  "fn.getByHash.returns.data": "The stored type instance.",
+
+  "fn.getByIndex.desc": "Returns the type instance stored at the given position in the index array, allowing records to be enumerated.",
+  "fn.getByIndex.params.index": "The position of the record in the index array.",
+  "fn.getByIndex.returns.data": "The stored type instance.",
+
+  "fn.count.desc": "Returns the number of records currently stored in the contract.",
+  "fn.count.returns.counter": "The total number of stored records.",
+
+  "fn.LogNew.desc": "Emitted when a new type instance is inserted into the storage contract.",
+  "fn.LogNew.params.identifier": "The primary identifier of the inserted record.",
+  "fn.LogNew.params.index": "The index of the record in the index array.",
+
+  "fn.LogUpdate.desc": "Emitted when an existing record is updated.",
+  "fn.LogUpdate.params.identifier": "The primary identifier of the updated record.",
+  "fn.LogUpdate.params.index": "The index of the record in the index array.",
+
+  "fn.LogRemove.desc": "Emitted when a record is removed from the storage contract.",
+  "fn.LogRemove.params.identifier": "The primary identifier of the removed record.",
+  "fn.LogRemove.params.index": "The index the removed record occupied in the index array.",
+
+  "node.user": "Data Publisher",
+  "node.contract": "Type Storage Contract",
+  "node.storageRecords": "Record Storage",
+
+  "edge.callInsert": "Call insert()",
+  "edge.updateRecords": "Store type instance",
+  "edge.emitLogNew": "Emit LogNew event",
+
+  "sim.insertWalkthrough.name": "Store a Type Instance Walkthrough",
+  "sim.insertWalkthrough.desc": "Follow an insert call from the publisher through record storage to the LogNew event.",
+  "sim.insertWalkthrough.param.record": "Type instance",
+  "sim.insertWalkthrough.step.call": "The publisher calls insert(data) with a type instance to add to the storage contract.",
+  "sim.insertWalkthrough.step.call.mobile": "Call insert()",
+  "sim.insertWalkthrough.step.execute": "The contract derives the identifier with the type library's getIdentifier function, writes the record into the typeStruct mapping, and appends its identifier to the typeIndex array.",
+  "sim.insertWalkthrough.step.execute.mobile": "Store the record",
+  "sim.insertWalkthrough.step.event": "The contract emits LogNew(identifier, index) so off-chain indexers can track the new record.",
+  "sim.insertWalkthrough.step.event.mobile": "Emit LogNew event"
+}

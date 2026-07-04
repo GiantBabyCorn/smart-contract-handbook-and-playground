@@ -1,0 +1,27 @@
+{
+  "short": "方法行为的通用可扩展性",
+  "introduction": "ERC-5750 定义了一种约定，通过将合约方法的最后一个参数（一个动态大小的 bytes 字段）指定为行为扩展的开放槽位，使合约方法具备可扩展性。该标准由 Zainan Victor Zhou 于 2022 年 10 月提出。合规方法无需为每一项未来需求都新增一个方法，而是接受一个末尾的 bytes 参数，用于携带任意载荷，例如签名、nonce 或承诺值。当该字段为空时，该方法的行为必须与其不带此参数的重载同名方法完全一致。",
+  "designPurpose": "ERC-5750 的设计目标是让方法接口能够演进，而不破坏现有调用方。在此之前，扩展一个函数意味着要么发明一个新方法（并随之带来所有命名与函数签名方面的问题），要么复用现有参数（并承担语义含糊的风险）。通过预留一个末尾的 bytes 参数来承载非结构化的扩展数据，该标准为每个方法提供了一个向前兼容的应急扩展出口，它可以编码任何未来的方案，同时保持空数据时的行为与普通方法完全一致。",
+  "commonUsage": "已有多个成熟标准包含合规方法：ERC-721 与 ERC-1155 的 safeTransferFrom 函数，以及 ERC-777 的 burn 和 send 函数，都将一个末尾的 bytes data 参数置于最后。较新的设计采用这一约定，用于附加签名、携带供 commit-reveal 方案使用的盐值、nonce 或承诺值，或将数据转发给接收方回调。该标准还标记出末尾 bytes 已承载实际用途的方法，例如 ERC-2535 中的 diamondCut，这类方法需要一个重载才能合规。",
+
+  "node.user": "调用方",
+  "node.contract": "合规合约",
+  "node.storageData": "扩展载荷",
+  "node.extension": "扩展行为",
+
+  "edge.callMethod": "携带 data 调用 methodName1()",
+  "edge.readData": "读取 data 参数",
+  "edge.invokeExtension": "调用扩展行为",
+  "edge.forwardData": "转发载荷",
+
+  "sim.extensionCallWalkthrough.name": "方法扩展演练",
+  "sim.extensionCallWalkthrough.desc": "跟随一次合规方法调用，其末尾的 bytes 载荷会触发一项扩展行为。",
+  "sim.extensionCallWalkthrough.param.param1": "方法参数",
+  "sim.extensionCallWalkthrough.param.data": "扩展载荷",
+  "sim.extensionCallWalkthrough.step.call": "调用方在合规合约上调用 methodName1，并将一个扩展载荷作为末尾的 bytes data 参数附加其后。",
+  "sim.extensionCallWalkthrough.step.call.mobile": "携带 data 调用",
+  "sim.extensionCallWalkthrough.step.execute": "合约执行其核心行为并读取末尾的 data 参数；当该字段为空时，此调用与不带该参数的同名方法完全一致。",
+  "sim.extensionCallWalkthrough.step.execute.mobile": "读取 data 参数",
+  "sim.extensionCallWalkthrough.step.extension": "合约解码该载荷并调用扩展行为，例如验证签名或记录一个承诺值。",
+  "sim.extensionCallWalkthrough.step.extension.mobile": "调用扩展"
+}

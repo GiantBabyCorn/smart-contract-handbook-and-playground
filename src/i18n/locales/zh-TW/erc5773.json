@@ -1,0 +1,70 @@
+{
+  "short": "上下文相關多資產代幣",
+  "introduction": "ERC-5773 為多資產 NFT 定義了一套介面，讓單一非同質化代幣持有多個資產，並根據存取它的上下文對外揭露最合適的那一個。該標準由 Bruno Škvorc、Cicada、Steven Pineda、Stevan Bogosavljevic 與 Jan Turk 於 2022 年 10 月提出。每個資產都是一個帶命名空間的 token URI，由一個 uint64 識別碼引用，依優先級排序，並透過提議-提交（propose-commit）模式加入：新資產會先進入待處理陣列，必須先由所有者接受，才會成為活躍資產。",
+  "designPurpose": "ERC-5773 的設計目標是擴展 ERC-721，使 NFT 不再被綁定到單一的 tokenURI。在此之前，若要讓一個代幣在不同應用中呈現不同形態，或將其元資料鏡像到多個儲存網路，就意味著替換掉唯一的那個 URI，並抹去它的歷史脈絡。ERC-5773 轉而以 uint64 識別碼按引用方式儲存資產，並依所有者設定的優先級排序，讓使用方挑選適合自身媒介的資產。提議-提交流程允許發行方建議或替換某個資產，同時所有者保留最終的決定權。",
+  "commonUsage": "多資產代幣適用於同一個 NFT 需要向不同使用方提供不同輸出的情境：一本電子書在閱讀器中解析為 PDF，而在有聲書應用中解析為 MP3；一件遊戲裝飾品為不同引擎攜帶各自的資產檔案；或將元資料鏡像到 IPFS、Arweave 等多個網路以提供冗餘。由於該標準擴展自 ERC-721，實作可以重複使用現有的 ERC-721 工具，並加入 ERC-165 偵測，以及針對單一代幣與操作者、專門用於將資產管理與轉移分開處理的授權。",
+
+  "fn.acceptAsset.desc": "將一個資產從代幣的待處理陣列遷移到其活躍陣列。呼叫者必須擁有該代幣，或已獲授權管理其資產，且 index 與預期的 assetId 必須相符。發出一個 AssetAccepted 事件。",
+  "fn.acceptAsset.params.tokenId": "要接受其待處理資產的代幣 ID。",
+  "fn.acceptAsset.params.index": "待處理陣列中要接受的資產的索引。",
+  "fn.acceptAsset.params.assetId": "該索引處預期的資產 ID，用於驗證以防止競爭條件。",
+
+  "fn.rejectAsset.desc": "從代幣的待處理陣列中移除單個資產而不將其啟用。呼叫者必須擁有該代幣，或已獲授權管理其資產，且 index 與預期的 assetId 必須相符。發出一個 AssetRejected 事件。",
+  "fn.rejectAsset.params.tokenId": "要從中拒絕該資產的代幣 ID。",
+  "fn.rejectAsset.params.index": "待處理陣列中要拒絕的資產的索引。",
+  "fn.rejectAsset.params.assetId": "該索引處預期的資產 ID。",
+
+  "fn.rejectAllAssets.desc": "在一次呼叫中清空代幣的整個待處理陣列，並以 maxRejections 為上限，以避免丟棄在該操作之前剛剛到達的資產。發出一個 assetId 為 0 的 AssetRejected 事件。",
+  "fn.rejectAllAssets.params.tokenId": "待處理陣列被清空的代幣 ID。",
+  "fn.rejectAllAssets.params.maxRejections": "要拒絕的資產的最大數量，用於防範在呼叫之前剛剛加入的資產。",
+
+  "fn.setPriority.desc": "為代幣的活躍資產設定新的優先順序，其中數值最小者優先級最高，0 表示未初始化。priorities 陣列的長度必須等於活躍資產的數量。發出一個 AssetPrioritySet 事件。",
+  "fn.setPriority.params.tokenId": "要為其設定優先級的代幣 ID。",
+  "fn.setPriority.params.priorities": "活躍資產的優先級陣列，與活躍陣列的順序一一對應。",
+
+  "fn.getActiveAssets.desc": "傳回給定代幣的活躍資產 ID 陣列；資產資料需透過 getAssetMetadata 單獨取得。",
+  "fn.getActiveAssets.params.tokenId": "要查詢其活躍資產 ID 的代幣 ID。",
+  "fn.getActiveAssets.returns.assetIds": "給定代幣的活躍資產 ID 陣列。",
+
+  "fn.getPendingAssets.desc": "傳回給定代幣中等待所有者接受或拒絕的待處理資產 ID 陣列。",
+  "fn.getPendingAssets.params.tokenId": "要查詢其待處理資產 ID 的代幣 ID。",
+  "fn.getPendingAssets.returns.assetIds": "給定代幣的待處理資產 ID 陣列。",
+
+  "fn.getAssetMetadata.desc": "傳回代幣某個給定活躍資產的元資料 URI，該 URI 解析為該資產的媒體或描述符，從而實現上下文相關的輸出。",
+  "fn.getAssetMetadata.params.tokenId": "要從中讀取資產元資料的代幣 ID。",
+  "fn.getAssetMetadata.params.assetId": "資產的 ID，該資產必須位於代幣的活躍資產陣列中。",
+  "fn.getAssetMetadata.returns.metadata": "指定資產的元資料 URI。",
+
+  "fn.AssetAccepted.desc": "當一個待處理資產被接受並遷移到代幣的活躍陣列時發出，其中包含它所替換的任何資產的 ID。",
+  "fn.AssetAccepted.params.tokenId": "有新資產被接受的代幣 ID。",
+  "fn.AssetAccepted.params.assetId": "被接受的資產的 ID。",
+  "fn.AssetAccepted.params.replacesId": "被替換的資產的 ID，若無則為 0。",
+
+  "fn.AssetRejected.desc": "當一個資產從代幣的待處理陣列中被丟棄時發出；assetId 為 0 表示整個待處理陣列已被清空。",
+  "fn.AssetRejected.params.tokenId": "有資產被拒絕的代幣 ID。",
+  "fn.AssetRejected.params.assetId": "被拒絕的資產的 ID，當整個待處理陣列被清空時為 0。",
+
+  "fn.AssetPrioritySet.desc": "當代幣的活躍資產優先順序被更新時發出。",
+  "fn.AssetPrioritySet.params.tokenId": "資產優先級陣列被更新的代幣 ID。",
+
+  "node.user": "代幣所有者",
+  "node.contract": "多資產代幣",
+  "node.storageAssets": "資產儲存",
+
+  "edge.callAcceptAsset": "呼叫 acceptAsset()",
+  "edge.callRejectAsset": "呼叫 rejectAsset()",
+  "edge.updateAssets": "更新資產陣列",
+  "edge.emitAssetAccepted": "發出 AssetAccepted 事件",
+
+  "sim.acceptAssetWalkthrough.name": "接受資產演練",
+  "sim.acceptAssetWalkthrough.desc": "追蹤一次 acceptAsset 呼叫，觀察一個待處理資產如何被遷移到活躍陣列，以及 AssetAccepted 事件如何被發出。",
+  "sim.acceptAssetWalkthrough.param.tokenId": "代幣 ID",
+  "sim.acceptAssetWalkthrough.param.index": "待處理索引",
+  "sim.acceptAssetWalkthrough.param.assetId": "資產 ID",
+  "sim.acceptAssetWalkthrough.step.call": "代幣所有者呼叫 acceptAsset(tokenId, index, assetId) 以接受一個待處理資產，並傳入預期的 assetId 以防範索引發生變化。",
+  "sim.acceptAssetWalkthrough.step.call.mobile": "呼叫 acceptAsset()",
+  "sim.acceptAssetWalkthrough.step.execute": "合約將該資產從待處理陣列中移除，並將其附加到代幣的活躍資產陣列中。",
+  "sim.acceptAssetWalkthrough.step.execute.mobile": "遷移至活躍",
+  "sim.acceptAssetWalkthrough.step.event": "合約發出 AssetAccepted，以便索引器和交易市場能夠重新整理代幣的活躍資產。",
+  "sim.acceptAssetWalkthrough.step.event.mobile": "發出 AssetAccepted"
+}

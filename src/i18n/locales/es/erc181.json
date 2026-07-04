@@ -1,0 +1,42 @@
+{
+  "short": "Resolución Inversa ENS de Direcciones de Ethereum",
+  "introduction": "ERC-181 define una interfaz de registrador y resolver para la resolución inversa en el Ethereum Name Service (ENS), que asigna una dirección de Ethereum de vuelta a un nombre legible por humanos. Fue propuesto por Nick Johnson en diciembre de 2016. Los registros inversos residen bajo el dominio reservado addr.reverse: el registro de una dirección se almacena en su forma hexadecimal en minúsculas seguida de .addr.reverse. Un registrador que posee ese dominio permite que cada cuenta reclame su propio nodo inverso, y un resolver expone un método name que devuelve el nombre ENS de un nodo.",
+  "designPurpose": "ERC-181 se diseñó para añadir búsquedas inversas a ENS, que originalmente solo admitía la resolución directa de un nombre a una dirección. Dado que cualquiera puede apuntar un nombre a una dirección que no posee, un registro directo por sí solo no puede probar que una dirección respalde un nombre determinado. ERC-181 deriva el nodo inverso de cada dirección de forma determinista a partir de su codificación hexadecimal y coloca un registrador sobre addr.reverse que solo permite a una cuenta reclamar el registro de su propia dirección, de modo que los resolvers puedan confiar en que el nombre fue establecido por el propietario de la dirección.",
+  "commonUsage": "La resolución inversa la utilizan billeteras, exploradores de bloques y paneles que muestran un nombre ENS corto como alice.eth en lugar de una dirección hexadecimal en bruto. La función claim también permite que un contrato delegue la configuración del registro inverso en su desplegador con una sola llamada al constructor, de modo que los contratos desplegados puedan presentar un nombre legible. Dado que los registros inversos se indexan por la codificación hexadecimal de la dirección, los contratos que realizan búsquedas inversas on-chain deben codificar ellos mismos la dirección en hexadecimal antes de consultar ENS.",
+
+  "fn.claim.desc": "Indica al registro de ENS que transfiera la propiedad del registro inverso del llamante, hex(caller) + '.addr.reverse', a la dirección owner indicada, y devuelve el namehash de ese registro.",
+  "fn.claim.params.owner": "La dirección que se establecerá como propietaria del registro inverso del llamante en ENS.",
+  "fn.claim.returns.node": "El namehash ENS del registro inverso cuya propiedad se transfirió.",
+
+  "fn.claimWithResolver.desc": "Establece el resolver del registro inverso del llamante y transfiere su propiedad al owner indicado en una sola llamada, y luego devuelve el namehash del registro. Pasar cero como resolver deja sin cambios el actual.",
+  "fn.claimWithResolver.params.owner": "La dirección que se establecerá como propietaria del registro inverso.",
+  "fn.claimWithResolver.params.resolver": "La dirección de resolver que se establecerá para el registro; cero deja sin cambios el resolver actual.",
+  "fn.claimWithResolver.returns.node": "El namehash ENS del registro inverso.",
+
+  "fn.setName.desc": "Apunta el registro inverso del llamante a un resolver predeterminado y escribe el nombre indicado en él, creando un registro inverso en una sola transacción. Devuelve el namehash del registro.",
+  "fn.setName.params.name": "El nombre ENS que se almacenará como registro inverso del llamante.",
+  "fn.setName.returns.node": "El namehash ENS del registro inverso.",
+
+  "fn.name.desc": "Método del resolver que devuelve el nombre ENS registrado para el nodo indicado, o la cadena vacía cuando no hay ninguno establecido. Su ID de interfaz ERC-165 es 0x691f3431.",
+  "fn.name.params.node": "El namehash del registro inverso que se va a buscar.",
+  "fn.name.returns.name": "El nombre ENS registrado para el nodo, o una cadena vacía si no está establecido.",
+
+  "node.user": "Propietario de la dirección",
+  "node.contract": "Registrador inverso",
+  "node.storageReverse": "Registros inversos",
+
+  "edge.callClaim": "Llamar a claim()",
+  "edge.callSetName": "Llamar a setName()",
+  "edge.updateReverse": "Actualizar registro inverso",
+
+  "sim.setNameWalkthrough.name": "Recorrido por la configuración del nombre inverso",
+  "sim.setNameWalkthrough.desc": "Seguimiento de una llamada a setName mientras el registrador inverso reclama el nodo inverso del llamante y almacena un nombre ENS para él.",
+  "sim.setNameWalkthrough.param.caller": "Propietario de la dirección",
+  "sim.setNameWalkthrough.param.name": "Nombre ENS",
+  "sim.setNameWalkthrough.step.call": "Una cuenta llama a setName(name) en el registrador inverso para establecer el nombre ENS de su propia dirección en una sola transacción.",
+  "sim.setNameWalkthrough.step.call.mobile": "Llamar a setName()",
+  "sim.setNameWalkthrough.step.claim": "El registrador calcula el nodo inverso del llamante a partir de hex(caller) + '.addr.reverse', reclama su propiedad y lo apunta al resolver predeterminado.",
+  "sim.setNameWalkthrough.step.claim.mobile": "Reclamar nodo inverso",
+  "sim.setNameWalkthrough.step.store": "El resolver predeterminado escribe el nombre suministrado en su mapeo name para el nodo inverso, de modo que las búsquedas ahora devuelven el nombre legible por humanos.",
+  "sim.setNameWalkthrough.step.store.mobile": "Almacenar nombre ENS"
+}

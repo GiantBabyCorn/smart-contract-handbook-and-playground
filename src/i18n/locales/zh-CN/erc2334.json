@@ -1,0 +1,31 @@
+{
+  "short": "BLS12-381 确定性账户层级",
+  "introduction": "ERC-2334 为 ERC-2333 派生出的 BLS12-381 密钥定义了一套确定性账户层级。该标准由 Carl Beekhuizen 于 2019 年 9 月提出。密钥通过形如 m / purpose / coin_type / account / use 的路径来寻址，其中 purpose 固定为 12381，coin_type 则按链区分密钥。验证者使用 coin_type 3600，在 m/12381/3600/i/0 处派生取款密钥，在 m/12381/3600/i/0/0 处派生签名密钥。注意：ERC-2334 目前处于 Review 状态，其接口在最终定稿前仍可能发生变化。",
+  "designPurpose": "在 BIP44 被证明不适用之后，ERC-2334 旨在为 BLS12-381 密钥提供一条统一且可预测的派生路径。BIP44 以 UTXO 为中心，并假定 secp256k1 密钥经由 BIP32 派生，而 ERC-2333 只使用硬化密钥和另一种 KDF。ERC-2334 沿用了 BIP43 与 BIP44 的 purpose、coin_type 和 account 字段，但舍弃了早期几种相互竞争的以太坊路径格式所保留的 UTXO 专属层级。它的 coin_type 3600 是 secp256k1 的 coin_type 60 的平方，可让这两种密钥类型清晰分离。",
+  "commonUsage": "这套层级被以太坊质押工具用来将单个助记词转换为验证者密钥：存款与密钥生成软件沿 m/12381/3600/i/0 和 m/12381/3600/i/0/0 派生出每个验证者的取款密钥和签名密钥。由于签名密钥是取款密钥的第 0 个子密钥，只要将取款密钥作为冷密钥安全保存，日后便足以恢复出热态的签名密钥。正如规范所允许的，托管式和秘密共享式的设置可以省略部分密钥并通过其他方式派生。",
+
+  "node.user": "密钥生成器",
+  "node.deriver": "ERC-2333 KDF",
+  "node.storagePath": "派生路径",
+  "node.storageWithdrawal": "取款密钥",
+  "node.storageSigning": "签名密钥",
+  "node.validator": "Beacon Chain 验证者",
+
+  "edge.provideSeed": "提供种子",
+  "edge.buildPath": "构建路径",
+  "edge.deriveWithdrawal": "派生取款密钥",
+  "edge.deriveSigning": "派生签名密钥",
+  "edge.loadSigning": "加载签名密钥",
+
+  "sim.deriveKeysWalkthrough.name": "验证者密钥派生演练",
+  "sim.deriveKeysWalkthrough.desc": "跟随一个助记词种子，观察 ERC-2334 路径如何构建，以及验证者的取款密钥和签名密钥如何派生。",
+  "sim.deriveKeysWalkthrough.param.accountIndex": "验证者索引（i）",
+  "sim.deriveKeysWalkthrough.step.seed": "操作者向 ERC-2333 密钥派生函数提供一个助记词种子和一个验证者索引。",
+  "sim.deriveKeysWalkthrough.step.seed.mobile": "提供种子",
+  "sim.deriveKeysWalkthrough.step.path": "组装出路径 m / 12381 / 3600 / account / use，为 Beacon Chain 将 purpose 固定为 12381、coin_type 固定为 3600。",
+  "sim.deriveKeysWalkthrough.step.path.mobile": "构建路径",
+  "sim.deriveKeysWalkthrough.step.derive": "在 m/12381/3600/i/0 处派生出取款密钥，签名密钥则作为其第 0 个子密钥在 m/12381/3600/i/0/0 处派生。",
+  "sim.deriveKeysWalkthrough.step.derive.mobile": "派生密钥",
+  "sim.deriveKeysWalkthrough.step.load": "签名密钥作为热密钥被加载进验证者客户端，而取款密钥则留在冷存储中。",
+  "sim.deriveKeysWalkthrough.step.load.mobile": "加载签名密钥"
+}

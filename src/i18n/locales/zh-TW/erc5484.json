@@ -1,0 +1,41 @@
+{
+  "short": "雙方同意的靈魂綁定代幣標準",
+  "introduction": "ERC-5484 定義了一個擴充 ERC-721 的介面，用於建立雙方同意的靈魂綁定代幣（SBT）：不可轉移的 NFT，其銷毀權限在發行前由雙方共同約定。該標準由 Buzz Cai 於 2022 年 8 月提出。在發行之前，發行方與接收方就銷毀授權達成一致——IssuerOnly、OwnerOnly、Both 或 Neither——此後不可更改。合約在發出 ERC-721 Transfer 事件的同時發出 Issued 事件，並提供 burnAuth 查詢，用於將 SBT 與普通 NFT 區分開來。",
+  "designPurpose": "ERC-5484 旨在為靈魂綁定代幣提供統一的介面，使錢包、區塊瀏覽器和各類服務能夠一致地處理它們。早期的靈魂綁定實作雖然擴充了 ERC-721，卻只是在每次轉移時直接回退，沒有標準方式來偵測不可轉移性，也無法得知誰有權銷毀代幣。ERC-5484 在發行時為每個代幣固定一個銷毀授權，要求事先取得接收方的同意，並新增了 burnAuth getter 和 Issued 事件，使第三方能夠透過 ERC-165 偵測來識別它們。",
+  "commonUsage": "雙方同意的靈魂綁定代幣適用於憑證、會員資格、認證和信用記錄——在這些場景中，代幣應當綁定到單一地址，而非自由交易。銷毀授權按用例選擇：IssuerOnly 適用於可撤銷的貸款記錄，OwnerOnly 適用於持有者可自行捨棄的會員資格，Both 適用於憑證，Neither 適用於永久的信用歷史。由於 SBT 仍是 ERC-721 代幣，現有的 NFT 工具可以展示它們，同時在任何轉移之前檢查介面。",
+
+  "fn.burnAuth.desc": "回傳某個代幣的銷毀授權，指明哪些方可以銷毀它：IssuerOnly、OwnerOnly、Both 或 Neither。查詢未指派的 token ID 會回退。",
+  "fn.burnAuth.params.tokenId": "要查詢的代幣的識別碼。",
+  "fn.burnAuth.returns.burnAuth": "在發行時為該代幣固定的不可變銷毀授權。",
+
+  "fn.Issued.desc": "在發行靈魂綁定代幣時，除 ERC-721 Transfer 事件外一併發出，使第三方能夠將 SBT 的發行與普通 NFT 的轉移區分開來。",
+  "fn.Issued.params.from": "代幣的發行方。",
+  "fn.Issued.params.to": "代幣的接收方。",
+  "fn.Issued.params.tokenId": "所發行代幣的識別碼。",
+  "fn.Issued.params.burnAuth": "為該代幣約定的銷毀授權，在發行時固定。",
+
+  "node.issuer": "發行方",
+  "node.contract": "靈魂綁定代幣合約",
+  "node.storageBurnAuth": "銷毀授權儲存",
+  "node.receiver": "接收方",
+
+  "edge.issue": "發行靈魂綁定代幣",
+  "edge.storeBurnAuth": "儲存銷毀授權",
+  "edge.mintToken": "向接收方鑄造代幣",
+  "edge.emitIssued": "發出 Issued 事件",
+  "edge.queryBurnAuth": "呼叫 burnAuth()",
+
+  "sim.issueTokenWalkthrough.name": "發行靈魂綁定代幣",
+  "sim.issueTokenWalkthrough.desc": "追蹤一個雙方同意的靈魂綁定代幣的發行過程，從發行方開始，經過儲存和 Issued 事件，直到 burnAuth 查詢。",
+  "sim.issueTokenWalkthrough.param.to": "接收方地址",
+  "sim.issueTokenWalkthrough.param.tokenId": "代幣 ID",
+  "sim.issueTokenWalkthrough.param.burnAuth": "銷毀授權",
+  "sim.issueTokenWalkthrough.step.issue": "發行方向接收方發行一個靈魂綁定代幣，接收方已經同意所選的銷毀授權。",
+  "sim.issueTokenWalkthrough.step.issue.mobile": "發行代幣",
+  "sim.issueTokenWalkthrough.step.store": "合約記錄該代幣的不可變銷毀授權，並將所有權指派給接收方。",
+  "sim.issueTokenWalkthrough.step.store.mobile": "儲存銷毀授權",
+  "sim.issueTokenWalkthrough.step.event": "合約在發出 ERC-721 Transfer 事件的同時發出 Issued(from, to, tokenId, burnAuth)，以標記該 SBT 的發行。",
+  "sim.issueTokenWalkthrough.step.event.mobile": "發出 Issued 事件",
+  "sim.issueTokenWalkthrough.step.query": "第三方在採取行動之前呼叫 burnAuth(tokenId)，以讀取哪一方被允許銷毀該代幣。",
+  "sim.issueTokenWalkthrough.step.query.mobile": "查詢 burnAuth()"
+}

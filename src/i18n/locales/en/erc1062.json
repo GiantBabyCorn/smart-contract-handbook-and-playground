@@ -1,0 +1,32 @@
+{
+  "short": "Mapping IPFS Content Hashes into ENS Resolvers",
+  "introduction": "ERC-1062 defines a convention for storing an IPFS content hash in an ENS resolver so a readable name points at decentralized files. It was proposed by Phyrex Tsai and the Portal Network Team in May 2018. IPFS hashes use Base58 while Ethereum stores hex, so the standard bridges the two through a binary buffer, saving the hex via setMultihash and reversing it on read. Note: ERC-1062 is Stagnant — it has been inactive for 6+ months and may never be finalized, but remains historically or technically significant.",
+  "designPurpose": "ERC-1062 was designed to make decentralized websites reachable through readable names instead of raw IPFS hashes. IPFS addresses content by a long Base58 fingerprint no one can memorize, and ENS maps names to on-chain records, yet there was no agreed way to store an IPFS hash in a resolver or read it back. By fixing the Base58-to-hex conversion and reusing the resolver's setMultihash and multihash methods, the standard lets a browser resolve a name like portal.eth to an IPFS document and render it as a web page.",
+  "commonUsage": "Because ERC-1062 never advanced past its early stage, it is best seen as a blueprint for decentralized-content resolution rather than a deployed standard. Its reference implementation is a Portal Network browser extension that lets a user type an ENS name and fetch the linked IPFS resource, much like a DNS domain. The Base58-to-hex conversion relies on the multihashes JavaScript library, and it reuses the ENS public resolver's existing setMultihash and multihash methods rather than defining a new interface.",
+
+  "node.publisher": "Content Publisher",
+  "node.encoder": "Base58-to-Hex Encoder",
+  "node.resolver": "ENS Public Resolver",
+  "node.storageMultihash": "Multihash Record",
+  "node.decoder": "Hex-to-Base58 Decoder",
+  "node.browser": "Web3 Browser",
+
+  "edge.provideHash": "Provide Base58 hash",
+  "edge.callSetMultihash": "Call setMultihash()",
+  "edge.storeMultihash": "Store hex multihash",
+  "edge.readMultihash": "Read via multihash()",
+  "edge.returnAddress": "Return Base58 address",
+
+  "sim.ipfsResolutionWalkthrough.name": "IPFS Resolution Walkthrough",
+  "sim.ipfsResolutionWalkthrough.desc": "Follow an IPFS hash from an ENS name owner through the resolver's multihash record and back to a Base58 address a browser can load.",
+  "sim.ipfsResolutionWalkthrough.param.name": "ENS name",
+  "sim.ipfsResolutionWalkthrough.param.ipfsHash": "IPFS Base58 hash",
+  "sim.ipfsResolutionWalkthrough.step.publish": "The ENS name owner hands the content's Base58 IPFS hash to the encoder that will prepare it for on-chain storage.",
+  "sim.ipfsResolutionWalkthrough.step.publish.mobile": "Provide IPFS hash",
+  "sim.ipfsResolutionWalkthrough.step.store": "The encoder converts the hash to hex and calls setMultihash, and the ENS resolver writes the multihash bytes into its record for the name.",
+  "sim.ipfsResolutionWalkthrough.step.store.mobile": "Store multihash",
+  "sim.ipfsResolutionWalkthrough.step.read": "A client resolving the name reads the stored bytes through multihash and passes the hex value to the decoder.",
+  "sim.ipfsResolutionWalkthrough.step.read.mobile": "Read multihash",
+  "sim.ipfsResolutionWalkthrough.step.render": "The decoder converts the hex back to the Base58 IPFS address, letting the browser fetch and render the decentralized content.",
+  "sim.ipfsResolutionWalkthrough.step.render.mobile": "Load content"
+}

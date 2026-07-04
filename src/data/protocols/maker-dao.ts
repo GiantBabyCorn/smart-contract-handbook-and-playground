@@ -102,6 +102,25 @@ export const entry: ProtocolEntry = {
     },
   ],
 
+  // ─── Schema v2 content sections ───
+  composes: [
+    { slug: 'erc20', role: 'maker-dao.compose.erc20.role' },
+    { erc: 712, role: 'maker-dao.compose.erc712.role' },
+  ],
+
+  references: [
+    {
+      label: 'MakerDAO docs — Dai module (ERC-20 + permit)',
+      url: 'https://docs.makerdao.com/smart-contract-modules/dai-module/dai-detailed-documentation',
+      kind: 'spec',
+    },
+    {
+      label: 'dai.sol (permit with bool allowed)',
+      url: 'https://github.com/makerdao/dss/blob/master/src/dai.sol',
+      kind: 'impl',
+    },
+  ],
+
   // ─── ERCFlow ───
   flowNodes: [
     {

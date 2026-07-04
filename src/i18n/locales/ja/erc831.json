@@ -1,0 +1,32 @@
+{
+  "short": "Ethereum の URI 形式",
+  "introduction": "ERC-831 は、Ethereum 向けの URI 形式を定義し、ethereum: または eth: スキームを、ユーザーのウォレットへリクエストを伝えるためのコンテナとして使用します。この提案は 2018 年 1 月に ligi によって提案されました。URI は ethereum:[prefix-]payload という形式を取り、省略可能なプレフィックスがユースケースを示し、ペイロードがそのデータを運びます。プレフィックスが省略された場合は、EIP-67 との互換性のために pay- が想定されます。注意：ERC-831 は Stagnant（停滞）状態です。6 か月以上活動がなく、最終化されない可能性がありますが、歴史的または技術的に重要な意味を持ち続けています。",
+  "designPurpose": "ERC-831 は、ethereum: スキームを単一のユースケースに縛るのではなく、多くのユースケースに対して開いたままにするために設計されました。この必要性は EIP-681 を洗練させる過程で生じました。すなわち、いかなる単一のユースケースの重みも背負わないコンテナが求められていたのです。ERC-831 は、当時存在した決済のユースケースにスキーム全体を予約するのではなく、URI をユースケースを示す省略可能なプレフィックスと、その構造を各ユースケースの ERC が独自に定義するペイロードとに分割し、スキームを塞ぐことなく後から新しいプレフィックスを追加できるようにしています。",
+  "commonUsage": "この URI 形式は、ハイパーリンク、QR コード、メール、チャットメッセージを通じて疎結合なアプリケーション間でリクエストを受け渡すウォレット、dapp、QR コードジェネレーターによって使用され、単一のリンクでユーザーの好みのウォレットを呼び出すことができます。pay- プレフィックスによって運ばれ、EIP-681 で詳述される決済のユースケースは、仕様が挙げる例です。他のユースケースの ERC は、同じスキーム上で追加のプレフィックスを登録できます。ERC-831 はコンテナのみを定義するため、Ethereum のリクエストに対する共通のエントリポイントとして機能します。",
+
+  "node.requester": "リクエスト作成者",
+  "node.uriBuilder": "URI エンコーダー",
+  "node.ethereumUri": "Ethereum URI",
+  "node.wallet": "ウォレットパーサー",
+  "node.useCaseHandler": "ユースケースハンドラー",
+  "node.user": "ウォレットユーザー",
+
+  "edge.composeRequest": "リクエストを作成",
+  "edge.encodeUri": "ethereum: URI をエンコード",
+  "edge.openUri": "リンクをスキャンまたは開く",
+  "edge.routePrefix": "プレフィックスでルーティング",
+  "edge.presentAction": "アクションを提示",
+
+  "sim.uriRoutingWalkthrough.name": "URI ルーティングのウォークスルー",
+  "sim.uriRoutingWalkthrough.desc": "ethereum: URI からのリクエストを、ウォレットのプレフィックスルーティングを経て、一致するユースケースハンドラーまで追跡します。",
+  "sim.uriRoutingWalkthrough.param.prefix": "ユースケースプレフィックス",
+  "sim.uriRoutingWalkthrough.param.target": "ターゲットアドレス",
+  "sim.uriRoutingWalkthrough.step.compose": "dapp または受取人がリクエストを作成し、ユースケースプレフィックスと、伝える必要のあるペイロードデータを選択します。",
+  "sim.uriRoutingWalkthrough.step.compose.mobile": "リクエストを作成",
+  "sim.uriRoutingWalkthrough.step.encode": "リクエストは、スキーム、省略可能なプレフィックス、ペイロードからなる ethereum: URI にエンコードされ、QR コードやリンクに埋め込む準備が整います。",
+  "sim.uriRoutingWalkthrough.step.encode.mobile": "URI をエンコード",
+  "sim.uriRoutingWalkthrough.step.open": "ユーザーがリンクをスキャンまたは開くと、ウォレットが ethereum: スキームを認識し、プレフィックスとペイロードを読み取ります。",
+  "sim.uriRoutingWalkthrough.step.open.mobile": "リンクを開く",
+  "sim.uriRoutingWalkthrough.step.route": "ウォレットは pay- プレフィックスに基づいて EIP-681 ハンドラーへルーティングし、そのハンドラーがペイロードを解析して、結果として生じるアクションをユーザーが確認できるように提示します。",
+  "sim.uriRoutingWalkthrough.step.route.mobile": "プレフィックスでルーティング"
+}

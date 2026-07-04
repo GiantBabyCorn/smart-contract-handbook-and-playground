@@ -1,0 +1,35 @@
+{
+  "short": "可互操作的数字媒体索引",
+  "introduction": "ERC-7053 定义了一种可互操作的索引方法，用于在兼容 EVM 的区块链上记录、发现和检索数字媒体的历史。该标准由 Bofu Chen 和 Tammy Yang 于 2023 年 5 月提出。它为每个媒体文件配备一个去中心化的内容标识符（CID），并搭配一个 commit 函数，该函数会发出 Commit 事件并记录每次提交的区块号，从而让任何系统都能将有关同一内容的所有链上数据关联起来，并追踪其从创建到当前状态的全过程。",
+  "designPurpose": "ERC-7053 旨在消除因缺乏通用、可互操作的数字媒体内容标识符而造成的碎片化问题。在此之前，文件的元数据、存储位置和溯源信息分散在各自独立的系统中，彼此没有共享的键，导致跨合约和跨链检索十分困难。通过将每个文件锚定到一个加密的内容标识符，并标准化一个附带索引化 Commit 事件的 commit 函数，它为每个系统提供了一种可预测的方式来索引和搜索同一内容。",
+  "commonUsage": "ERC-7053 适用于数字媒体平台、溯源注册表以及在链上追踪图像、视频和其他文件历史的内容索引器。由于 Commit 事件同时为 recorder 和资产 CID 建立索引，链下服务可以订阅该事件并为每个资产重建完整的时间线。规范还描述了如何为 NFT 引用的媒体建立索引——将 tokenURI 背后的文件转换为相同的 CID，从而让 ERC-721 和 ERC-1155 集合可以共用同一套方案。",
+
+  "fn.commit.desc": "为由 assetCid 标识的资产登记一次提交。发出 Commit 事件，并为提供的 assetCid 记录该次提交的区块号，然后返回该区块号。",
+  "fn.commit.params.assetCid": "被提交资产的内容标识符（CID）。",
+  "fn.commit.params.commitData": "与该次提交相关联的数据。",
+  "fn.commit.returns.blockNumber": "进行该次提交时所在的区块号。",
+
+  "fn.Commit.desc": "当有新的提交发生时发出，以便索引器可以追踪 recorder、资产和提交数据。recorder 和 assetCid 被建立索引以便过滤。",
+  "fn.Commit.params.recorder": "进行该次提交的账户地址。",
+  "fn.Commit.params.assetCid": "被提交资产的内容标识符。",
+  "fn.Commit.params.commitData": "与该次提交相关联的数据。",
+
+  "node.user": "记录者",
+  "node.contract": "提交注册表",
+  "node.storageLogs": "提交日志",
+
+  "edge.callCommit": "调用 commit()",
+  "edge.updateLogs": "记录区块号",
+  "edge.emitCommit": "发出 Commit 事件",
+
+  "sim.commitWalkthrough.name": "媒体提交演练",
+  "sim.commitWalkthrough.desc": "跟随一次提交调用，从记录者出发，经过日志映射，直到 Commit 事件。",
+  "sim.commitWalkthrough.param.assetCid": "资产 CID",
+  "sim.commitWalkthrough.param.commitData": "提交数据",
+  "sim.commitWalkthrough.step.call": "记录者在注册表合约上调用 commit(assetCid, commitData) 来为一个媒体文件建立索引。",
+  "sim.commitWalkthrough.step.call.mobile": "调用 commit()",
+  "sim.commitWalkthrough.step.execute": "合约将当前区块号追加到该资产 CID 对应的 recordLogs 条目中，从而构建其链上历史。",
+  "sim.commitWalkthrough.step.execute.mobile": "记录区块号",
+  "sim.commitWalkthrough.step.event": "合约发出 Commit(recorder, assetCid, commitData)，以便链下索引器可以更新其对该资产的时间线。",
+  "sim.commitWalkthrough.step.event.mobile": "发出 Commit 事件"
+}

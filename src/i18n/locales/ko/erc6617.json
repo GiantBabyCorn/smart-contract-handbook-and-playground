@@ -1,0 +1,52 @@
+{
+  "short": "비트 기반 권한 및 역할 시스템",
+  "introduction": "ERC-6617은 각 권한을 uint256의 1비트로 표현하여 최대 256개의 권한을 인코딩하고 이를 역할로 조합하는 비트 기반 권한 및 역할 시스템을 정의합니다. 이 표준은 Chiro와 Victor Dusart가 2023년 2월에 제안했습니다. 각 권한은 1비트만 차지하도록 2의 거듭제곱이어야 하며, 인터페이스는 권한을 부여·취소·확인하는 함수를 제공하고 모두 비트 연산으로 구현되며 변경이 있을 때마다 이벤트를 발생시킵니다. 참고: ERC-6617은 Review 상태이며 최종 확정 전에 인터페이스가 변경될 수 있습니다.",
+  "designPurpose": "ERC-6617은 단일 소유자 또는 문자열 기반 역할 방식보다 온체인 접근 제어를 더 세분화하고 gas 효율을 높이도록 설계되었습니다. ERC-173에서는 컨트랙트에 소유자가 한 명뿐이며, bytes32 식별자를 키로 하는 역할 시스템은 확인할 때마다 스토리지 읽기가 필요합니다. 모든 권한을 uint256의 1비트에 담음으로써 ERC-6617은 단 한 번의 비트 AND로 접근을 검사하고 비트 OR로 여러 권한을 역할로 병합하여 추가적인 스토리지 로드를 피합니다. 비트를 자릿값 순으로 정렬하면 권한을 정수로 순위를 매길 수도 있습니다.",
+  "commonUsage": "비트 기반 권한은 다중 역할 프로토콜 관리, 토큰의 발행 및 일시 중지 권한, 스마트 컨트랙트 계정의 모듈 권한 등 서로 다른 접근 수준이 필요한 컨트랙트에 적합합니다. 역할은 단순한 uint256 값이므로 스토리지 조회 없이 컨트랙트 간에 전달하고 비교할 수 있습니다. ERC-6617은 각 권한에 이름과 설명을 붙이는 선택적 IEIP6617Meta 확장도 정의하며, 이를 탐색기와 대시보드에서 표시할 수 있습니다.",
+
+  "fn.hasPermission.desc": "사용자가 저장한 권한 비트마스크가 요구되는 권한의 상위 집합일 때, 즉 _requiredPermission에서 설정된 모든 비트가 해당 사용자에게도 설정되어 있을 때 true를 반환합니다. 이 검사는 비트 AND를 사용하는 view 연산입니다.",
+  "fn.hasPermission.params._user": "권한을 확인할 사용자의 주소.",
+  "fn.hasPermission.params._requiredPermission": "사용자가 보유해야 하는 권한 또는 권한 비트의 조합.",
+  "fn.hasPermission.returns.result": "사용자의 권한이 요구되는 권한의 상위 집합이면 true, 그렇지 않으면 false.",
+
+  "fn.grantPermission.desc": "지정된 권한 비트를 비트 OR로 사용자의 비트마스크에 추가하고 PermissionGranted 이벤트를 발생시킵니다. 추가할 권한은 정확히 1비트만 설정되도록 2의 거듭제곱이어야 합니다.",
+  "fn.grantPermission.params._user": "권한을 추가할 사용자의 주소.",
+  "fn.grantPermission.params._permissionToAdd": "추가할 권한 비트. 2의 거듭제곱이어야 합니다.",
+  "fn.grantPermission.returns.success": "권한이 부여되면 true.",
+
+  "fn.revokePermission.desc": "지정된 권한 비트를 사용자의 비트마스크에서 제거하고 PermissionRevoked 이벤트를 발생시키며, 사용자의 다른 권한은 그대로 유지됩니다.",
+  "fn.revokePermission.params._user": "권한을 취소할 사용자의 주소.",
+  "fn.revokePermission.params._permissionToRevoke": "제거할 권한 비트.",
+  "fn.revokePermission.returns.success": "권한이 취소되면 true.",
+
+  "fn.PermissionGranted.desc": "권한이 사용자에게 부여될 때 발생하며, 부여자·권한·수신 사용자를 기록합니다.",
+  "fn.PermissionGranted.params._grantor": "권한을 부여한 주소.",
+  "fn.PermissionGranted.params._permission": "부여된 권한.",
+  "fn.PermissionGranted.params._user": "권한을 받은 사용자의 주소.",
+
+  "fn.PermissionRevoked.desc": "권한이 사용자로부터 취소될 때 발생하며, 취소자·권한·영향을 받은 사용자를 기록합니다.",
+  "fn.PermissionRevoked.params._revoker": "권한을 취소한 주소.",
+  "fn.PermissionRevoked.params._permission": "취소된 권한.",
+  "fn.PermissionRevoked.params._user": "권한을 잃은 사용자의 주소.",
+
+  "node.user": "권한 부여자",
+  "node.contract": "ERC-6617 컨트랙트",
+  "node.storagePermissions": "권한 스토리지",
+  "node.targetUser": "대상 사용자",
+
+  "edge.callGrant": "grantPermission() 호출",
+  "edge.updatePermissions": "권한 비트 설정",
+  "edge.emitGranted": "PermissionGranted 이벤트 발생",
+  "edge.grantToUser": "사용자에게 권한 부여",
+
+  "sim.grantPermissionWalkthrough.name": "권한 부여 워크스루",
+  "sim.grantPermissionWalkthrough.desc": "grantPermission 호출을 부여자에서 권한 비트마스크를 거쳐 PermissionGranted 이벤트까지 따라갑니다.",
+  "sim.grantPermissionWalkthrough.param.targetUser": "권한을 받는 사용자",
+  "sim.grantPermissionWalkthrough.param.permission": "권한 비트(2의 거듭제곱)",
+  "sim.grantPermissionWalkthrough.step.call": "부여자는 2의 거듭제곱인 권한을 지정하여 grantPermission(_user, _permissionToAdd)를 호출하며, 접근 비트를 받아야 하는 사용자를 대상으로 합니다.",
+  "sim.grantPermissionWalkthrough.step.call.mobile": "grantPermission() 호출",
+  "sim.grantPermissionWalkthrough.step.execute": "컨트랙트는 새 권한 비트를 사용자가 저장한 uint256 비트마스크에 OR로 결합하므로 이미 부여된 비트는 유지됩니다.",
+  "sim.grantPermissionWalkthrough.step.execute.mobile": "권한 비트 설정",
+  "sim.grantPermissionWalkthrough.step.event": "컨트랙트는 부여자·권한·사용자를 담은 PermissionGranted를 발생시키며, 대상 사용자는 이제 추가된 권한을 보유하게 됩니다.",
+  "sim.grantPermissionWalkthrough.step.event.mobile": "PermissionGranted 발생"
+}

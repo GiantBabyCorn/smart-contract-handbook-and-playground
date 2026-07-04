@@ -1,0 +1,35 @@
+{
+  "short": "Chain-Id Mixed-Case Checksum Address Encoding",
+  "introduction": "ERC-1191 extends the ERC-55 mixed-case address checksum by optionally adding an EIP-155 chain id to the hash calculation. It was proposed by Juliano Rizzo in March 2018. When a chain id belongs to a network that opted into this variant, the address is prefixed with the chain id and the '0x' separator before the Keccak-256 hash is computed, which then drives the ERC-55 letter-casing rule. Note: ERC-1191 is in Last Call, the final review window before it becomes Final.",
+  "designPurpose": "ERC-1191 was designed to stop funds from being lost when a valid address from one Ethereum-based network is used on another. ERC-55 catches typos but treats every network the same, so an address generated for a testnet or a sibling chain still passes the checksum on mainnet. ERC-1191 mixes the chain id into the hash input for networks that opt in, so an address checksummed for one chain id fails validation under another, letting wallets flag cross-network mistakes with a minimal change to existing ERC-55 code.",
+  "commonUsage": "ERC-1191 is applied off-chain by wallets and libraries when they display or validate an address, so it needs no on-chain contract or storage. The specification lists RSK Mainnet (chain id 30) and RSK Testnet (chain id 31) as the networks that opted into the variant, and its test vectors give the expected casing for those chains plus Ethereum mainnet. Implementations noted in the spec include MyCrypto, MyEtherWallet, web3.js, and the Ledger and Trezor hardware wallets.",
+
+  "node.user": "Address Source",
+  "node.encoder": "Checksum Encoder",
+  "node.storageInput": "Chain-Prefixed Input",
+  "node.storageHash": "Keccak-256 Hash",
+  "node.storageResult": "Checksummed Address",
+  "node.verifier": "Network Verifier",
+  "node.consumer": "Verifying Wallet",
+
+  "edge.submitAddress": "Submit address and chain id",
+  "edge.prefixChainId": "Prefix chain id",
+  "edge.hashInput": "Hash prefixed input",
+  "edge.applyCasing": "Apply letter casing",
+  "edge.readHash": "Read hash bits",
+  "edge.checkCasing": "Check casing",
+  "edge.deliverAddress": "Deliver validated address",
+
+  "sim.checksumWalkthrough.name": "Chain-Id Checksum Walkthrough",
+  "sim.checksumWalkthrough.desc": "Follow an address and chain id as the encoder prefixes the chain id, hashes the input, applies the ERC-1191 casing, and a network client verifies the result.",
+  "sim.checksumWalkthrough.param.address": "Lowercase address",
+  "sim.checksumWalkthrough.param.chainId": "Network chain id",
+  "sim.checksumWalkthrough.step.submit": "A wallet submits a lowercase address together with the chain id of the network it belongs to.",
+  "sim.checksumWalkthrough.step.submit.mobile": "Submit address and chain",
+  "sim.checksumWalkthrough.step.prefix": "For an opted-in chain id, the encoder prefixes the address with the chain id and the '0x' separator, then computes the Keccak-256 hash of that string.",
+  "sim.checksumWalkthrough.step.prefix.mobile": "Prefix chain id and hash",
+  "sim.checksumWalkthrough.step.case": "Each hex letter is uppercased when its matching hash nibble is 8 or higher and left lowercase otherwise, producing a chain-specific mixed-case address.",
+  "sim.checksumWalkthrough.step.case.mobile": "Apply letter casing",
+  "sim.checksumWalkthrough.step.verify": "A client on the same network re-derives the casing from the chain-prefixed hash and accepts the address only when every letter matches.",
+  "sim.checksumWalkthrough.step.verify.mobile": "Verify checksum"
+}

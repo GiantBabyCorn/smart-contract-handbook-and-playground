@@ -1,0 +1,85 @@
+{
+  "short": "Clearable Token Standard",
+  "introduction": "ERC-2018 defines an ERC-20 extension for clearable transfers, where a transfer is first ordered and then executed or rejected by a clearing agent rather than settling immediately. It was proposed by Julio Faura, Fernando Paris, and Daniel Lehrner in April 2019. Ordering reserves the payer's tokens without deducting them, so the agent can run off-chain checks before executing or rejecting it. Note: ERC-2018 is Stagnant — it has been inactive for 6+ months and may never be finalized, but remains historically or technically significant.",
+  "designPurpose": "ERC-2018 was designed for regulated tokens whose transfers cannot always complete in a single on-chain step. Compliance rules such as KYC and AML may need to run off-chain, so a transfer must be approved before it settles, yet a plain ERC-20 transfer is atomic with no such intermediate state. By separating the order from the settlement and handing the decision to a clearing agent, ERC-2018 lets the agent execute a compliant transfer or reject a non-compliant one, while the ordered amount stays reserved so execution later succeeds.",
+  "commonUsage": "Clearable tokens target regulated financial settlement, where a payment must pass compliance review before value moves. An ordered transfer waits through an Ordered and optional InProcess state until a clearing agent executes it, moving the tokens, or rejects it with a reason and frees the reserved balance. The standard reuses the ERC-777 operator naming convention so an authorized operator can order transfers for an account, and builds on ERC-1996 holds so a reserved amount cannot be spent before the agent decides.",
+
+  "fn.orderTransfer.desc": "Orders a clearable transfer from the caller to the payee, reserving the value until a clearing agent executes or rejects it. Reverts if the operationId has already been used.",
+  "fn.orderTransfer.params.operationId": "The unique ID that identifies the clearable transfer.",
+  "fn.orderTransfer.params.to": "The payee address that receives the tokens if the transfer is executed.",
+  "fn.orderTransfer.params.value": "The amount to transfer; must not exceed the payer's balance.",
+  "fn.orderTransfer.returns.success": "True when the clearable transfer was ordered successfully.",
+
+  "fn.orderTransferFrom.desc": "Orders a clearable transfer on behalf of the payer in favor of the payee. The caller must be an authorized operator for the payer. Reverts if the operationId has already been used.",
+  "fn.orderTransferFrom.params.operationId": "The unique ID that identifies the clearable transfer.",
+  "fn.orderTransferFrom.params.from": "The payer address whose tokens are reserved and taken if the transfer is executed.",
+  "fn.orderTransferFrom.params.to": "The payee address that receives the tokens if the transfer is executed.",
+  "fn.orderTransferFrom.params.value": "The amount to transfer; must not exceed the payer's balance.",
+  "fn.orderTransferFrom.returns.success": "True when the clearable transfer was ordered successfully.",
+
+  "fn.cancelTransfer.desc": "Cancels an ordered clearable transfer. Only the orderer may cancel their own order, and only before the clearing agent has moved it into the InProcess status.",
+  "fn.cancelTransfer.params.operationId": "The unique ID that identifies the clearable transfer.",
+  "fn.cancelTransfer.returns.success": "True when the clearable transfer was cancelled successfully.",
+
+  "fn.processClearableTransfer.desc": "Moves an ordered transfer into the InProcess status, signaling that review is underway and preventing the orderer from cancelling it. Only a clearing agent may call it successfully.",
+  "fn.processClearableTransfer.params.operationId": "The unique ID that identifies the clearable transfer.",
+  "fn.processClearableTransfer.returns.success": "True when the transfer entered the InProcess status.",
+
+  "fn.executeClearableTransfer.desc": "Executes a clearable transfer, moving the reserved tokens from the payer to the payee. Only a clearing agent may call it successfully.",
+  "fn.executeClearableTransfer.params.operationId": "The unique ID that identifies the clearable transfer.",
+  "fn.executeClearableTransfer.returns.success": "True when the clearable transfer was executed successfully.",
+
+  "fn.rejectClearableTransfer.desc": "Rejects a clearable transfer, releasing the reserved tokens back to the payer without any movement. Only a clearing agent may call it, and it records a reason for the rejection.",
+  "fn.rejectClearableTransfer.params.operationId": "The unique ID that identifies the clearable transfer.",
+  "fn.rejectClearableTransfer.params.reason": "A human-readable reason given by the clearing agent for rejecting the transfer.",
+  "fn.rejectClearableTransfer.returns.success": "True when the clearable transfer was rejected successfully.",
+
+  "fn.retrieveClearableTransferData.desc": "Returns all stored information for a clearable transfer, including its payer, payee, value, and current status code.",
+  "fn.retrieveClearableTransferData.params.operationId": "The unique ID that identifies the clearable transfer.",
+  "fn.retrieveClearableTransferData.returns.from": "The payer address of the clearable transfer.",
+  "fn.retrieveClearableTransferData.returns.to": "The payee address of the clearable transfer.",
+  "fn.retrieveClearableTransferData.returns.value": "The amount to be transferred if the order is executed.",
+  "fn.retrieveClearableTransferData.returns.status": "The current status code of the clearable transfer.",
+
+  "fn.ClearableTransferOrdered.desc": "Emitted when a clearable transfer is ordered, recording its orderer, payer, payee, and value.",
+  "fn.ClearableTransferOrdered.params.orderer": "The account that ordered the clearable transfer.",
+  "fn.ClearableTransferOrdered.params.operationId": "The unique ID that identifies the clearable transfer.",
+  "fn.ClearableTransferOrdered.params.from": "The payer whose tokens are reserved.",
+  "fn.ClearableTransferOrdered.params.to": "The payee who receives the tokens if executed.",
+  "fn.ClearableTransferOrdered.params.value": "The amount to be transferred if executed.",
+
+  "fn.ClearableTransferExecuted.desc": "Emitted when a clearing agent executes a clearable transfer and the tokens move to the payee.",
+  "fn.ClearableTransferExecuted.params.orderer": "The account that ordered the clearable transfer.",
+  "fn.ClearableTransferExecuted.params.operationId": "The unique ID that identifies the clearable transfer.",
+
+  "fn.ClearableTransferRejected.desc": "Emitted when a clearing agent rejects a clearable transfer, carrying the reason for the rejection.",
+  "fn.ClearableTransferRejected.params.orderer": "The account that ordered the clearable transfer.",
+  "fn.ClearableTransferRejected.params.operationId": "The unique ID that identifies the clearable transfer.",
+  "fn.ClearableTransferRejected.params.reason": "The reason given by the clearing agent for the rejection.",
+
+  "node.user": "Orderer",
+  "node.clearingAgent": "Clearing Agent",
+  "node.contract": "ERC-2018 Token",
+  "node.storageClearableTransfers": "Clearable Transfers",
+  "node.payee": "Payee",
+
+  "edge.callOrderTransfer": "Call orderTransfer()",
+  "edge.callExecute": "Call executeClearableTransfer()",
+  "edge.updateTransfers": "Record order & reserve balance",
+  "edge.transferTokens": "Transfer reserved tokens",
+  "edge.emitExecuted": "Emit ClearableTransferExecuted event",
+
+  "sim.orderTransferWalkthrough.name": "Order and Execute Walkthrough",
+  "sim.orderTransferWalkthrough.desc": "Follow a clearable transfer from an order placed by the payer through the clearing agent's execution and the resulting token transfer to the payee.",
+  "sim.orderTransferWalkthrough.param.operationId": "Operation ID",
+  "sim.orderTransferWalkthrough.param.to": "Payee address",
+  "sim.orderTransferWalkthrough.param.value": "Transfer amount (in wei)",
+  "sim.orderTransferWalkthrough.step.order": "The orderer calls orderTransfer(operationId, to, value) to request a transfer to the payee.",
+  "sim.orderTransferWalkthrough.step.order.mobile": "Call orderTransfer()",
+  "sim.orderTransferWalkthrough.step.record": "The contract records the new clearable transfer and reserves the value from the payer's balance, so it cannot be spent elsewhere while it waits for the clearing agent.",
+  "sim.orderTransferWalkthrough.step.record.mobile": "Reserve balance",
+  "sim.orderTransferWalkthrough.step.execute": "The clearing agent calls executeClearableTransfer, and the contract moves the reserved tokens from the payer to the payee.",
+  "sim.orderTransferWalkthrough.step.execute.mobile": "Agent executes transfer",
+  "sim.orderTransferWalkthrough.step.event": "The contract emits ClearableTransferExecuted so indexers can record that the transfer has settled.",
+  "sim.orderTransferWalkthrough.step.event.mobile": "Emit Executed event"
+}

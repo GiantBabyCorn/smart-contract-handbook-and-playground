@@ -1,0 +1,31 @@
+{
+  "short": "BLS12-381 決定論的アカウント階層",
+  "introduction": "ERC-2334 は、ERC-2333 によって導出される BLS12-381 鍵のための決定論的アカウント階層を定義します。2019年9月に Carl Beekhuizen によって提案されました。鍵は m / purpose / coin_type / account / use という形式のパスでアドレス指定され、purpose は 12381 に固定され、coin_type は鍵をチェーンごとに区別します。バリデータは coin_type 3600 を使用し、m/12381/3600/i/0 で引き出し鍵を、m/12381/3600/i/0/0 で署名鍵を導出します。注: ERC-2334 は Review ステータスにあり、確定するまでインターフェースが変更される可能性があります。",
+  "designPurpose": "ERC-2334 は、BIP44 が不適切であると判明した後、BLS12-381 鍵に単一で予測可能な導出パスを与えるために設計されました。BIP44 は UTXO 中心であり、BIP32 を通じて導出される secp256k1 鍵を前提としますが、ERC-2333 は強化鍵のみを使用し、異なる KDF を採用します。ERC-2334 は BIP43 と BIP44 の purpose、coin_type、account の各フィールドを再利用しますが、初期の競合する Ethereum のパス形式が保持していた UTXO 固有の階層は削除します。その coin_type 3600 は secp256k1 の coin_type 60 の2乗であり、2種類の鍵を明確に分離した状態に保ちます。",
+  "commonUsage": "この階層は、単一のニーモニックをバリデータ鍵へと変換する Ethereum のステーキングツールで使用されます。預け入れおよび鍵生成ソフトウェアは、m/12381/3600/i/0 と m/12381/3600/i/0/0 に沿って各バリデータの引き出し鍵と署名鍵を導出します。署名鍵は引き出し鍵の0番目の子であるため、引き出し鍵をコールド鍵として安全に保管しておけば、後でホットな署名鍵を復元するのに十分です。仕様が認めているとおり、カストディアルおよび秘密分散型のセットアップでは一部の鍵を省略し、別の手段で導出する場合があります。",
+
+  "node.user": "鍵生成器",
+  "node.deriver": "ERC-2333 KDF",
+  "node.storagePath": "導出パス",
+  "node.storageWithdrawal": "引き出し鍵",
+  "node.storageSigning": "署名鍵",
+  "node.validator": "Beacon Chain バリデータ",
+
+  "edge.provideSeed": "シードを提供",
+  "edge.buildPath": "パスを構築",
+  "edge.deriveWithdrawal": "引き出し鍵を導出",
+  "edge.deriveSigning": "署名鍵を導出",
+  "edge.loadSigning": "署名鍵を読み込む",
+
+  "sim.deriveKeysWalkthrough.name": "バリデータ鍵導出のウォークスルー",
+  "sim.deriveKeysWalkthrough.desc": "ERC-2334 のパスが構築され、バリデータの引き出し鍵と署名鍵が導出される過程を、ニーモニックシードに沿って追います。",
+  "sim.deriveKeysWalkthrough.param.accountIndex": "バリデータインデックス（i）",
+  "sim.deriveKeysWalkthrough.step.seed": "オペレーターは、ニーモニックシードとバリデータインデックスを ERC-2333 の鍵導出関数に提供します。",
+  "sim.deriveKeysWalkthrough.step.seed.mobile": "シードを提供",
+  "sim.deriveKeysWalkthrough.step.path": "パス m / 12381 / 3600 / account / use が組み立てられ、Beacon Chain 用に purpose が 12381、coin_type が 3600 に固定されます。",
+  "sim.deriveKeysWalkthrough.step.path.mobile": "パスを構築",
+  "sim.deriveKeysWalkthrough.step.derive": "引き出し鍵は m/12381/3600/i/0 で導出され、署名鍵はその0番目の子として m/12381/3600/i/0/0 で導出されます。",
+  "sim.deriveKeysWalkthrough.step.derive.mobile": "鍵を導出",
+  "sim.deriveKeysWalkthrough.step.load": "署名鍵はホット鍵としてバリデータクライアントに読み込まれ、引き出し鍵はコールドストレージに保管されたままになります。",
+  "sim.deriveKeysWalkthrough.step.load.mobile": "署名鍵を読み込む"
+}

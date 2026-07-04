@@ -1,0 +1,29 @@
+{
+  "short": "パラメータ化ストレージキー",
+  "introduction": "ERC-8119 は、EVM のキーバリューストレージで使用されるパラメータ化文字列キーの標準フォーマットを定義しており、1 つのメタデータ型が複数のインスタンスを表す必要がある場合に用いられます。2025 年 1 月に Prem Makeig によって提案されました。2 種類のエンコーディングを規定します。単一パラメータ向けのスラッシュまたはコロン形式で key-label/key-parameter と記述されるものと、複数の順序付きパラメータ向けのブラケット形式で key-label[parameter-1][parameter-2] と記述されるものです。注意：ERC-8119 は Draft であり、仕様は現在も活発に開発が進められており、大幅に変更される可能性があります。",
+  "designPurpose": "ERC-8119 は、コントラクトが 1 つのメタデータ型の複数のインスタンスを格納する際に生じる不整合を取り除くために設計されました。それ以前は、各実装がラベルとパラメータを結合するための独自の規約を考案していたため、registration-1 や registration1 といったキーはツール間で解析したり共有したりできませんでした。ERC-8119 は 2 つの明示的なエンコーディングを定め、ラベルからスラッシュ、コロン、左ブラケットの文字を予約することで、キーをラベルとパラメータに分割するための決定論的な 1 つの規則をパーサーに提供します。",
+  "commonUsage": "このフォーマットは、メタデータを mapping(string => bytes) や類似のストアに保持するコントラクト（名前レジストリ、プロファイルレコード、インスタンスごとの設定など）を対象としています。スラッシュおよびコロン形式は registration/1 や website/http://website.com のような長いテキスト値に適しており、ブラケット形式は resource[chain][1][token][42] のような複数パラメータのキーに適しています。これはインターフェースではなく命名規約であるため、アプリケーションはキーを一貫してフォーマットおよび解析することで採用でき、オンチェーンのコード変更は不要です。",
+
+  "node.app": "アプリケーション",
+  "node.formatter": "キーフォーマッタ",
+  "node.storageMetadata": "メタデータストレージ",
+  "node.parser": "キーパーサー",
+
+  "edge.buildSlash": "スラッシュ/コロンキーを構築",
+  "edge.buildBracket": "ブラケットキーを構築",
+  "edge.writeKey": "メタデータを書き込む",
+  "edge.parseKey": "キーを解析",
+
+  "sim.buildKeyWalkthrough.name": "パラメータ化キーの構築",
+  "sim.buildKeyWalkthrough.desc": "スラッシュ形式のキーを、アプリケーションからメタデータストレージを経て、それをラベルとパラメータに分割し直すパーサーまで追跡します。",
+  "sim.buildKeyWalkthrough.param.keyLabel": "キーラベル",
+  "sim.buildKeyWalkthrough.param.keyParameter": "キーパラメータ",
+  "sim.buildKeyWalkthrough.step.build": "アプリケーションは key-label とパラメータをスラッシュで結合し、パラメータ化キー registration/1 を形成します。",
+  "sim.buildKeyWalkthrough.step.build.mobile": "キーを構築",
+  "sim.buildKeyWalkthrough.step.format": "フォーマッタはラベルにスペース、スラッシュ、コロン、左ブラケットが含まれないことを確認し、標準に準拠したキーを生成します。",
+  "sim.buildKeyWalkthrough.step.format.mobile": "キー形式を検証",
+  "sim.buildKeyWalkthrough.step.store": "コントラクトは mapping(string => bytes) のメタデータストアで、キー registration/1 の下に値を書き込みます。",
+  "sim.buildKeyWalkthrough.step.store.mobile": "メタデータを書き込む",
+  "sim.buildKeyWalkthrough.step.parse": "パーサーはキーを読み取り、最初のスラッシュまたはコロンで分割し、ラベル registration とパラメータ 1 を復元します。",
+  "sim.buildKeyWalkthrough.step.parse.mobile": "キーを解析し直す"
+}

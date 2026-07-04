@@ -1,0 +1,32 @@
+{
+  "short": "将 IPFS 内容哈希映射到 ENS 解析器",
+  "introduction": "ERC-1062 定义了一种约定，用于在 ENS 解析器中存储 IPFS 内容哈希，从而让一个可读的名称指向去中心化文件。该标准由 Phyrex Tsai 和 Portal Network 团队于 2018 年 5 月提出。IPFS 哈希使用 Base58，而 Ethereum 存储 hex，因此该标准通过一个二进制缓冲区在两者之间架起桥梁：借助 setMultihash 保存 hex，并在读取时进行反向转换。注意：ERC-1062 处于 Stagnant（停滞）状态——它已有 6 个月以上未活跃，可能永远不会最终定稿，但仍具有历史或技术上的重要意义。",
+  "designPurpose": "ERC-1062 旨在让去中心化网站能够通过可读的名称访问，而不必使用原始的 IPFS 哈希。IPFS 通过一长串没人能记住的 Base58 指纹来寻址内容，而 ENS 将名称映射到链上记录，但此前并没有一种约定好的方式在解析器中存储 IPFS 哈希或将其读回。该标准固定了 Base58 到 hex 的转换，并复用解析器的 setMultihash 和 multihash 方法，使浏览器能够将像 portal.eth 这样的名称解析为一个 IPFS 文档并将其渲染为网页。",
+  "commonUsage": "由于 ERC-1062 从未走出早期阶段，因此最好将它视为去中心化内容解析的一份蓝图，而非一个已部署的标准。它的参考实现是一个 Portal Network 浏览器扩展，让用户能够输入一个 ENS 名称并获取所链接的 IPFS 资源，就像 DNS 域名一样。Base58 到 hex 的转换依赖 multihashes JavaScript 库，并且它复用了 ENS 公共解析器现有的 setMultihash 和 multihash 方法，而没有定义新的接口。",
+
+  "node.publisher": "内容发布者",
+  "node.encoder": "Base58 转 hex 编码器",
+  "node.resolver": "ENS 公共解析器",
+  "node.storageMultihash": "Multihash 记录",
+  "node.decoder": "hex 转 Base58 解码器",
+  "node.browser": "Web3 浏览器",
+
+  "edge.provideHash": "提供 Base58 哈希",
+  "edge.callSetMultihash": "调用 setMultihash()",
+  "edge.storeMultihash": "存储 hex multihash",
+  "edge.readMultihash": "通过 multihash() 读取",
+  "edge.returnAddress": "返回 Base58 地址",
+
+  "sim.ipfsResolutionWalkthrough.name": "IPFS 解析演练",
+  "sim.ipfsResolutionWalkthrough.desc": "跟随一个 IPFS 哈希，从 ENS 名称所有者出发，经过解析器的 multihash 记录，再回到浏览器可以加载的 Base58 地址。",
+  "sim.ipfsResolutionWalkthrough.param.name": "ENS 名称",
+  "sim.ipfsResolutionWalkthrough.param.ipfsHash": "IPFS Base58 哈希",
+  "sim.ipfsResolutionWalkthrough.step.publish": "ENS 名称所有者将内容的 Base58 IPFS 哈希交给编码器，由其准备好用于链上存储。",
+  "sim.ipfsResolutionWalkthrough.step.publish.mobile": "提供 IPFS 哈希",
+  "sim.ipfsResolutionWalkthrough.step.store": "编码器将哈希转换为 hex 并调用 setMultihash，ENS 解析器随即把 multihash 字节写入该名称的记录中。",
+  "sim.ipfsResolutionWalkthrough.step.store.mobile": "存储 multihash",
+  "sim.ipfsResolutionWalkthrough.step.read": "解析该名称的客户端通过 multihash 读取所存储的字节，并将 hex 值传递给解码器。",
+  "sim.ipfsResolutionWalkthrough.step.read.mobile": "读取 multihash",
+  "sim.ipfsResolutionWalkthrough.step.render": "解码器将 hex 转换回 Base58 IPFS 地址，让浏览器能够获取并渲染去中心化内容。",
+  "sim.ipfsResolutionWalkthrough.step.render.mobile": "加载内容"
+}

@@ -1,0 +1,36 @@
+{
+  "short": "マルチアセット ERC-4626 ボールト",
+  "introduction": "ERC-7575 は、ERC-4626 のトークン化ボールト規格を拡張し、単一の ERC-20 シェアトークンを共有する複数のアセットやエントリーポイントを持つボールト（2 つの任意の外部トークン間で変換するボールトを含む）をサポートします。2023 年 12 月に Jeroen Offerijns、Alina Sinelnikova、Vikram Arun、Joey Santoro、Farhaan Ali によって提案されました。ERC-20 シェアを外部化する share メソッド、各アセットをそのボールトにマッピングする任意のボールト参照、および準拠コントラクトを検出するための必須の ERC-165 サポートを追加します。",
+  "designPurpose": "ERC-7575 は、すべてのボールトが同時に ERC-20 シェアトークンでもあるという ERC-4626 の要件を取り除くために設計されました。この要件は、マルチアセットボールトや流動性プロバイダー型のボールトを扱いにくく、あるいは準拠不能にします。なぜなら、異なるアセットで建てられた複数のエントリーポイントから 1 つのシェアをミントすることができないからです。ERC-7575 は、別のコントラクトを指し得る share メソッドの背後に ERC-20 依存を外部化することで、複数のボールトが 1 つの共通シェアにリンクできるようにし、2 つの外部トークン間で変換する Pipe を可能にします。",
+  "commonUsage": "ERC-7575 は、ERC-4626 の「1 ボールト 1 トークン」モデルに当てはまらないボールトを対象とします。すなわち、共有トークンを中心に複数のアセットエントリーポイントを公開するマルチアセットボールトと、2 つの外部 ERC-20 トークン間で一方向または双方向に変換する Pipe です。シェアトークンは任意でボールト参照を実装し、リンクされたボールトが変わると VaultUpdate を発行します。一方、ボールトとシェアは ERC-165 のインターフェースID 0x2f0a18c5 と 0xf815c03d を公表するため、フロントエンドやインデクサーはグループ化されたコントラクトを認識できます。",
+
+  "fn.share.desc": "ボールト内のシェアを表す ERC-20 トークンのアドレスを返します。ボールト自身のアドレスを返すこともあれば、ERC-20 シェアが別途管理されている場合は外部コントラクトのアドレスを返すこともあり、リバートしてはなりません。",
+  "fn.share.returns.shareTokenAddress": "ボールトの ERC-20 シェア表現のアドレス。",
+
+  "fn.vault.desc": "指定されたアセットをシェアのエントリーポイントとして使用するボールトのアドレスを返します。シェアトークン上に実装され、インテグレーターがアセットからマルチアセットボールトのエントリーポイントを参照できるようにします。",
+  "fn.vault.params.asset": "リンクされたボールトを照会する対象のアセットトークン。",
+  "fn.vault.returns.vault": "指定されたアセットに対して登録されたボールトのアドレス。",
+
+  "fn.VaultUpdate.desc": "あるアセットに対してシェアトークンにリンクされたボールトが変わったときにシェアトークンによって発行され、インテグレーションがマルチアセットボールトの現在のエントリーポイントを追跡できるようにします。",
+  "fn.VaultUpdate.params.asset": "リンクされたボールトが変わったアセット。",
+  "fn.VaultUpdate.params.vault": "新しくリンクされたボールトのアドレス。",
+
+  "node.user": "ボールトインテグレーター",
+  "node.contract": "ERC-7575 シェアトークン",
+  "node.storageVaults": "アセット対ボールトマップ",
+
+  "edge.callVault": "vault() を呼び出す",
+  "edge.readVaults": "ボールトマップを読み取る",
+  "edge.emitVaultUpdate": "VaultUpdate イベントを発行",
+  "edge.callShare": "share() を呼び出す",
+
+  "sim.vaultLookupWalkthrough.name": "ボールト参照ウォークスルー",
+  "sim.vaultLookupWalkthrough.desc": "シェアトークン上での vault(asset) 参照をたどり、VaultUpdate がアセット対ボールトマップを最新に保つ仕組みを確認します。",
+  "sim.vaultLookupWalkthrough.param.asset": "アセットアドレス",
+  "sim.vaultLookupWalkthrough.step.lookup": "インテグレーターがシェアトークン上で vault(asset) を呼び出し、指定されたアセットのボールトエントリーポイントを見つけます。",
+  "sim.vaultLookupWalkthrough.step.lookup.mobile": "vault() を呼び出す",
+  "sim.vaultLookupWalkthrough.step.read": "シェアトークンはアセット対ボールトのマッピングを読み取り、そのアセットに対して登録されたボールトのアドレスを返します。",
+  "sim.vaultLookupWalkthrough.step.read.mobile": "ボールトマップを読み取る",
+  "sim.vaultLookupWalkthrough.step.event": "あるアセットにリンクされたボールトが変わるたびに、シェアトークンは VaultUpdate を発行し、インデクサーがキャッシュされたマッピングを更新できるようにします。",
+  "sim.vaultLookupWalkthrough.step.event.mobile": "VaultUpdate イベントを発行"
+}

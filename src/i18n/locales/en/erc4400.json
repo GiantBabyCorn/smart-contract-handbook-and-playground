@@ -1,0 +1,42 @@
+{
+  "short": "EIP-721 Consumable Extension",
+  "introduction": "ERC-4400 defines an optional extension to ERC-721 that adds a standardized consumer role for non-fungible tokens, letting an owner authorize another address to use an NFT without transferring ownership. It was proposed by Daniel Ivanov and George Spasov in October 2021. The extension adds a read function to look up the current consumer, a write function to set or reaffirm it, and a ConsumerChanged event; it also requires that every transfer reset the consumer to a default address, recommended to be the zero address.",
+  "designPurpose": "ERC-4400 was designed to standardize the utility role that many ERC-721 projects had been implementing with their own custom permissions. Before it, metaverses, games, and rental platforms each defined ad-hoc operator or contributor roles, so wallets and marketplaces could not tell in a uniform way who was entitled to use a token. By reserving a single consumer role that must never gain owner, operator, or approval rights, ERC-4400 lets an NFT be used by one party while still owned and transferable by another.",
+  "commonUsage": "The consumer role is intended for applications where using an NFT is distinct from owning it: metaverse land where a tenant deploys scenes, in-game assets lent to players, event passes, and NFT-based yield farming where the staker keeps utility after depositing the token into a staking contract. Because the extension only exposes consumerOf and changeConsumer plus ERC-165 detection of interface id 0x953c8dfa, it is typically mixed into an existing ERC-721 contract rather than deployed on its own.",
+
+  "fn.consumerOf.desc": "Returns the current consumer address for the given NFT, or the zero address when no consumer is set. Reverts if the token id is not a valid NFT.",
+  "fn.consumerOf.params.tokenId": "The NFT whose consumer address is being queried.",
+  "fn.consumerOf.returns.consumer": "The consumer address for the NFT, or the zero address if there is none.",
+
+  "fn.changeConsumer.desc": "Sets or reaffirms the consumer address for an NFT, using the zero address to clear it. Reverts unless the caller is the NFT owner, an authorized operator, or an approved address, and emits ConsumerChanged.",
+  "fn.changeConsumer.params.consumer": "The new consumer of the NFT; the zero address indicates no consumer.",
+  "fn.changeConsumer.params.tokenId": "The NFT whose consumer is being changed.",
+
+  "fn.ConsumerChanged.desc": "Emitted when an owner changes the consumer of an NFT. A zero-address consumer indicates there is no consumer, and a Transfer also resets the consumer to none.",
+  "fn.ConsumerChanged.params.owner": "The owner of the NFT whose consumer changed.",
+  "fn.ConsumerChanged.params.consumer": "The new consumer address, or the zero address if cleared.",
+  "fn.ConsumerChanged.params.tokenId": "The NFT whose consumer was changed.",
+
+  "node.user": "NFT Owner",
+  "node.contract": "ERC-4400 NFT Contract",
+  "node.storageConsumers": "Consumer Storage",
+  "node.consumer": "Consumer",
+
+  "edge.callChangeConsumer": "Call changeConsumer()",
+  "edge.updateConsumers": "Update consumer mapping",
+  "edge.emitConsumerChanged": "Emit ConsumerChanged event",
+  "edge.grantConsumer": "Grant usage rights",
+
+  "sim.changeConsumerWalkthrough.name": "Set NFT Consumer",
+  "sim.changeConsumerWalkthrough.desc": "Follow a changeConsumer call from the owner through storage to the ConsumerChanged event that grants a consumer usage rights.",
+  "sim.changeConsumerWalkthrough.param.consumer": "Consumer address",
+  "sim.changeConsumerWalkthrough.param.tokenId": "Token ID",
+  "sim.changeConsumerWalkthrough.step.call": "The NFT owner calls changeConsumer(consumer, tokenId) on the contract to assign a consumer to the token.",
+  "sim.changeConsumerWalkthrough.step.call.mobile": "Call changeConsumer()",
+  "sim.changeConsumerWalkthrough.step.execute": "The contract checks that the caller is the owner, an authorized operator, or an approved address, then writes the new consumer into the _consumers mapping for the token.",
+  "sim.changeConsumerWalkthrough.step.execute.mobile": "Store consumer",
+  "sim.changeConsumerWalkthrough.step.event": "The contract emits ConsumerChanged(owner, consumer, tokenId) so indexers and interfaces can track the new consumer.",
+  "sim.changeConsumerWalkthrough.step.event.mobile": "Emit ConsumerChanged",
+  "sim.changeConsumerWalkthrough.step.grant": "The assigned consumer can now use the NFT within the application, without gaining owner, operator, or approval permissions.",
+  "sim.changeConsumerWalkthrough.step.grant.mobile": "Consumer gains usage rights"
+}

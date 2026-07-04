@@ -1,0 +1,68 @@
+{
+  "short": "Extensión de almacenamiento dType para la EVM",
+  "introduction": "ERC-2157 define una extensión de almacenamiento opcional para dType, el sistema de tipos descentralizado de ERC-1900, estandarizando el ABI de los contratos que almacenan instancias de tipos. Fue propuesta por Loredana Cirstea y Christian Tzurcanu en junio de 2019. Cada contrato de almacenamiento expone una interfaz CRUD común que hace que cada registro sea direccionable mediante un identificador determinista o por índice. Nota: ERC-2157 está en estado Stagnant (estancado): ha estado inactivo durante más de 6 meses y puede que nunca se finalice, pero conserva importancia histórica o técnica.",
+  "designPurpose": "ERC-2157 se diseñó para dar a Ethereum una direccionabilidad determinista para los datos públicos. ERC-1900 estandarizó las definiciones de tipos, pero dejó la recuperación de datos al análisis de blockchain fuera de la cadena o a cachés centralizadas como los exploradores de bloques, por lo que los contratos en la cadena no podían localizar de forma fiable las instancias de otro proyecto. Al fijar un ABI de almacenamiento común y un TypeRootContract que vincula cada tipo con su biblioteca y su almacenamiento, ERC-2157 permite que cualquier contrato o herramienta siga una ruta conocida hasta un registro y reconstruya su ABI a partir del registro dType.",
+  "commonUsage": "La extensión está dirigida a aplicaciones construidas sobre datos públicos compartidos: mercados descentralizados que leen registros de productos directamente desde un contrato de almacenamiento conocido, puentes de datos que sincronizan instancias de tipos entre fragmentos de Ethereum o entre cadenas, y herramientas que infieren el ABI de un contrato a partir del registro. La propuesta deja los controles de acceso y de mutabilidad para una extensión futura. Como ERC-2157 nunca alcanzó el estado Final, solo tuvo trabajo de implementación de referencia en lugar de una adopción en producción.",
+
+  "fn.insert.desc": "Almacena una nueva instancia de tipo, escribiéndola en el mapeo de registros y añadiéndola al arreglo de índices. Devuelve el identificador primario calculado por la función getIdentifier de la biblioteca de tipos y emite un evento LogNew.",
+  "fn.insert.params.data": "La instancia de tipo que se va a almacenar, tipada por la biblioteca de tipos del contrato.",
+  "fn.insert.returns.identifier": "El identificador primario del registro, derivado de sus valores por getIdentifier.",
+
+  "fn.insertBytes.desc": "Almacena una nueva instancia de tipo proporcionada como bytes codificados en ABI, decodificándola con la biblioteca de tipos antes de escribir el registro.",
+  "fn.insertBytes.params.data": "La instancia de tipo codificada en ABI que se va a almacenar.",
+  "fn.insertBytes.returns.identifier": "El identificador primario del registro almacenado.",
+
+  "fn.remove.desc": "Elimina el registro con el identificador dado y libera su slot de almacenamiento, devolviendo el índice que ocupaba el registro.",
+  "fn.remove.params.identifier": "El identificador primario del registro que se va a eliminar.",
+  "fn.remove.returns.index": "El índice que ocupaba el registro eliminado en el arreglo de índices.",
+
+  "fn.update.desc": "Sobrescribe el registro almacenado bajo el identificador dado con nuevos valores de instancia de tipo, devolviendo el identificador del registro actualizado.",
+  "fn.update.params.identifier": "El identificador primario del registro que se va a actualizar.",
+  "fn.update.params.data": "Los nuevos valores de instancia de tipo que se van a almacenar.",
+  "fn.update.returns.identifier": "El identificador del registro actualizado.",
+
+  "fn.isStored.desc": "Informa si existe un registro con el identificador dado en el contrato de almacenamiento.",
+  "fn.isStored.params.identifier": "El identificador primario que se va a comprobar.",
+  "fn.isStored.returns.stored": "Verdadero si existe un registro con el identificador.",
+
+  "fn.getByHash.desc": "Devuelve la instancia de tipo almacenada bajo el identificador primario dado.",
+  "fn.getByHash.params.identifier": "El identificador primario del registro que se va a obtener.",
+  "fn.getByHash.returns.data": "La instancia de tipo almacenada.",
+
+  "fn.getByIndex.desc": "Devuelve la instancia de tipo almacenada en la posición dada del arreglo de índices, lo que permite enumerar los registros.",
+  "fn.getByIndex.params.index": "La posición del registro en el arreglo de índices.",
+  "fn.getByIndex.returns.data": "La instancia de tipo almacenada.",
+
+  "fn.count.desc": "Devuelve el número de registros almacenados actualmente en el contrato.",
+  "fn.count.returns.counter": "El número total de registros almacenados.",
+
+  "fn.LogNew.desc": "Se emite cuando una nueva instancia de tipo se inserta en el contrato de almacenamiento.",
+  "fn.LogNew.params.identifier": "El identificador primario del registro insertado.",
+  "fn.LogNew.params.index": "El índice del registro en el arreglo de índices.",
+
+  "fn.LogUpdate.desc": "Se emite cuando se actualiza un registro existente.",
+  "fn.LogUpdate.params.identifier": "El identificador primario del registro actualizado.",
+  "fn.LogUpdate.params.index": "El índice del registro en el arreglo de índices.",
+
+  "fn.LogRemove.desc": "Se emite cuando un registro se elimina del contrato de almacenamiento.",
+  "fn.LogRemove.params.identifier": "El identificador primario del registro eliminado.",
+  "fn.LogRemove.params.index": "El índice que ocupaba el registro eliminado en el arreglo de índices.",
+
+  "node.user": "Publicador de datos",
+  "node.contract": "Contrato de almacenamiento de tipos",
+  "node.storageRecords": "Almacenamiento de registros",
+
+  "edge.callInsert": "Llamar a insert()",
+  "edge.updateRecords": "Almacenar instancia de tipo",
+  "edge.emitLogNew": "Emitir evento LogNew",
+
+  "sim.insertWalkthrough.name": "Recorrido para almacenar una instancia de tipo",
+  "sim.insertWalkthrough.desc": "Sigue una llamada a insert desde el publicador, a través del almacenamiento de registros, hasta el evento LogNew.",
+  "sim.insertWalkthrough.param.record": "Instancia de tipo",
+  "sim.insertWalkthrough.step.call": "El publicador llama a insert(data) con una instancia de tipo para añadirla al contrato de almacenamiento.",
+  "sim.insertWalkthrough.step.call.mobile": "Llamar a insert()",
+  "sim.insertWalkthrough.step.execute": "El contrato deriva el identificador con la función getIdentifier de la biblioteca de tipos, escribe el registro en el mapeo typeStruct y añade su identificador al arreglo typeIndex.",
+  "sim.insertWalkthrough.step.execute.mobile": "Almacenar el registro",
+  "sim.insertWalkthrough.step.event": "El contrato emite LogNew(identifier, index) para que los indexadores fuera de la cadena puedan rastrear el nuevo registro.",
+  "sim.insertWalkthrough.step.event.mobile": "Emitir evento LogNew"
+}

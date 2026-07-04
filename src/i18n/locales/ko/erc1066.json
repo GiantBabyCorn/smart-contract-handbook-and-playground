@@ -1,0 +1,32 @@
+{
+  "short": "스마트 컨트랙트 상태 코드",
+  "introduction": "ERC-1066은 컨트랙트를 위한 공유된 1바이트 상태 코드 집합을 정의하는 표준으로, HTTP 상태를 본떠 설계되어 함수가 단순한 true/false나 revert 대신 의미 있는 결과를 반환할 수 있도록 합니다. 2018년 5월 Brooklyn Zelenka, Tom Carchrae, Gleb Naumenko가 제안했습니다. 각 바이트는 16×16 표에서 상위 니블의 카테고리와 하위 니블의 사유를 짝지은 것으로, 여러 반환값 중 첫 번째로 반환됩니다. 참고: ERC-1066은 Stagnant(정체) 상태입니다. 6개월 이상 활동이 없었고 최종 확정되지 않을 수 있지만, 역사적으로 또는 기술적으로 여전히 중요한 의미를 가집니다.",
+  "designPurpose": "ERC-1066은 컨트랙트가 의존하던 저맥락 신호 방식을 대체하기 위해 설계되었습니다. 성공에 이르지 못하는 모든 경우에 revert하거나, 아무런 사유도 담지 않은 불투명한 true/false를 반환하는 방식입니다. 그 이전에는 모든 프로젝트가 자체적인 오류 체계를 만들었기 때문에, 컨트랙트는 상대방의 고유한 enum을 알지 못하면 서로의 결과에 반응할 수 없었습니다. ERC-1066은 카테고리와 사유 코드를 유한하고 HTTP와 유사한 표로 표준화함으로써, 컨트랙트에 자율적으로 분기할 수 있는 공유 어휘를 제공하는 동시에 사유가 포함된 revert와의 호환성도 유지합니다.",
+  "commonUsage": "ERC-1066은 통과 또는 실패 이상을 전달해야 하는 컨트랙트를 대상으로 합니다. 전송이 왜 차단되었는지 보고하는 검증기, 허용 또는 중단 코드를 반환하는 권한 확인, 그리고 한 컨트랙트가 다른 컨트랙트의 결과에 따라 분기하는 흐름 등입니다. 명세는 0x10(Disallowed, 불허) 또는 0x11(Allowed, 허용)을 반환하는 규제 대상 토큰 검증기를 예로 들어 설명합니다. Stagnant 제안인 만큼 프로덕션에서 널리 채택되지는 못했으며, 사람이 읽을 수 있는 번역 계층은 ERC-1444로 분리되었습니다.",
+
+  "node.caller": "호출하는 컨트랙트",
+  "node.contract": "상태를 반환하는 컨트랙트",
+  "node.storageCodeTable": "상태 코드 표",
+  "node.storageReturn": "반환된 상태 바이트",
+  "node.consumer": "반응하는 소비자",
+  "node.translator": "번역 계층",
+
+  "edge.callFunction": "함수 호출",
+  "edge.selectCode": "카테고리와 사유 선택",
+  "edge.encodeByte": "상태 바이트 인코딩",
+  "edge.reactToCode": "코드에 반응",
+  "edge.translateCode": "코드 번역",
+  "edge.showMessage": "메시지 표시",
+
+  "sim.statusCodeWalkthrough.name": "상태 코드 워크스루",
+  "sim.statusCodeWalkthrough.desc": "상태 코드가 컨트랙트 호출에서 시작해 인코딩을 거쳐 반응하는 소비자와 사람이 읽을 수 있는 메시지에 이르기까지의 과정을 따라갑니다.",
+  "sim.statusCodeWalkthrough.param.outcome": "함수 결과",
+  "sim.statusCodeWalkthrough.step.call": "호출하는 컨트랙트가 상태를 반환하는 컨트랙트의 함수를 호출하며, 첫 번째 반환값으로 바이트 상태 코드를 기대합니다.",
+  "sim.statusCodeWalkthrough.step.call.mobile": "함수 호출",
+  "sim.statusCodeWalkthrough.step.encode": "컨트랙트는 16×16 코드 표에서 카테고리와 사유를 하나씩 선택하여 하나의 상태 바이트로 묶습니다.",
+  "sim.statusCodeWalkthrough.step.encode.mobile": "상태 바이트 인코딩",
+  "sim.statusCodeWalkthrough.step.return": "상태 바이트는 첫 번째 값으로 반환되며, 소비자는 이를 기준으로 분기하여 짝수 코드는 차단(blocking), 홀수 코드는 비차단(non-blocking)으로 취급합니다.",
+  "sim.statusCodeWalkthrough.step.return.mobile": "코드에 반응",
+  "sim.statusCodeWalkthrough.step.translate": "번역 계층이 이후 ERC-1444에서 규정하는 대로 코드를 사람이 읽을 수 있는 메시지로 매핑합니다.",
+  "sim.statusCodeWalkthrough.step.translate.mobile": "메시지 표시"
+}

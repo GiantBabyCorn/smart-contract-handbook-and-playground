@@ -1,0 +1,32 @@
+{
+  "short": "智能合约状态码",
+  "introduction": "ERC-1066 为合约定义了一套共享的单字节状态码，仿照 HTTP 状态码设计，使函数能够返回有意义的结果，而不是单纯的 true/false 或直接 revert。它由 Brooklyn Zelenka、Tom Carchrae 和 Gleb Naumenko 于 2018 年 5 月提出。每个字节将高半字节（high nibble）表示的类别与低半字节（low nibble）表示的原因配对，取自一张 16×16 的表，并作为多返回值中的第一个返回。注意：ERC-1066 处于 Stagnant 状态——它已有 6 个月以上未活动，可能永远不会最终定稿，但在历史或技术上仍具重要意义。",
+  "designPurpose": "ERC-1066 的设计目标是取代合约以往所依赖的低上下文信号方式：只要未达成功便 revert，或返回不透明、不携带任何原因的 true/false。在此之前，每个项目都自创一套错误方案，因此合约在不了解对方定制 enum 的情况下无法对彼此的结果作出反应。通过将类别与原因编码标准化为一张有限的、类似 HTTP 的表，ERC-1066 为合约提供了可用于自主分支判断的共享词汇，同时保持与带原因的 revert 兼容。",
+  "commonUsage": "ERC-1066 面向那些需要传达的信息不止「成功或失败」的合约：报告转账为何被拦截的验证器、返回「允许或终止」状态码的权限检查，以及一个合约需要根据另一个合约结果进行分支的流程。该规范以一个受监管代币的验证器为例，它返回 0x10（Disallowed，不允许）或 0x11（Allowed，允许）。作为一项 Stagnant 提案，它从未在生产环境中被广泛采用，而其面向人类可读的翻译层被拆分到了 ERC-1444。",
+
+  "node.caller": "调用方合约",
+  "node.contract": "返回状态码的合约",
+  "node.storageCodeTable": "状态码表",
+  "node.storageReturn": "返回的状态字节",
+  "node.consumer": "作出反应的消费方",
+  "node.translator": "翻译层",
+
+  "edge.callFunction": "调用函数",
+  "edge.selectCode": "选择类别与原因",
+  "edge.encodeByte": "编码状态字节",
+  "edge.reactToCode": "对状态码作出反应",
+  "edge.translateCode": "翻译状态码",
+  "edge.showMessage": "显示消息",
+
+  "sim.statusCodeWalkthrough.name": "状态码逐步演示",
+  "sim.statusCodeWalkthrough.desc": "跟随一个状态码，从合约调用出发，经过编码，直到作出反应的消费方和一条人类可读的消息。",
+  "sim.statusCodeWalkthrough.param.outcome": "函数执行结果",
+  "sim.statusCodeWalkthrough.step.call": "调用方合约在一个返回状态码的合约上调用某个函数，期望第一个返回值是一个字节状态码。",
+  "sim.statusCodeWalkthrough.step.call.mobile": "调用函数",
+  "sim.statusCodeWalkthrough.step.encode": "该合约从 16×16 的状态码表中选取一个类别和一个原因，并将它们打包为单个状态字节。",
+  "sim.statusCodeWalkthrough.step.encode.mobile": "编码状态字节",
+  "sim.statusCodeWalkthrough.step.return": "状态字节作为第一个返回值返回；消费方据此分支处理，将偶数码视为阻断（blocking），奇数码视为非阻断（non-blocking）。",
+  "sim.statusCodeWalkthrough.step.return.mobile": "对状态码作出反应",
+  "sim.statusCodeWalkthrough.step.translate": "翻译层将状态码映射为一条人类可读的消息，正如后来的 ERC-1444 所规定。",
+  "sim.statusCodeWalkthrough.step.translate.mobile": "显示消息"
+}

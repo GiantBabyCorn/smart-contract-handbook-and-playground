@@ -1,0 +1,32 @@
+{
+  "short": "チェーン固有の相互運用可能なアドレス形式",
+  "introduction": "ERC-7930 は、対象アドレスとそれが属するチェーンをまとめてエンコードするコンパクトなバイナリ形式を定義し、単一の正規な相互運用可能なアドレス（Interoperable Address）を生成します。2025年2月に Teddy、Joxes、Nick Johnson らによって提案されました。この形式はバージョン付きで長さプレフィックス付きのエンベロープであり、バージョン、チェーンタイプとチェーン参照、およびアドレスを保持します。付随する CAIP-350 標準が、各名前空間でそれらをどうシリアライズするかを定義します。注意：ERC-7930 は Review ステータスにあり、確定するまでインターフェースが変更される可能性があります。",
+  "designPurpose": "ERC-7930 は、プロトコルがアドレスとそのチェーンを組み合わせる場当たり的な方法を終わらせるために設計されました。Ethereum のアドレス形式である ERC-55 はチェーン情報を一切持たないため、各クロスチェーンプロトコルが独自のフィールドや慣習を考案し、ツールを断片化させ、リスクを高めていました。チェーンの識別と生のアドレスを、オンチェーンで使えるほどコンパクトで、CAIP-350 プロファイルを通じて EVM 以外のチェーンにも拡張できる単一の正規なバイナリペイロードに束ねることで、この標準は相互運用システムに共通の形式を与えます。",
+  "commonUsage": "相互運用可能なアドレスは、クロスチェーンのメッセージ伝達やインテントシステムなど、別のチェーン上のアカウントを参照する必要があるスマートコントラクトを対象とします。長さがゼロのアドレスはペイロードを、チェーンだけを指し示すチェーン識別子（Chain Identifier）に変え、長さがゼロのチェーン参照は互換性のある任意のチェーン上のアドレスを表します。バイナリ形式は表示を目的としていないため、ERC-7828 が人間が読める相互運用可能な名前（Interoperable Name）をその上に重ね、生の値を表示する実装者はそれを小文字の16進文字列としてレンダリングします。",
+
+  "node.user": "アドレスの供給元",
+  "node.caip350": "CAIP-350 プロファイル",
+  "node.encoder": "相互運用可能なアドレスのエンコーダー",
+  "node.storageEnvelope": "エンベロープのフィールド",
+  "node.storageResult": "相互運用可能なアドレス",
+  "node.consumer": "クロスチェーンプロトコル",
+
+  "edge.submitTarget": "アドレスとチェーンを送信",
+  "edge.provideRules": "シリアライズ規則を提供",
+  "edge.assembleFields": "フィールドを組み立て",
+  "edge.concatenate": "ペイロードへ連結",
+  "edge.deliverAddress": "相互運用可能なアドレスを引き渡す",
+
+  "sim.encodeAddressWalkthrough.name": "相互運用可能なアドレスのエンコード",
+  "sim.encodeAddressWalkthrough.desc": "対象アドレスとチェーンをたどりながら、エンコーダーが CAIP-350 に従って各フィールドをシリアライズし、それらを1つのバイナリペイロードに連結する様子を確認します。",
+  "sim.encodeAddressWalkthrough.param.address": "対象アドレス",
+  "sim.encodeAddressWalkthrough.param.chain": "対象チェーン",
+  "sim.encodeAddressWalkthrough.step.submit": "アプリケーションが、相互運用可能なアドレスへエンコードするために、対象アドレスとそれが属するチェーンを送信します。",
+  "sim.encodeAddressWalkthrough.step.submit.mobile": "アドレスとチェーンを送信",
+  "sim.encodeAddressWalkthrough.step.serialize": "エンコーダーは、そのチェーンの名前空間に対応する CAIP-350 プロファイルを読み取り、バージョン、チェーンタイプ、そして長さプレフィックス付きのチェーン参照とアドレスのフィールドを埋めます。",
+  "sim.encodeAddressWalkthrough.step.serialize.mobile": "フィールドをシリアライズ",
+  "sim.encodeAddressWalkthrough.step.concatenate": "6つのフィールドは、長さプレフィックス付きの単一のバイナリペイロードへ連結されます。ここでは Ethereum メインネットアドレスの27バイトのエンコードです。",
+  "sim.encodeAddressWalkthrough.step.concatenate.mobile": "ペイロードを連結",
+  "sim.encodeAddressWalkthrough.step.deliver": "生成された相互運用可能なアドレスはクロスチェーンプロトコルへ渡され、そのプロトコルはこれを曖昧さのない1つの参照として保存または送信できます。",
+  "sim.encodeAddressWalkthrough.step.deliver.mobile": "プロトコルへ引き渡す"
+}

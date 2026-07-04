@@ -1,0 +1,42 @@
+{
+  "short": "Extensión Consumible de EIP-721",
+  "introduction": "ERC-4400 define una extensión opcional de ERC-721 que añade un rol de consumidor estandarizado para tokens no fungibles, lo que permite que un propietario autorice a otra dirección a usar un NFT sin transferir la propiedad. Fue propuesto por Daniel Ivanov y George Spasov en octubre de 2021. La extensión añade una función de lectura para consultar el consumidor actual, una función de escritura para establecerlo o reafirmarlo, y un evento ConsumerChanged; también exige que cada transferencia restablezca el consumidor a una dirección predeterminada, que se recomienda que sea la dirección cero.",
+  "designPurpose": "ERC-4400 se diseñó para estandarizar el rol de utilidad que muchos proyectos de ERC-721 venían implementando con sus propios permisos personalizados. Antes de él, los metaversos, los juegos y las plataformas de alquiler definían cada uno roles de operador o de colaborador improvisados, por lo que las billeteras y los mercados no podían determinar de forma uniforme quién tenía derecho a usar un token. Al reservar un único rol de consumidor que nunca debe obtener derechos de propietario, de operador ni de aprobación, ERC-4400 permite que un NFT sea usado por una parte mientras otra sigue siendo su propietaria y puede transferirlo.",
+  "commonUsage": "El rol de consumidor está pensado para aplicaciones en las que usar un NFT es distinto de poseerlo: terrenos del metaverso donde un inquilino despliega escenas, activos dentro del juego prestados a los jugadores, pases de eventos y yield farming basado en NFT donde el staker conserva la utilidad tras depositar el token en un contrato de staking. Dado que la extensión solo expone consumerOf y changeConsumer, además de la detección mediante ERC-165 del ID de interfaz 0x953c8dfa, normalmente se integra en un contrato ERC-721 existente en lugar de desplegarse por sí sola.",
+
+  "fn.consumerOf.desc": "Devuelve la dirección del consumidor actual del NFT indicado, o la dirección cero cuando no hay ningún consumidor establecido. Revierte si el token id no es un NFT válido.",
+  "fn.consumerOf.params.tokenId": "El NFT cuya dirección de consumidor se consulta.",
+  "fn.consumerOf.returns.consumer": "La dirección del consumidor del NFT, o la dirección cero si no hay ninguna.",
+
+  "fn.changeConsumer.desc": "Establece o reafirma la dirección del consumidor de un NFT, usando la dirección cero para borrarla. Revierte a menos que quien llama sea el propietario del NFT, un operador autorizado o una dirección aprobada, y emite ConsumerChanged.",
+  "fn.changeConsumer.params.consumer": "El nuevo consumidor del NFT; la dirección cero indica que no hay consumidor.",
+  "fn.changeConsumer.params.tokenId": "El NFT cuyo consumidor se cambia.",
+
+  "fn.ConsumerChanged.desc": "Se emite cuando un propietario cambia el consumidor de un NFT. Un consumidor con dirección cero indica que no hay consumidor, y una transferencia (Transfer) también restablece el consumidor a ninguno.",
+  "fn.ConsumerChanged.params.owner": "El propietario del NFT cuyo consumidor cambió.",
+  "fn.ConsumerChanged.params.consumer": "La nueva dirección del consumidor, o la dirección cero si se borró.",
+  "fn.ConsumerChanged.params.tokenId": "El NFT cuyo consumidor se cambió.",
+
+  "node.user": "Propietario del NFT",
+  "node.contract": "Contrato NFT ERC-4400",
+  "node.storageConsumers": "Almacenamiento de consumidores",
+  "node.consumer": "Consumidor",
+
+  "edge.callChangeConsumer": "Llamar a changeConsumer()",
+  "edge.updateConsumers": "Actualizar el mapping de consumidores",
+  "edge.emitConsumerChanged": "Emitir el evento ConsumerChanged",
+  "edge.grantConsumer": "Otorgar derechos de uso",
+
+  "sim.changeConsumerWalkthrough.name": "Establecer el consumidor de un NFT",
+  "sim.changeConsumerWalkthrough.desc": "Sigue una llamada a changeConsumer del propietario, a través del almacenamiento, hasta el evento ConsumerChanged que otorga al consumidor derechos de uso.",
+  "sim.changeConsumerWalkthrough.param.consumer": "Dirección del consumidor",
+  "sim.changeConsumerWalkthrough.param.tokenId": "Token ID",
+  "sim.changeConsumerWalkthrough.step.call": "El propietario del NFT llama a changeConsumer(consumer, tokenId) en el contrato para asignar un consumidor al token.",
+  "sim.changeConsumerWalkthrough.step.call.mobile": "Llamar a changeConsumer()",
+  "sim.changeConsumerWalkthrough.step.execute": "El contrato comprueba que quien llama es el propietario, un operador autorizado o una dirección aprobada, y luego escribe el nuevo consumidor en el mapping _consumers del token.",
+  "sim.changeConsumerWalkthrough.step.execute.mobile": "Almacenar el consumidor",
+  "sim.changeConsumerWalkthrough.step.event": "El contrato emite ConsumerChanged(owner, consumer, tokenId) para que los indexadores y las interfaces puedan seguir al nuevo consumidor.",
+  "sim.changeConsumerWalkthrough.step.event.mobile": "Emitir ConsumerChanged",
+  "sim.changeConsumerWalkthrough.step.grant": "El consumidor asignado ya puede usar el NFT dentro de la aplicación, sin obtener permisos de propietario, de operador ni de aprobación.",
+  "sim.changeConsumerWalkthrough.step.grant.mobile": "El consumidor obtiene derechos de uso"
+}

@@ -1,0 +1,61 @@
+{
+  "short": "Stealth Addresses",
+  "introduction": "ERC-5564 defines a standardized method for generating and locating stealth addresses, letting a sender non-interactively create a fresh account that only the recipient can control. It was proposed by Toni Wahrstätter, Matt Solomon, Ben DiFrancesco, and Vitalik Buterin in August 2022. The sender derives the address from a shared secret with the recipient's stealth meta-address, then calls a singleton ERC5564Announcer contract that emits an Announcement event carrying the ephemeral public key and a view tag.",
+  "designPurpose": "ERC-5564 was designed to let recipients receive assets without linking the transfer to their on-chain identity. Before it, paying a known address exposed the recipient, and each privacy project invented its own incompatible address-derivation and announcement scheme. The standard fixes a shared interface for deriving stealth addresses from a sender-recipient secret and a single ERC5564Announcer contract, giving wallets and indexers one place to publish and scan announcements.",
+  "commonUsage": "Stealth addresses are used by privacy-focused wallets and payment tools that want recipients to stay unlinkable, such as private donations or one-off transfers where reusing an address would leak information. Because the Announcer only emits events, integrators pair it with off-chain scanning services and a registry like ERC-6538 that maps users to their stealth meta-addresses. The SECP256k1 scheme with view tags defined here (schemeId 1) is the common starting point.",
+
+  "fn.generateStealthAddress.desc": "Generates a stealth address for a recipient from their stealth meta-address. Returns the stealth address, the ephemeral public key the sender used, and a view tag that speeds up the recipient's scanning.",
+  "fn.generateStealthAddress.params.stealthMetaAddress": "The recipient's stealth meta-address, encoding their spending and viewing public keys.",
+  "fn.generateStealthAddress.returns.stealthAddress": "The stealth address the sender can send funds to.",
+  "fn.generateStealthAddress.returns.ephemeralPubKey": "The ephemeral public key generated for this address, published so the recipient can recompute the shared secret.",
+  "fn.generateStealthAddress.returns.viewTag": "A single byte derived from the shared secret that lets recipients quickly filter non-matching announcements.",
+
+  "fn.checkStealthAddress.desc": "Returns true if funds sent to the given stealth address belong to the recipient who controls the corresponding spending key. Recipients run it against each announcement to detect their own payments.",
+  "fn.checkStealthAddress.params.stealthAddress": "The stealth address to test ownership of.",
+  "fn.checkStealthAddress.params.ephemeralPubKey": "The ephemeral public key taken from the announcement.",
+  "fn.checkStealthAddress.params.viewingKey": "The recipient's viewing private key.",
+  "fn.checkStealthAddress.params.spendingPubKey": "The recipient's spending public key.",
+  "fn.checkStealthAddress.returns.isRecipient": "True when the stealth address belongs to this recipient.",
+
+  "fn.computeStealthKey.desc": "Computes the private key for a stealth address from the recipient's viewing and spending private keys and the ephemeral public key, letting the recipient spend the funds held at that address.",
+  "fn.computeStealthKey.params.stealthAddress": "The stealth address whose private key is derived; included so the result can be validated.",
+  "fn.computeStealthKey.params.ephemeralPubKey": "The ephemeral public key taken from the announcement.",
+  "fn.computeStealthKey.params.viewingKey": "The recipient's viewing private key.",
+  "fn.computeStealthKey.params.spendingKey": "The recipient's spending private key.",
+  "fn.computeStealthKey.returns.stealthKey": "The stealth private key controlling the stealth address.",
+
+  "fn.announce.desc": "Called by integrators to emit an Announcement event that tells recipients something was sent to a stealth address. The Announcer is a singleton contract with one instance per chain and holds no state.",
+  "fn.announce.params.schemeId": "The integer identifying the stealth address scheme applied.",
+  "fn.announce.params.stealthAddress": "The computed stealth address for the recipient.",
+  "fn.announce.params.ephemeralPubKey": "The ephemeral public key used by the sender.",
+  "fn.announce.params.metadata": "Arbitrary data whose first byte MUST be the view tag; remaining bytes may describe the token and amount.",
+
+  "fn.Announcement.desc": "Emitted whenever something is sent to a stealth address. Indexers and recipients scan these events; schemeId, stealthAddress, and caller are indexed for filtering.",
+  "fn.Announcement.params.schemeId": "The stealth address scheme identifier (indexed).",
+  "fn.Announcement.params.stealthAddress": "The stealth address funds were sent to (indexed).",
+  "fn.Announcement.params.caller": "The account that called announce, i.e. msg.sender (indexed).",
+  "fn.Announcement.params.ephemeralPubKey": "The ephemeral public key used by the sender.",
+  "fn.Announcement.params.metadata": "Arbitrary metadata whose first byte is the view tag.",
+
+  "node.user": "Sender",
+  "node.contract": "ERC5564Announcer",
+  "node.recipient": "Recipient",
+
+  "edge.callAnnounce": "Call announce()",
+  "edge.emitAnnouncement": "Emit Announcement event",
+  "edge.scanAnnouncement": "Scan announcement",
+  "edge.callCheck": "Call checkStealthAddress()",
+
+  "sim.announceWalkthrough.name": "Stealth Payment Announcement",
+  "sim.announceWalkthrough.desc": "Follow a stealth payment from the sender's announce call through the Announcement event to the recipient's scan.",
+  "sim.announceWalkthrough.param.schemeId": "Scheme ID",
+  "sim.announceWalkthrough.param.stealthAddress": "Stealth address",
+  "sim.announceWalkthrough.step.call": "The sender calls announce() on the ERC5564Announcer singleton, passing the scheme ID, the recipient's stealth address, the ephemeral public key, and metadata.",
+  "sim.announceWalkthrough.step.call.mobile": "Call announce()",
+  "sim.announceWalkthrough.step.execute": "The Announcer forwards the call and adds msg.sender as the indexed caller. It keeps no state and only prepares the event.",
+  "sim.announceWalkthrough.step.execute.mobile": "Forward to Announcer",
+  "sim.announceWalkthrough.step.emit": "The contract emits an Announcement event carrying the scheme ID, stealth address, caller, ephemeral public key, and metadata with the view tag.",
+  "sim.announceWalkthrough.step.emit.mobile": "Emit Announcement event",
+  "sim.announceWalkthrough.step.scan": "The recipient scans Announcement events, checks the view tag, and runs checkStealthAddress() to confirm the payment is theirs.",
+  "sim.announceWalkthrough.step.scan.mobile": "Scan & check"
+}

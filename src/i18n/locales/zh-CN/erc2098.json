@@ -1,0 +1,29 @@
+{
+  "short": "紧凑签名表示",
+  "introduction": "ERC-2098 定义了以太坊 secp256k1 签名的一种紧凑的 64 字节表示，用 r 和 yParityAndS 这两个 32 字节的字取代传统的 65 字节 (r, s, v) 三元组。它由 Richard Moore 和 Nick Johnson 于 2019 年 3 月提出。该编码依赖于规范签名中 s 值的最高位为零这一事实，因此将 yParity 位存储在这个空闲的高位中，得到 yParityAndS = (yParity << 255) | s。解码时反向操作，恢复出 r、s 和 yParity 供 ecrecover 使用。",
+  "designPurpose": "ERC-2098 旨在缩减浪费空间和 gas 的签名负载。规范签名需要 65 字节，但一旦填充到 256 位的 EVM 字，就会占用 96 字节，其中注入了 31 个零字节，而 RLP 编码的交易平均要为 yParity 多花 1.5 字节。通过将 yParity 位打包进 s 恒为零的高位，该标准将完整签名装入两个对齐的 32 字节的字中，在不丢失任何信息的前提下缩减了 calldata 大小以及传递签名的 gas 成本。",
+  "commonUsage": "凡是签名以 calldata 形式传输且空间受限的场景，都会用到紧凑签名：元交易中继器、多重签名钱包以及 permit 式授权。ethers.js 库将打包后的形式作为内部拆分签名属性暴露出来，恢复工具在调用 ecrecover 之前会同时接受 (r, yParityAndS) 布局和经典的 (r, s, v) 形式。由于这种表示只是一种纯粹的编码，它可以与任何已经依赖 ECDSA 签名的方案组合使用。",
+
+  "node.signer": "签名者",
+  "node.encoder": "紧凑编码器",
+  "node.compactSig": "紧凑签名",
+  "node.verifier": "链上验证者",
+  "node.recovered": "恢复出的签名者",
+
+  "edge.sign": "签署摘要",
+  "edge.pack": "打包成 64 字节",
+  "edge.submit": "提交紧凑签名",
+  "edge.recover": "恢复签名者",
+
+  "sim.compactEncoding.name": "紧凑签名编码",
+  "sim.compactEncoding.desc": "跟随一个签名从规范的 (r, s, v) 形式，经过紧凑打包，到链上恢复的全过程。",
+  "sim.compactEncoding.param.yParity": "yParity 位",
+  "sim.compactEncoding.step.sign": "签名者生成一个规范的 secp256k1 签名，包含 r、s 和 yParity 三个分量。",
+  "sim.compactEncoding.step.sign.mobile": "签署摘要",
+  "sim.compactEncoding.step.pack": "编码器将 yParity 存入 s 的最高位，生成 r 和 yParityAndS 这两个 32 字节的字。",
+  "sim.compactEncoding.step.pack.mobile": "打包成 64 字节",
+  "sim.compactEncoding.step.submit": "64 字节的紧凑签名以 (r, yParityAndS) 对的形式提交到链上。",
+  "sim.compactEncoding.step.submit.mobile": "提交签名",
+  "sim.compactEncoding.step.recover": "验证者从 yParityAndS 中解出 yParity 和 s，然后调用 ecrecover 恢复签名者地址。",
+  "sim.compactEncoding.step.recover.mobile": "恢复签名者"
+}

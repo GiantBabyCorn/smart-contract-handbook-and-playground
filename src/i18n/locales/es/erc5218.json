@@ -1,0 +1,68 @@
+{
+  "short": "Gestión de Derechos de NFT",
+  "introduction": "ERC-5218 define una interfaz para registrar licencias de derechos de autor en la cadena y vincularlas a un NFT ERC-721. Fue propuesto por James Grimmelmann, Yan Ji y Tyler Kell en julio de 2022. Cada NFT tiene una licencia raíz en poder de su propietario, quien puede conceder sublicencias que forman un árbol; cada licencia apunta a un URI de términos y puede crearse, transferirse, revocarse o consultarse si está activa. Nota: ERC-5218 está en estado Stagnant (estancado): ha estado inactivo durante más de 6 meses y es posible que nunca se finalice, pero conserva relevancia histórica o técnica.",
+  "designPurpose": "ERC-5218 se diseñó para cerrar la brecha entre poseer un NFT y tener los derechos legales sobre la obra que este representa. Antes de su existencia, las licencias de NFT vivían fuera de la cadena y el token no daba ninguna indicación de qué derechos se aplicaban, mientras que las sublicencias eran imposibles de rastrear y algunos proyectos acuñaban NFT separados para hacer las veces de una licencia. Al registrar cada licencia en un árbol en la cadena indexado por los identificadores de licencia y de token, cada uno con un URI de términos y un revocador, el estándar permite que creadores, titulares y auditores rastreen el historial completo de derechos a través de los registros de eventos.",
+  "commonUsage": "ERC-5218 está destinado a proyectos de NFT que adjuntan obras creativas —imágenes, música u otros medios— a sus tokens y quieren que la licencia sea explícita y transferible. Un contrato conforme hereda de ERC-721 y responde a supportsInterface con 0xac7b5ca9, de modo que los mercados y exploradores pueden detectar el soporte de licencias y resolver los términos desde cada URI. Dado que la especificación nunca alcanzó el estado Final, su adopción en la cadena es limitada y se mantiene principalmente como un diseño de referencia para la gestión de derechos.",
+
+  "fn.isLicenseActive.desc": "Devuelve si la licencia dada está actualmente activa. Una licencia inexistente o revocada está inactiva, y una licencia también se considera inactiva cuando una de sus licencias ancestrales ha sido revocada.",
+  "fn.isLicenseActive.params.licenseId": "El identificador de la licencia consultada.",
+  "fn.isLicenseActive.returns.active": "true si la licencia está activa; false en caso contrario.",
+
+  "fn.getLicenseIdByTokenId.desc": "Devuelve el identificador de la licencia raíz vinculada al NFT dado. Si el NFT no tiene licencia raíz, se devuelve un identificador especial que no hace referencia a ninguna licencia, como 0.",
+  "fn.getLicenseIdByTokenId.params.tokenId": "El identificador del NFT cuya licencia raíz se consulta.",
+  "fn.getLicenseIdByTokenId.returns.licenseId": "El identificador de la licencia raíz del NFT, o 0 si no existe ninguna.",
+
+  "fn.createLicense.desc": "Crea una nueva licencia sobre un NFT y devuelve su identificador. El propietario del NFT puede crear una licencia raíz, mientras que el titular de la licencia padre activa puede crear una sublicencia. Emite un evento CreateLicense.",
+  "fn.createLicense.params.tokenId": "El NFT sobre el cual se emite la licencia.",
+  "fn.createLicense.params.parentLicenseId": "El identificador de la licencia padre, o un valor especial como 0 para una licencia raíz.",
+  "fn.createLicense.params.licenseHolder": "La dirección que tendrá la nueva licencia.",
+  "fn.createLicense.params.uri": "El URI que apunta a los términos de la licencia.",
+  "fn.createLicense.params.revoker": "La dirección autorizada a revocar la licencia.",
+  "fn.createLicense.returns.licenseId": "El identificador asignado a la licencia creada.",
+
+  "fn.revokeLicense.desc": "Revoca una licencia activa; solo el revocador designado de la licencia puede llamarla. Revocar una licencia raíz devuelve el NFT a su creador, y las sublicencias bajo una licencia revocada también quedan inactivas.",
+  "fn.revokeLicense.params.licenseId": "El identificador de la licencia a revocar.",
+
+  "fn.transferSublicense.desc": "Transfiere una sublicencia activa a un nuevo titular; solo el titular actual puede llamarla. Las licencias raíz no se transfieren de esta manera, ya que se mueven junto con el NFT a través de la transferencia ERC-721.",
+  "fn.transferSublicense.params.licenseId": "El identificador de la sublicencia a transferir.",
+  "fn.transferSublicense.params.licenseHolder": "La dirección del nuevo titular de la sublicencia.",
+
+  "fn.CreateLicense.desc": "Se emite cuando se crea una nueva licencia por cualquier mecanismo, registrando su identificador, el NFT, la licencia padre, el titular, el URI de términos y el revocador.",
+  "fn.CreateLicense.params.licenseId": "El identificador de la licencia recién creada.",
+  "fn.CreateLicense.params.tokenId": "El NFT sobre el cual se emite la licencia.",
+  "fn.CreateLicense.params.parentLicenseId": "El identificador de la licencia padre, o 0 para una licencia raíz.",
+  "fn.CreateLicense.params.licenseHolder": "La dirección que tiene la nueva licencia.",
+  "fn.CreateLicense.params.uri": "El URI que apunta a los términos de la licencia.",
+  "fn.CreateLicense.params.revoker": "La dirección autorizada a revocar la licencia.",
+
+  "fn.RevokeLicense.desc": "Se emite cuando se revoca una licencia. Según algunos términos, un único evento en una licencia ancestral implica la revocación de todas sus sublicencias.",
+  "fn.RevokeLicense.params.licenseId": "El identificador de la licencia revocada.",
+
+  "fn.TransferLicense.desc": "Se emite cuando una licencia se transfiere a un nuevo titular, incluida la licencia raíz que se mueve junto con su NFT hacia un nuevo propietario.",
+  "fn.TransferLicense.params.licenseId": "El identificador de la licencia transferida.",
+  "fn.TransferLicense.params.licenseHolder": "La dirección del nuevo titular de la licencia.",
+
+  "node.user": "Propietario del NFT",
+  "node.contract": "Contrato ERC-5218",
+  "node.storageLicenses": "Almacenamiento de licencias",
+  "node.licenseHolder": "Titular de la licencia",
+
+  "edge.callCreateLicense": "Llamar a createLicense()",
+  "edge.recordLicense": "Registrar licencia",
+  "edge.emitCreateLicense": "Emitir evento CreateLicense",
+  "edge.grantLicense": "Conceder licencia",
+
+  "sim.createLicenseWalkthrough.name": "Recorrido de creación de licencia",
+  "sim.createLicenseWalkthrough.desc": "Sigue una llamada a createLicense desde el propietario del NFT, a través del almacenamiento, hasta el titular de la licencia y el evento CreateLicense.",
+  "sim.createLicenseWalkthrough.param.tokenId": "ID de token",
+  "sim.createLicenseWalkthrough.param.parentLicenseId": "ID de licencia padre",
+  "sim.createLicenseWalkthrough.param.licenseHolder": "Titular de la licencia",
+  "sim.createLicenseWalkthrough.step.call": "El propietario del NFT llama a createLicense() en el contrato, pasando el ID de token, la licencia padre, el titular, el URI de términos y el revocador.",
+  "sim.createLicenseWalkthrough.step.call.mobile": "Llamar a createLicense()",
+  "sim.createLicenseWalkthrough.step.execute": "El contrato registra una nueva entrada License y, para una licencia raíz, la vincula al NFT en el mapping _licenseIds.",
+  "sim.createLicenseWalkthrough.step.execute.mobile": "Registrar licencia",
+  "sim.createLicenseWalkthrough.step.grant": "La nueva licencia se asigna al titular especificado, quien obtiene los derechos en la cadena descritos por el URI de la licencia.",
+  "sim.createLicenseWalkthrough.step.grant.mobile": "Asignar al titular",
+  "sim.createLicenseWalkthrough.step.event": "El contrato emite CreateLicense para que los indexadores y auditores puedan rastrear el árbol completo de licencias del NFT.",
+  "sim.createLicenseWalkthrough.step.event.mobile": "Emitir evento CreateLicense"
+}

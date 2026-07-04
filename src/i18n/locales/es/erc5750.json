@@ -1,0 +1,27 @@
+{
+  "short": "Extensibilidad general para comportamientos de métodos",
+  "introduction": "ERC-5750 define una convención para hacer extensibles los métodos de un contrato al designar su último parámetro, un campo bytes de tamaño dinámico, como una ranura abierta para extensiones de comportamiento. Fue propuesto por Zainan Victor Zhou en octubre de 2022. En lugar de añadir un método nuevo para cada necesidad futura, un método conforme acepta un argumento bytes final que transporta cargas útiles arbitrarias, como firmas, nonces o compromisos. Cuando ese campo está vacío, el método debe comportarse de forma idéntica a su método hermano sobrecargado que no lo incluye.",
+  "designPurpose": "ERC-5750 se diseñó para permitir que las interfaces de los métodos evolucionen sin romper a los llamadores existentes. Antes de él, extender una función significaba inventar un método nuevo, con todas las cuestiones de nombres y firmas de función que eso plantea, o reutilizar parámetros existentes con el riesgo de ambigüedad. Al reservar un parámetro bytes final para datos de extensión no estructurados, el estándar da a cada método una vía de escape compatible hacia adelante que puede codificar cualquier esquema futuro, manteniendo el comportamiento con datos vacíos idéntico al del método simple.",
+  "commonUsage": "Varios estándares consolidados ya contienen métodos conformes: las funciones safeTransferFrom de ERC-721 y ERC-1155 y las funciones burn y send de ERC-777 colocan todas un parámetro data de bytes al final. Los diseños más recientes adoptan la convención para adjuntar firmas, para transportar salts, nonces o compromisos en esquemas commit-reveal, o para reenviar datos a callbacks del receptor. También señala los métodos cuyo bytes final ya cumple una función esencial, como diamondCut en ERC-2535, que necesitan una sobrecarga para cumplir el estándar.",
+
+  "node.user": "Llamador",
+  "node.contract": "Contrato conforme",
+  "node.storageData": "Carga útil de extensión",
+  "node.extension": "Comportamiento de extensión",
+
+  "edge.callMethod": "Llamar a methodName1() con data",
+  "edge.readData": "Leer el parámetro data",
+  "edge.invokeExtension": "Invocar el comportamiento de extensión",
+  "edge.forwardData": "Reenviar la carga útil",
+
+  "sim.extensionCallWalkthrough.name": "Recorrido de extensión de método",
+  "sim.extensionCallWalkthrough.desc": "Sigue una llamada a un método conforme cuya carga útil de bytes final desencadena un comportamiento de extensión.",
+  "sim.extensionCallWalkthrough.param.param1": "Parámetro del método",
+  "sim.extensionCallWalkthrough.param.data": "Carga útil de extensión",
+  "sim.extensionCallWalkthrough.step.call": "El llamador invoca methodName1 en el contrato conforme, añadiendo una carga útil de extensión como parámetro data de bytes final.",
+  "sim.extensionCallWalkthrough.step.call.mobile": "Llamar con data",
+  "sim.extensionCallWalkthrough.step.execute": "El contrato ejecuta su comportamiento principal y lee el parámetro data final; cuando ese campo está vacío, la llamada coincide con el método simple sin ese parámetro.",
+  "sim.extensionCallWalkthrough.step.execute.mobile": "Leer parámetro data",
+  "sim.extensionCallWalkthrough.step.extension": "El contrato decodifica la carga útil e invoca el comportamiento de extensión, como verificar una firma o registrar un compromiso.",
+  "sim.extensionCallWalkthrough.step.extension.mobile": "Invocar extensión"
+}

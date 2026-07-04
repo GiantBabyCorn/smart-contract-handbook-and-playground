@@ -1,0 +1,64 @@
+{
+  "short": "참조 가능 NFT 관계 확장",
+  "introduction": "ERC-5521은 대체 불가능 토큰이 다른 NFT와의 참조 관계를 기록할 수 있도록 하는 ERC-721의 확장입니다. Saber Yu와 공동 저자들이 2022년 8월에 제안했습니다. 이 표준은 토큰이 인용하는 NFT를 가리키는 참조 목록(referring list)과 해당 토큰을 인용하는 NFT를 담은 피참조 목록(referred list)을, 블록 수준의 createdTimestamp와 함께 추가합니다. 참조는 반드시 더 이전의 토큰을 가리켜야 하므로, 이러한 관계는 방향성 비순환 그래프를 형성하며 지갑과 인덱서가 이를 조회, 추적, 분석할 수 있습니다.",
+  "designPurpose": "ERC-5521은 서로를 기반으로 쌓아 올라가는 NFT를 연결하기 위해 설계되었으며, ERC-721은 이러한 토큰을 고립된 일회성 토큰으로 남겨 둡니다. 그 이전에는 NFT가 자신이 파생된 작품에 대한 온체인 링크를 갖지 않아, 창작자가 계보를 추적하거나 작품이 재사용될 때 가치를 축적할 수 없었습니다. 이 표준은 참조를 참조 목록과 피참조 목록으로 온체인에 기록하고 각 토큰에 생성 시각을 새겨, 어떤 컨트랙트든 인용 그래프를 재구성할 수 있습니다. 참조가 더 이전의 토큰만 가리키도록 요구함으로써 그래프를 비순환으로 유지합니다.",
+  "commonUsage": "참조 가능 NFT는 창작물이 이전 작품을 기반으로 만들어지는 상황을 위한 것입니다. 아티스트가 이전 NFT에서 작품을 파생시키거나, 뮤지션이 참조한 트랙을 리믹스하거나, 후속 토큰이 출처를 표기하는 인용 그래프 등이 그 예입니다. 참조는 TargetContract 인터페이스를 통해 컨트랙트를 넘나들 수 있으므로, 토큰은 ERC-165 지원을 확인한 후 다른 컬렉션의 NFT를 인용할 수 있습니다. 이 확장은 ERC-721 컨트랙트에 추가되며, 참조 목록과 피참조 목록을 통해 마켓플레이스와 익스플로러가 출처를 표시할 수 있습니다.",
+
+  "fn.setNode.desc": "rNFT의 참조 목록을 설정하고 그것이 가리키는 모든 NFT의 피참조 목록을 업데이트하여 관계를 기록하며, 현재 블록 타임스탬프로 토큰에 표시합니다. 변경된 각 노드에 대해 UpdateNode를 발생시킵니다.",
+  "fn.setNode.params.tokenId": "참조를 설정하는 대상 rNFT.",
+  "fn.setNode.params.addresses": "참조 대상 rNFT를 보유한 컨트랙트 주소.",
+  "fn.setNode.params.tokenIds": "각 주소에 대해, 이 rNFT가 참조하는 토큰 ID 목록.",
+
+  "fn.setNodeReferredExternal.desc": "대상 컨트랙트에서 호출되어 주어진 rNFT의 피참조 목록에 tokenId를 추가함으로써, 참조가 두 컨트랙트에 걸칠 수 있게 합니다. 호출자가 대상이 해당 인터페이스를 지원하는지 확인한 후에만 호출됩니다.",
+  "fn.setNodeReferredExternal.params._address": "외부 참조를 수행하는 컨트랙트의 주소.",
+  "fn.setNodeReferredExternal.params.tokenId": "각 대상의 피참조 목록에 추가되는 참조 측 rNFT.",
+  "fn.setNodeReferredExternal.params._tokenIds": "참조 대상이 되는 대상 컨트랙트의 토큰 ID.",
+
+  "fn.referringOf.desc": "rNFT의 참조 목록을 반환합니다. 컨트랙트 주소와, 각 주소에 대해 이 NFT가 가리키는 토큰 ID입니다. 주소가 이 컨트랙트가 아닐 때 컨트랙트 간 조회를 지원합니다.",
+  "fn.referringOf.params._address": "조회 대상 rNFT와 연관된 컨트랙트 주소.",
+  "fn.referringOf.params.tokenId": "참조 목록을 요청하는 대상 rNFT.",
+  "fn.referringOf.returns.addresses": "참조된 NFT의 컨트랙트 주소.",
+  "fn.referringOf.returns.tokenIds": "각 주소에 대해, 이 rNFT가 참조하는 토큰 ID.",
+
+  "fn.referredOf.desc": "rNFT의 피참조 목록을 반환합니다. 그것을 가리키는 NFT의 컨트랙트 주소와 토큰 ID입니다. 주소가 이 컨트랙트가 아닐 때 컨트랙트 간 조회를 지원합니다.",
+  "fn.referredOf.params._address": "조회 대상 rNFT와 연관된 컨트랙트 주소.",
+  "fn.referredOf.params.tokenId": "피참조 목록을 요청하는 대상 rNFT.",
+  "fn.referredOf.returns.addresses": "참조 측 NFT의 컨트랙트 주소.",
+  "fn.referredOf.returns.tokenIds": "각 주소에 대해, 이 rNFT를 참조하는 토큰 ID.",
+
+  "fn.createdTimestampOf.desc": "rNFT가 생성될 때 기록된 블록 타임스탬프를 반환합니다. 표준은 이를 사용해 참조를 정렬하여 토큰이 선행 토큰만 참조할 수 있도록 합니다.",
+  "fn.createdTimestampOf.params._address": "조회 대상 rNFT와 연관된 컨트랙트 주소.",
+  "fn.createdTimestampOf.params.tokenId": "생성 타임스탬프를 요청하는 대상 rNFT.",
+  "fn.createdTimestampOf.returns.timestamp": "rNFT가 생성된 블록 타임스탬프.",
+
+  "fn.UpdateNode.desc": "setNode가 노드를 변경할 때마다 발생하며, 토큰과 그 소유자, 그리고 전체 참조 목록과 피참조 목록을 담아 인덱서가 참조 그래프를 추적할 수 있게 합니다.",
+  "fn.UpdateNode.params.tokenId": "관계가 변경된 rNFT.",
+  "fn.UpdateNode.params.owner": "변경된 rNFT의 소유자.",
+  "fn.UpdateNode.params._address_referringList": "토큰의 참조 목록에 있는 컨트랙트 주소.",
+  "fn.UpdateNode.params._tokenIds_referringList": "주소별로, 토큰이 참조하는 토큰 ID.",
+  "fn.UpdateNode.params._address_referredList": "토큰의 피참조 목록에 있는 컨트랙트 주소.",
+  "fn.UpdateNode.params._tokenIds_referredList": "주소별로, 토큰을 참조하는 토큰 ID.",
+
+  "node.user": "rNFT 생성자",
+  "node.contract": "ERC-5521 rNFT",
+  "node.storageRelationship": "관계 저장소",
+  "node.targetContract": "참조된 rNFT 컨트랙트",
+
+  "edge.callSetNode": "setNode() 호출",
+  "edge.updateRelationship": "관계 업데이트",
+  "edge.referExternal": "외부 rNFT 참조",
+  "edge.emitUpdateNode": "UpdateNode 이벤트 발생",
+
+  "sim.setNodeWalkthrough.name": "setNode 워크스루",
+  "sim.setNodeWalkthrough.desc": "새 rNFT가 참조 목록을 기록하고, 참조하는 선행 토큰을 업데이트하며, UpdateNode를 발생시키는 setNode 호출을 따라갑니다.",
+  "sim.setNodeWalkthrough.param.tokenId": "새 rNFT ID",
+  "sim.setNodeWalkthrough.param.referredTokenId": "참조된 rNFT ID",
+  "sim.setNodeWalkthrough.step.call": "생성자가 rNFT 컨트랙트에서 setNode(tokenId, addresses, tokenIds)를 호출하여 하나 이상의 기존 토큰을 참조합니다.",
+  "sim.setNodeWalkthrough.step.call.mobile": "setNode() 호출",
+  "sim.setNodeWalkthrough.step.referring": "컨트랙트가 새 토큰의 참조 목록을 기록하고 관계 저장소에서 현재 블록 타임스탬프로 표시합니다.",
+  "sim.setNodeWalkthrough.step.referring.mobile": "참조 기록",
+  "sim.setNodeWalkthrough.step.referred": "참조된 각 토큰에 대해 컨트랙트가 이 토큰을 해당 피참조 목록에 추가하며, 참조가 컨트랙트를 넘나들 때는 다른 컨트랙트에서 setNodeReferredExternal을 호출합니다.",
+  "sim.setNodeWalkthrough.step.referred.mobile": "피참조 목록 업데이트",
+  "sim.setNodeWalkthrough.step.event": "컨트랙트가 변경된 각 토큰에 대해 UpdateNode를 발생시켜 인덱서가 참조 그래프를 업데이트할 수 있게 합니다.",
+  "sim.setNodeWalkthrough.step.event.mobile": "UpdateNode 이벤트 발생"
+}

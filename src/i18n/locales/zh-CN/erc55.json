@@ -1,0 +1,32 @@
+{
+  "short": "混合大小写校验和地址编码",
+  "introduction": "ERC-55 为 Ethereum 地址定义了一种向后兼容的校验和，它将错误检测位编码到十六进制数字的字母大小写中。该方案由 Vitalik Buterin 和 Alex Van de Sande 于 2016 年 1 月提出。地址会先转换为 40 个字符的小写十六进制形式，并作为 ASCII 字符串用 Keccak-256 进行哈希；当哈希中对应的半字节（nibble）为 8 或更大时，该十六进制字母转为大写，否则保持小写。十进制数字保持不变，因此地址在长度不变的情况下增加了约 15 个校验位。",
+  "designPurpose": "ERC-55 的设计目的是在不改变长度、也不破坏现有工具的前提下，检测输入错误的 Ethereum 地址。单纯的十六进制地址没有任何冗余，因此只要改动一个字符，就会产生另一个看似有效的地址，资金可能因此丢失。ERC-55 并非附加一个校验和，而是复用 a-f 字母的大小写作为逐字符的检查。由于大多数解析器都接受大小写混合的十六进制，带校验和的地址在较旧的软件中也能运行，而支持此功能的客户端则会拒绝任何大小写与哈希不匹配的地址。",
+  "commonUsage": "几乎在每个向人显示 Ethereum 地址的地方，都能看到混合大小写校验和：钱包、区块浏览器，以及 web3.js 和 ethers.js 等库，都以这种形式呈现并验证地址。由于这种编码是地址的纯函数，因此不需要任何链上合约或存储；软件会在显示地址时应用它，并在大小写未通过检查时发出警告或予以拒绝。规范中的全大写、全小写与常规测试向量，常用于验证各种实现。",
+
+  "node.user": "地址来源",
+  "node.encoder": "校验和编码器",
+  "node.storageHash": "Keccak-256 哈希",
+  "node.storageResult": "带校验和的地址",
+  "node.verifier": "校验和验证器",
+  "node.consumer": "验证钱包",
+
+  "edge.submitAddress": "提交小写地址",
+  "edge.hashAddress": "哈希小写十六进制",
+  "edge.applyCasing": "应用字母大小写",
+  "edge.readHash": "读取哈希位",
+  "edge.checkChecksum": "检查大小写",
+  "edge.deliverAddress": "交付已验证地址",
+
+  "sim.checksumWalkthrough.name": "校验和编码演练",
+  "sim.checksumWalkthrough.desc": "跟随一个小写地址，观察编码器如何对其进行哈希、应用 ERC-55 的字母大小写，以及客户端如何验证结果。",
+  "sim.checksumWalkthrough.param.address": "小写地址",
+  "sim.checksumWalkthrough.step.submit": "钱包或应用程序向校验和编码器提交一个普通的小写十六进制地址。",
+  "sim.checksumWalkthrough.step.submit.mobile": "提交地址",
+  "sim.checksumWalkthrough.step.hash": "编码器将 40 个字符的十六进制地址视为 ASCII，并计算其 Keccak-256 哈希，为大小写提供所需的位。",
+  "sim.checksumWalkthrough.step.hash.mobile": "哈希小写十六进制",
+  "sim.checksumWalkthrough.step.case": "当每个十六进制字母对应的哈希半字节（nibble）为 8 或更大时，该字母转为大写，否则保持小写，从而生成混合大小写地址。",
+  "sim.checksumWalkthrough.step.case.mobile": "应用字母大小写",
+  "sim.checksumWalkthrough.step.verify": "验证客户端根据哈希重新推导大小写并进行比较，只有当每个字母都匹配时才接受该地址。",
+  "sim.checksumWalkthrough.step.verify.mobile": "验证校验和"
+}

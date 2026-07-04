@@ -1,0 +1,36 @@
+{
+  "short": "Interfaz de Reloj de Contrato",
+  "introduction": "ERC-6372 define una interfaz mínima que permite a un contrato informar qué reloj utiliza para medir el tiempo. Fue propuesto por Hadrien Croubois y Francisco Giordano en enero de 2023. La función clock() devuelve el punto temporal actual como un uint48 no decreciente, como block.timestamp o block.number, y CLOCK_MODE() devuelve una cadena con formato de consulta URL como mode=timestamp o mode=blocknumber para que los observadores la decodifiquen. Nota: ERC-6372 está en estado Review; la interfaz aún puede cambiar antes de ser finalizada.",
+  "designPurpose": "ERC-6372 se diseñó para eliminar las conjeturas sobre cómo un contrato lleva el registro del tiempo. Antes de él, algunos contratos medían retrasos e instantáneas con block.timestamp mientras que otros usaban block.number, y un observador externo no tenía forma fiable de saber cuál, lo que forzaba suposiciones arriesgadas al componer timelocks y sistemas de votación. Al estandarizar clock() y un descriptor autodescriptivo CLOCK_MODE(), ERC-6372 hace que la base temporal de un contrato sea detectable en tiempo de ejecución, de modo que las herramientas y los contratos dependientes puedan alinearse en la misma unidad.",
+  "commonUsage": "La interfaz está dirigida a contratos que imponen retrasos o almacenan un historial con marca de tiempo, incluidos los timelocks, los gobernadores de DAO con periodos de votación fijos y los tokens de votación que registran puntos de control de los saldos por punto temporal. Los marcos de gobernanza combinan CLOCK_MODE() con clock() para que un gobernador y su token de votación coincidan en si las propuestas y las instantáneas se miden en segundos o en bloques. Como ambas funciones son de solo lectura, los indexadores y las interfaces de usuario pueden consultar el modo de reloj fuera de la cadena sin enviar una transacción.",
+
+  "fn.clock.desc": "Devuelve el punto temporal actual del contrato según su modo de reloj. El valor debe ser una función no decreciente de la cadena y suele ser block.timestamp (segundos) o block.number.",
+  "fn.clock.returns.timepoint": "El punto temporal actual como un uint48, interpretado según el valor que devuelve CLOCK_MODE().",
+
+  "fn.CLOCK_MODE.desc": "Devuelve una descripción legible por máquina del reloj, con formato de cadena de consulta URL decodificable con new URLSearchParams(). Los valores incluyen mode=timestamp para segundos y mode=blocknumber&from=default para números de bloque.",
+  "fn.CLOCK_MODE.returns.descriptor": "Un descriptor con formato de consulta URL como mode=timestamp o mode=blocknumber&from=<CAIP-2-ID>.",
+
+  "node.user": "Observador del Reloj",
+  "node.contract": "Contrato ERC-6372",
+  "node.clockSource": "Fuente de Tiempo de la Cadena",
+  "node.clockResult": "Informe del Reloj",
+
+  "edge.callClock": "Llamar a clock()",
+  "edge.callClockMode": "Llamar a CLOCK_MODE()",
+  "edge.readClockSource": "Leer el tiempo de la cadena",
+  "edge.buildTimepoint": "Empaquetar el punto temporal",
+  "edge.returnTimepoint": "Devolver la información del reloj",
+
+  "sim.clockDiscovery.name": "Descubrimiento del Modo de Reloj",
+  "sim.clockDiscovery.desc": "Consultar clock() y CLOCK_MODE() de un contrato para leer su punto temporal actual y aprender a interpretarlo.",
+  "sim.clockDiscovery.param.contractAddress": "Contrato a consultar",
+  "sim.clockDiscovery.param.mode": "Modo de reloj",
+  "sim.clockDiscovery.step.call": "El observador llama a clock() en el contrato objetivo para leer su punto temporal actual.",
+  "sim.clockDiscovery.step.call.mobile": "Llamar a clock()",
+  "sim.clockDiscovery.step.read": "El contrato lee la fuente de tiempo de la cadena que está configurado para usar, ya sea block.timestamp o block.number, y la devuelve como un uint48.",
+  "sim.clockDiscovery.step.read.mobile": "Leer el tiempo de la cadena",
+  "sim.clockDiscovery.step.mode": "El observador llama a CLOCK_MODE() para saber si el punto temporal se mide en segundos o en números de bloque.",
+  "sim.clockDiscovery.step.mode.mobile": "Llamar a CLOCK_MODE()",
+  "sim.clockDiscovery.step.return": "El contrato devuelve el punto temporal empaquetado y el descriptor de modo para que el observador pueda alinear sus retrasos e instantáneas con el mismo reloj.",
+  "sim.clockDiscovery.step.return.mobile": "Devolver la información del reloj"
+}

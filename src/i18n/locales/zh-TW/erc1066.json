@@ -1,0 +1,32 @@
+{
+  "short": "智能合約狀態碼",
+  "introduction": "ERC-1066 為合約定義了一套共享的單一位元組狀態碼，仿照 HTTP 狀態碼設計，使函式能夠回傳有意義的結果，而非單純的 true/false 或直接 revert。它由 Brooklyn Zelenka、Tom Carchrae 與 Gleb Naumenko 於 2018 年 5 月提出。每個位元組將高半位元組（high nibble）表示的類別與低半位元組（low nibble）表示的原因配對，取自一張 16×16 的表，並作為多重回傳值中的第一個回傳。注意：ERC-1066 處於 Stagnant 狀態——它已有 6 個月以上未活動，可能永遠不會最終定案，但在歷史或技術上仍具重要意義。",
+  "designPurpose": "ERC-1066 的設計目標是取代合約以往所依賴的低上下文訊號方式：只要未達成功便 revert，或回傳不透明、不攜帶任何原因的 true/false。在此之前，每個專案都自創一套錯誤方案，因此合約在不了解對方自訂 enum 的情況下無法對彼此的結果作出反應。透過將類別與原因編碼標準化為一張有限的、類似 HTTP 的表，ERC-1066 為合約提供了可用於自主分支判斷的共享詞彙，同時保持與帶原因的 revert 相容。",
+  "commonUsage": "ERC-1066 針對那些需要傳達的資訊不僅止於「成功或失敗」的合約：回報轉帳為何被攔截的驗證器、回傳「允許或終止」狀態碼的權限檢查，以及一個合約需要依據另一個合約結果進行分支的流程。該規範以一個受監管代幣的驗證器為例，它回傳 0x10（Disallowed，不允許）或 0x11（Allowed，允許）。作為一項 Stagnant 提案，它從未在生產環境中被廣泛採用，而其面向人類可讀的翻譯層被拆分至 ERC-1444。",
+
+  "node.caller": "呼叫方合約",
+  "node.contract": "回傳狀態碼的合約",
+  "node.storageCodeTable": "狀態碼表",
+  "node.storageReturn": "回傳的狀態位元組",
+  "node.consumer": "作出反應的消費方",
+  "node.translator": "翻譯層",
+
+  "edge.callFunction": "呼叫函式",
+  "edge.selectCode": "選擇類別與原因",
+  "edge.encodeByte": "編碼狀態位元組",
+  "edge.reactToCode": "對狀態碼作出反應",
+  "edge.translateCode": "翻譯狀態碼",
+  "edge.showMessage": "顯示訊息",
+
+  "sim.statusCodeWalkthrough.name": "狀態碼逐步演示",
+  "sim.statusCodeWalkthrough.desc": "跟隨一個狀態碼，從合約呼叫出發，經過編碼，直到作出反應的消費方與一則人類可讀的訊息。",
+  "sim.statusCodeWalkthrough.param.outcome": "函式執行結果",
+  "sim.statusCodeWalkthrough.step.call": "呼叫方合約在一個回傳狀態碼的合約上呼叫某個函式，期望第一個回傳值是一個位元組狀態碼。",
+  "sim.statusCodeWalkthrough.step.call.mobile": "呼叫函式",
+  "sim.statusCodeWalkthrough.step.encode": "該合約從 16×16 的狀態碼表中選取一個類別與一個原因，並將它們打包為單一狀態位元組。",
+  "sim.statusCodeWalkthrough.step.encode.mobile": "編碼狀態位元組",
+  "sim.statusCodeWalkthrough.step.return": "狀態位元組作為第一個回傳值回傳；消費方據此分支處理，將偶數碼視為阻斷（blocking），奇數碼視為非阻斷（non-blocking）。",
+  "sim.statusCodeWalkthrough.step.return.mobile": "對狀態碼作出反應",
+  "sim.statusCodeWalkthrough.step.translate": "翻譯層將狀態碼對應為一則人類可讀的訊息，正如後來的 ERC-1444 所規定。",
+  "sim.statusCodeWalkthrough.step.translate.mobile": "顯示訊息"
+}

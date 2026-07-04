@@ -1,0 +1,29 @@
+{
+  "short": "Representación Compacta de Firma",
+  "introduction": "ERC-2098 define una representación compacta de 64 bytes de una firma secp256k1 de Ethereum, que reemplaza el tradicional triplete de 65 bytes (r, s, v) por dos palabras de 32 bytes, r y yParityAndS. Fue propuesto por Richard Moore y Nick Johnson en marzo de 2019. La codificación se basa en que el bit más significativo del valor s es cero en las firmas canónicas, de modo que el bit yParity se almacena en ese bit alto libre, dando yParityAndS = (yParity << 255) | s. La decodificación lo invierte para recuperar r, s y yParity para ecrecover.",
+  "designPurpose": "ERC-2098 se diseñó para reducir las cargas útiles de firma que desperdician espacio y gas. Una firma canónica necesita 65 bytes, pero una vez rellenada a palabras EVM de 256 bits ocupa 96 bytes con 31 bytes cero inyectados, y las transacciones codificadas con RLP gastan en promedio 1,5 bytes adicionales en yParity. Al empaquetar el bit yParity en el bit alto de s, que siempre es cero, el estándar ajusta una firma completa en dos palabras alineadas de 32 bytes, reduciendo el tamaño de calldata y el costo de gas de transmitir firmas sin perder ninguna información.",
+  "commonUsage": "Las firmas compactas se utilizan dondequiera que las firmas viajen como calldata y el espacio importe: relayers de metatransacciones, billeteras multifirma y aprobaciones de tipo permit. La biblioteca ethers.js expone la forma empaquetada como una propiedad interna de firma dividida, y las utilidades de recuperación aceptan la disposición (r, yParityAndS) junto con la forma clásica (r, s, v) antes de llamar a ecrecover. Dado que la representación es una codificación pura, se compone con cualquier esquema que ya dependa de firmas ECDSA.",
+
+  "node.signer": "Firmante",
+  "node.encoder": "Codificador compacto",
+  "node.compactSig": "Firma compacta",
+  "node.verifier": "Verificador on-chain",
+  "node.recovered": "Firmante recuperado",
+
+  "edge.sign": "Firmar el digest",
+  "edge.pack": "Empaquetar en 64 bytes",
+  "edge.submit": "Enviar la firma compacta",
+  "edge.recover": "Recuperar al firmante",
+
+  "sim.compactEncoding.name": "Codificación de firma compacta",
+  "sim.compactEncoding.desc": "Sigue una firma desde la forma canónica (r, s, v), pasando por el empaquetado compacto, hasta la recuperación on-chain.",
+  "sim.compactEncoding.param.yParity": "bit yParity",
+  "sim.compactEncoding.step.sign": "El firmante produce una firma secp256k1 canónica con los componentes r, s y yParity.",
+  "sim.compactEncoding.step.sign.mobile": "Firmar el digest",
+  "sim.compactEncoding.step.pack": "El codificador almacena yParity en el bit más significativo de s, produciendo r y yParityAndS como dos palabras de 32 bytes.",
+  "sim.compactEncoding.step.pack.mobile": "Empaquetar en 64 bytes",
+  "sim.compactEncoding.step.submit": "La firma compacta de 64 bytes se envía on-chain como el par (r, yParityAndS).",
+  "sim.compactEncoding.step.submit.mobile": "Enviar la firma",
+  "sim.compactEncoding.step.recover": "El verificador extrae yParity y s de yParityAndS, luego llama a ecrecover para recuperar la dirección del firmante.",
+  "sim.compactEncoding.step.recover.mobile": "Recuperar al firmante"
+}

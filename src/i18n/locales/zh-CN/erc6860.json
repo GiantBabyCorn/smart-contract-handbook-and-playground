@@ -1,0 +1,34 @@
+{
+  "short": "Web3 URL 到 EVM 调用消息的转换",
+  "introduction": "ERC-6860 规定了如何将 HTTP 风格的 web3:// URL 转换为 EVM 调用消息，使链上内容可通过人类可读的名称访问。该标准由 Qi Zhou、Chao Pi、Sam Wilson 和 Nicolas Deschildre 于 2023 年 9 月提出。URL 会被解析为合约名称、链 ID 和路径；名称解析为地址，而目标合约上的 resolveMode() 决定如何将路径转换为 calldata。注意：ERC-6860 处于 Draft（草案）状态，规范仍在积极开发中，可能会有大幅变动。",
+  "designPurpose": "ERC-6860 旨在为 Ethereum 提供一个去中心化的呈现层，使链上 Web 内容无需信任链下网关即可访问。在此之前，读取 Web3 数据依赖于用户无法控制的 Web2 代理，例如 dApp 网站或区块浏览器。作为对 ERC-4804 的修正更新，它以 ABNF 规定了一套兼容 RFC 3986 的 URL 语法，以及一套解析名称、检测 resolve mode 并将路径编码为 calldata 的流程，从而使同一 URL 始终映射到相同的 EVM 调用。",
+  "commonUsage": "该转换由 Web3 URL 网关和浏览器扩展实现，让用户可以打开 web3:// 链接，查看直接从合约渲染的链上 HTML、SVG 和 JSON。在 manual 模式下，原始路径作为 calldata 传入，响应被视为 bytes；在 auto 模式下，方法名和类型化参数使用标准合约 ABI 编码，并可由 returns 属性进一步塑形。它与 ENS（ERC-137）配合进行名称解析，并与提供资源的合约（例如遵循 ERC-5219 的合约）配合使用。",
+
+  "fn.resolveMode.desc": "目标合约暴露的只读钩子，供协议据此选择 resolve mode。值为 'manual' 的 bytes32 选择原始路径 calldata；而 'auto'、空值、零或 revert 则选择 ABI 编码的 auto 模式。",
+  "fn.resolveMode.returns.mode": "以 bytes32 表示的模式选择器：'manual' 表示 manual 模式，'auto'（也包括空值、零或 revert）表示 auto 模式。",
+
+  "node.browser": "Web3 客户端",
+  "node.resolver": "Web3 URL 解析器",
+  "node.urlParts": "解析后的 URL",
+  "node.target": "目标合约",
+  "node.evmMessage": "EVM 调用消息",
+
+  "edge.requestUrl": "请求 web3:// URL",
+  "edge.parseUrl": "解析 URL",
+  "edge.detectMode": "调用 resolveMode()",
+  "edge.buildMessage": "构建 EVM 消息",
+  "edge.sendCall": "发送调用",
+  "edge.returnData": "返回 bytes",
+
+  "sim.urlTranslationWalkthrough.name": "Web3 URL 转换演练",
+  "sim.urlTranslationWalkthrough.desc": "跟随一个 web3:// URL，观察解析器如何解析它、检测合约的 resolve mode，并将其转换为 EVM 调用。",
+  "sim.urlTranslationWalkthrough.param.url": "Web3 URL",
+  "sim.urlTranslationWalkthrough.step.request": "Web3 客户端向解析器请求一个 web3:// URL，而不是通过 Web2 代理路由。",
+  "sim.urlTranslationWalkthrough.step.request.mobile": "请求 web3:// URL",
+  "sim.urlTranslationWalkthrough.step.parse": "解析器将 URL 解析为合约名称、链 ID 和路径，并通过 ENS 将名称解析为地址。",
+  "sim.urlTranslationWalkthrough.step.parse.mobile": "解析 URL 各部分",
+  "sim.urlTranslationWalkthrough.step.detect": "解析器在目标合约上调用 resolveMode() 以选择 manual 或 auto 模式；空结果或 revert 表示 auto 模式。",
+  "sim.urlTranslationWalkthrough.step.detect.mobile": "检测 resolve mode",
+  "sim.urlTranslationWalkthrough.step.call": "解析器将路径编码为 calldata，发送只读 EVM 调用，并将解码后的 bytes 返回给客户端。",
+  "sim.urlTranslationWalkthrough.step.call.mobile": "发送调用，返回数据"
+}

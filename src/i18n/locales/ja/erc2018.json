@@ -1,0 +1,85 @@
+{
+  "short": "清算可能トークン規格",
+  "introduction": "ERC-2018 は、清算可能な転送のための ERC-20 拡張を定義します。転送はまず発注され、その後、即座に決済されるのではなく清算エージェントによって実行または拒否されます。この規格は 2019 年 4 月に Julio Faura、Fernando Paris、Daniel Lehrner によって提案されました。発注は支払人のトークンを差し引かずに確保するため、エージェントは実行または拒否の前にオフチェーンのチェックを行えます。注記：ERC-2018 は Stagnant（停滞）です。6 か月以上活動がなく、最終化されない可能性がありますが、歴史的または技術的に重要な意味を持ちます。",
+  "designPurpose": "ERC-2018 は、転送が常に単一のオンチェーンステップで完了できるとは限らない規制対象トークンのために設計されました。KYC や AML などのコンプライアンス規則はオフチェーンで実行する必要がある場合があり、そのため転送は決済される前に承認されなければなりませんが、通常の ERC-20 転送はアトミックであり、そのような中間状態を持ちません。発注と決済を分離し、判断を清算エージェントに委ねることで、ERC-2018 はエージェントがコンプライアンスに準拠した転送を実行し、準拠しない転送を拒否できるようにします。その間、発注された金額は確保されたままとなり、後の実行が成功するようになります。",
+  "commonUsage": "清算可能トークンは、価値が移動する前に支払いがコンプライアンス審査を通過しなければならない規制対象の金融決済を対象とします。発注された転送は、清算エージェントがそれを実行してトークンを移動させるか、理由を付けて拒否し確保された残高を解放するまで、Ordered ステータスおよび任意の InProcess ステータスを経て待機します。この規格は ERC-777 のオペレーター命名規約を再利用しており、権限を持つオペレーターがアカウントに代わって転送を発注できます。また ERC-1996 の hold の上に構築されているため、確保された金額はエージェントが判断する前に使用できません。",
+
+  "fn.orderTransfer.desc": "呼び出し元から受取人への清算可能な転送を発注し、清算エージェントが実行または拒否するまでその金額を確保します。operationId がすでに使用されている場合はリバートします。",
+  "fn.orderTransfer.params.operationId": "清算可能な転送を識別する一意の ID です。",
+  "fn.orderTransfer.params.to": "転送が実行された場合にトークンを受け取る受取人アドレスです。",
+  "fn.orderTransfer.params.value": "転送する金額で、支払人の残高を超えてはなりません。",
+  "fn.orderTransfer.returns.success": "清算可能な転送が正常に発注された場合に true になります。",
+
+  "fn.orderTransferFrom.desc": "支払人に代わって受取人のために清算可能な転送を発注します。呼び出し元は支払人の権限を持つオペレーターである必要があります。operationId がすでに使用されている場合はリバートします。",
+  "fn.orderTransferFrom.params.operationId": "清算可能な転送を識別する一意の ID です。",
+  "fn.orderTransferFrom.params.from": "転送が実行された場合にトークンが確保され差し引かれる支払人アドレスです。",
+  "fn.orderTransferFrom.params.to": "転送が実行された場合にトークンを受け取る受取人アドレスです。",
+  "fn.orderTransferFrom.params.value": "転送する金額で、支払人の残高を超えてはなりません。",
+  "fn.orderTransferFrom.returns.success": "清算可能な転送が正常に発注された場合に true になります。",
+
+  "fn.cancelTransfer.desc": "発注済みの清算可能な転送をキャンセルします。発注者のみが自身の発注をキャンセルでき、清算エージェントが InProcess ステータスに移す前に限られます。",
+  "fn.cancelTransfer.params.operationId": "清算可能な転送を識別する一意の ID です。",
+  "fn.cancelTransfer.returns.success": "清算可能な転送が正常にキャンセルされた場合に true になります。",
+
+  "fn.processClearableTransfer.desc": "発注済みの転送を InProcess ステータスに移し、審査が進行中であることを示すとともに、発注者がキャンセルできないようにします。清算エージェントのみが正常に呼び出せます。",
+  "fn.processClearableTransfer.params.operationId": "清算可能な転送を識別する一意の ID です。",
+  "fn.processClearableTransfer.returns.success": "転送が InProcess ステータスに入った場合に true になります。",
+
+  "fn.executeClearableTransfer.desc": "清算可能な転送を実行し、確保されたトークンを支払人から受取人に移動します。清算エージェントのみが正常に呼び出せます。",
+  "fn.executeClearableTransfer.params.operationId": "清算可能な転送を識別する一意の ID です。",
+  "fn.executeClearableTransfer.returns.success": "清算可能な転送が正常に実行された場合に true になります。",
+
+  "fn.rejectClearableTransfer.desc": "清算可能な転送を拒否し、確保されたトークンを移動せずに支払人へ解放します。清算エージェントのみが呼び出すことができ、拒否の理由を記録します。",
+  "fn.rejectClearableTransfer.params.operationId": "清算可能な転送を識別する一意の ID です。",
+  "fn.rejectClearableTransfer.params.reason": "清算エージェントが転送を拒否する理由として示す、人間が読める理由です。",
+  "fn.rejectClearableTransfer.returns.success": "清算可能な転送が正常に拒否された場合に true になります。",
+
+  "fn.retrieveClearableTransferData.desc": "清算可能な転送について保存されているすべての情報（支払人、受取人、金額、現在のステータスコードを含む）を返します。",
+  "fn.retrieveClearableTransferData.params.operationId": "清算可能な転送を識別する一意の ID です。",
+  "fn.retrieveClearableTransferData.returns.from": "清算可能な転送の支払人アドレスです。",
+  "fn.retrieveClearableTransferData.returns.to": "清算可能な転送の受取人アドレスです。",
+  "fn.retrieveClearableTransferData.returns.value": "発注が実行された場合に転送される金額です。",
+  "fn.retrieveClearableTransferData.returns.status": "清算可能な転送の現在のステータスコードです。",
+
+  "fn.ClearableTransferOrdered.desc": "清算可能な転送が発注されたときに発行され、その発注者、支払人、受取人、金額を記録します。",
+  "fn.ClearableTransferOrdered.params.orderer": "清算可能な転送を発注したアカウントです。",
+  "fn.ClearableTransferOrdered.params.operationId": "清算可能な転送を識別する一意の ID です。",
+  "fn.ClearableTransferOrdered.params.from": "トークンが確保される支払人です。",
+  "fn.ClearableTransferOrdered.params.to": "実行された場合にトークンを受け取る受取人です。",
+  "fn.ClearableTransferOrdered.params.value": "実行された場合に転送される金額です。",
+
+  "fn.ClearableTransferExecuted.desc": "清算エージェントが清算可能な転送を実行し、トークンが受取人に移動したときに発行されます。",
+  "fn.ClearableTransferExecuted.params.orderer": "清算可能な転送を発注したアカウントです。",
+  "fn.ClearableTransferExecuted.params.operationId": "清算可能な転送を識別する一意の ID です。",
+
+  "fn.ClearableTransferRejected.desc": "清算エージェントが清算可能な転送を拒否したときに発行され、拒否の理由を伴います。",
+  "fn.ClearableTransferRejected.params.orderer": "清算可能な転送を発注したアカウントです。",
+  "fn.ClearableTransferRejected.params.operationId": "清算可能な転送を識別する一意の ID です。",
+  "fn.ClearableTransferRejected.params.reason": "清算エージェントが拒否について示した理由です。",
+
+  "node.user": "発注者",
+  "node.clearingAgent": "清算エージェント",
+  "node.contract": "ERC-2018 トークン",
+  "node.storageClearableTransfers": "清算可能な転送",
+  "node.payee": "受取人",
+
+  "edge.callOrderTransfer": "orderTransfer() を呼び出す",
+  "edge.callExecute": "executeClearableTransfer() を呼び出す",
+  "edge.updateTransfers": "発注を記録し残高を確保",
+  "edge.transferTokens": "確保したトークンを転送",
+  "edge.emitExecuted": "ClearableTransferExecuted イベントを発行",
+
+  "sim.orderTransferWalkthrough.name": "発注と実行のウォークスルー",
+  "sim.orderTransferWalkthrough.desc": "支払人による発注から、清算エージェントによる実行、そして受取人へのトークン転送まで、清算可能な転送の流れを追います。",
+  "sim.orderTransferWalkthrough.param.operationId": "オペレーション ID",
+  "sim.orderTransferWalkthrough.param.to": "受取人アドレス",
+  "sim.orderTransferWalkthrough.param.value": "転送額（wei 単位）",
+  "sim.orderTransferWalkthrough.step.order": "発注者が orderTransfer(operationId, to, value) を呼び出し、受取人への転送を要求します。",
+  "sim.orderTransferWalkthrough.step.order.mobile": "orderTransfer() を呼び出す",
+  "sim.orderTransferWalkthrough.step.record": "コントラクトは新しい清算可能な転送を記録し、支払人の残高からその金額を確保するため、清算エージェントを待つ間、他の用途に使用できません。",
+  "sim.orderTransferWalkthrough.step.record.mobile": "残高を確保",
+  "sim.orderTransferWalkthrough.step.execute": "清算エージェントが executeClearableTransfer を呼び出し、コントラクトは確保されたトークンを支払人から受取人に移動します。",
+  "sim.orderTransferWalkthrough.step.execute.mobile": "エージェントが転送を実行",
+  "sim.orderTransferWalkthrough.step.event": "コントラクトは ClearableTransferExecuted を発行し、インデクサーが転送の決済完了を記録できるようにします。",
+  "sim.orderTransferWalkthrough.step.event.mobile": "Executed イベントを発行"
+}

@@ -1,0 +1,36 @@
+{
+  "short": "多资产 ERC-4626 金库",
+  "introduction": "ERC-7575 对 ERC-4626 代币化金库标准进行了扩展，以支持拥有多种资产或多个入口、且共享单个 ERC-20 份额代币的金库，包括在两个任意外部代币之间进行转换的金库。它由 Jeroen Offerijns、Alina Sinelnikova、Vikram Arun、Joey Santoro 和 Farhaan Ali 于 2023 年 12 月提出。它新增了一个将 ERC-20 份额外部化的 share 方法、一个将每种资产映射到其金库的可选金库查询，以及用于检测兼容合约的强制性 ERC-165 支持。",
+  "designPurpose": "ERC-7575 的设计目的是移除 ERC-4626 中要求每个金库同时也是一个 ERC-20 份额代币的限制。该限制使得多资产金库和流动性提供者式的金库变得笨重或无法兼容，因为无法从多个以不同资产计价的入口铸造出同一种份额。通过将 ERC-20 依赖隐藏在一个可指向独立合约的 share 方法之后，ERC-7575 让多个金库能够链接到同一个共享份额，并支持可在两个外部代币之间进行转换的 Pipe。",
+  "commonUsage": "ERC-7575 针对的是不符合 ERC-4626「一金库一代币」模型的金库：围绕共享代币暴露多个资产入口的多资产金库，以及在两个外部 ERC-20 代币之间单向或双向转换的 Pipe。份额代币可选地实现金库查询，并在链接的金库发生变化时发出 VaultUpdate，而金库与份额则公布 ERC-165 接口 ID 0x2f0a18c5 和 0xf815c03d，以便前端和索引器能够识别这些分组的合约。",
+
+  "fn.share.desc": "返回代表金库份额的 ERC-20 代币的地址。它可能返回金库自身的地址，或在 ERC-20 份额被单独管理时返回一个外部合约的地址，并且不得回滚。",
+  "fn.share.returns.shareTokenAddress": "金库的 ERC-20 份额表示的地址。",
+
+  "fn.vault.desc": "返回将给定资产用作份额入口的金库的地址。该方法实现在份额代币上，以便集成方可以按资产查询多资产金库的入口。",
+  "fn.vault.params.asset": "要查询其所链接金库的资产代币。",
+  "fn.vault.returns.vault": "为给定资产注册的金库的地址。",
+
+  "fn.VaultUpdate.desc": "当份额代币针对某个资产所链接的金库发生变化时由其发出，让集成方能够跟踪多资产金库当前的入口。",
+  "fn.VaultUpdate.params.asset": "其所链接金库发生变化的资产。",
+  "fn.VaultUpdate.params.vault": "新链接的金库的地址。",
+
+  "node.user": "金库集成方",
+  "node.contract": "ERC-7575 份额代币",
+  "node.storageVaults": "资产到金库映射",
+
+  "edge.callVault": "调用 vault()",
+  "edge.readVaults": "读取金库映射",
+  "edge.emitVaultUpdate": "发出 VaultUpdate 事件",
+  "edge.callShare": "调用 share()",
+
+  "sim.vaultLookupWalkthrough.name": "金库查询演练",
+  "sim.vaultLookupWalkthrough.desc": "跟随份额代币上的一次 vault(asset) 查询，了解 VaultUpdate 如何保持资产到金库映射的最新状态。",
+  "sim.vaultLookupWalkthrough.param.asset": "资产地址",
+  "sim.vaultLookupWalkthrough.step.lookup": "集成方在份额代币上调用 vault(asset)，以查找给定资产的金库入口。",
+  "sim.vaultLookupWalkthrough.step.lookup.mobile": "调用 vault()",
+  "sim.vaultLookupWalkthrough.step.read": "份额代币读取其资产到金库映射，并返回为该资产注册的金库的地址。",
+  "sim.vaultLookupWalkthrough.step.read.mobile": "读取金库映射",
+  "sim.vaultLookupWalkthrough.step.event": "每当某个资产所链接的金库发生变化时，份额代币便发出 VaultUpdate，以便索引器可以刷新其缓存的映射。",
+  "sim.vaultLookupWalkthrough.step.event.mobile": "发出 VaultUpdate 事件"
+}

@@ -1,0 +1,27 @@
+{
+  "short": "方法行為的通用可擴充性",
+  "introduction": "ERC-5750 定義了一種約定，透過將合約方法的最後一個參數（一個動態大小的 bytes 欄位）指定為行為擴充的開放槽位，使合約方法具備可擴充性。該標準由 Zainan Victor Zhou 於 2022 年 10 月提出。合規方法無需為每一項未來需求都新增一個方法，而是接受一個末尾的 bytes 參數，用於攜帶任意酬載，例如簽章、nonce 或承諾值。當該欄位為空時，該方法的行為必須與其不帶此參數的多載同名方法完全一致。",
+  "designPurpose": "ERC-5750 的設計目標是讓方法介面能夠演進，而不破壞現有呼叫方。在此之前，擴充一個函式意味著要麼發明一個新方法（並隨之帶來所有命名與函式簽章方面的問題），要麼重複使用現有參數（並承擔語義含糊的風險）。透過預留一個末尾的 bytes 參數來承載非結構化的擴充資料，該標準為每個方法提供了一個向前相容的應急擴充出口，它可以編碼任何未來的方案，同時讓空資料時的行為與普通方法完全一致。",
+  "commonUsage": "已有多個成熟標準包含合規方法：ERC-721 與 ERC-1155 的 safeTransferFrom 函式，以及 ERC-777 的 burn 和 send 函式，都將一個末尾的 bytes data 參數置於最後。較新的設計採用這項約定，用於附加簽章、攜帶供 commit-reveal 方案使用的鹽值、nonce 或承諾值，或將資料轉發給接收方回呼。該標準也標記出末尾 bytes 已承載實際用途的方法，例如 ERC-2535 中的 diamondCut，這類方法需要一個多載才能合規。",
+
+  "node.user": "呼叫方",
+  "node.contract": "合規合約",
+  "node.storageData": "擴充酬載",
+  "node.extension": "擴充行為",
+
+  "edge.callMethod": "攜帶 data 呼叫 methodName1()",
+  "edge.readData": "讀取 data 參數",
+  "edge.invokeExtension": "呼叫擴充行為",
+  "edge.forwardData": "轉發酬載",
+
+  "sim.extensionCallWalkthrough.name": "方法擴充演練",
+  "sim.extensionCallWalkthrough.desc": "跟隨一次合規方法呼叫，其末尾的 bytes 酬載會觸發一項擴充行為。",
+  "sim.extensionCallWalkthrough.param.param1": "方法參數",
+  "sim.extensionCallWalkthrough.param.data": "擴充酬載",
+  "sim.extensionCallWalkthrough.step.call": "呼叫方在合規合約上呼叫 methodName1，並將一個擴充酬載作為末尾的 bytes data 參數附加其後。",
+  "sim.extensionCallWalkthrough.step.call.mobile": "攜帶 data 呼叫",
+  "sim.extensionCallWalkthrough.step.execute": "合約執行其核心行為並讀取末尾的 data 參數；當該欄位為空時，此呼叫與不帶該參數的同名方法完全一致。",
+  "sim.extensionCallWalkthrough.step.execute.mobile": "讀取 data 參數",
+  "sim.extensionCallWalkthrough.step.extension": "合約解碼該酬載並呼叫擴充行為，例如驗證簽章或記錄一個承諾值。",
+  "sim.extensionCallWalkthrough.step.extension.mobile": "呼叫擴充"
+}

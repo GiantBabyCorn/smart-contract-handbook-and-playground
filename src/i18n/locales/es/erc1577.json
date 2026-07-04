@@ -1,0 +1,31 @@
+{
+  "short": "Campo contenthash para resolvers de ENS",
+  "introduction": "ERC-1577 define el campo contenthash para los resolvers de ENS, asignando un nombre ENS legible por humanos a una dirección de contenido en una red como IPFS o Swarm. Fue propuesto por Dean Eigenmann y Nick Johnson en noviembre de 2018. El valor es un multicodec con la forma <protoCode uvarint><value>: el protoCode identifica el sistema de almacenamiento y los bytes restantes son la dirección de contenido. Nota: ERC-1577 está Stagnant (estancado): ha estado inactivo durante más de 6 meses y puede que nunca se finalice, pero conserva relevancia histórica o técnica.",
+  "designPurpose": "ERC-1577 se diseñó para dar a ENS un único campo bien definido con el que apuntar un nombre a contenido fuera de la cadena. Antes, los clientes resolvían nombres a hashes de IPFS o Swarm mediante campos content y multihash improvisados que no registraban qué red o formato usaba un valor, por lo que los clientes no podían saber cómo obtener el destino. Al convertir el valor en un multicodec ——un prefijo protoCode seguido de la dirección codificada——, el estándar permite que un solo resolver sirva a muchos protocolos mientras cada cliente lee el protoCode para resolver la dirección.",
+  "commonUsage": "El campo contenthash lo leen las billeteras y los navegadores que resuelven nombres ENS a sitios web descentralizados, incluidos los clientes MetaMask y Status mencionados en la especificación. Sustenta el alojamiento de sitios web .eth, donde un nombre se resuelve a un sitio de IPFS o Swarm que los clientes obtienen desde la dirección codificada. Las bibliotecas de codificación decodifican y vuelven a codificar el valor multicodec para que las aplicaciones sigan el destino sin fijar en el código un único protocolo, y los resolvers anuncian su compatibilidad mediante el identificador de interfaz 0xbc1c58d1.",
+
+  "node.user": "Propietario del dominio",
+  "node.encoder": "Codificador de contenthash",
+  "node.storageContenthash": "contenthash del resolver",
+  "node.resolver": "Resolver de ENS",
+  "node.decoder": "Decodificador de multicodec",
+  "node.network": "Red de contenido",
+
+  "edge.submitAddress": "Enviar dirección de contenido",
+  "edge.encodeContenthash": "Codificar contenthash",
+  "edge.readContenthash": "Leer contenthash",
+  "edge.returnContenthash": "Devolver contenthash",
+  "edge.fetchContent": "Decodificar y obtener contenido",
+
+  "sim.resolveWalkthrough.name": "Recorrido de resolución de contenthash",
+  "sim.resolveWalkthrough.desc": "Sigue un valor contenthash desde la codificación, pasando por el resolver de ENS, hasta una obtención decodificada de IPFS o Swarm.",
+  "sim.resolveWalkthrough.param.protocol": "Protocolo de almacenamiento",
+  "sim.resolveWalkthrough.step.submit": "El propietario del dominio envía una dirección de contenido para codificarla en el campo contenthash.",
+  "sim.resolveWalkthrough.step.submit.mobile": "Enviar dirección de contenido",
+  "sim.resolveWalkthrough.step.encode": "La dirección se empaqueta en un valor multicodec, un prefijo protoCode seguido de la dirección de contenido codificada, y se almacena en el resolver.",
+  "sim.resolveWalkthrough.step.encode.mobile": "Codificar y almacenar",
+  "sim.resolveWalkthrough.step.resolve": "Una aplicación consulta el resolver de ENS, que devuelve los bytes contenthash almacenados para decodificarlos.",
+  "sim.resolveWalkthrough.step.resolve.mobile": "Resolver contenthash",
+  "sim.resolveWalkthrough.step.decode": "El cliente lee el protoCode (0xe3 para IPFS) para elegir el protocolo y obtiene el contenido de esa red.",
+  "sim.resolveWalkthrough.step.decode.mobile": "Decodificar y obtener"
+}

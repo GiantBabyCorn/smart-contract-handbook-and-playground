@@ -1,0 +1,60 @@
+{
+  "short": "会员资格验证代币（MVT）标准",
+  "introduction": "ERC-1261 为会员资格验证代币（Membership Verification Token，MVT）定义了一套标准接口：这是一种不可转移、可撤销的代币，用于记录某个地址是否属于名为实体（entity）的链上组织。该标准由 Chaitanya Potti 与 Partha Bhattacharya 于 2018 年 7 月提出。实体所有者负责分配和撤销会员资格，而成员则可以自行申请或放弃会员资格。注意：ERC-1261 处于停滞（Stagnant）状态——它已有 6 个月以上未见活动，可能永远不会被最终确定，但在历史或技术层面仍具意义。",
+  "designPurpose": "ERC-1261 的设计目标是在不依赖代币余额的情况下，将需要许可的会员资格引入链上。早期治理系统曾以代币余额作为参与资格的替代指标，但余额会把财富与参与权混为一谈。与 ERC-725/735 之类的声明注册表不同——在那些方案中，主体持有自己的声明，因而可以无视被移除的操作——MVT 完全由发行方实体控制，实体可以随时分配、修改或撤销某个会员资格及其属性。",
+  "commonUsage": "由于 MVT 不可转移且可撤销，它适用于会员卡这类场景，而非可交易的资产。规范描述了一些预期应用，例如：需要许可的投票，其中成员数量可作为投票率的分母；将证券型代币限制为仅面向合格地址的合规场景；以及护照、执照或软件使用权等凭证的发放。按成员设定的属性可让投票筛选其选民范围，而可选的元数据扩展则会公开组织的名称与符号。",
+
+  "fn.requestMembership.desc": "允许任意地址向实体申请会员资格，并触发 RequestedMembership 事件，以便所有者批准或丢弃该请求。如果调用者已持有该代币，则会回滚；该函数为 payable，因此实现可以收取费用。",
+  "fn.requestMembership.params.attributeIndexes": "要与该潜在成员关联的属性值的索引。",
+
+  "fn.forfeitMembership.desc": "允许当前成员自愿放弃自己的会员资格，并触发 Revoked 事件。如果调用者未持有该代币，则会回滚。",
+
+  "fn.approveRequest.desc": "由所有者调用，用于批准一个待处理的会员资格请求，随即分配代币并触发 ApprovedMembership 与 Assigned 事件。如果该用户没有待处理的请求，或调用者不是所有者，则会回滚。",
+  "fn.approveRequest.params.user": "其待处理会员资格请求被批准的地址。",
+
+  "fn.discardRequest.desc": "由所有者调用，用于拒绝一个待处理的会员资格请求，且不分配代币。如果该用户没有待处理的请求，或调用者不是所有者，则会回滚。",
+  "fn.discardRequest.params.user": "其待处理会员资格请求被丢弃的地址。",
+
+  "fn.assignTo.desc": "由所有者调用，用于将会员资格直接分配给某个地址，并触发 Assigned 事件。如果该地址已持有代币、为零地址，或调用者不是所有者，则会回滚。",
+  "fn.assignTo.params.to": "会员资格代币被分配到的目标地址。",
+  "fn.assignTo.params.attributeIndexes": "为新成员记录的属性值的索引。",
+
+  "fn.revokeFrom.desc": "由所有者调用，用于移除某个地址的会员资格，并触发 Revoked 事件。如果该地址不是成员、为零地址，或调用者不是所有者，则会回滚。",
+  "fn.revokeFrom.params.from": "其会员资格被撤销的当前成员地址。",
+
+  "fn.isCurrentMember.desc": "返回某个地址当前是否为实体的成员。对零地址的查询会抛出异常，因为其代币始终被视为无效。",
+  "fn.isCurrentMember.params.to": "被查询会员资格状态的地址。",
+  "fn.isCurrentMember.returns.isMember": "如果该地址当前持有有效的会员资格代币，则为 true。",
+
+  "fn.Assigned.desc": "当会员资格代币被分配给某个地址时触发，无论是由所有者直接分配，还是在请求获批时分配。",
+  "fn.Assigned.params.to": "接收会员资格代币的地址。",
+  "fn.Assigned.params.attributeIndexes": "为该成员记录的属性值索引。",
+
+  "fn.Revoked.desc": "当会员资格被所有者撤销或被成员放弃时触发。",
+  "fn.Revoked.params.to": "会员资格被撤销的地址。",
+
+  "fn.RequestedMembership.desc": "当某个地址向实体申请会员资格时触发，用于提示所有者批准或丢弃该请求。",
+  "fn.RequestedMembership.params.to": "申请会员资格的地址。",
+
+  "node.user": "实体所有者",
+  "node.contract": "ERC-1261 实体",
+  "node.storageMembers": "会员资格存储",
+  "node.member": "成员",
+
+  "edge.callAssign": "调用 assignTo()",
+  "edge.updateMembers": "更新会员资格",
+  "edge.emitAssigned": "触发 Assigned 事件",
+  "edge.grantMembership": "授予会员资格",
+  "edge.callRevoke": "调用 revokeFrom()",
+
+  "sim.assignMembership.name": "分配会员资格",
+  "sim.assignMembership.desc": "跟踪一次 assignTo 调用：从实体所有者出发，经过会员资格存储，直到触发确认新成员的 Assigned 事件。",
+  "sim.assignMembership.param.to": "新成员地址",
+  "sim.assignMembership.param.attributeIndexes": "属性索引",
+  "sim.assignMembership.step.call": "实体所有者在 ERC-1261 合约上调用 assignTo(_to, _attributeIndexes)，向某个地址授予会员资格。",
+  "sim.assignMembership.step.call.mobile": "调用 assignTo()",
+  "sim.assignMembership.step.execute": "合约将该地址记录为当前成员，并将其属性索引存储到会员资格映射中。",
+  "sim.assignMembership.step.execute.mobile": "记录会员资格",
+  "sim.assignMembership.step.event": "合约触发 Assigned 事件，此时该地址已成为实体所认可的成员。",
+  "sim.assignMembership.step.event.mobile": "触发 Assigned 事件"
+}

@@ -1,0 +1,44 @@
+{
+  "short": "Multichain Address Resolution for ENS",
+  "introduction": "ERC-2304 extends ENS resolvers with an overloaded addr function that resolves addresses for blockchains other than Ethereum, keyed by a SLIP-0044 coin type index. It was proposed by Nick Johnson in September 2019. It also defines an AddressChanged event and a recommended setAddr setter, storing each address in its native binary format under one ENS name. Note: ERC-2304 is Stagnant — it has been inactive for 6+ months and may never be finalized, but remains historically or technically significant.",
+  "designPurpose": "ERC-2304 was designed to let a single ENS name resolve addresses for many blockchains rather than Ethereum alone. As multi-coin wallets adopted ENS, authors needed a cross-client way to store and look up non-Ethereum addresses, which the original single-address addr(bytes32) resolver could not express. ERC-2304 answers this by overloading addr with a coinType parameter drawn from the SLIP-0044 index and mandating an AddressChanged event, so every chain's address lives under one name and indexers stay synchronized.",
+  "commonUsage": "Multichain address resolution is used by ENS resolver contracts and the multi-coin wallets that read them, so a name like alice.eth can return a Bitcoin, Litecoin, or Binance Chain address alongside its Ethereum one. Wallets query addr(node, coinType) with the SLIP-0044 index for the selected chain, while resolver front-ends call setAddr to populate records. Because the addr overload carries the ERC-165 interface ID 0xf1cb7e06, clients can detect support before relying on it.",
+
+  "fn.addr.desc": "Returns the stored address for an ENS node on the blockchain identified by coinType, in that chain's native binary format. A zero-length value is returned when no address is set for the given node and coin type.",
+  "fn.addr.params.node": "The namehash of the ENS name to query.",
+  "fn.addr.params.coinType": "The SLIP-0044 coin type index identifying the target blockchain.",
+  "fn.addr.returns.address": "The address in its native binary encoding, or an empty value if none is set.",
+
+  "fn.setAddr.desc": "Adds or replaces the address stored for the given ENS node and coin type, then emits an AddressChanged event. This is the recommended setter that resolvers implement unless their needs dictate a different interface.",
+  "fn.setAddr.params.node": "The namehash of the ENS name to update.",
+  "fn.setAddr.params.coinType": "The SLIP-0044 coin type index identifying the target blockchain.",
+  "fn.setAddr.params.addr": "The new address in the chain's native binary encoding.",
+
+  "fn.AddressChanged.desc": "Emitted on each change to the address stored for an ENS node and coin type, letting resolvers and off-chain indexers track updates.",
+  "fn.AddressChanged.params.node": "The ENS node whose address changed.",
+  "fn.AddressChanged.params.coinType": "The SLIP-0044 coin type index of the changed address.",
+  "fn.AddressChanged.params.newAddress": "The new address in its native binary encoding.",
+
+  "node.user": "ENS Name Owner",
+  "node.contract": "ENS Resolver",
+  "node.storageAddresses": "Address Records",
+  "node.wallet": "Multi-Coin Wallet",
+
+  "edge.callSetAddr": "Call setAddr()",
+  "edge.updateAddresses": "Update address records",
+  "edge.emitAddressChanged": "Emit AddressChanged event",
+  "edge.callAddr": "Call addr()",
+  "edge.returnAddress": "Return stored address",
+
+  "sim.setAddrWalkthrough.name": "Set Multichain Address",
+  "sim.setAddrWalkthrough.desc": "Follow a setAddr call from the ENS name owner through storage to the AddressChanged event.",
+  "sim.setAddrWalkthrough.param.node": "ENS name",
+  "sim.setAddrWalkthrough.param.coinType": "Coin type",
+  "sim.setAddrWalkthrough.param.addr": "Address",
+  "sim.setAddrWalkthrough.step.call": "The ENS name owner calls setAddr(node, coinType, addr) on the resolver to store an address for the chosen blockchain.",
+  "sim.setAddrWalkthrough.step.call.mobile": "Call setAddr()",
+  "sim.setAddrWalkthrough.step.execute": "The resolver writes the address into the _addresses mapping under the node and coin type, replacing any previous value.",
+  "sim.setAddrWalkthrough.step.execute.mobile": "Store the address",
+  "sim.setAddrWalkthrough.step.event": "The resolver emits AddressChanged(node, coinType, newAddress) so wallets and indexers can refresh their cached records.",
+  "sim.setAddrWalkthrough.step.event.mobile": "Emit AddressChanged"
+}

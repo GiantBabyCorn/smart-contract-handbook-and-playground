@@ -1,0 +1,33 @@
+{
+  "short": "人类可读的链特定地址格式",
+  "introduction": "ERC-3770 定义了一种 EVM 地址的文本格式，为地址加上一个人类可读、用于标识其所在链的前缀，写法是短名称、一个冒号，然后是地址。该标准由 Lukas Schor、Richard Meissner、Pedro Gomes 和 ligi 于 2021 年 8 月提出。短名称来自 ethereum-lists/chains 注册表，地址必须是 ERC-55 校验和十六进制地址，因此像 eth:0x… 这样的字符串可以同时标识账户与网络。注意：ERC-3770 处于 Draft（草案）状态；规范仍在积极开发中，可能会发生重大变化。",
+  "designPurpose": "ERC-3770 旨在消除同一地址在多条 EVM 链上重复使用时的歧义——它在一条网络上可能是外部拥有账户，在另一条网络上却是尚未部署的合约。纯十六进制地址不携带任何关于其所在链的信息，因此用户可能会把资金发送到某条从未部署过合约钱包的网络上并因此损失资金。EIP-155 链 ID 是为开发者标识网络而设，并非用来展示给普通用户，因此 ERC-3770 为地址加上一个简短、人类可读的链名称前缀。",
+  "commonUsage": "链特定地址面向跨多个 EVM 网络的界面，例如多链钱包、地址簿，以及允许用户粘贴单个字符串、由软件自动选择正确网络的 dApp 前端。由于前缀映射到 ethereum-lists/chains 注册表中的某个条目，工具会在发送前把 eth 或 gno 这样的短名称解析为特定的链。这种格式是一种显示与交换约定，而非链上机制，因此它不需要任何合约或存储，只在客户端软件中运行。",
+
+  "node.user": "发送应用",
+  "node.formatter": "地址格式化器",
+  "node.storageRegistry": "链短名称列表",
+  "node.storageAddress": "链特定地址",
+  "node.resolver": "地址解析器",
+  "node.wallet": "接收钱包",
+
+  "edge.submitAddress": "提交地址与链",
+  "edge.lookupShortName": "查找短名称",
+  "edge.buildPrefix": "构建带前缀的地址",
+  "edge.readShortName": "读取短名称",
+  "edge.parsePrefix": "解析前缀",
+  "edge.routeToChain": "路由到链",
+
+  "sim.formatAddressWalkthrough.name": "链特定地址演练",
+  "sim.formatAddressWalkthrough.desc": "跟随一个地址和链，观察格式化器如何构建链特定前缀，以及解析器如何把它路由到正确的网络。",
+  "sim.formatAddressWalkthrough.param.shortName": "链短名称",
+  "sim.formatAddressWalkthrough.param.address": "校验和地址",
+  "sim.formatAddressWalkthrough.step.submit": "发送应用把一个 ERC-55 校验和地址连同目标链一起提交给格式化器。",
+  "sim.formatAddressWalkthrough.step.submit.mobile": "提交地址",
+  "sim.formatAddressWalkthrough.step.lookup": "格式化器在 ethereum-lists/chains 注册表中查找该链的短名称，例如以太坊主网对应 eth。",
+  "sim.formatAddressWalkthrough.step.lookup.mobile": "查找短名称",
+  "sim.formatAddressWalkthrough.step.build": "格式化器把短名称、一个冒号和地址拼接成单个链特定字符串，例如 eth:0x…。",
+  "sim.formatAddressWalkthrough.step.build.mobile": "构建前缀",
+  "sim.formatAddressWalkthrough.step.resolve": "解析器重新读取短名称，解析前缀，并把交易路由到所标识网络上的钱包。",
+  "sim.formatAddressWalkthrough.step.resolve.mobile": "路由到链"
+}

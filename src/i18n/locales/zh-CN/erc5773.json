@@ -1,0 +1,70 @@
+{
+  "short": "上下文相关多资产代币",
+  "introduction": "ERC-5773 为多资产 NFT 定义了一套接口，让单个非同质化代币持有多个资产，并根据访问它的上下文对外暴露最合适的那一个。该标准由 Bruno Škvorc、Cicada、Steven Pineda、Stevan Bogosavljevic 与 Jan Turk 于 2022 年 10 月提出。每个资产都是一个带命名空间的 token URI，由一个 uint64 标识符引用，按优先级排序，并通过提议-提交（propose-commit）模式添加：新资产先进入待处理数组，必须先由所有者接受，才会成为活跃资产。",
+  "designPurpose": "ERC-5773 的设计目标是扩展 ERC-721，使 NFT 不再被绑定到单一的 tokenURI。在此之前，若要让一个代币在不同应用中呈现不同形态，或将其元数据镜像到多个存储网络，就意味着替换掉唯一的那个 URI，并抹去它的历史脉络。ERC-5773 转而以 uint64 标识符按引用方式存储资产，并按所有者设定的优先级排序，让使用方挑选适合自身媒介的资产。提议-提交流程允许发行方建议或替换某个资产，同时所有者保留最终的决定权。",
+  "commonUsage": "多资产代币适用于同一个 NFT 需要向不同使用方提供不同输出的场景：一本电子书在阅读器中解析为 PDF，而在有声书应用中解析为 MP3；一件游戏装饰品为不同引擎携带各自的资产文件；或将元数据镜像到 IPFS、Arweave 等多个网络以实现冗余。由于该标准扩展自 ERC-721，实现可以复用现有的 ERC-721 工具，并加入 ERC-165 检测，以及针对单个代币和操作员、专门用于将资产管理与转移分开处理的授权。",
+
+  "fn.acceptAsset.desc": "将一个资产从代币的待处理数组迁移到其活跃数组。调用者必须拥有该代币，或已获授权管理其资产，且 index 与预期的 assetId 必须匹配。触发一个 AssetAccepted 事件。",
+  "fn.acceptAsset.params.tokenId": "要接受其待处理资产的代币 ID。",
+  "fn.acceptAsset.params.index": "待处理数组中要接受的资产的索引。",
+  "fn.acceptAsset.params.assetId": "该索引处预期的资产 ID，用于校验以防止竞态条件。",
+
+  "fn.rejectAsset.desc": "从代币的待处理数组中移除单个资产而不将其激活。调用者必须拥有该代币，或已获授权管理其资产，且 index 与预期的 assetId 必须匹配。触发一个 AssetRejected 事件。",
+  "fn.rejectAsset.params.tokenId": "要从中拒绝该资产的代币 ID。",
+  "fn.rejectAsset.params.index": "待处理数组中要拒绝的资产的索引。",
+  "fn.rejectAsset.params.assetId": "该索引处预期的资产 ID。",
+
+  "fn.rejectAllAssets.desc": "在一次调用中清空代币的整个待处理数组，并以 maxRejections 为上限，以避免丢弃在该操作之前刚刚到达的资产。触发一个 assetId 为 0 的 AssetRejected 事件。",
+  "fn.rejectAllAssets.params.tokenId": "待处理数组被清空的代币 ID。",
+  "fn.rejectAllAssets.params.maxRejections": "要拒绝的资产的最大数量，用于防范在调用之前刚刚添加的资产。",
+
+  "fn.setPriority.desc": "为代币的活跃资产设定新的优先级排序，其中数值最小者优先级最高，0 表示未初始化。priorities 数组的长度必须等于活跃资产的数量。触发一个 AssetPrioritySet 事件。",
+  "fn.setPriority.params.tokenId": "要为其设定优先级的代币 ID。",
+  "fn.setPriority.params.priorities": "活跃资产的优先级数组，与活跃数组的顺序一一对应。",
+
+  "fn.getActiveAssets.desc": "返回给定代币的活跃资产 ID 数组；资产数据需通过 getAssetMetadata 单独获取。",
+  "fn.getActiveAssets.params.tokenId": "要查询其活跃资产 ID 的代币 ID。",
+  "fn.getActiveAssets.returns.assetIds": "给定代币的活跃资产 ID 数组。",
+
+  "fn.getPendingAssets.desc": "返回给定代币中等待所有者接受或拒绝的待处理资产 ID 数组。",
+  "fn.getPendingAssets.params.tokenId": "要查询其待处理资产 ID 的代币 ID。",
+  "fn.getPendingAssets.returns.assetIds": "给定代币的待处理资产 ID 数组。",
+
+  "fn.getAssetMetadata.desc": "返回代币某个给定活跃资产的元数据 URI，该 URI 解析为该资产的媒体或描述符，从而实现上下文相关的输出。",
+  "fn.getAssetMetadata.params.tokenId": "要从中读取资产元数据的代币 ID。",
+  "fn.getAssetMetadata.params.assetId": "资产的 ID，该资产必须位于代币的活跃资产数组中。",
+  "fn.getAssetMetadata.returns.metadata": "指定资产的元数据 URI。",
+
+  "fn.AssetAccepted.desc": "当一个待处理资产被接受并迁移到代币的活跃数组时触发，其中包含它所替换的任何资产的 ID。",
+  "fn.AssetAccepted.params.tokenId": "有新资产被接受的代币 ID。",
+  "fn.AssetAccepted.params.assetId": "被接受的资产的 ID。",
+  "fn.AssetAccepted.params.replacesId": "被替换的资产的 ID，若无则为 0。",
+
+  "fn.AssetRejected.desc": "当一个资产从代币的待处理数组中被丢弃时触发；assetId 为 0 表示整个待处理数组已被清空。",
+  "fn.AssetRejected.params.tokenId": "有资产被拒绝的代币 ID。",
+  "fn.AssetRejected.params.assetId": "被拒绝的资产的 ID，当整个待处理数组被清空时为 0。",
+
+  "fn.AssetPrioritySet.desc": "当代币的活跃资产优先级排序被更新时触发。",
+  "fn.AssetPrioritySet.params.tokenId": "资产优先级数组被更新的代币 ID。",
+
+  "node.user": "代币所有者",
+  "node.contract": "多资产代币",
+  "node.storageAssets": "资产存储",
+
+  "edge.callAcceptAsset": "调用 acceptAsset()",
+  "edge.callRejectAsset": "调用 rejectAsset()",
+  "edge.updateAssets": "更新资产数组",
+  "edge.emitAssetAccepted": "触发 AssetAccepted 事件",
+
+  "sim.acceptAssetWalkthrough.name": "接受资产演练",
+  "sim.acceptAssetWalkthrough.desc": "跟踪一次 acceptAsset 调用，观察一个待处理资产如何被迁移到活跃数组，以及 AssetAccepted 事件如何被触发。",
+  "sim.acceptAssetWalkthrough.param.tokenId": "代币 ID",
+  "sim.acceptAssetWalkthrough.param.index": "待处理索引",
+  "sim.acceptAssetWalkthrough.param.assetId": "资产 ID",
+  "sim.acceptAssetWalkthrough.step.call": "代币所有者调用 acceptAsset(tokenId, index, assetId) 以接受一个待处理资产，并传入预期的 assetId 以防范索引发生变化。",
+  "sim.acceptAssetWalkthrough.step.call.mobile": "调用 acceptAsset()",
+  "sim.acceptAssetWalkthrough.step.execute": "合约将该资产从待处理数组中移除，并将其追加到代币的活跃资产数组中。",
+  "sim.acceptAssetWalkthrough.step.execute.mobile": "迁移至活跃",
+  "sim.acceptAssetWalkthrough.step.event": "合约触发 AssetAccepted，以便索引器和交易市场能够刷新代币的活跃资产。",
+  "sim.acceptAssetWalkthrough.step.event.mobile": "触发 AssetAccepted"
+}

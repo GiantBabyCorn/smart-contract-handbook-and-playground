@@ -1,0 +1,42 @@
+{
+  "short": "EIP-721 可消費擴充",
+  "introduction": "ERC-4400 定義了 ERC-721 的一個可選擴充，為非同質化代幣新增了標準化的消費者角色，讓所有者可以授權另一個地址使用某個 NFT 而無需轉移所有權。它由 Daniel Ivanov 和 George Spasov 於 2021 年 10 月提出。該擴充新增了一個用於查詢當前消費者的讀取函式、一個用於設定或重新確認消費者的寫入函式，以及一個 ConsumerChanged 事件；它還要求每次轉移都將消費者重置為預設地址，並建議使用零地址。",
+  "designPurpose": "ERC-4400 的設計目標是將許多 ERC-721 專案先前用各自的自訂權限實作的使用角色標準化。在此之前，元宇宙、遊戲和租賃平台各自定義臨時的操作員或貢獻者角色，因此錢包和市場無法以統一的方式判斷誰有權使用某個代幣。透過保留一個絕不能取得所有者、操作員或授權權限的單一消費者角色，ERC-4400 讓一個 NFT 可以由一方使用，同時仍由另一方擁有並可轉移。",
+  "commonUsage": "消費者角色適用於「使用 NFT」與「擁有 NFT」相互區分的應用情境：承租人在其上部署場景的元宇宙地塊、出借給玩家的遊戲內資產、活動通行證，以及基於 NFT 的收益耕作——質押者將代幣存入質押合約後仍保留其使用價值。由於該擴充僅公開 consumerOf 和 changeConsumer，外加透過 ERC-165 偵測介面 ID 0x953c8dfa，它通常會被混入現有的 ERC-721 合約，而非單獨部署。",
+
+  "fn.consumerOf.desc": "回傳給定 NFT 的當前消費者地址；若未設定消費者，則回傳零地址。若 token ID 不是有效的 NFT，則回退。",
+  "fn.consumerOf.params.tokenId": "要查詢其消費者地址的 NFT。",
+  "fn.consumerOf.returns.consumer": "該 NFT 的消費者地址；若不存在，則為零地址。",
+
+  "fn.changeConsumer.desc": "設定或重新確認某個 NFT 的消費者地址，使用零地址可將其清除。除非呼叫者是該 NFT 的所有者、獲授權的操作員或獲授權的地址，否則將回退；成功時會觸發 ConsumerChanged。",
+  "fn.changeConsumer.params.consumer": "該 NFT 的新消費者；零地址表示沒有消費者。",
+  "fn.changeConsumer.params.tokenId": "要變更其消費者的 NFT。",
+
+  "fn.ConsumerChanged.desc": "當所有者變更某個 NFT 的消費者時觸發。消費者為零地址表示沒有消費者，而 Transfer 也會將消費者重置為無。",
+  "fn.ConsumerChanged.params.owner": "其消費者發生變更的 NFT 的所有者。",
+  "fn.ConsumerChanged.params.consumer": "新的消費者地址；若被清除，則為零地址。",
+  "fn.ConsumerChanged.params.tokenId": "其消費者已被變更的 NFT。",
+
+  "node.user": "NFT 所有者",
+  "node.contract": "ERC-4400 NFT 合約",
+  "node.storageConsumers": "消費者儲存",
+  "node.consumer": "消費者",
+
+  "edge.callChangeConsumer": "呼叫 changeConsumer()",
+  "edge.updateConsumers": "更新消費者映射",
+  "edge.emitConsumerChanged": "觸發 ConsumerChanged 事件",
+  "edge.grantConsumer": "授予使用權",
+
+  "sim.changeConsumerWalkthrough.name": "設定 NFT 消費者",
+  "sim.changeConsumerWalkthrough.desc": "跟隨所有者發起的一次 changeConsumer 呼叫，從儲存一直到授予消費者使用權的 ConsumerChanged 事件。",
+  "sim.changeConsumerWalkthrough.param.consumer": "消費者地址",
+  "sim.changeConsumerWalkthrough.param.tokenId": "Token ID",
+  "sim.changeConsumerWalkthrough.step.call": "NFT 所有者在合約上呼叫 changeConsumer(consumer, tokenId)，為該代幣指定一個消費者。",
+  "sim.changeConsumerWalkthrough.step.call.mobile": "呼叫 changeConsumer()",
+  "sim.changeConsumerWalkthrough.step.execute": "合約檢查呼叫者是所有者、獲授權的操作員還是獲授權的地址，然後將新的消費者寫入該代幣的 _consumers 映射。",
+  "sim.changeConsumerWalkthrough.step.execute.mobile": "儲存消費者",
+  "sim.changeConsumerWalkthrough.step.event": "合約觸發 ConsumerChanged(owner, consumer, tokenId)，以便索引器和前端介面能夠追蹤新的消費者。",
+  "sim.changeConsumerWalkthrough.step.event.mobile": "觸發 ConsumerChanged",
+  "sim.changeConsumerWalkthrough.step.grant": "被指定的消費者現在可以在應用內使用該 NFT，而不會取得所有者、操作員或授權權限。",
+  "sim.changeConsumerWalkthrough.step.grant.mobile": "消費者取得使用權"
+}

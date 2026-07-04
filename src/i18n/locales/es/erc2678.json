@@ -1,0 +1,32 @@
+{
+  "short": "Formato de manifiesto de paquete de contrato inteligente (EthPM v3)",
+  "introduction": "ERC-2678 define un formato de datos JSON para un manifiesto de paquete que describe un paquete de contrato inteligente: uno o más contratos junto con su código fuente, la configuración del compilador y las instancias desplegadas en distintas redes. Fue propuesto por g. nicholas d'andrea, Piper Merriam y varios coautores en mayo de 2020 como la versión 3 del formato EthPM. Los manifiestos son objetos JSON ordenados alfabéticamente y minificados, distribuidos a través de almacenamiento direccionable por contenido como IPFS y publicados en registros EthPM en cadena.",
+  "designPurpose": "EthPM v3 se diseñó para dar al ecosistema de Ethereum un formato único e independiente de las herramientas para compartir y reutilizar contratos compilados. Antes de él, los proyectos describían sus fuentes y despliegues en estructuras ad hoc incompatibles, por lo que las dependencias no podían instalarse ni verificarse de forma fiable entre distintas herramientas. La versión 3 alinea el esquema con la salida de metadatos del compilador de Solidity, reúne las definiciones de los compiladores en un único arreglo de nivel superior y renombra las claves de snake_case a camelCase por coherencia.",
+  "commonUsage": "Los manifiestos de paquete se generan de forma programática mediante herramientas de gestión de paquetes durante el proceso de publicación de un proyecto, en lugar de a mano. Los gestores de paquetes los consumen para instalar dependencias, construir versiones y verificar los despliegues frente a sus contratos fuente. Los paquetes van desde contratos base pensados para la herencia hasta contratos reutilizables como un token ERC-20 estándar y conjuntos de instancias desplegadas. Los manifiestos se almacenan en sistemas direccionables por contenido como IPFS y son referenciados por los registros EthPM.",
+
+  "node.author": "Autor del paquete",
+  "node.packageManager": "Gestor de paquetes EthPM",
+  "node.manifest": "Manifiesto del paquete",
+  "node.ipfs": "Almacenamiento direccionable por contenido",
+  "node.registry": "Registro EthPM",
+  "node.consumer": "Desarrollador consumidor",
+
+  "edge.assemble": "Ensamblar paquete",
+  "edge.serialize": "Serializar manifiesto",
+  "edge.publish": "Publicar en IPFS",
+  "edge.register": "Registrar la versión",
+  "edge.resolve": "Resolver e instalar",
+
+  "sim.publishPackageWalkthrough.name": "Recorrido de publicación de un paquete",
+  "sim.publishPackageWalkthrough.desc": "Sigue un paquete EthPM v3 desde que un autor lo ensambla, pasando por el almacenamiento en IPFS, hasta que un consumidor instala la versión.",
+  "sim.publishPackageWalkthrough.param.packageName": "Nombre del paquete",
+  "sim.publishPackageWalkthrough.param.version": "Versión del paquete",
+  "sim.publishPackageWalkthrough.step.assemble": "El autor del paquete ejecuta un gestor de paquetes para ensamblar una nueva versión a partir de los contratos, las fuentes y los despliegues del proyecto.",
+  "sim.publishPackageWalkthrough.step.assemble.mobile": "Ensamblar el paquete",
+  "sim.publishPackageWalkthrough.step.serialize": "La herramienta serializa los datos recopilados en un manifiesto de paquete, estableciendo el campo manifest en ethpm/3 y escribiendo los campos name, version, sources, contractTypes, compilers y deployments.",
+  "sim.publishPackageWalkthrough.step.serialize.mobile": "Serializar campos del manifiesto",
+  "sim.publishPackageWalkthrough.step.publish": "El manifiesto se ordena alfabéticamente, se minifica y se almacena en IPFS, y su URI direccionada por contenido se registra como una versión en un registro EthPM en cadena.",
+  "sim.publishPackageWalkthrough.step.publish.mobile": "Publicar en IPFS y registro",
+  "sim.publishPackageWalkthrough.step.consume": "Un desarrollador consumidor resuelve la versión desde el registro e instala el paquete, usando el manifiesto para obtener las fuentes y verificar las instancias desplegadas.",
+  "sim.publishPackageWalkthrough.step.consume.mobile": "Resolver e instalar el paquete"
+}

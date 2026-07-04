@@ -1,0 +1,32 @@
+{
+  "short": "WalletConnect URI Format",
+  "introduction": "ERC-1328 defines a URI format for encoding the data needed to open a connection between an application and a wallet. It was proposed by ligi and Pedro Gomes in August 2018. A request uses the wc scheme followed by a topic string, an @-delimited version number, and a query string of parameters: v1 URIs carry a bridge URL and a symmetric key, while v2 URIs carry a symKey and a relay-protocol. Because the payload is a compact URI rather than JSON, it can be shown as a QR code or link and parsed efficiently by wallets.",
+  "designPurpose": "ERC-1328 was designed to replace the JSON payload used by the alpha version of the WalletConnect protocol, which parsed inefficiently from a QR code. By encoding the connection data as a URI instead, the standard gives wallets a compact, unambiguous string that QR-code scanners and deep-link handlers can read directly, and it lets the Android intent system route the link to a wallet. A required version segment lets the parameter set change across protocol versions while preserving backwards compatibility.",
+  "commonUsage": "The format is used by the WalletConnect protocol to pair mobile wallets with applications: a dApp renders the URI as a QR code, and a wallet scans or opens it to derive the shared session parameters. Version 1 URIs supply a bridge URL and encryption key, while version 2 URIs supply a relay protocol and a symmetric key for the pairing topic, plus an optional expiry timestamp. Wallet SDKs, dApp connector libraries, and QR-code components across the ecosystem parse this URI to bootstrap an encrypted session.",
+
+  "node.dapp": "Requesting Application",
+  "node.uriBuilder": "URI Encoder",
+  "node.connectionUri": "WalletConnect URI",
+  "node.wallet": "Wallet",
+  "node.walletUser": "Wallet User",
+  "node.pairing": "Pairing Session",
+
+  "edge.buildRequest": "Build connection request",
+  "edge.encodeUri": "Encode wc: URI",
+  "edge.scanUri": "Scan or open link",
+  "edge.approve": "Approve pairing",
+  "edge.establish": "Derive shared session",
+
+  "sim.connectionUriWalkthrough.name": "Connection URI Walkthrough",
+  "sim.connectionUriWalkthrough.desc": "Follow a WalletConnect URI from a dApp through a QR scan to an established pairing session.",
+  "sim.connectionUriWalkthrough.param.version": "Protocol version",
+  "sim.connectionUriWalkthrough.param.expiryTimestamp": "Pairing expiry (unix time)",
+  "sim.connectionUriWalkthrough.step.build": "The application creates a connection request and selects the WalletConnect protocol version to use.",
+  "sim.connectionUriWalkthrough.step.build.mobile": "Build request",
+  "sim.connectionUriWalkthrough.step.encode": "The topic, version, and parameters are encoded into a wc: URI that can be shown as a QR code or a link.",
+  "sim.connectionUriWalkthrough.step.encode.mobile": "Encode wc: URI",
+  "sim.connectionUriWalkthrough.step.scan": "The wallet user scans or opens the URI, and the wallet parses the topic, version, and connection parameters before approving the pairing.",
+  "sim.connectionUriWalkthrough.step.scan.mobile": "Scan and approve",
+  "sim.connectionUriWalkthrough.step.pair": "The wallet derives the shared encryption key and relay settings from the URI, establishing the pairing session with the application.",
+  "sim.connectionUriWalkthrough.step.pair.mobile": "Establish pairing"
+}

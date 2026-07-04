@@ -1,0 +1,90 @@
+{
+  "short": "异步 ERC-4626 代币化金库",
+  "introduction": "ERC-7540 以异步的存款与赎回流程（称为 Request，即请求）扩展了 ERC-4626 代币化金库标准。该标准由 Jeroen Offerijns、Alina Sinelnikova、Vikram Arun、Joey Santoro、Farhaan Ali 和 João Martins 于 2023 年 10 月提出。用户调用 requestDeposit 或 requestRedeem，将资产或份额置于待处理（Pending）状态；一旦金库完成该请求，相应金额即变为可领取（Claimable），并通过现有的 deposit、mint、withdraw 或 redeem 方法进行领取。",
+  "designPurpose": "ERC-7540 旨在将存在结算延迟的金库纳入 ERC-4626 生态系统。基础标准假设存款与赎回在某一限额内以原子方式完成，这排除了现实世界资产协议、低抵押或跨链借贷、流动性质押代币，以及资金流随时间逐步结算的保险模块。它没有采用一套平行的接口，而是新增 requestDeposit 和 requestRedeem 以进入待处理（Pending）状态，并在请求变为可领取（Claimable）后复用 ERC-4626 的领取方法。",
+  "commonUsage": "异步金库适用于进入或退出头寸并非即时完成的系统：在链下结算的现实世界资产与低抵押借贷协议、跨链借贷金库、流动性质押代币，以及保险模块。由于待处理的头寸只是半同质化的，实现合约可以将它们作为内部记账保留，或用其他代币标准进行包装；集成方则读取 ERC-165 接口 ID，以判断某个金库在存款、赎回或两者上是否为异步。",
+
+  "fn.requestDeposit.desc": "将资产从所有者转入金库并开启一个存款请求，把相应金额置于待处理（Pending）状态，并为控制者增加 pendingDepositRequest。返回一个 requestId 并发出 DepositRequest。",
+  "fn.requestDeposit.params.assets": "为该存款请求锁定的底层资产数量。",
+  "fn.requestDeposit.params.controller": "将控制该请求并在之后领取份额的账户。",
+  "fn.requestDeposit.params.owner": "其资产被转入的账户；必须是 msg.sender 或已授权的操作员。",
+  "fn.requestDeposit.returns.requestId": "该请求的标识符，与控制者一起用于查询其状态。",
+
+  "fn.pendingDepositRequest.desc": "返回控制者的存款请求中仍处于待处理（Pending）、尚未变为可领取（Claimable）的资产数量。",
+  "fn.pendingDepositRequest.params.requestId": "要查询的请求的标识符。",
+  "fn.pendingDepositRequest.params.controller": "拥有该请求的账户。",
+  "fn.pendingDepositRequest.returns.assets": "控制者仍处于待处理（Pending）状态的资产。",
+
+  "fn.claimableDepositRequest.desc": "返回控制者的存款请求中现在已变为可领取（Claimable）、可通过 deposit 或 mint 转化为份额的资产数量。",
+  "fn.claimableDepositRequest.params.requestId": "要查询的请求的标识符。",
+  "fn.claimableDepositRequest.params.controller": "拥有该请求的账户。",
+  "fn.claimableDepositRequest.returns.assets": "控制者处于可领取（Claimable）状态的资产。",
+
+  "fn.requestRedeem.desc": "从所有者处接管份额并开启一个赎回请求，把相应金额置于待处理（Pending）状态，并为控制者增加 pendingRedeemRequest。返回一个 requestId 并发出 RedeemRequest。",
+  "fn.requestRedeem.params.shares": "为该赎回请求锁定的金库份额数量。",
+  "fn.requestRedeem.params.controller": "将控制该请求并在之后领取资产的账户。",
+  "fn.requestRedeem.params.owner": "其份额被移出托管的账户；必须是 msg.sender、已授权的操作员或已授权的支出方。",
+  "fn.requestRedeem.returns.requestId": "该请求的标识符，与控制者一起用于查询其状态。",
+
+  "fn.pendingRedeemRequest.desc": "返回控制者的赎回请求中仍处于待处理（Pending）、尚未变为可领取（Claimable）的份额数量。",
+  "fn.pendingRedeemRequest.params.requestId": "要查询的请求的标识符。",
+  "fn.pendingRedeemRequest.params.controller": "拥有该请求的账户。",
+  "fn.pendingRedeemRequest.returns.shares": "控制者仍处于待处理（Pending）状态的份额。",
+
+  "fn.claimableRedeemRequest.desc": "返回控制者的赎回请求中现在已变为可领取（Claimable）、可通过 redeem 或 withdraw 转化为资产的份额数量。",
+  "fn.claimableRedeemRequest.params.requestId": "要查询的请求的标识符。",
+  "fn.claimableRedeemRequest.params.controller": "拥有该请求的账户。",
+  "fn.claimableRedeemRequest.returns.shares": "控制者处于可领取（Claimable）状态的份额。",
+
+  "fn.setOperator.desc": "授予或撤销一个可代表 msg.sender 管理请求的操作员。发出 OperatorSet 并返回 true。",
+  "fn.setOperator.params.operator": "正在设置其操作员状态的账户。",
+  "fn.setOperator.params.approved": "true 表示授予操作员权限，false 表示撤销。",
+  "fn.setOperator.returns.success": "调用成功时始终为 true。",
+
+  "fn.deposit.desc": "通过向接收者铸造份额并减少控制者的 claimableDepositRequest，来领取一个可领取（Claimable）的存款请求。此重载在 ERC-4626 的 deposit 方法上增加了一个 controller 参数。",
+  "fn.deposit.params.assets": "要领取的先前已请求的资产数量。",
+  "fn.deposit.params.receiver": "接收所铸造份额的账户。",
+  "fn.deposit.params.controller": "其可领取（Claimable）请求被扣减的账户；必须是 msg.sender 或已授权的操作员。",
+  "fn.deposit.returns.shares": "铸造给接收者的份额数量。",
+
+  "fn.DepositRequest.desc": "当通过 requestDeposit 提交存款请求时发出，记录控制者、所有者、requestId、调用者以及所请求的资产。",
+  "fn.DepositRequest.params.controller": "控制这个新请求的账户。",
+  "fn.DepositRequest.params.owner": "其资产被锁定的账户。",
+  "fn.DepositRequest.params.requestId": "分配给该请求的标识符。",
+  "fn.DepositRequest.params.sender": "requestDeposit 的调用者，可能与所有者不同。",
+  "fn.DepositRequest.params.assets": "为该请求锁定的资产数量。",
+
+  "fn.RedeemRequest.desc": "当通过 requestRedeem 提交赎回请求时发出，记录控制者、所有者、requestId、调用者以及所请求的份额。",
+  "fn.RedeemRequest.params.controller": "控制这个新请求的账户。",
+  "fn.RedeemRequest.params.owner": "其份额被锁定的账户。",
+  "fn.RedeemRequest.params.requestId": "分配给该请求的标识符。",
+  "fn.RedeemRequest.params.sender": "requestRedeem 的调用者，可能与所有者不同。",
+  "fn.RedeemRequest.params.shares": "为该请求锁定的份额数量。",
+
+  "fn.OperatorSet.desc": "当控制者通过 setOperator 设置某个操作员的授权状态时发出。",
+  "fn.OperatorSet.params.controller": "授予或撤销操作员权限的账户。",
+  "fn.OperatorSet.params.operator": "操作员状态发生变化的账户。",
+  "fn.OperatorSet.params.approved": "新的操作员授权状态。",
+
+  "node.user": "金库用户",
+  "node.contract": "异步 ERC-4626 金库",
+  "node.storageRequests": "请求状态",
+
+  "edge.callRequestDeposit": "调用 requestDeposit()",
+  "edge.updateRequests": "更新请求状态",
+  "edge.emitDepositRequest": "发出 DepositRequest 事件",
+  "edge.callDeposit": "调用 deposit()",
+
+  "sim.requestDepositWalkthrough.name": "存款请求演练",
+  "sim.requestDepositWalkthrough.desc": "追踪一笔异步存款，从 requestDeposit 经过待处理（Pending）与可领取（Claimable）状态，直到通过 deposit 完成领取。",
+  "sim.requestDepositWalkthrough.param.assets": "要请求的资产",
+  "sim.requestDepositWalkthrough.param.controller": "控制者地址",
+  "sim.requestDepositWalkthrough.step.request": "用户调用 requestDeposit(assets, controller, owner)，金库将资产转入并开启该请求。",
+  "sim.requestDepositWalkthrough.step.request.mobile": "调用 requestDeposit()",
+  "sim.requestDepositWalkthrough.step.pending": "金库为该控制者增加 pendingDepositRequest，并将资产保持在待处理（Pending）状态，直到它完成该请求。",
+  "sim.requestDepositWalkthrough.step.pending.mobile": "记录待处理请求",
+  "sim.requestDepositWalkthrough.step.event": "金库发出 DepositRequest，以便索引器和控制者可以通过 requestId 追踪这个新请求。",
+  "sim.requestDepositWalkthrough.step.event.mobile": "发出 DepositRequest 事件",
+  "sim.requestDepositWalkthrough.step.claim": "一旦该请求变为可领取（Claimable），控制者调用 deposit 来铸造份额并减少 claimableDepositRequest。",
+  "sim.requestDepositWalkthrough.step.claim.mobile": "通过 deposit() 领取份额"
+}

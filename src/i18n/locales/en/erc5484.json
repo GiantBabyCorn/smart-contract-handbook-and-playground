@@ -1,0 +1,41 @@
+{
+  "short": "Consensual Soulbound Token Standard",
+  "introduction": "ERC-5484 defines an interface extending ERC-721 to create consensual soulbound tokens (SBTs): non-transferable NFTs whose burn permission is agreed by both parties before issuance. It was proposed by Buzz Cai in August 2022. Before issuance, the issuer and receiver agree on a burn authorization — IssuerOnly, OwnerOnly, Both, or Neither — that is immutable afterward. The contract emits an Issued event alongside the ERC-721 Transfer event and exposes a burnAuth query that tells SBTs apart from ordinary NFTs.",
+  "designPurpose": "ERC-5484 was designed to give soulbound tokens a shared interface so wallets, explorers, and services can treat them consistently. Earlier soulbound implementations extended ERC-721 but simply reverted on every transfer, with no standard way to detect non-transferability or learn who may destroy the token. ERC-5484 fixes a per-token burn authorization at issuance, requires the receiver's consent beforehand, and adds a burnAuth getter plus an Issued event so third parties can identify them through ERC-165 detection.",
+  "commonUsage": "Consensual soulbound tokens are intended for credentials, memberships, certifications, and credit records — cases where a token should stay bound to one address rather than trade freely. The burn authorization is chosen per use case: IssuerOnly suits revocable loan records, OwnerOnly suits memberships the holder can discard, Both suits credentials, and Neither suits permanent credit history. Because SBTs remain ERC-721 tokens, existing NFT tooling can display them while checking the interface before any transfer.",
+
+  "fn.burnAuth.desc": "Returns the burn authorization for a token, indicating which parties may destroy it: IssuerOnly, OwnerOnly, Both, or Neither. Queries for unassigned token IDs revert.",
+  "fn.burnAuth.params.tokenId": "The identifier of the token to query.",
+  "fn.burnAuth.returns.burnAuth": "The immutable burn authorization fixed for the token at issuance.",
+
+  "fn.Issued.desc": "Emitted when a soulbound token is issued, in addition to the ERC-721 Transfer event, so third parties can distinguish an SBT issuance from an ordinary NFT transfer.",
+  "fn.Issued.params.from": "The issuer of the token.",
+  "fn.Issued.params.to": "The receiver of the token.",
+  "fn.Issued.params.tokenId": "The identifier of the issued token.",
+  "fn.Issued.params.burnAuth": "The burn authorization agreed for this token, fixed at issuance.",
+
+  "node.issuer": "Issuer",
+  "node.contract": "Soulbound Token Contract",
+  "node.storageBurnAuth": "Burn Authorization Storage",
+  "node.receiver": "Receiver",
+
+  "edge.issue": "Issue soulbound token",
+  "edge.storeBurnAuth": "Store burn authorization",
+  "edge.mintToken": "Mint token to receiver",
+  "edge.emitIssued": "Emit Issued event",
+  "edge.queryBurnAuth": "Call burnAuth()",
+
+  "sim.issueTokenWalkthrough.name": "Issue Soulbound Token",
+  "sim.issueTokenWalkthrough.desc": "Follow the issuance of a consensual soulbound token, from the issuer through storage and the Issued event to a burnAuth query.",
+  "sim.issueTokenWalkthrough.param.to": "Receiver address",
+  "sim.issueTokenWalkthrough.param.tokenId": "Token ID",
+  "sim.issueTokenWalkthrough.param.burnAuth": "Burn authorization",
+  "sim.issueTokenWalkthrough.step.issue": "The issuer issues a soulbound token to the receiver, who has already consented to the chosen burn authorization.",
+  "sim.issueTokenWalkthrough.step.issue.mobile": "Issue token",
+  "sim.issueTokenWalkthrough.step.store": "The contract records the immutable burn authorization for the token and assigns ownership to the receiver.",
+  "sim.issueTokenWalkthrough.step.store.mobile": "Store burn auth",
+  "sim.issueTokenWalkthrough.step.event": "The contract emits Issued(from, to, tokenId, burnAuth) alongside the ERC-721 Transfer event to flag the SBT issuance.",
+  "sim.issueTokenWalkthrough.step.event.mobile": "Emit Issued event",
+  "sim.issueTokenWalkthrough.step.query": "A third party calls burnAuth(tokenId) to read which party is allowed to burn the token before acting on it.",
+  "sim.issueTokenWalkthrough.step.query.mobile": "Query burnAuth()"
+}

@@ -1,0 +1,57 @@
+{
+  "short": "Smart Contract Executable Proposal Interface",
+  "introduction": "ERC-5247 defines an interface for smart contract executable proposals: bundles of on-chain calls that are recorded and can later be executed. It was proposed by Zainan Victor Zhou in July 2022. A proposal packages parallel arrays of targets, values, gas limits, and calldatas, so it can carry arbitrarily many calls. createProposal records the bundle and returns a proposal id; executeProposal dispatches every stored call. Note: ERC-5247 is in Review status; the interface may still change before it is finalized.",
+  "designPurpose": "ERC-5247 was designed to separate the code to be executed from the act of executing it. Before it, DAOs and delegation systems each encoded proposal contents in bespoke formats, so tooling could not compose or inspect proposals across implementations. By standardizing a single createProposal and executeProposal interface built on parallel arrays of targets, values, gas limits, and calldatas, ERC-5247 lets a proposal be composed first, approved by any mechanism, and then executed as a single on-chain action.",
+  "commonUsage": "Executable proposals fit DAO governance, where a proposer records a proposal, members vote on it through a separate voting interface such as ERC-1202, and the approved bundle is executed once consensus forms. The same create-then-execute pattern suits delegation and trustee arrangements, or a conditional offer that a counterparty may choose to accept and run. Because the interface decouples proposal storage from execution, it can be deployed as a standalone forwarder or mixed into an existing governor contract.",
+
+  "fn.createProposal.desc": "Records a new executable proposal from parallel arrays of target addresses, ether values, gas limits, and calldatas, and returns the id under which it was registered. Emits a ProposalCreated event.",
+  "fn.createProposal.params.proposalId": "A caller-suggested identifier for the proposal; implementations may honor it or assign their own id.",
+  "fn.createProposal.params.targets": "The contract addresses each call in the proposal will be sent to.",
+  "fn.createProposal.params.values": "The amount of ether, in wei, to send with each corresponding call.",
+  "fn.createProposal.params.gasLimits": "The gas limit to apply to each corresponding call.",
+  "fn.createProposal.params.calldatas": "The ABI-encoded calldata for each corresponding call.",
+  "fn.createProposal.params.extraParams": "Additional implementation-defined parameters.",
+  "fn.createProposal.returns.registeredProposalId": "The identifier under which the proposal was actually registered.",
+
+  "fn.executeProposal.desc": "Executes a previously recorded proposal, dispatching each of its stored calls in sequence. Emits a ProposalExecuted event.",
+  "fn.executeProposal.params.proposalId": "The identifier of the proposal to execute.",
+  "fn.executeProposal.params.extraParams": "Additional implementation-defined parameters.",
+
+  "fn.ProposalCreated.desc": "Emitted when a new proposal is created, carrying the full contents of the proposal so off-chain services can index it.",
+  "fn.ProposalCreated.params.proposer": "The address that created the proposal.",
+  "fn.ProposalCreated.params.proposalId": "The identifier of the created proposal.",
+  "fn.ProposalCreated.params.targets": "The target addresses for the proposal's calls.",
+  "fn.ProposalCreated.params.values": "The ether values for the proposal's calls.",
+  "fn.ProposalCreated.params.gasLimits": "The gas limits for the proposal's calls.",
+  "fn.ProposalCreated.params.calldatas": "The calldata for the proposal's calls.",
+  "fn.ProposalCreated.params.extraParams": "Additional implementation-defined parameters.",
+
+  "fn.ProposalExecuted.desc": "Emitted when a proposal is executed.",
+  "fn.ProposalExecuted.params.executor": "The address that executed the proposal.",
+  "fn.ProposalExecuted.params.proposalId": "The identifier of the executed proposal.",
+  "fn.ProposalExecuted.params.extraParams": "Additional implementation-defined parameters.",
+
+  "node.user": "Proposer",
+  "node.contract": "ERC-5247 Registry",
+  "node.storageProposals": "Proposal Storage",
+
+  "edge.callCreateProposal": "Call createProposal()",
+  "edge.callExecuteProposal": "Call executeProposal()",
+  "edge.storeProposal": "Store proposal",
+  "edge.emitProposalCreated": "Emit ProposalCreated event",
+  "edge.emitProposalExecuted": "Emit ProposalExecuted event",
+
+  "sim.createProposalWalkthrough.name": "Create & Execute Proposal",
+  "sim.createProposalWalkthrough.desc": "Follow an executable proposal from creation, through storage and the ProposalCreated event, to on-chain execution.",
+  "sim.createProposalWalkthrough.param.proposalId": "Proposal id",
+  "sim.createProposalWalkthrough.param.target": "Target address",
+  "sim.createProposalWalkthrough.param.value": "Ether value (in wei)",
+  "sim.createProposalWalkthrough.step.call": "The proposer calls createProposal with parallel arrays of targets, values, gas limits, and calldatas describing the calls to run.",
+  "sim.createProposalWalkthrough.step.call.mobile": "Call createProposal()",
+  "sim.createProposalWalkthrough.step.store": "The registry contract stores the proposal contents under a registered proposal id for later execution.",
+  "sim.createProposalWalkthrough.step.store.mobile": "Store proposal",
+  "sim.createProposalWalkthrough.step.created": "The contract emits ProposalCreated with the full proposal contents so voting and indexing services can pick it up.",
+  "sim.createProposalWalkthrough.step.created.mobile": "Emit ProposalCreated",
+  "sim.createProposalWalkthrough.step.execute": "Once approved, the executor calls executeProposal, the registry dispatches each stored call, and a ProposalExecuted event is emitted.",
+  "sim.createProposalWalkthrough.step.execute.mobile": "Execute proposal"
+}

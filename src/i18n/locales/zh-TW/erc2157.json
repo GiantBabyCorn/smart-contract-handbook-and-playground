@@ -1,0 +1,68 @@
+{
+  "short": "面向 EVM 的 dType 儲存擴充",
+  "introduction": "ERC-2157 為 dType 定義了一個可選的儲存擴充（dType 是源自 ERC-1900 的去中心化類型系統），並對儲存類型實例的合約的 ABI 進行標準化。它由 Loredana Cirstea 與 Christian Tzurcanu 於 2019 年 6 月提出。每個儲存合約都會公開一個通用的 CRUD 介面，使每筆記錄都能透過確定性識別碼或索引來定址。注意：ERC-2157 處於 Stagnant（停滯）狀態——它已停止活動 6 個月以上，可能永遠不會最終定稿，但仍具有歷史或技術意義。",
+  "designPurpose": "ERC-2157 旨在為 Ethereum 上的公共資料提供確定性的定址能力。ERC-1900 將類型定義加以標準化，但把資料檢索留給了鏈下區塊鏈分析或區塊瀏覽器等中心化快取，因此鏈上合約無法可靠地定位另一個專案的實例。透過固定一個通用的儲存 ABI，以及一個將每種類型與其函式庫和儲存關聯起來的 TypeRootContract，ERC-2157 讓任何合約或工具都能沿著已知路徑找到某筆記錄，並從 dType 註冊表重建其 ABI。",
+  "commonUsage": "該擴充面向建構在共享公共資料之上的應用：直接從已知儲存合約讀取商品記錄的去中心化市場、在 Ethereum 分片之間或跨鏈同步類型實例的資料橋，以及從註冊表推斷合約 ABI 的工具。該提案將存取控制與可變性控制留待未來的擴充處理。由於 ERC-2157 從未達到 Final 狀態，它只停留在參考實作層面，而未進入生產採用。",
+
+  "fn.insert.desc": "儲存一個新的類型實例，將其寫入記錄映射並附加到索引陣列中。傳回由類型函式庫的 getIdentifier 函式計算出的主識別碼，並發出 LogNew 事件。",
+  "fn.insert.params.data": "要儲存的類型實例，其類型由合約的類型函式庫定義。",
+  "fn.insert.returns.identifier": "該記錄的主識別碼，由 getIdentifier 根據其取值衍生而來。",
+
+  "fn.insertBytes.desc": "儲存以 ABI 編碼位元組形式提供的新類型實例，在寫入記錄前先以類型函式庫對其解碼。",
+  "fn.insertBytes.params.data": "要儲存的 ABI 編碼類型實例。",
+  "fn.insertBytes.returns.identifier": "所儲存記錄的主識別碼。",
+
+  "fn.remove.desc": "刪除具有給定識別碼的記錄並釋放其儲存槽，傳回該記錄曾占用的索引。",
+  "fn.remove.params.identifier": "要刪除記錄的主識別碼。",
+  "fn.remove.returns.index": "被刪除記錄在索引陣列中曾占用的索引。",
+
+  "fn.update.desc": "以新的類型實例取值覆寫以給定識別碼儲存的記錄，傳回被更新記錄的識別碼。",
+  "fn.update.params.identifier": "要更新記錄的主識別碼。",
+  "fn.update.params.data": "要儲存的新類型實例取值。",
+  "fn.update.returns.identifier": "被更新記錄的識別碼。",
+
+  "fn.isStored.desc": "報告儲存合約中是否存在具有給定識別碼的記錄。",
+  "fn.isStored.params.identifier": "要檢查的主識別碼。",
+  "fn.isStored.returns.stored": "若存在具有該識別碼的記錄則為 true。",
+
+  "fn.getByHash.desc": "傳回以給定主識別碼儲存的類型實例。",
+  "fn.getByHash.params.identifier": "要取得記錄的主識別碼。",
+  "fn.getByHash.returns.data": "所儲存的類型實例。",
+
+  "fn.getByIndex.desc": "傳回索引陣列中給定位置處儲存的類型實例，從而支援對記錄進行列舉。",
+  "fn.getByIndex.params.index": "記錄在索引陣列中的位置。",
+  "fn.getByIndex.returns.data": "所儲存的類型實例。",
+
+  "fn.count.desc": "傳回合約中目前儲存的記錄數量。",
+  "fn.count.returns.counter": "所儲存記錄的總數。",
+
+  "fn.LogNew.desc": "當有新的類型實例插入儲存合約時發出。",
+  "fn.LogNew.params.identifier": "所插入記錄的主識別碼。",
+  "fn.LogNew.params.index": "該記錄在索引陣列中的索引。",
+
+  "fn.LogUpdate.desc": "當現有記錄被更新時發出。",
+  "fn.LogUpdate.params.identifier": "被更新記錄的主識別碼。",
+  "fn.LogUpdate.params.index": "該記錄在索引陣列中的索引。",
+
+  "fn.LogRemove.desc": "當有記錄從儲存合約中被刪除時發出。",
+  "fn.LogRemove.params.identifier": "被刪除記錄的主識別碼。",
+  "fn.LogRemove.params.index": "被刪除記錄在索引陣列中曾占用的索引。",
+
+  "node.user": "資料發布者",
+  "node.contract": "類型儲存合約",
+  "node.storageRecords": "記錄儲存",
+
+  "edge.callInsert": "呼叫 insert()",
+  "edge.updateRecords": "儲存類型實例",
+  "edge.emitLogNew": "發出 LogNew 事件",
+
+  "sim.insertWalkthrough.name": "儲存類型實例演練",
+  "sim.insertWalkthrough.desc": "跟隨一次 insert 呼叫，從發布者經由記錄儲存直到 LogNew 事件。",
+  "sim.insertWalkthrough.param.record": "類型實例",
+  "sim.insertWalkthrough.step.call": "發布者呼叫 insert(data)，將一個類型實例加入儲存合約中。",
+  "sim.insertWalkthrough.step.call.mobile": "呼叫 insert()",
+  "sim.insertWalkthrough.step.execute": "合約使用類型函式庫的 getIdentifier 函式衍生識別碼，將記錄寫入 typeStruct 映射，並將其識別碼附加到 typeIndex 陣列中。",
+  "sim.insertWalkthrough.step.execute.mobile": "儲存記錄",
+  "sim.insertWalkthrough.step.event": "合約發出 LogNew(identifier, index)，以便鏈下索引器能夠追蹤新記錄。",
+  "sim.insertWalkthrough.step.event.mobile": "發出 LogNew 事件"
+}

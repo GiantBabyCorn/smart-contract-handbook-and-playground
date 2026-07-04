@@ -1,0 +1,34 @@
+{
+  "short": "地址元資料註冊表",
+  "introduction": "ERC-926 定義了一個將任意地址映射到元資料提供者合約的註冊表，使任何帳戶或合約都能發布自己的元資料。該標準由 Nick Johnson 於 2018 年 3 月提出。它不直接儲存值，而是採用間接引用的方式：setProvider 記錄呼叫者的提供者，provider 則將其回傳，每個提供者透過 ERC-165 公開類型化的記錄介面。注意：ERC-926 處於 Stagnant（停滯）狀態——它已有 6 個月以上未活躍，可能永遠不會最終定稿，但仍具有歷史或技術上的重要意義。",
+  "designPurpose": "ERC-926 旨在遏止單一用途註冊表合約的氾濫。在此標準之前，諸如通用授權、代幣接受設定與聲明註冊表等用例各自部署了自己的儲存合約，因此呼叫者必須為每一種元資料了解不同的地址與佈局。透過標準化一個為每個地址回傳提供者的註冊表，ERC-926 讓新的元資料類型能夠作為獨立的提供者介面加入，而無需重新部署共享的鍵/值結構描述。",
+  "commonUsage": "該註冊表面向那些為地址附加結構化資料的應用，例如通用授權方案、代幣接受偏好，以及聲明或聲譽記錄。由於提供者可以實作標準化記錄類型介面的任意子集並透過 ERC-165 公布它們，錢包、dapp 與索引器只需查詢一個固定的註冊表地址，沿著間接引用找到提供者，並只讀取它們能夠理解的記錄類型。作為一個 Stagnant 提案，它在生產環境中鮮有使用。",
+
+  "fn.provider.desc": "回傳目前為所提供地址註冊的元資料提供者合約地址；若未設定，則回傳零地址。",
+  "fn.provider.params.target": "要查詢其已註冊元資料提供者的地址。",
+  "fn.provider.returns.provider": "為被查詢地址註冊的提供者合約；若未設定，則為零地址。",
+
+  "fn.setProvider.desc": "為呼叫者自己的地址註冊元資料提供者合約，覆寫任何先前的提供者。註冊表以 msg.sender 作為條目的鍵，因此一個地址只能設定自己的提供者。",
+  "fn.setProvider.params.provider": "要與呼叫者地址關聯的元資料提供者合約。",
+
+  "node.user": "地址所有者",
+  "node.contract": "元資料註冊表",
+  "node.storageProviders": "提供者映射",
+  "node.consumer": "元資料消費者",
+
+  "edge.callSetProvider": "呼叫 setProvider()",
+  "edge.updateProvider": "更新提供者映射",
+  "edge.callProvider": "呼叫 provider()",
+  "edge.readProvider": "讀取提供者映射",
+
+  "sim.registerProviderWalkthrough.name": "註冊並解析提供者",
+  "sim.registerProviderWalkthrough.desc": "追蹤一個地址註冊其元資料提供者，以及一個消費者透過註冊表將其解析出來的過程。",
+  "sim.registerProviderWalkthrough.param.provider": "提供者地址",
+  "sim.registerProviderWalkthrough.param.target": "被查詢地址",
+  "sim.registerProviderWalkthrough.step.set": "地址所有者在註冊表上呼叫 setProvider(_provider)，以註冊其選定的元資料提供者合約。",
+  "sim.registerProviderWalkthrough.step.set.mobile": "呼叫 setProvider()",
+  "sim.registerProviderWalkthrough.step.store": "註冊表將提供者寫入呼叫者地址下的提供者映射，替換任何先前的條目。",
+  "sim.registerProviderWalkthrough.step.store.mobile": "更新提供者映射",
+  "sim.registerProviderWalkthrough.step.lookup": "消費者呼叫 provider(target)，註冊表讀取映射並回傳已註冊的提供者地址。",
+  "sim.registerProviderWalkthrough.step.lookup.mobile": "解析提供者"
+}

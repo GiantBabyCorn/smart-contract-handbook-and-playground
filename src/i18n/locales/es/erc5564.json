@@ -1,0 +1,61 @@
+{
+  "short": "Direcciones Sigilosas",
+  "introduction": "ERC-5564 define un método estandarizado para generar y localizar direcciones sigilosas, permitiendo que un remitente cree de forma no interactiva una cuenta nueva que solo el destinatario puede controlar. Fue propuesto por Toni Wahrstätter, Matt Solomon, Ben DiFrancesco y Vitalik Buterin en agosto de 2022. El remitente deriva la dirección a partir de un secreto compartido con la meta-dirección sigilosa del destinatario y luego llama a un contrato singleton ERC5564Announcer que emite un evento Announcement que lleva la clave pública efímera y una etiqueta de vista.",
+  "designPurpose": "ERC-5564 se diseñó para que los destinatarios reciban activos sin vincular la transferencia a su identidad on-chain. Antes de él, pagar a una dirección conocida exponía al destinatario, y cada proyecto de privacidad inventaba su propio esquema de derivación de direcciones y de anuncio, incompatible con los demás. El estándar fija una interfaz común para derivar direcciones sigilosas a partir de un secreto entre remitente y destinatario, y un único contrato ERC5564Announcer, dando a las billeteras e indexadores un solo lugar donde publicar y escanear anuncios.",
+  "commonUsage": "Las direcciones sigilosas las utilizan las billeteras y herramientas de pago centradas en la privacidad que quieren que los destinatarios permanezcan no vinculables, como en donaciones privadas o transferencias puntuales donde reutilizar una dirección filtraría información. Como el Announcer solo emite eventos, los integradores lo combinan con servicios de escaneo off-chain y un registro como ERC-6538 que asigna a los usuarios sus meta-direcciones sigilosas. El esquema SECP256k1 con etiquetas de vista definido aquí (schemeId 1) es el punto de partida habitual.",
+
+  "fn.generateStealthAddress.desc": "Genera una dirección sigilosa para un destinatario a partir de su meta-dirección sigilosa. Devuelve la dirección sigilosa, la clave pública efímera que usó el remitente y una etiqueta de vista que acelera el escaneo del destinatario.",
+  "fn.generateStealthAddress.params.stealthMetaAddress": "La meta-dirección sigilosa del destinatario, que codifica sus claves públicas de gasto y de visualización.",
+  "fn.generateStealthAddress.returns.stealthAddress": "La dirección sigilosa a la que el remitente puede enviar fondos.",
+  "fn.generateStealthAddress.returns.ephemeralPubKey": "La clave pública efímera generada para esta dirección, publicada para que el destinatario pueda recalcular el secreto compartido.",
+  "fn.generateStealthAddress.returns.viewTag": "Un único byte derivado del secreto compartido que permite a los destinatarios filtrar rápidamente los anuncios que no coinciden.",
+
+  "fn.checkStealthAddress.desc": "Devuelve true si los fondos enviados a la dirección sigilosa dada pertenecen al destinatario que controla la clave de gasto correspondiente. Los destinatarios la ejecutan contra cada anuncio para detectar sus propios pagos.",
+  "fn.checkStealthAddress.params.stealthAddress": "La dirección sigilosa cuya propiedad se comprueba.",
+  "fn.checkStealthAddress.params.ephemeralPubKey": "La clave pública efímera tomada del anuncio.",
+  "fn.checkStealthAddress.params.viewingKey": "La clave privada de visualización del destinatario.",
+  "fn.checkStealthAddress.params.spendingPubKey": "La clave pública de gasto del destinatario.",
+  "fn.checkStealthAddress.returns.isRecipient": "Es true cuando la dirección sigilosa pertenece a este destinatario.",
+
+  "fn.computeStealthKey.desc": "Calcula la clave privada de una dirección sigilosa a partir de las claves privadas de visualización y de gasto del destinatario y de la clave pública efímera, permitiendo que el destinatario gaste los fondos guardados en esa dirección.",
+  "fn.computeStealthKey.params.stealthAddress": "La dirección sigilosa cuya clave privada se deriva; se incluye para poder validar el resultado.",
+  "fn.computeStealthKey.params.ephemeralPubKey": "La clave pública efímera tomada del anuncio.",
+  "fn.computeStealthKey.params.viewingKey": "La clave privada de visualización del destinatario.",
+  "fn.computeStealthKey.params.spendingKey": "La clave privada de gasto del destinatario.",
+  "fn.computeStealthKey.returns.stealthKey": "La clave privada sigilosa que controla la dirección sigilosa.",
+
+  "fn.announce.desc": "La llaman los integradores para emitir un evento Announcement que indica a los destinatarios que se envió algo a una dirección sigilosa. El Announcer es un contrato singleton con una única instancia por cadena y no guarda estado.",
+  "fn.announce.params.schemeId": "El entero que identifica el esquema de dirección sigilosa aplicado.",
+  "fn.announce.params.stealthAddress": "La dirección sigilosa calculada para el destinatario.",
+  "fn.announce.params.ephemeralPubKey": "La clave pública efímera usada por el remitente.",
+  "fn.announce.params.metadata": "Datos arbitrarios cuyo primer byte DEBE ser la etiqueta de vista; los bytes restantes pueden describir el token y el monto.",
+
+  "fn.Announcement.desc": "Se emite cada vez que se envía algo a una dirección sigilosa. Los indexadores y destinatarios escanean estos eventos; schemeId, stealthAddress y caller están marcados como indexed para poder filtrar.",
+  "fn.Announcement.params.schemeId": "El identificador del esquema de dirección sigilosa (indexed).",
+  "fn.Announcement.params.stealthAddress": "La dirección sigilosa a la que se enviaron los fondos (indexed).",
+  "fn.Announcement.params.caller": "La cuenta que llamó a announce, es decir, msg.sender (indexed).",
+  "fn.Announcement.params.ephemeralPubKey": "La clave pública efímera usada por el remitente.",
+  "fn.Announcement.params.metadata": "Metadatos arbitrarios cuyo primer byte es la etiqueta de vista.",
+
+  "node.user": "Remitente",
+  "node.contract": "ERC5564Announcer",
+  "node.recipient": "Destinatario",
+
+  "edge.callAnnounce": "Llamar a announce()",
+  "edge.emitAnnouncement": "Emitir evento Announcement",
+  "edge.scanAnnouncement": "Escanear anuncio",
+  "edge.callCheck": "Llamar a checkStealthAddress()",
+
+  "sim.announceWalkthrough.name": "Anuncio de Pago Sigiloso",
+  "sim.announceWalkthrough.desc": "Sigue un pago sigiloso desde la llamada announce del remitente, pasando por el evento Announcement, hasta el escaneo del destinatario.",
+  "sim.announceWalkthrough.param.schemeId": "ID de esquema",
+  "sim.announceWalkthrough.param.stealthAddress": "Dirección sigilosa",
+  "sim.announceWalkthrough.step.call": "El remitente llama a announce() en el singleton ERC5564Announcer, pasando el ID de esquema, la dirección sigilosa del destinatario, la clave pública efímera y los metadatos.",
+  "sim.announceWalkthrough.step.call.mobile": "Llamar a announce()",
+  "sim.announceWalkthrough.step.execute": "El Announcer reenvía la llamada y añade msg.sender como el caller indexed. No guarda estado y solo prepara el evento.",
+  "sim.announceWalkthrough.step.execute.mobile": "Reenviar al Announcer",
+  "sim.announceWalkthrough.step.emit": "El contrato emite un evento Announcement que lleva el ID de esquema, la dirección sigilosa, el caller, la clave pública efímera y los metadatos con la etiqueta de vista.",
+  "sim.announceWalkthrough.step.emit.mobile": "Emitir evento Announcement",
+  "sim.announceWalkthrough.step.scan": "El destinatario escanea los eventos Announcement, comprueba la etiqueta de vista y ejecuta checkStealthAddress() para confirmar que el pago es suyo.",
+  "sim.announceWalkthrough.step.scan.mobile": "Escanear y comprobar"
+}

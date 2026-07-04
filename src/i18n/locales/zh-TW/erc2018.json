@@ -1,0 +1,85 @@
+{
+  "short": "可清算代幣標準",
+  "introduction": "ERC-2018 定義了一個面向可清算轉帳的 ERC-20 擴充：轉帳先被下達訂單，再由清算代理執行或拒絕，而非立即結算。該標準由 Julio Faura、Fernando Paris 和 Daniel Lehrner 於 2019 年 4 月提出。下單會預留付款方的代幣但不扣除，以便清算代理在執行或拒絕之前先進行鏈下檢查。注意：ERC-2018 處於 Stagnant（停滯）狀態——它已停止活動 6 個月以上，可能永遠不會被最終定案，但在歷史或技術上仍具有重要意義。",
+  "designPurpose": "ERC-2018 是為受監管代幣設計的，這類代幣的轉帳無法總是在單一鏈上步驟中完成。KYC 和 AML 等合規規則可能需要在鏈下進行，因此轉帳必須在結算前獲得批准，而普通的 ERC-20 轉帳是原子操作，沒有這種中間狀態。透過將下單與結算分離，並把決定權交給清算代理，ERC-2018 讓清算代理可以執行合規的轉帳、拒絕不合規的轉帳，同時已下單的金額保持預留狀態，從而使之後的執行能夠成功。",
+  "commonUsage": "可清算代幣面向受監管的金融結算場景，在這類場景中，一筆支付必須先通過合規審查，價值才會轉移。已下單的轉帳會經歷 Ordered 狀態以及可選的 InProcess 狀態進行等待，直到清算代理將其執行、轉移代幣，或者附上原因將其拒絕並釋放預留餘額。該標準複用了 ERC-777 的 operator（操作者）命名慣例，使已獲授權的操作者可以代表某個帳戶下達轉帳訂單；它還基於 ERC-1996 的保留（hold）機制，使預留金額在清算代理做出決定之前無法被花費。",
+
+  "fn.orderTransfer.desc": "下達一筆從呼叫者到收款方的可清算轉帳，並預留相應金額，直到清算代理將其執行或拒絕。如果 operationId 已被使用，則回滾。",
+  "fn.orderTransfer.params.operationId": "用於標識該可清算轉帳的唯一 ID。",
+  "fn.orderTransfer.params.to": "收款方地址，若轉帳被執行則接收代幣。",
+  "fn.orderTransfer.params.value": "要轉帳的金額；不得超過付款方的餘額。",
+  "fn.orderTransfer.returns.success": "當可清算轉帳成功下單時回傳 true。",
+
+  "fn.orderTransferFrom.desc": "代表付款方、以收款方為受益方下達一筆可清算轉帳。呼叫者必須是付款方已授權的操作者。如果 operationId 已被使用，則回滾。",
+  "fn.orderTransferFrom.params.operationId": "用於標識該可清算轉帳的唯一 ID。",
+  "fn.orderTransferFrom.params.from": "付款方地址，其代幣會被預留，並在轉帳被執行時被扣除。",
+  "fn.orderTransferFrom.params.to": "收款方地址，若轉帳被執行則接收代幣。",
+  "fn.orderTransferFrom.params.value": "要轉帳的金額；不得超過付款方的餘額。",
+  "fn.orderTransferFrom.returns.success": "當可清算轉帳成功下單時回傳 true。",
+
+  "fn.cancelTransfer.desc": "取消一筆已下單的可清算轉帳。只有下單方可以取消自己的訂單，且只能在清算代理將其移入 InProcess 狀態之前取消。",
+  "fn.cancelTransfer.params.operationId": "用於標識該可清算轉帳的唯一 ID。",
+  "fn.cancelTransfer.returns.success": "當可清算轉帳成功取消時回傳 true。",
+
+  "fn.processClearableTransfer.desc": "將一筆已下單的轉帳移入 InProcess 狀態，表示審查正在進行，並阻止下單方取消它。只有清算代理才能成功呼叫它。",
+  "fn.processClearableTransfer.params.operationId": "用於標識該可清算轉帳的唯一 ID。",
+  "fn.processClearableTransfer.returns.success": "當轉帳進入 InProcess 狀態時回傳 true。",
+
+  "fn.executeClearableTransfer.desc": "執行一筆可清算轉帳，將預留的代幣從付款方轉移給收款方。只有清算代理才能成功呼叫它。",
+  "fn.executeClearableTransfer.params.operationId": "用於標識該可清算轉帳的唯一 ID。",
+  "fn.executeClearableTransfer.returns.success": "當可清算轉帳成功執行時回傳 true。",
+
+  "fn.rejectClearableTransfer.desc": "拒絕一筆可清算轉帳，將預留的代幣釋放回付款方，不發生任何轉移。只有清算代理可以呼叫它，並且它會記錄拒絕的原因。",
+  "fn.rejectClearableTransfer.params.operationId": "用於標識該可清算轉帳的唯一 ID。",
+  "fn.rejectClearableTransfer.params.reason": "清算代理給出的、可供人閱讀的拒絕該轉帳的原因。",
+  "fn.rejectClearableTransfer.returns.success": "當可清算轉帳成功拒絕時回傳 true。",
+
+  "fn.retrieveClearableTransferData.desc": "回傳一筆可清算轉帳的所有儲存資訊，包括其付款方、收款方、金額和目前狀態碼。",
+  "fn.retrieveClearableTransferData.params.operationId": "用於標識該可清算轉帳的唯一 ID。",
+  "fn.retrieveClearableTransferData.returns.from": "該可清算轉帳的付款方地址。",
+  "fn.retrieveClearableTransferData.returns.to": "該可清算轉帳的收款方地址。",
+  "fn.retrieveClearableTransferData.returns.value": "若訂單被執行時將轉帳的金額。",
+  "fn.retrieveClearableTransferData.returns.status": "該可清算轉帳的目前狀態碼。",
+
+  "fn.ClearableTransferOrdered.desc": "在下達一筆可清算轉帳時發出，記錄其下單方、付款方、收款方和金額。",
+  "fn.ClearableTransferOrdered.params.orderer": "下達該可清算轉帳的帳戶。",
+  "fn.ClearableTransferOrdered.params.operationId": "用於標識該可清算轉帳的唯一 ID。",
+  "fn.ClearableTransferOrdered.params.from": "代幣被預留的付款方。",
+  "fn.ClearableTransferOrdered.params.to": "若執行則接收代幣的收款方。",
+  "fn.ClearableTransferOrdered.params.value": "若執行則將轉帳的金額。",
+
+  "fn.ClearableTransferExecuted.desc": "在清算代理執行一筆可清算轉帳、代幣轉移給收款方時發出。",
+  "fn.ClearableTransferExecuted.params.orderer": "下達該可清算轉帳的帳戶。",
+  "fn.ClearableTransferExecuted.params.operationId": "用於標識該可清算轉帳的唯一 ID。",
+
+  "fn.ClearableTransferRejected.desc": "在清算代理拒絕一筆可清算轉帳時發出，攜帶拒絕的原因。",
+  "fn.ClearableTransferRejected.params.orderer": "下達該可清算轉帳的帳戶。",
+  "fn.ClearableTransferRejected.params.operationId": "用於標識該可清算轉帳的唯一 ID。",
+  "fn.ClearableTransferRejected.params.reason": "清算代理給出的拒絕原因。",
+
+  "node.user": "下單方",
+  "node.clearingAgent": "清算代理",
+  "node.contract": "ERC-2018 代幣",
+  "node.storageClearableTransfers": "可清算轉帳",
+  "node.payee": "收款方",
+
+  "edge.callOrderTransfer": "呼叫 orderTransfer()",
+  "edge.callExecute": "呼叫 executeClearableTransfer()",
+  "edge.updateTransfers": "記錄訂單並預留餘額",
+  "edge.transferTokens": "轉移預留的代幣",
+  "edge.emitExecuted": "發出 ClearableTransferExecuted 事件",
+
+  "sim.orderTransferWalkthrough.name": "下單與執行演練",
+  "sim.orderTransferWalkthrough.desc": "跟隨一筆可清算轉帳，從付款方下達訂單，到清算代理執行，再到最終代幣轉移給收款方的全過程。",
+  "sim.orderTransferWalkthrough.param.operationId": "操作 ID",
+  "sim.orderTransferWalkthrough.param.to": "收款方地址",
+  "sim.orderTransferWalkthrough.param.value": "轉帳金額（以 wei 計）",
+  "sim.orderTransferWalkthrough.step.order": "下單方呼叫 orderTransfer(operationId, to, value)，請求向收款方轉帳。",
+  "sim.orderTransferWalkthrough.step.order.mobile": "呼叫 orderTransfer()",
+  "sim.orderTransferWalkthrough.step.record": "合約記錄這筆新的可清算轉帳，並從付款方餘額中預留相應金額，使其在等待清算代理期間無法被用於別處。",
+  "sim.orderTransferWalkthrough.step.record.mobile": "預留餘額",
+  "sim.orderTransferWalkthrough.step.execute": "清算代理呼叫 executeClearableTransfer，合約將預留的代幣從付款方轉移給收款方。",
+  "sim.orderTransferWalkthrough.step.execute.mobile": "代理執行轉帳",
+  "sim.orderTransferWalkthrough.step.event": "合約發出 ClearableTransferExecuted，以便索引器記錄該轉帳已結算。",
+  "sim.orderTransferWalkthrough.step.event.mobile": "發出 Executed 事件"
+}

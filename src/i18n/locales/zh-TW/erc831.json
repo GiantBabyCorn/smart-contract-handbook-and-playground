@@ -1,0 +1,32 @@
+{
+  "short": "以太坊的 URI 格式",
+  "introduction": "ERC-831 為以太坊定義了一種 URI 格式，它使用 ethereum: 或 eth: 方案作為容器，用於向使用者的錢包傳遞請求訊號。該提案由 ligi 於 2018 年 1 月提出。URI 採用 ethereum:[prefix-]payload 的形式：可選的前綴指明用例，載荷則承載其資料。若省略前綴，則預設為 pay-，以相容 EIP-67。注意：ERC-831 處於 Stagnant 狀態——它已有 6 個月以上未活動，可能永遠不會最終定案，但在歷史或技術上仍具重要意義。",
+  "designPurpose": "ERC-831 的設計目標是讓 ethereum: 方案對多種用例保持開放，而非將其綁定到單一用例。這一需求源於 EIP-681 的完善過程：當時希望有一個不承載任何單一用例分量的容器。ERC-831 並未將整個方案保留給當時已存在的支付用例，而是把 URI 拆分為一個指明用例的可選前綴，以及一個由各用例 ERC 自行定義結構的載荷，從而讓新前綴能在日後加入，而不會阻塞該方案。",
+  "commonUsage": "這種 URI 格式被錢包、dapp 與 QR code 產生器所使用，它們透過超連結、QR code、電子郵件或聊天訊息在鬆耦合的應用之間傳遞請求，因此單一連結就能喚起使用者偏好的錢包。由 pay- 前綴承載並在 EIP-681 中詳述的支付用例，是規範所舉的範例；其他用例 ERC 可以在同一方案上註冊額外的前綴。由於 ERC-831 僅定義了容器，它成為以太坊請求的共用入口。",
+
+  "node.requester": "請求發起者",
+  "node.uriBuilder": "URI 編碼器",
+  "node.ethereumUri": "Ethereum URI",
+  "node.wallet": "錢包解析器",
+  "node.useCaseHandler": "用例處理器",
+  "node.user": "錢包使用者",
+
+  "edge.composeRequest": "撰寫請求",
+  "edge.encodeUri": "編碼 ethereum: URI",
+  "edge.openUri": "掃描或開啟連結",
+  "edge.routePrefix": "依前綴路由",
+  "edge.presentAction": "呈現動作",
+
+  "sim.uriRoutingWalkthrough.name": "URI 路由演練",
+  "sim.uriRoutingWalkthrough.desc": "跟隨一個請求從 ethereum: URI 經過錢包的前綴路由，抵達相符的用例處理器。",
+  "sim.uriRoutingWalkthrough.param.prefix": "用例前綴",
+  "sim.uriRoutingWalkthrough.param.target": "目標地址",
+  "sim.uriRoutingWalkthrough.step.compose": "dapp 或收款方撰寫一個請求，選擇用例前綴以及需要傳達的載荷資料。",
+  "sim.uriRoutingWalkthrough.step.compose.mobile": "撰寫請求",
+  "sim.uriRoutingWalkthrough.step.encode": "該請求被編碼為一個 ethereum: URI，包含方案、可選前綴與載荷，可以嵌入 QR code 或連結中。",
+  "sim.uriRoutingWalkthrough.step.encode.mobile": "編碼 URI",
+  "sim.uriRoutingWalkthrough.step.open": "使用者掃描或開啟連結；其錢包辨識 ethereum: 方案，並讀取前綴與載荷。",
+  "sim.uriRoutingWalkthrough.step.open.mobile": "開啟連結",
+  "sim.uriRoutingWalkthrough.step.route": "錢包依 pay- 前綴路由到 EIP-681 處理器，後者解析載荷並呈現最終動作供使用者確認。",
+  "sim.uriRoutingWalkthrough.step.route.mobile": "依前綴路由"
+}

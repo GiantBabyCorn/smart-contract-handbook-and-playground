@@ -1,0 +1,75 @@
+{
+  "short": "汎用データキー・バリューストアと実行",
+  "introduction": "ERC-725はスマートコントラクトアカウントのための2つの構成要素を定義します。bytes32のキーを任意のbytes値にマッピングするキー・バリューデータストア（ERC725Y）と、他のコントラクトの呼び出し・作成・delegatecallを行う汎用実行関数（ERC725X）です。2017年10月にFabian VogelstellerとTyler Yasakaによって提案されました。両方の部分はERC-173を通じて所有者によって制御され、一緒にも別々にも使用できます。注：ERC-725はDraftであり、仕様は現在も活発に開発が進められており、大幅に変更される可能性があります。",
+  "designPurpose": "ERC-725は、スマートコントラクトアカウントに、長期的に使い続けられるほど柔軟でありながら、ツールが依拠できるほど標準化されたデータと実行のレイアウトを与えるために設計されました。それ以前は、各プロジェクトが独自のストレージ変数と実行エントリポイントを考案していたため、外部コントラクトやオフチェーンアプリがそれらを統一的に読み取ったり操作したりすることができませんでした。すべてのデータを1つのmapping(bytes32 => bytes)の下に保持し、外向きのアクションを単一のexecute関数を通じてルーティングすることで、プロトコルはインターフェースを変更することなくそのデータを再解釈できます。",
+  "commonUsage": "ERC-725は、モジュール式のスマートコントラクトアカウントや、アップグレード可能なオンチェーンメタデータの基盤として機能します。そのERC725Yストアは、NFT、トークン、その他のコントラクトに変更可能なメタデータを付与するために単独で使用され、ERC725Xはユーザーに代わって動作するアカウント型コントラクトに汎用的なexecuteエントリポイントを提供します。仕様では、アカウント形式はLSP0-ERC725Accountとして標準化され、LSP2-ERC725JSONSchemaがキーと値のエンコード方法を定義していると述べられています。",
+
+  "fn.execute.desc": "アカウントから単一の操作を実行します。operationTypeによって選択される、call、CREATEまたはCREATE2によるコントラクト作成、staticcall、またはdelegatecallのいずれかです。現在の所有者のみが呼び出すことができ、操作が失敗した場合はリバートします。",
+  "fn.execute.params.operationType": "実行する操作タイプ：CALLは0、CREATEは1、CREATE2は2、STATICCALLは3、DELEGATECALLは4です。",
+  "fn.execute.params.target": "呼び出すコントラクトまたはアドレス。コントラクトを作成する場合はaddress(0)にする必要があります。",
+  "fn.execute.params.value": "転送するネイティブトークンの量。wei単位です。",
+  "fn.execute.params.data": "コールデータ、またはコントラクトをデプロイする場合は作成バイトコードです。",
+  "fn.execute.returns.returnData": "呼び出された関数が返したデータ、またはデプロイされたコントラクトのアドレスです。",
+
+  "fn.executeBatch.desc": "1つのトランザクションで一連の操作を実行し、長さの等しい操作タイプ、ターゲット、値、コールデータの配列を受け取ります。所有者のみが呼び出すことができ、いずれかの操作が失敗した場合はリバートします。",
+  "fn.executeBatch.params.operationsType": "各呼び出しで実行する操作タイプのリストです。",
+  "fn.executeBatch.params.targets": "各操作で呼び出すアドレスのリストです。",
+  "fn.executeBatch.params.values": "転送するネイティブトークンの量のリスト。wei単位です。",
+  "fn.executeBatch.params.datas": "コールデータまたはコントラクト作成バイトコードのリストです。",
+  "fn.executeBatch.returns.results": "返されたデータまたはデプロイされたコントラクトアドレスの配列です。",
+
+  "fn.getData.desc": "ERC725Yストア内の単一のデータキーに格納されたbytes値を返します。任意の呼び出し元が読み取ることができます。",
+  "fn.getData.params.dataKey": "値を取得するデータキーです。",
+  "fn.getData.returns.dataValue": "要求されたデータキーに格納されているbytes値です。",
+
+  "fn.getDataBatch.desc": "1回の呼び出しで複数のデータキーに格納された値を返し、一括読み取りのgasコストを低く抑えます。",
+  "fn.getDataBatch.params.dataKeys": "値を取得するデータキーのリストです。",
+  "fn.getDataBatch.returns.dataValues": "要求されたデータキーに対応するbytes値の配列です。",
+
+  "fn.setData.desc": "ERC725Yストア内の単一のデータキーにbytes値を格納し、以前の値を上書きします。所有者のみが呼び出すことができ、DataChangedを発行します。",
+  "fn.setData.params.dataKey": "値を設定するデータキーです。",
+  "fn.setData.params.dataValue": "格納するbytes値です。",
+
+  "fn.setDataBatch.desc": "1回の呼び出しで複数のデータキーに値を格納し、長さの等しいキーと値の配列を受け取ります。所有者のみが呼び出すことができ、各キーについてDataChangedを発行します。",
+  "fn.setDataBatch.params.dataKeys": "値を設定するデータキーのリストです。",
+  "fn.setDataBatch.params.dataValues": "格納するbytes値のリストです。",
+
+  "fn.Executed.desc": "executeがCALL、STATICCALL、またはDELEGATECALL（操作タイプ0、3、4）を実行したときに発行されます。",
+  "fn.Executed.params.operationType": "実行された操作タイプです。",
+  "fn.Executed.params.target": "呼び出されたアドレスです。",
+  "fn.Executed.params.value": "送信されたネイティブトークンの量。wei単位です。",
+  "fn.Executed.params.data": "コールデータの最初の4バイトで、通常は関数セレクタです。",
+
+  "fn.ContractCreated.desc": "executeがCREATEまたはCREATE2（操作タイプ1、2）を介して新しいコントラクトをデプロイしたときに発行されます。",
+  "fn.ContractCreated.params.operationType": "コントラクトのデプロイに使用された操作タイプです。",
+  "fn.ContractCreated.params.contractAddress": "新しくデプロイされたコントラクトのアドレスです。",
+  "fn.ContractCreated.params.value": "新しいコントラクトに送信されたネイティブトークンの量。wei単位です。",
+  "fn.ContractCreated.params.salt": "CREATE2デプロイに使用されたbytes32のsaltです。",
+
+  "fn.DataChanged.desc": "ERC725Yストアでデータキーの値が正常に設定されるたびに発行されます。",
+  "fn.DataChanged.params.dataKey": "値が変更されたデータキーです。",
+  "fn.DataChanged.params.dataValue": "そのキーに格納された新しいbytes値です。",
+
+  "node.user": "アカウント所有者",
+  "node.contract": "ERC-725アカウント",
+  "node.storageData": "データストア",
+  "node.target": "ターゲットコントラクト",
+
+  "edge.callExecute": "execute()を呼び出す",
+  "edge.callSetData": "setData()を呼び出す",
+  "edge.forwardCall": "呼び出しを転送",
+  "edge.updateStore": "データストアを更新",
+  "edge.emitExecuted": "Executedイベントを発行",
+  "edge.emitDataChanged": "DataChangedイベントを発行",
+
+  "sim.setDataWalkthrough.name": "setDataウォークスルー",
+  "sim.setDataWalkthrough.desc": "所有者からのsetData呼び出しを、ERC725Yデータストアを経てDataChangedイベントまで追跡します。",
+  "sim.setDataWalkthrough.param.dataKey": "データキー",
+  "sim.setDataWalkthrough.param.dataValue": "データ値",
+  "sim.setDataWalkthrough.step.call": "所有者がERC-725アカウント上でsetData(dataKey, dataValue)を呼び出し、値を格納します。",
+  "sim.setDataWalkthrough.step.call.mobile": "setData()を呼び出す",
+  "sim.setDataWalkthrough.step.execute": "コントラクトは呼び出し元が所有者であることを確認し、その値をbytes32からbytesへのデータストアに書き込み、そのキーの以前の値を上書きします。",
+  "sim.setDataWalkthrough.step.execute.mobile": "データストアに書き込む",
+  "sim.setDataWalkthrough.step.event": "コントラクトがDataChanged(dataKey, dataValue)を発行し、インデクサーやオフチェーンアプリが更新を追跡できるようにします。",
+  "sim.setDataWalkthrough.step.event.mobile": "DataChangedイベントを発行"
+}

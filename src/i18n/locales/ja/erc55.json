@@ -1,0 +1,32 @@
+{
+  "short": "大文字小文字混在チェックサムアドレスエンコーディング",
+  "introduction": "ERC-55 は、Ethereum アドレスの後方互換なチェックサムを定義し、エラー検出ビットを 16 進数字の英字の大文字・小文字に符号化します。この方式は 2016 年 1 月に Vitalik Buterin と Alex Van de Sande によって提案されました。アドレスはまず 40 文字の小文字 16 進形式に変換され、ASCII 文字列として Keccak-256 でハッシュ化されます。各 16 進の英字は、ハッシュ内の対応するニブルが 8 以上のときに大文字化され、それ以外は小文字のままになります。10 進数字は変化しないため、アドレスは長さを保ちながら約 15 個のチェックビットを追加します。",
+  "designPurpose": "ERC-55 は、長さを変えたり既存のツールを壊したりせずに、誤入力された Ethereum アドレスを検出するために設計されました。素の 16 進アドレスには冗長性がないため、1 文字が変わっただけでも別の一見正しく見えるアドレスになり、資金が失われる可能性があります。ERC-55 はチェックサムを付加する代わりに、a-f の英字の大文字・小文字を 1 文字ごとのチェックとして再利用します。ほとんどのパーサーは大文字・小文字混在の 16 進を受け入れるため、チェックサム付きアドレスは古いソフトウェアでも動作し、対応するクライアントは大文字・小文字がハッシュと一致しないアドレスを拒否します。",
+  "commonUsage": "大文字・小文字混在のチェックサムは、Ethereum アドレスが人に表示されるほぼすべての場所に現れます。ウォレット、ブロックエクスプローラー、web3.js や ethers.js などのライブラリは、この形式でアドレスを表示・検証します。このエンコーディングはアドレスの純粋な関数であるため、オンチェーンのコントラクトやストレージを必要とせず、ソフトウェアはアドレスを表示するときにそれを適用し、大文字・小文字がチェックに失敗した場合は警告または拒否します。仕様の全大文字、全小文字、通常のテストベクターは、実装の検証によく使われます。",
+
+  "node.user": "アドレスソース",
+  "node.encoder": "チェックサムエンコーダー",
+  "node.storageHash": "Keccak-256 ハッシュ",
+  "node.storageResult": "チェックサム付きアドレス",
+  "node.verifier": "チェックサム検証器",
+  "node.consumer": "検証ウォレット",
+
+  "edge.submitAddress": "小文字アドレスを送信",
+  "edge.hashAddress": "小文字 16 進をハッシュ化",
+  "edge.applyCasing": "英字の大文字・小文字を適用",
+  "edge.readHash": "ハッシュビットを読み取り",
+  "edge.checkChecksum": "大文字・小文字を確認",
+  "edge.deliverAddress": "検証済みアドレスを引き渡し",
+
+  "sim.checksumWalkthrough.name": "チェックサムエンコーディングの手順",
+  "sim.checksumWalkthrough.desc": "小文字アドレスを追い、エンコーダーがそれをハッシュ化し、ERC-55 の英字の大文字・小文字を適用し、クライアントが結果を検証する様子を確認します。",
+  "sim.checksumWalkthrough.param.address": "小文字アドレス",
+  "sim.checksumWalkthrough.step.submit": "ウォレットまたはアプリケーションが、素の小文字 16 進アドレスをチェックサムエンコーダーに送信します。",
+  "sim.checksumWalkthrough.step.submit.mobile": "アドレスを送信",
+  "sim.checksumWalkthrough.step.hash": "エンコーダーは 40 文字の 16 進アドレスを ASCII として扱い、その Keccak-256 ハッシュを計算します。これが大文字・小文字のビットを供給します。",
+  "sim.checksumWalkthrough.step.hash.mobile": "小文字 16 進をハッシュ化",
+  "sim.checksumWalkthrough.step.case": "各 16 進の英字は、対応するハッシュのニブルが 8 以上のときに大文字化され、それ以外は小文字のままとなり、大文字・小文字混在のアドレスが生成されます。",
+  "sim.checksumWalkthrough.step.case.mobile": "英字の大文字・小文字を適用",
+  "sim.checksumWalkthrough.step.verify": "検証を行うクライアントは、ハッシュから大文字・小文字を再導出して比較し、すべての英字が一致した場合にのみアドレスを受け入れます。",
+  "sim.checksumWalkthrough.step.verify.mobile": "チェックサムを検証"
+}

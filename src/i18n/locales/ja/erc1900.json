@@ -1,0 +1,64 @@
+{
+  "short": "EVM 向けの分散化された型システム",
+  "introduction": "ERC-1900 は dType を定義します。これは Ethereum 上で Solidity の構造体から再利用可能なデータ型を宣言するためのオンチェーンレジストリおよび共通インターフェースです。この提案は 2019 年 3 月に Loredana Cirstea と Christian Tzurcanu によって提案されました。各型は ABI メタデータとともに保存され、その名前の keccak256 として計算される識別子をキーとするため、ツールとコントラクトが一貫した型定義を共有できます。注意：ERC-1900 は Stagnant（停滞）状態です。6 か月以上活動がなく、最終化されない可能性がありますが、歴史的または技術的に重要な意味を持ち続けています。",
+  "designPurpose": "dType は、すべてのプロジェクトが同じ構造体をそれぞれ個別に再定義するのではなく、Ethereum にデータ型の共有語彙を与えることを目的として設計されました。共通のレジストリがなければ、オンチェーンデータはプロトコル間をスムーズに流通できず、ブロックエクスプローラーのようなオフチェーンツールは任意の構造をデコードできません。各型の ABI メタデータを決定論的な識別子のもとでオンチェーンに記録することで、dType はコントラクトが既存の定義を参照できるようにし、ツールがそのコレクションをキャッシュして検索できるようにします。",
+  "commonUsage": "dType は、機械可読な型定義を必要とするインフラを対象としています。トランザクションの副作用をデコードするブロックエクスプローラー、型付きコントラクトを自動補完するエディタプラグイン、共有データモデル上で相互運用するプロトコルなどです。この提案は dType を後続の拡張の基盤レイヤーとして位置づけています。すなわち、データストレージを備えた型システム（ERC-2158）や、各型に対する pure 関数のライブラリです。Final 状態に到達しなかったため、ERC-1900 は本番環境での採用ではなく、リファレンス実装の作業にとどまりました。",
+
+  "fn.insert.desc": "dType のメタデータ構造体をレジストリに保存することで、新しい型を登録します。型名の keccak256 として計算される識別子を返し、LogNew イベントを発行します。",
+  "fn.insert.params.data": "型を記述する dType のメタデータ構造体：その typeChoice、コントラクトアドレス、Swarm ソースハッシュ、名前、サブタイプを含みます。",
+  "fn.insert.returns.identifier": "その型の主要な識別子であり、名前の keccak256 です。",
+
+  "fn.remove.desc": "指定された識別子を持つ型レコードを削除し、そのストレージスロットを解放します。仕様では、この関数は任意であり、不変性を保証するために省略してもよいとされています。",
+  "fn.remove.params.identifier": "削除する型の識別子。",
+  "fn.remove.returns.index": "削除されたレコードが占めていた配列インデックス。",
+
+  "fn.count.desc": "現在登録されている型の数を返します。",
+  "fn.count.returns.counter": "登録されている型の総数。",
+
+  "fn.getTypeIdentifier.desc": "ストレージに触れることなく、パックされた名前の keccak256 として型名の識別子を計算します。呼び出し元はこれを使って他のルックアップ用のキーを導出します。",
+  "fn.getTypeIdentifier.params.name": "Solidity で記述された型名。",
+  "fn.getTypeIdentifier.returns.identifier": "名前から導出された識別子。",
+
+  "fn.getByIdentifier.desc": "指定された識別子のもとに保存されている完全な dType のメタデータ構造体を返します。",
+  "fn.getByIdentifier.params.identifier": "取得する型の識別子。",
+  "fn.getByIdentifier.returns.dtype": "保存されている dType のメタデータ構造体。",
+
+  "fn.get.desc": "名前で検索された型の dType メタデータ構造体を返し、識別子を内部で解決します。",
+  "fn.get.params.name": "検索する型名。",
+  "fn.get.returns.dtype": "保存されている dType のメタデータ構造体。",
+
+  "fn.isRegistered.desc": "指定された識別子を持つ型がレジストリに存在するかどうかを報告します。",
+  "fn.isRegistered.params.identifier": "確認する識別子。",
+  "fn.isRegistered.returns.registered": "その識別子を持つ型が登録されている場合は true。",
+
+  "fn.LogNew.desc": "新しい型がレジストリに挿入されたときに発行されます。",
+  "fn.LogNew.params.identifier": "新しく登録された型の識別子。",
+  "fn.LogNew.params.index": "レジストリの識別子配列における型のインデックス。",
+
+  "fn.LogUpdate.desc": "既存の型レコードが更新されたときに発行されます。",
+  "fn.LogUpdate.params.identifier": "更新された型の識別子。",
+  "fn.LogUpdate.params.index": "レジストリの識別子配列における型のインデックス。",
+
+  "fn.LogRemove.desc": "型レコードがレジストリから削除されたときに発行されます。",
+  "fn.LogRemove.params.identifier": "削除された型の識別子。",
+  "fn.LogRemove.params.index": "削除された型が識別子配列で占めていたインデックス。",
+
+  "node.user": "型の作成者",
+  "node.contract": "dType レジストリ",
+  "node.storageTypes": "型ストレージ",
+
+  "edge.callInsert": "insert()を呼び出す",
+  "edge.updateTypes": "型レコードを保存",
+  "edge.emitLogNew": "LogNewイベントを発行",
+
+  "sim.insertWalkthrough.name": "型の登録ウォークスルー",
+  "sim.insertWalkthrough.desc": "insert の呼び出しを、作成者からレジストリのストレージを経て LogNew イベントまで追跡します。",
+  "sim.insertWalkthrough.param.name": "型名",
+  "sim.insertWalkthrough.param.typeChoice": "型の選択",
+  "sim.insertWalkthrough.step.call": "作成者は、登録する型を記述する dType 構造体を指定して insert(data) を呼び出します。",
+  "sim.insertWalkthrough.step.call.mobile": "insert()を呼び出す",
+  "sim.insertWalkthrough.step.execute": "レジストリは identifier = keccak256(name) を導出し、レコードを typeStruct マッピングに書き込み、typeIndex 配列に追加します。",
+  "sim.insertWalkthrough.step.execute.mobile": "型レコードを保存",
+  "sim.insertWalkthrough.step.event": "レジストリは LogNew(identifier, index) を発行し、オフチェーンのインデクサーが新しい型を追跡できるようにします。",
+  "sim.insertWalkthrough.step.event.mobile": "LogNewイベントを発行"
+}

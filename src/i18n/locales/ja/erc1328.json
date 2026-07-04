@@ -1,0 +1,32 @@
+{
+  "short": "WalletConnect URI フォーマット",
+  "introduction": "ERC-1328 は、アプリケーションとウォレットの間の接続を確立するために必要なデータをエンコードするための URI フォーマットを定義します。これは 2018 年 8 月に ligi と Pedro Gomes によって提案されました。リクエストは wc スキームに続いてトピック文字列、@ で区切られたバージョン番号、そしてパラメータのクエリ文字列を使用します。v1 の URI は bridge URL と対称鍵を運び、v2 の URI は symKey と relay-protocol を運びます。ペイロードが JSON ではなくコンパクトな URI であるため、QR コードまたはリンクとして表示でき、ウォレットが効率的に解析できます。",
+  "designPurpose": "ERC-1328 は、WalletConnect プロトコルのアルファ版で使用されていた JSON ペイロードを置き換えるために設計されました。このペイロードは QR コードからの解析が非効率でした。接続データを代わりに URI としてエンコードすることで、この標準は QR コードスキャナーやディープリンクハンドラーが直接読み取れるコンパクトで曖昧さのない文字列をウォレットに提供し、Android の intent システムがリンクをウォレットにルーティングできるようにします。必須のバージョンセグメントにより、後方互換性を保ちながらプロトコルのバージョン間でパラメータセットを変更できます。",
+  "commonUsage": "このフォーマットは、モバイルウォレットとアプリケーションをペアリングするために WalletConnect プロトコルで使用されます。dApp が URI を QR コードとして表示し、ウォレットがそれをスキャンまたは開いて共有セッションパラメータを導出します。バージョン 1 の URI は bridge URL と暗号鍵を提供し、バージョン 2 の URI はペアリングトピック用のリレープロトコルと対称鍵、さらにオプションの有効期限タイムスタンプを提供します。エコシステム全体のウォレット SDK、dApp コネクタライブラリ、QR コードコンポーネントがこの URI を解析して暗号化されたセッションをブートストラップします。",
+
+  "node.dapp": "リクエスト元アプリケーション",
+  "node.uriBuilder": "URI エンコーダー",
+  "node.connectionUri": "WalletConnect URI",
+  "node.wallet": "ウォレット",
+  "node.walletUser": "ウォレットユーザー",
+  "node.pairing": "ペアリングセッション",
+
+  "edge.buildRequest": "接続リクエストを構築",
+  "edge.encodeUri": "wc: URI をエンコード",
+  "edge.scanUri": "リンクをスキャンまたは開く",
+  "edge.approve": "ペアリングを承認",
+  "edge.establish": "共有セッションを導出",
+
+  "sim.connectionUriWalkthrough.name": "接続 URI ウォークスルー",
+  "sim.connectionUriWalkthrough.desc": "WalletConnect URI が dApp から QR スキャンを経てペアリングセッションの確立に至るまでを追跡します。",
+  "sim.connectionUriWalkthrough.param.version": "プロトコルバージョン",
+  "sim.connectionUriWalkthrough.param.expiryTimestamp": "ペアリングの有効期限（unix 時間）",
+  "sim.connectionUriWalkthrough.step.build": "アプリケーションは接続リクエストを作成し、使用する WalletConnect プロトコルのバージョンを選択します。",
+  "sim.connectionUriWalkthrough.step.build.mobile": "リクエストを構築",
+  "sim.connectionUriWalkthrough.step.encode": "トピック、バージョン、パラメータは wc: URI にエンコードされ、QR コードまたはリンクとして表示できます。",
+  "sim.connectionUriWalkthrough.step.encode.mobile": "wc: URI をエンコード",
+  "sim.connectionUriWalkthrough.step.scan": "ウォレットユーザーが URI をスキャンまたは開くと、ウォレットはペアリングを承認する前にトピック、バージョン、接続パラメータを解析します。",
+  "sim.connectionUriWalkthrough.step.scan.mobile": "スキャンして承認",
+  "sim.connectionUriWalkthrough.step.pair": "ウォレットは URI から共有暗号鍵とリレー設定を導出し、アプリケーションとのペアリングセッションを確立します。",
+  "sim.connectionUriWalkthrough.step.pair.mobile": "ペアリングを確立"
+}

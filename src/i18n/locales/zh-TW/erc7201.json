@@ -1,0 +1,30 @@
+{
+  "short": "命名空間儲存佈局",
+  "introduction": "ERC-7201 定義了一種慣例，將合約儲存佈局在彼此隔離的命名空間中，而非預設的順序佈局。該標準由 Francisco Giordano、Hadrien Croubois、Ernesto García 與 Eric Lau 於 2023 年 6 月提出。每個命名空間都是一個帶有 @custom:storage-location 註解的 Solidity 結構體，其根位於 erc7201(id) = keccak256(keccak256(id) - 1) & ~0xff，這個槽位經過刻意選擇，使其不會與 Solidity 或 Vyper 的預設儲存樹重疊，因此多個命名空間可以共存而不發生衝突。",
+  "designPurpose": "ERC-7201 的設計目標是讓模組化與可升級合約所使用的分散儲存位置變得可預測且安全。Solidity 與 Vyper 從 slot 0 開始順序分配儲存，因此透過 delegatecall 共享儲存、或在升級過程中增長的合約，可能會移動或與現有槽位發生衝突。透過標準化 erc7201 公式與 @custom:storage-location 註解，每個命名空間都獲得一個互不相交的根，以及一份工具可以解讀的機器可讀宣告。",
+  "commonUsage": "命名空間儲存被可升級合約框架以及圍繞 delegatecall 建構的合約所採用。OpenZeppelin 的可升級函式庫採用了這一模式，使得新的狀態可以跨版本新增而不擾亂現有槽位；鑽石模式（ERC-2535）為每個切面賦予各自的命名空間，使共享同一代理的切面不會發生衝突。由於 Solidity 編譯器從 0.8.20 版本起會將該註解記錄在其 AST 中，工具便能定位到原本不可見的命名空間資料。",
+
+  "node.developer": "合約開發者",
+  "node.struct": "命名空間結構體",
+  "node.storageNamespace": "命名空間儲存",
+  "node.storageDefault": "預設儲存樹",
+  "node.tooling": "工具與區塊瀏覽器",
+
+  "edge.declareNamespace": "宣告命名空間",
+  "edge.deriveRoot": "對命名空間 id 進行雜湊",
+  "edge.rootAt": "根植於計算出的槽位",
+  "edge.disjointFrom": "與預設樹互不相交",
+  "edge.exposeLayout": "揭露佈局",
+
+  "sim.deriveNamespaceWalkthrough.name": "推導儲存命名空間",
+  "sim.deriveNamespaceWalkthrough.desc": "跟隨一個命名空間 id，從它的 @custom:storage-location 註解出發，經過 erc7201 公式，抵達它隔離的儲存根。",
+  "sim.deriveNamespaceWalkthrough.param.namespaceId": "命名空間 id",
+  "sim.deriveNamespaceWalkthrough.step.declare": "開發者宣告一個帶有 @custom:storage-location erc7201:example.main 註解的結構體，以將其標記為一個命名空間。",
+  "sim.deriveNamespaceWalkthrough.step.declare.mobile": "宣告命名空間",
+  "sim.deriveNamespaceWalkthrough.step.derive": "erc7201 公式對命名空間 id 進行兩次雜湊，計算出 keccak256(keccak256(id) - 1) & ~0xff 作為根槽位。",
+  "sim.deriveNamespaceWalkthrough.step.derive.mobile": "雜湊 id 得到根槽位",
+  "sim.deriveNamespaceWalkthrough.step.root": "結構體的欄位從計算出的根槽位開始順序佈局，遵循與預設佈局相同的規則，但其根遠離 slot 0。",
+  "sim.deriveNamespaceWalkthrough.step.root.mobile": "在根處佈局",
+  "sim.deriveNamespaceWalkthrough.step.isolate": "該命名空間佔據自己的儲存樹，與 Solidity 的預設佈局互不相交，而該註解讓瀏覽器能夠定位到它。",
+  "sim.deriveNamespaceWalkthrough.step.isolate.mobile": "與預設儲存隔離"
+}

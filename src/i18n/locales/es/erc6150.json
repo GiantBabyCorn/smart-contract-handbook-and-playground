@@ -1,0 +1,52 @@
+{
+  "short": "NFT jerárquicos tipo sistema de archivos",
+  "introduction": "ERC-6150 define una extensión de ERC-721 que organiza los NFT en una jerarquía similar a un sistema de archivos, donde cada token es un nodo con un padre y cualquier cantidad de hijos. Fue propuesto por Keegan Lee, msfew, Kartin y qizhou en diciembre de 2022. El ID de token cero significa que no hay padre, por lo que todo nodo real tiene un ID mayor que cero y una raíz informa un padre de cero. La interfaz añade funciones de lectura para el padre y los hijos de un nodo y para comprobar si es una raíz o una hoja, además de un evento Minted que marca cada nodo nuevo.",
+  "designPurpose": "ERC-6150 se diseñó para llevar datos con estructura de árbol a la cadena a través de un único contrato, en lugar de los punteros de padre improvisados o los registros paralelos que las aplicaciones añadían sobre ERC-721. Las jerarquías son comunes en los sistemas de archivos y en los árboles de categorías de sitios como eBay o Reddit, pero los NFT simples no expresan ninguna relación entre tokens. Al estandarizar el evento Minted y las consultas parentOf, childrenOf, isRoot e isLeaf, el diseño mantiene el árbol en la cadena para que cualquier front-end lo recorra sin permisos.",
+  "commonUsage": "ERC-6150 está dirigido a aplicaciones cuyos datos tienen forma de árbol de manera natural: foros on-chain como Reddit, feeds sociales organizados en listas, organigramas de empresas on-chain y árboles de categorías de comercio electrónico como el de eBay. Como cada directorio o categoría es en sí mismo un NFT, la propiedad de una rama puede transferirse o ser gobernada por una DAO. La especificación define extensiones opcionales para enumerar hijos, quemar nodos hoja, reasignar el padre de un nodo y control de acceso por nodo, de modo que quienes implementan añaden solo lo que necesitan.",
+
+  "fn.parentOf.desc": "Devuelve el token padre del nodo dado. Un nodo raíz devuelve cero, ya que el ID de token cero está reservado para indicar que el token no tiene padre.",
+  "fn.parentOf.params.tokenId": "El token hijo cuyo padre se consulta.",
+  "fn.parentOf.returns.parentId": "El ID del token padre, o cero cuando el nodo es una raíz.",
+
+  "fn.childrenOf.desc": "Devuelve el arreglo de tokens hijos directamente bajo el nodo dado. Un nodo hoja devuelve un arreglo vacío.",
+  "fn.childrenOf.params.tokenId": "El token padre cuyos hijos directos se enumeran.",
+  "fn.childrenOf.returns.childrenIds": "Los ID de los tokens cuyo padre es tokenId.",
+
+  "fn.isRoot.desc": "Devuelve true cuando el token dado es un nodo raíz, es decir, no tiene padre. Las raíces son las entradas de nivel superior de la jerarquía.",
+  "fn.isRoot.params.tokenId": "El token que se comprueba.",
+  "fn.isRoot.returns.root": "True si el token es un nodo raíz sin padre.",
+
+  "fn.isLeaf.desc": "Devuelve true cuando el token dado es un nodo hoja, es decir, no tiene hijos. Las hojas se sitúan en la parte inferior de la jerarquía.",
+  "fn.isLeaf.params.tokenId": "El token que se comprueba.",
+  "fn.isLeaf.returns.leaf": "True si el token es un nodo hoja sin hijos.",
+
+  "fn.Minted.desc": "Se emite cuando se acuña un nuevo token bajo un padre. Un parentId de cero indica que el token acuñado es una raíz; el ID del token acuñado debe ser mayor que cero.",
+  "fn.Minted.params.minter": "La dirección que acuñó el token.",
+  "fn.Minted.params.to": "La dirección que recibió el token acuñado.",
+  "fn.Minted.params.parentId": "El ID del token padre, o cero cuando el token acuñado es una raíz.",
+  "fn.Minted.params.tokenId": "El ID del token recién acuñado, que debe ser mayor que cero.",
+
+  "node.user": "Propietario del NFT",
+  "node.contract": "Contrato de NFT jerárquico",
+  "node.storageHierarchy": "Almacenamiento de jerarquía",
+  "node.recipient": "Receptor del nodo hijo",
+
+  "edge.mintChild": "Acuñar nodo hijo",
+  "edge.updateHierarchy": "Actualizar jerarquía",
+  "edge.emitMinted": "Emitir evento Minted",
+  "edge.assignChild": "Asignar nodo hijo",
+  "edge.callParentOf": "Llamar a parentOf()",
+  "edge.callChildrenOf": "Llamar a childrenOf()",
+
+  "sim.mintChild.name": "Acuñar un nodo hijo",
+  "sim.mintChild.desc": "Sigue la acuñación de un nodo hijo bajo un padre, desde la llamada del propietario, pasando por la actualización del almacenamiento de jerarquía, hasta el evento Minted.",
+  "sim.mintChild.param.parentId": "ID del token padre",
+  "sim.mintChild.param.tokenId": "ID del nuevo token hijo",
+  "sim.mintChild.param.to": "Dirección del receptor",
+  "sim.mintChild.step.call": "El propietario acuña un nuevo token bajo el padre 1, pasando la dirección del receptor y el ID del nuevo token hijo al contrato de NFT jerárquico.",
+  "sim.mintChild.step.call.mobile": "Acuñar nodo hijo",
+  "sim.mintChild.step.execute": "El contrato vincula el nuevo token a su padre, escribiendo el puntero al padre y agregando el hijo a la lista de hijos del padre.",
+  "sim.mintChild.step.execute.mobile": "Actualizar jerarquía",
+  "sim.mintChild.step.event": "El contrato emite Minted(minter, to, parentId, tokenId) y asigna el nuevo nodo hijo al receptor.",
+  "sim.mintChild.step.event.mobile": "Emitir evento Minted"
+}

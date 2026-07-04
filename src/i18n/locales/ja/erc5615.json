@@ -1,0 +1,32 @@
+{
+  "short": "ERC-1155 供給量拡張",
+  "introduction": "ERC-5615 は、ERC-1155 マルチトークンコントラクトのための供給量報告拡張を定義します。2023 年 5 月に Gavin John によって提案されました。この拡張は 2 つの view 関数を追加します。totalSupply は指定した id について流通しているトークンの数を返し、exists は id が存在するか、以前存在したか、または存在する可能性があるかを報告します。OpenZeppelin の ERC1155Supply としてすでに提供されているパターンを標準化し、インデクサーやウォレットがオフチェーンデータに依存せずに id ごとの供給量を予測可能な方法で読み取れるようにします。",
+  "designPurpose": "ERC-5615 は、基本標準では省略されている id ごとの供給量を公開する共通の方法を ERC-1155 に与えるために設計されました。それ以前は、各コントラクトが独自の供給量取得関数を用意するか、まったく用意しないかのいずれかであったため、インデクサーやマーケットプレイスはトークン id が何単位ミントされたか、あるいは id が将来存在するかどうかを確実に知ることができませんでした。広く使われている OpenZeppelin 実装と同じセマンティクスで totalSupply と exists を形式化することで、ERC-5615 はあらゆるコンシューマーが 1 つの予測可能なインターフェースを通じて供給量を照会できるようにします。",
+  "commonUsage": "この拡張は、トークン id ごとの残りまたは総供給量を表示する ERC-1155 コレクションやマーケットプレイス、エディション数に上限を設けるミントインターフェース、流通量を追跡するインデクサーによって使用されます。OpenZeppelin の ERC1155Supply を踏襲しているため、通常は単独でデプロイされるのではなく、既存の ERC-1155 コントラクトに組み込まれます。exists 関数は、現在の供給量がゼロの id と、決してミントできない id を区別するために使用されます。",
+
+  "fn.exists.desc": "指定したトークン id が存在するか、以前存在したか、または存在する可能性があるかを返します。コンシューマーは、これを使って現在の供給量がゼロの id と、決してミントできない id を区別します。",
+  "fn.exists.params.id": "存在を確認するトークン id。",
+  "fn.exists.returns.exists": "トークン id が存在する、以前存在した、または存在する可能性がある場合は true、そうでない場合は false。",
+
+  "fn.totalSupply.desc": "指定した id について流通しているトークンの数を返します。トークン id が存在しない場合は 0 を返します。",
+  "fn.totalSupply.params.id": "総供給量を取得するトークン id。",
+  "fn.totalSupply.returns.totalSupply": "指定したトークン id の総供給量。存在しない場合は 0。",
+
+  "node.user": "供給量リーダー",
+  "node.contract": "ERC-1155 供給量トークン",
+  "node.storageSupply": "供給量ストレージ",
+
+  "edge.callTotalSupply": "totalSupply() を呼び出す",
+  "edge.callExists": "exists() を呼び出す",
+  "edge.readSupply": "供給量マッピングを読み取る",
+
+  "sim.totalSupplyWalkthrough.name": "トークン供給量の照会",
+  "sim.totalSupplyWalkthrough.desc": "totalSupply の呼び出しを、リーダーからコントラクトの供給量ストレージまで追跡し、次に exists を確認してゼロという結果を解釈します。",
+  "sim.totalSupplyWalkthrough.param.id": "トークン id",
+  "sim.totalSupplyWalkthrough.step.call": "ウォレットやインデクサーなどのリーダーが、ERC-1155 コントラクトに対して totalSupply(id) を呼び出し、トークン id の流通量を取得します。",
+  "sim.totalSupplyWalkthrough.step.call.mobile": "totalSupply() を呼び出す",
+  "sim.totalSupplyWalkthrough.step.read": "コントラクトはその id の供給量マッピングを読み取り、格納されている数量を返します。その id のトークンがミントされていない場合は 0 を返します。",
+  "sim.totalSupplyWalkthrough.step.read.mobile": "供給量マッピングを読み取る",
+  "sim.totalSupplyWalkthrough.step.exists": "ゼロという結果を解釈するために、リーダーは exists(id) を呼び出します。これは、その id にまだ供給量がないのか、それとも決してミントできないのかを報告します。",
+  "sim.totalSupplyWalkthrough.step.exists.mobile": "exists() を確認する"
+}

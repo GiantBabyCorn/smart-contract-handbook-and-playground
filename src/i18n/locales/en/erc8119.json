@@ -1,0 +1,29 @@
+{
+  "short": "Parameterized Storage Keys",
+  "introduction": "ERC-8119 defines standard formats for parameterized string keys used in EVM key-value storage, where a metadata type must represent multiple instances. It was proposed by Prem Makeig in January 2025. It specifies two encodings: a slash or colon form for a single parameter, written as key-label/key-parameter, and a bracket form for multiple ordered parameters, written as key-label[parameter-1][parameter-2]. Note: ERC-8119 is a Draft; the specification is still under active development and may change substantially.",
+  "designPurpose": "ERC-8119 was designed to remove the inconsistency that arises when a contract stores several instances of one metadata type. Before it, each implementation invented its own convention for joining label and parameter, so keys such as registration-1 and registration1 could not be parsed or shared across tools. By fixing two explicit encodings and reserving the slash, colon, and left-bracket characters from the label, ERC-8119 gives parsers one deterministic rule for splitting a key into its label and parameters.",
+  "commonUsage": "The format targets contracts that keep metadata in a mapping(string => bytes) or similar store, such as name registries, profile records, and per-instance configuration. The slash and colon form suits long text values like registration/1 or website/http://website.com, while the bracket form suits multi-parameter keys like resource[chain][1][token][42]. Because it is a naming convention rather than an interface, applications adopt it by formatting and parsing keys consistently, with no on-chain code changes.",
+
+  "node.app": "Application",
+  "node.formatter": "Key Formatter",
+  "node.storageMetadata": "Metadata Storage",
+  "node.parser": "Key Parser",
+
+  "edge.buildSlash": "Build slash/colon key",
+  "edge.buildBracket": "Build bracket key",
+  "edge.writeKey": "Write metadata",
+  "edge.parseKey": "Parse key",
+
+  "sim.buildKeyWalkthrough.name": "Build Parameterized Key",
+  "sim.buildKeyWalkthrough.desc": "Follow a slash-form key from the application through metadata storage to a parser that splits it back into a label and a parameter.",
+  "sim.buildKeyWalkthrough.param.keyLabel": "Key label",
+  "sim.buildKeyWalkthrough.param.keyParameter": "Key parameter",
+  "sim.buildKeyWalkthrough.step.build": "The application joins the key-label and the parameter with a slash to form the parameterized key registration/1.",
+  "sim.buildKeyWalkthrough.step.build.mobile": "Build key",
+  "sim.buildKeyWalkthrough.step.format": "The formatter checks that the label contains no space, slash, colon, or left bracket, producing a standard-conforming key.",
+  "sim.buildKeyWalkthrough.step.format.mobile": "Validate key format",
+  "sim.buildKeyWalkthrough.step.store": "The contract writes the value under the key registration/1 in the mapping(string => bytes) metadata store.",
+  "sim.buildKeyWalkthrough.step.store.mobile": "Write metadata",
+  "sim.buildKeyWalkthrough.step.parse": "A parser reads the key, splits it at the first slash or colon, and recovers the label registration and the parameter 1.",
+  "sim.buildKeyWalkthrough.step.parse.mobile": "Parse key back"
+}

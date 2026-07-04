@@ -1,0 +1,36 @@
+{
+  "short": "合約時鐘介面",
+  "introduction": "ERC-6372 定義了一個最小介面，讓合約能夠報告它使用哪一種時鐘來度量時間。該標準由 Hadrien Croubois 與 Francisco Giordano 於 2023 年 1 月提出。clock() 函式以非遞減的 uint48 回傳當前時間點，例如 block.timestamp 或 block.number；CLOCK_MODE() 則回傳一個採用 URL 查詢字串格式的字串，如 mode=timestamp 或 mode=blocknumber，供觀察者解析。注：ERC-6372 處於 Review 狀態；在最終定案之前介面仍可能變更。",
+  "designPurpose": "ERC-6372 旨在消除對合約如何追蹤時間的猜測。在此之前，一些合約用 block.timestamp 度量延遲和快照，另一些則使用 block.number，而外部觀察者無法可靠地判斷究竟是哪一種，這迫使在組合時間鎖與投票系統時做出有風險的假設。透過標準化 clock() 以及一個自我描述的 CLOCK_MODE() 描述符，ERC-6372 讓合約的時間基準可以在執行時被發現，從而使工具和依賴它的合約能夠對齊到同一個單位。",
+  "commonUsage": "此介面針對那些強制執行延遲或儲存帶時間記錄的合約，包括時間鎖、具有固定投票期的 DAO 治理合約，以及依時間點為餘額設定檢查點的投票代幣。治理框架將 CLOCK_MODE() 與 clock() 搭配使用，使治理合約與其投票代幣就提案和快照是以秒還是以區塊來度量達成一致。由於這兩個函式都是唯讀的，索引器與前端可以在鏈下查詢時鐘模式，而無需發送交易。",
+
+  "fn.clock.desc": "根據合約的時鐘模式回傳其當前時間點。該值必須是鏈的非遞減函式，通常為 block.timestamp（秒）或 block.number。",
+  "fn.clock.returns.timepoint": "以 uint48 表示的當前時間點，依 CLOCK_MODE() 回傳的值來解釋。",
+
+  "fn.CLOCK_MODE.desc": "回傳時鐘的機器可讀描述，格式為可用 new URLSearchParams() 解析的 URL 查詢字串。取值包括表示秒的 mode=timestamp，以及表示區塊號的 mode=blocknumber&from=default。",
+  "fn.CLOCK_MODE.returns.descriptor": "一個採用 URL 查詢字串格式的描述符，如 mode=timestamp 或 mode=blocknumber&from=<CAIP-2-ID>。",
+
+  "node.user": "時鐘觀察者",
+  "node.contract": "ERC-6372 合約",
+  "node.clockSource": "鏈上時間源",
+  "node.clockResult": "時鐘報告",
+
+  "edge.callClock": "呼叫 clock()",
+  "edge.callClockMode": "呼叫 CLOCK_MODE()",
+  "edge.readClockSource": "讀取鏈上時間",
+  "edge.buildTimepoint": "打包時間點",
+  "edge.returnTimepoint": "回傳時鐘資訊",
+
+  "sim.clockDiscovery.name": "時鐘模式探索",
+  "sim.clockDiscovery.desc": "查詢合約的 clock() 與 CLOCK_MODE()，讀取其當前時間點並了解如何解釋它。",
+  "sim.clockDiscovery.param.contractAddress": "要查詢的合約",
+  "sim.clockDiscovery.param.mode": "時鐘模式",
+  "sim.clockDiscovery.step.call": "觀察者對目標合約呼叫 clock()，以讀取其當前時間點。",
+  "sim.clockDiscovery.step.call.mobile": "呼叫 clock()",
+  "sim.clockDiscovery.step.read": "合約讀取其設定為使用的鏈上時間源（block.timestamp 或 block.number），並以 uint48 形式回傳。",
+  "sim.clockDiscovery.step.read.mobile": "讀取鏈上時間",
+  "sim.clockDiscovery.step.mode": "觀察者呼叫 CLOCK_MODE()，以了解時間點是以秒還是以區塊號來度量。",
+  "sim.clockDiscovery.step.mode.mobile": "呼叫 CLOCK_MODE()",
+  "sim.clockDiscovery.step.return": "合約回傳打包好的時間點與模式描述符，使觀察者能夠將其延遲與快照對齊到同一個時鐘。",
+  "sim.clockDiscovery.step.return.mobile": "回傳時鐘資訊"
+}

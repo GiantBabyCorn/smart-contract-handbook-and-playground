@@ -1,0 +1,35 @@
+{
+  "short": "コントラクトリソースリクエスト",
+  "introduction": "ERC-5219は、クライアントがスマートコントラクトにリソースをリクエストし、HTTPのようなレスポンスを受け取れる読み取り専用のコントラクトインターフェースIDecentralizedAppを定義します。2022年7月にGavin Johnによって提案されました。呼び出し側は、セグメントに分割したリソースパスとクエリパラメータのリストを渡してrequest()を呼び出し、コントラクトはHTTPステータスコード、レスポンスボディ、レスポンスヘッダーを返します。request()はview関数であるため、トランザクションを必要とせず、フロントエンドをオンチェーンのコードから直接配信できます。",
+  "designPurpose": "ERC-5219は、ほとんどの分散型アプリケーションがユーザーインターフェースのために依然として依存している中央集権的なWebサーバーを取り除くために設計されました。フロントエンドが通常のWebサイトでホストされている場合、検閲されたり、削除されたり、密かに改ざんされたりする可能性があり、他のコントラクトからは読み取れません。ステータスコード、ボディ、ヘッダーを返す単一のview関数を規定することで、ERC-5219はインターフェースをオンチェーンに存在させ、トラストレスに取得でき、コントラクト自体と同じくらい永続的で、他のスマートコントラクトから読み取れるようにします。",
+  "commonUsage": "ERC-5219は、アプリケーションロジックと並べて完全にオンチェーンのフロントエンドを公開するプロジェクトや、通常のWebリクエストをrequest()呼び出しに変換してブラウザが結果を読み込めるようにするゲートウェイソフトウェアで使用されます。gasコストを低く抑えるため、実装者は大きなアセットをオンチェーンに保存する代わりに、IPFS上のコンテンツを指すmessage/external-bodyレスポンスを返すことがよくあります。このインターフェースはインターフェース検出と自然に組み合わさり、どのコントラクトがこのプロトコルに対応しているかをクライアントが発見できるようにします。",
+
+  "fn.request.desc": "リソースに対するHTTP GETのようなリクエストを送信し、HTTP形式のレスポンスを返します。リソースパスはセグメントの配列として、クエリ文字列はキー/値のペアとして渡されます。この関数はviewであるため、状態を変更することはありません。",
+  "fn.request.params.resource": "セグメントに分割されたリクエスト対象のリソースパス。したがって \"/asdf/1234\" は [\"asdf\", \"1234\"] になります。",
+  "fn.request.params.params": "キー/値のペアで表したクエリパラメータ。したがって \"?foo=bar\" は [{ key: \"foo\", value: \"bar\" }] になります。",
+  "fn.request.returns.statusCode": "レスポンスのHTTPステータスコード。成功時の200や、リソースが見つからない場合の404など。",
+  "fn.request.returns.body": "レスポンスのボディ。たとえばHTMLドキュメントやJSONペイロードなど。",
+  "fn.request.returns.headers": "Content-Typeなどのレスポンスヘッダーをキー/値のペアで表したリスト。",
+
+  "node.user": "クライアント／ブラウザ",
+  "node.contract": "DAppコントラクト",
+  "node.resources": "リソースストア",
+  "node.response": "HTTPレスポンス",
+
+  "edge.callRequest": "request()を呼び出す",
+  "edge.readResources": "リソースを読み取る",
+  "edge.buildResponse": "レスポンスを構築",
+  "edge.returnResponse": "レスポンスを返す",
+
+  "sim.requestWalkthrough.name": "リソースリクエストのウォークスルー",
+  "sim.requestWalkthrough.desc": "クライアントからコントラクトを経由して、返されるHTTPのようなレスポンスに至るrequest()呼び出しをたどります。",
+  "sim.requestWalkthrough.param.resource": "リソースパス",
+  "sim.requestWalkthrough.step.call": "クライアントがDAppコントラクトでrequest()を呼び出し、リソースパスとクエリパラメータを渡します。",
+  "sim.requestWalkthrough.step.call.mobile": "request()を呼び出す",
+  "sim.requestWalkthrough.step.resolve": "コントラクトはパスを解決し、リソースストアから一致するコンテンツを読み取ります。",
+  "sim.requestWalkthrough.step.resolve.mobile": "リソースを読み取る",
+  "sim.requestWalkthrough.step.build": "コントラクトはステータスコード、ボディ、ヘッダーを含むHTTPのようなレスポンスを組み立てます。",
+  "sim.requestWalkthrough.step.build.mobile": "レスポンスを構築",
+  "sim.requestWalkthrough.step.return": "レスポンスがクライアントに返され、クライアントはそれを通常のWebページと同じようにレンダリングします。",
+  "sim.requestWalkthrough.step.return.mobile": "レスポンスを返す"
+}

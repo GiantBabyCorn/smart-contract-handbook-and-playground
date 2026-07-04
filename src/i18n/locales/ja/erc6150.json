@@ -1,0 +1,52 @@
+{
+  "short": "ファイルシステム風の階層型NFT",
+  "introduction": "ERC-6150 は、NFT をファイルシステムのような階層に配置する ERC-721 の拡張を定義します。各トークンは 1 つの親と任意の数の子を持つノードです。これは Keegan Lee、msfew、Kartin、qizhou によって 2022年12月に提案されました。トークン ID がゼロの場合は親がないことを意味するため、実在するすべてのノードはゼロより大きい ID を持ち、ルートは親としてゼロを返します。このインターフェースは、ノードの親と子を読み取り、そのノードがルートかリーフかを判定する読み取り関数と、新しいノードごとを示す Minted イベントを追加します。",
+  "designPurpose": "ERC-6150 は、アプリケーションが ERC-721 に後付けしていた場当たり的な親ポインタやサイドレジストリの代わりに、ツリー構造データを単一のコントラクトでオンチェーンに持ち込むために設計されました。階層はファイルシステムや、eBay や Reddit のようなサイトのカテゴリツリーでは一般的ですが、素の NFT はトークン間の関係を表現しません。Minted イベントと parentOf、childrenOf、isRoot、isLeaf の各クエリを標準化することで、この設計はツリーをオンチェーンに保持し、任意のフロントエンドがパーミッションレスに走査できるようにします。",
+  "commonUsage": "ERC-6150 は、データが自然にツリー状になるアプリケーションを対象としています。Reddit のようなオンチェーンフォーラム、リストに整理されたソーシャルフィード、オンチェーン企業の組織図、eBay のような EC のカテゴリツリーなどです。各ディレクトリやカテゴリ自体が NFT であるため、あるブランチの所有権を移転したり、DAO によって管理したりできます。仕様では、子の列挙、リーフノードのバーン、ノードの親の付け替え、ノードごとのアクセス制御といったオプションの拡張が定義されており、実装者は必要なものだけを追加します。",
+
+  "fn.parentOf.desc": "指定されたノードの親トークンを返します。トークン ID ゼロはトークンに親がないことを意味するために予約されているため、ルートノードはゼロを返します。",
+  "fn.parentOf.params.tokenId": "親を検索する対象の子トークン。",
+  "fn.parentOf.returns.parentId": "親トークンの ID。ノードがルートの場合はゼロ。",
+
+  "fn.childrenOf.desc": "指定されたノードの直下にある子トークンの配列を返します。リーフノードは空の配列を返します。",
+  "fn.childrenOf.params.tokenId": "直接の子を列挙する対象の親トークン。",
+  "fn.childrenOf.returns.childrenIds": "親が tokenId であるトークンの ID。",
+
+  "fn.isRoot.desc": "指定されたトークンがルートノード、つまり親を持たない場合に true を返します。ルートは階層の最上位のエントリです。",
+  "fn.isRoot.params.tokenId": "判定対象のトークン。",
+  "fn.isRoot.returns.root": "トークンが親を持たないルートノードであれば true。",
+
+  "fn.isLeaf.desc": "指定されたトークンがリーフノード、つまり子を持たない場合に true を返します。リーフは階層の最下部に位置します。",
+  "fn.isLeaf.params.tokenId": "判定対象のトークン。",
+  "fn.isLeaf.returns.leaf": "トークンが子を持たないリーフノードであれば true。",
+
+  "fn.Minted.desc": "親の下に新しいトークンがミントされたときに発行されます。parentId がゼロの場合、ミントされたトークンがルートであることを示します。ミントされるトークン ID はゼロより大きい必要があります。",
+  "fn.Minted.params.minter": "トークンをミントしたアドレス。",
+  "fn.Minted.params.to": "ミントされたトークンを受け取ったアドレス。",
+  "fn.Minted.params.parentId": "親トークンの ID。ミントされたトークンがルートの場合はゼロ。",
+  "fn.Minted.params.tokenId": "新しくミントされたトークンの ID。ゼロより大きい必要があります。",
+
+  "node.user": "NFT 所有者",
+  "node.contract": "階層型 NFT コントラクト",
+  "node.storageHierarchy": "階層ストレージ",
+  "node.recipient": "子ノードの受取人",
+
+  "edge.mintChild": "子ノードをミント",
+  "edge.updateHierarchy": "階層を更新",
+  "edge.emitMinted": "Minted イベントを発行",
+  "edge.assignChild": "子ノードを割り当て",
+  "edge.callParentOf": "parentOf() を呼び出し",
+  "edge.callChildrenOf": "childrenOf() を呼び出し",
+
+  "sim.mintChild.name": "子ノードをミント",
+  "sim.mintChild.desc": "親の下に子ノードをミントする流れを、所有者の呼び出しから階層ストレージの更新を経て Minted イベントまで追います。",
+  "sim.mintChild.param.parentId": "親トークン ID",
+  "sim.mintChild.param.tokenId": "新しい子トークン ID",
+  "sim.mintChild.param.to": "受取人アドレス",
+  "sim.mintChild.step.call": "所有者が親 1 の下に新しいトークンをミントし、受取人アドレスと新しい子トークン ID を階層型 NFT コントラクトに渡します。",
+  "sim.mintChild.step.call.mobile": "子ノードをミント",
+  "sim.mintChild.step.execute": "コントラクトは新しいトークンをその親にリンクし、親ポインタを書き込み、親の子リストに子を追加します。",
+  "sim.mintChild.step.execute.mobile": "階層を更新",
+  "sim.mintChild.step.event": "コントラクトは Minted(minter, to, parentId, tokenId) を発行し、新しい子ノードを受取人に割り当てます。",
+  "sim.mintChild.step.event.mobile": "Minted イベントを発行"
+}

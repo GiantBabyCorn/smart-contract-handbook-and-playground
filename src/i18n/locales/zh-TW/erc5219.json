@@ -1,0 +1,35 @@
+{
+  "short": "合約資源請求",
+  "introduction": "ERC-5219 定義了一個唯讀的合約介面 IDecentralizedApp，讓用戶端可以向智能合約請求資源並收到類似 HTTP 的回應。它由 Gavin John 於 2022 年 7 月提出。呼叫方以拆分為多個片段的資源路徑和一組查詢參數呼叫 request()，合約則回傳一個 HTTP 狀態碼、一個回應主體和回應標頭。由於 request() 是 view 函式，它無需交易，因此前端可以直接由鏈上程式碼提供。",
+  "designPurpose": "ERC-5219 的設計目標是移除大多數去中心化應用在使用者介面上仍然依賴的中心化 Web 伺服器。當前端託管在普通網站上時，它可能被審查、下架或被悄然竄改，而且其他合約無法讀取它。透過規定一個回傳狀態碼、回應主體和回應標頭的 view 函式，ERC-5219 讓介面得以存在於鏈上，從而可以被無需信任地取得，與合約本身一樣持久，並能被其他智能合約讀取。",
+  "commonUsage": "ERC-5219 被那些在應用邏輯之外發布完全鏈上前端的專案使用，也被將普通 Web 請求轉換為 request() 呼叫的閘道軟體使用，以便瀏覽器能夠載入結果。為了降低 gas 成本，實作者通常回傳指向 IPFS 上內容的 message/external-body 回應，而不是將大型資源儲存在鏈上。該介面與介面偵測天然契合，讓用戶端能夠發現哪些合約支援該協議。",
+
+  "fn.request.desc": "發送一個類似 HTTP GET 的資源請求，並回傳一個 HTTP 風格的回應。資源路徑以片段陣列的形式傳入，查詢字串以鍵/值對的形式傳入；該函式是 view，因此絕不改變狀態。",
+  "fn.request.params.resource": "拆分為多個片段的請求資源路徑，因此 \"/asdf/1234\" 會變成 [\"asdf\", \"1234\"]。",
+  "fn.request.params.params": "以鍵/值對形式表示的查詢參數，因此 \"?foo=bar\" 會變成 [{ key: \"foo\", value: \"bar\" }]。",
+  "fn.request.returns.statusCode": "回應的 HTTP 狀態碼，例如成功時為 200，或找不到資源時為 404。",
+  "fn.request.returns.body": "回應的主體，例如一個 HTML 文件或 JSON 載荷。",
+  "fn.request.returns.headers": "以鍵/值對形式表示的回應標頭列表，例如 Content-Type。",
+
+  "node.user": "用戶端／瀏覽器",
+  "node.contract": "DApp 合約",
+  "node.resources": "資源儲存",
+  "node.response": "HTTP 回應",
+
+  "edge.callRequest": "呼叫 request()",
+  "edge.readResources": "讀取資源",
+  "edge.buildResponse": "建構回應",
+  "edge.returnResponse": "回傳回應",
+
+  "sim.requestWalkthrough.name": "資源請求演練",
+  "sim.requestWalkthrough.desc": "跟隨一次 request() 呼叫，從用戶端經過合約，直到它回傳的類似 HTTP 的回應。",
+  "sim.requestWalkthrough.param.resource": "資源路徑",
+  "sim.requestWalkthrough.step.call": "用戶端在 DApp 合約上呼叫 request()，傳入資源路徑和查詢參數。",
+  "sim.requestWalkthrough.step.call.mobile": "呼叫 request()",
+  "sim.requestWalkthrough.step.resolve": "合約解析該路徑，並從其資源儲存中讀取相符的內容。",
+  "sim.requestWalkthrough.step.resolve.mobile": "讀取資源",
+  "sim.requestWalkthrough.step.build": "合約組裝一個包含狀態碼、回應主體和回應標頭的類似 HTTP 的回應。",
+  "sim.requestWalkthrough.step.build.mobile": "建構回應",
+  "sim.requestWalkthrough.step.return": "回應被回傳給用戶端，用戶端像渲染普通網頁一樣渲染它。",
+  "sim.requestWalkthrough.step.return.mobile": "回傳回應"
+}

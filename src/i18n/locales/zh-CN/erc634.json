@@ -1,0 +1,32 @@
+{
+  "short": "ENS 文本记录解析器规范",
+  "introduction": "ERC-634 为以太坊域名服务（ENS）定义了一个解析器规范，让域名可以存储任意键/值形式的文本记录，例如电子邮件、URL、头像或社交账号。该提案由 Richard Moore 于 2017 年 5 月提出。该规范新增了一个 view 函数 text(node, key)，返回给定 nodehash 和键所存储的 UTF-8 字符串，若未设置则返回空字符串。注意：ERC-634 处于 Stagnant 状态——它已有 6 个月以上未活动，可能永远不会最终定稿，但在历史或技术上仍具重要意义。",
+  "designPurpose": "ERC-634 旨在为 ENS 域名附加人类可读的元数据，而无需为每个字段定义一种新的记录类型。它没有固定数十个特定字段，而是借鉴了 DNS TXT 记录的模型：通过单个 text(node, key) 查询来读取自由形式的键和 UTF-8 值。这让应用可以通过 com.github 之类的反向 DNS 服务键引入自己的键，而无需修改标准或承担冲突风险；同时 avatar、email、url 等通用全局键在各客户端之间保持互操作性。",
+  "commonUsage": "文本记录支撑着支持 ENS 的钱包、区块浏览器和 dapp 为域名呈现的个人资料：显示在地址旁的头像、关联的网站、电子邮件，以及 com.twitter 或 com.github 之类的社交账号。客户端通过对域名解析器调用 text(node, key) 来读取它们，并将空字符串视为未设置的键。由于键是开放式的，各服务会注册自己的反向 DNS 键，而不必协调对标准的修改。",
+
+  "fn.text.desc": "返回在由 nodehash 标识的 ENS 域名下、为给定键所存储的 UTF-8 文本数据。若该键未设置任何值，则返回空字符串。",
+  "fn.text.params.node": "标识要查询的域名的 ENS nodehash。",
+  "fn.text.params.key": "要查找的文本记录键，例如 email、url 或 com.twitter。",
+  "fn.text.returns.text": "该键所存储的文本值；若未设置则返回空字符串。",
+
+  "node.user": "记录读取方",
+  "node.contract": "ENS 文本解析器",
+  "node.storageTexts": "文本记录存储",
+  "node.result": "返回的文本",
+
+  "edge.query": "调用 text()",
+  "edge.readTexts": "读取文本记录",
+  "edge.returnText": "返回文本值",
+  "edge.response": "传递文本值",
+
+  "sim.textRecordQuery.name": "文本记录查询",
+  "sim.textRecordQuery.desc": "跟踪一次 text(node, key) 查询：从客户端出发，经过解析器存储，最终返回字符串值。",
+  "sim.textRecordQuery.param.node": "ENS 域名",
+  "sim.textRecordQuery.param.key": "记录键",
+  "sim.textRecordQuery.step.call": "客户端对解析器调用 text(node, key)，传入 ENS nodehash 和 email 之类的记录键。",
+  "sim.textRecordQuery.step.call.mobile": "调用 text()",
+  "sim.textRecordQuery.step.lookup": "解析器在其文本记录存储中查找该 nodehash 和键所对应的已存储值。",
+  "sim.textRecordQuery.step.lookup.mobile": "读取文本记录",
+  "sim.textRecordQuery.step.return": "解析器将存储的 UTF-8 字符串返回给客户端；若该键从未设置，则返回空字符串。",
+  "sim.textRecordQuery.step.return.mobile": "返回文本值"
+}

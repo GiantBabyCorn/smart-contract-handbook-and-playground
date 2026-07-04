@@ -1,0 +1,51 @@
+{
+  "short": "NFT に紐付けられたソウルバウンドバッジ",
+  "introduction": "ERC-5114 は、ミント時に別の非代替性トークン（NFT）にバインドされ、その後は決して転送できないトークンであるソウルバウンドバッジを定義します。これは 2022年5月に Micah Zoltu によって提案されました。各バッジは [address, tokenId] のペアで識別される NFT に紐付けられ、一度の Mint イベントで記録されます。そのバインドは ownerOf で読み出され、ウォレットアドレスではなくその NFT を返します。注意：ERC-5114 は Last Call の段階にあり、Final になる前の最終レビュー期間です。",
+  "designPurpose": "ERC-5114 は、評判や実績を示すバッジを、それらを売却できるウォレットではなくペルソナに固定するために設計されました。通常の NFT は自由に移動するため、通常のトークンとして作られたバッジは取引で手放され、実績がそれを獲得したアイデンティティから切り離されてしまう可能性があります。各バッジをミント時に NFT にバインドし、その後の転送を禁止することで、この標準は 1 つの NFT にバインドされたバッジ間の分離不可能性とマージ不可能性を保証します。コンテンツアドレス指定のメタデータは、ミント実行者がバッジを検閲することも防ぎます。",
+  "commonUsage": "ソウルバウンドバッジは、通常の NFT のように取引されるのではなくペルソナに従うべき、オンチェーンの評判、資格情報、実績、メンバーシップの標識に適しています。バッジは [address, tokenId] のペアで識別される NFT にバインドされるため、その方法でアドレス指定できる資産、すなわち ERC-721 または ERC-1155 トークンであれば、ソウルとして機能できます。この標準はメタデータ形式を規定せず、不変性とコンテンツアドレス可能性のみを定義するため、アプリケーションは独自のスキーマを用意し、URI の解析方法を示すために metadataFormat を使用します。",
+
+  "fn.ownerOf.desc": "バッジがバインドされている NFT を [address, tokenId] のペアとして返します。バッジがミントされていない場合はリバートし、常にそのバッジの元の Mint イベントが持つ値と同じ値を返します。",
+  "fn.ownerOf.params.badgeId": "解決するバッジの識別子。",
+  "fn.ownerOf.returns.nftAddress": "バッジがバインドされている NFT のコントラクトアドレス。",
+  "fn.ownerOf.returns.nftTokenId": "バッジがバインドされている NFT の token ID。",
+
+  "fn.collectionUri.desc": "バッジコレクションを記述する、不変でコンテンツアドレス指定可能な URI を返します。そのメタデータは各バッジの badgeUri の出力とマージされ、badgeUri のデータが優先されます。",
+  "fn.collectionUri.returns.collectionUri": "コレクションのメタデータに対する、不変でコンテンツアドレス指定可能な URI。",
+
+  "fn.badgeUri.desc": "単一のバッジインスタンスを記述する、検閲耐性がありコンテンツアドレス指定可能な URI を返します。そのデータは collectionUri が返すコレクションレベルのメタデータよりも優先されます。",
+  "fn.badgeUri.params.badgeId": "記述するバッジの識別子。",
+  "fn.badgeUri.returns.badgeUri": "このバッジのメタデータに対する、不変でコンテンツアドレス指定可能な URI。",
+
+  "fn.metadataFormat.desc": "collectionUri および badgeUri のデータの形式またはバージョンを識別する文字列（例えば 'EIP-ABCD' や 'soulbound-schema-version-4'）を返し、呼び出し側が事前に内容を検査せずに解析できるようにします。",
+  "fn.metadataFormat.returns.format": "URI メタデータの形式またはバージョンを示す文字列。",
+
+  "fn.Mint.desc": "バッジがミントされたときに一度だけ発行され、そのバッジとバインド先の NFT を記録します。同一の badgeId に対して二度発行してはなりません。",
+  "fn.Mint.params.badgeId": "新しくミントされたバッジの識別子。",
+  "fn.Mint.params.nftAddress": "バッジがバインドされている NFT のコントラクトアドレス。",
+  "fn.Mint.params.nftTokenId": "バッジがバインドされている NFT の token ID。",
+
+  "node.minter": "バッジのミント実行者",
+  "node.contract": "ソウルバウンドバッジコントラクト",
+  "node.storageBinding": "バッジバインドストレージ",
+  "node.soul": "バインド先の NFT（ソウル）",
+
+  "edge.mint": "バッジをミント",
+  "edge.storeBinding": "バッジのバインドを保存",
+  "edge.bindSoul": "バッジを NFT にバインド",
+  "edge.emitMint": "Mint イベントを発行",
+  "edge.queryOwner": "ownerOf() を呼び出し",
+
+  "sim.mintBadgeWalkthrough.name": "ソウルバウンドバッジをミント",
+  "sim.mintBadgeWalkthrough.desc": "バッジをミントから、その不変な NFT バインドと Mint イベントを経て、ownerOf クエリまで追います。",
+  "sim.mintBadgeWalkthrough.param.badgeId": "バッジID",
+  "sim.mintBadgeWalkthrough.param.nftAddress": "NFT アドレス",
+  "sim.mintBadgeWalkthrough.param.nftTokenId": "NFT トークンID",
+  "sim.mintBadgeWalkthrough.step.mint": "ミント実行者が新しいバッジをミントし、対象の NFT に永続的にバインドします。このバインドはその後決して変更できません。",
+  "sim.mintBadgeWalkthrough.step.mint.mobile": "バッジをミント",
+  "sim.mintBadgeWalkthrough.step.bind": "コントラクトはバッジと NFT のバインドをストレージに記録し、バッジをそのソウル NFT に紐付けます。",
+  "sim.mintBadgeWalkthrough.step.bind.mobile": "バインドを保存",
+  "sim.mintBadgeWalkthrough.step.event": "コントラクトは Mint(badgeId, nftAddress, nftTokenId) を正確に一度だけ発行し、インデクサーがバインドを記録できるようにします。",
+  "sim.mintBadgeWalkthrough.step.event.mobile": "Mint イベントを発行",
+  "sim.mintBadgeWalkthrough.step.query": "呼び出し側が ownerOf(badgeId) を呼び出すと、バッジがバインドされている NFT の [address, tokenId] が返されます。",
+  "sim.mintBadgeWalkthrough.step.query.mobile": "ownerOf() を照会"
+}

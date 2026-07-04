@@ -1,0 +1,31 @@
+{
+  "short": "通过 contractURI 提供的合约级元数据",
+  "introduction": "ERC-7572 标准化了一个 contractURI() 函数，该函数返回一个 URI，用于解析出合约级元数据，例如合约的名称、描述和图像，使得 dapp 和索引器无需针对每个应用进行配置即可显示这些信息。该标准由 Devin Finzer、Alex Atallah 和 Ryan Ghods 于 2023 年 12 月提出。该接口还定义了一个 ContractURIUpdated 事件，以便索引器知道何时需要重新获取元数据。注意：ERC-7572 尚处于草案（Draft）阶段，规范仍在积极开发中，可能会有重大变化。",
+  "designPurpose": "ERC-7572 的设计目的是将 dapp 多年来在缺乏统一参考的情况下所使用的一种惯例予以规范化。合约通常只在每个代币层面或通过临时函数暴露名称或符号，因此每个市场和浏览器都需要各自配置合约的展示信息。通过标准化单个返回 JSON 文档的 contractURI() 调用，并将其与 ContractURIUpdated 事件配对，该标准使得单一的元数据来源即可驱动所有接口，并在元数据变化时保持索引器同步。",
+  "commonUsage": "contractURI() 主要由 NFT 收藏集以及其他需要收藏集级名称、描述和图像的代币合约使用，市场和浏览器会将其渲染为合约的资料页和横幅。返回的字符串可以指向链下资源，也可以内嵌一段链上的 data:application/json JSON 字符串。其 schema 定义的字段包括 name、symbol、description、image、banner_image、featured_image、external_link 和 collaborators，其中只有 name 是必需的。",
+
+  "fn.contractURI.desc": "返回一个可解析出合约级元数据 JSON 文档的 URI，例如合约的名称、描述和图像。该 URI 可以引用链下资源，也可以内嵌一段链上的 data:application/json JSON 字符串。",
+  "fn.contractURI.returns.uri": "指向合约元数据 JSON 文档的 URI。",
+
+  "fn.ContractURIUpdated.desc": "当合约级元数据发生变化时触发，通知链下索引器重新获取 contractURI() 返回的文档。",
+
+  "node.user": "Dapp",
+  "node.contract": "合约",
+  "node.storageUri": "URI 存储",
+  "node.indexer": "链下索引器",
+
+  "edge.callContractURI": "调用 contractURI()",
+  "edge.readUri": "读取存储的 URI",
+  "edge.emitUpdated": "触发 ContractURIUpdated 事件",
+  "edge.notifyIndexer": "通知索引器",
+
+  "sim.readMetadataWalkthrough.name": "合约元数据解析",
+  "sim.readMetadataWalkthrough.desc": "跟随一个 dapp 通过 contractURI() 读取合约的元数据，然后进行一次更新，该更新触发 ContractURIUpdated 以通知索引器。",
+  "sim.readMetadataWalkthrough.param.contract": "合约地址",
+  "sim.readMetadataWalkthrough.step.call": "dapp 在合约上调用 contractURI()，以获取其合约级元数据的 URI。",
+  "sim.readMetadataWalkthrough.step.call.mobile": "调用 contractURI()",
+  "sim.readMetadataWalkthrough.step.read": "合约读取其存储的 URI，并返回一个链接（例如 ipfs:// 地址），该链接可解析出元数据 JSON 文档。",
+  "sim.readMetadataWalkthrough.step.read.mobile": "返回元数据 URI",
+  "sim.readMetadataWalkthrough.step.update": "当所有者更新元数据时，合约触发 ContractURIUpdated，促使链下索引器重新获取该文档。",
+  "sim.readMetadataWalkthrough.step.update.mobile": "触发更新事件"
+}

@@ -1,0 +1,77 @@
+{
+  "short": "Compliance Service for Regulated Tokens",
+  "introduction": "ERC-2009 defines a Compliance Service interface that lets regulated tokens run KYC and AML checks fully on-chain before a transfer, mint, or burn executes. It was proposed by Daniel Lehrner in May 2019. Tokens query check functions that return a status code of 0x11 (Allowed) or 0x10 (Disallowed), then record limits through update functions in the same transaction. Note: ERC-2009 is Stagnant — it has been inactive for 6+ months and may never be finalized, but remains historically or technically significant.",
+  "designPurpose": "ERC-2009 was designed to decentralize compliance checks for regulated tokens. Before it, KYC and AML verification often ran off-chain, which centralized transfers and forced a slower, non-atomic second confirmation step. ERC-1462 proposed which checks a token needs but not how to implement them. ERC-2009 answers this with an on-chain interface of check and update functions, leaving the rule logic to implementers, and keys state to a bytes32 token id so a token can upgrade its contract without migrating its data.",
+  "commonUsage": "The Compliance Service is intended for regulated and security tokens that must enforce KYC, AML, and jurisdiction-specific transfer limits directly in the contract. Because one service can register many tokens by bytes32 id, it is designed so a law-maker or issuer can maintain shared compliance rules for every token in a jurisdiction. As a Stagnant proposal it never saw broad production adoption; on-chain compliance in practice is more commonly handled by permissioned-token frameworks such as ERC-3643.",
+
+  "fn.checkTransferAllowed.desc": "Checks whether a transfer of the given value from one holder to another is permitted for the token, returning a status code; the token must revert unless the code is 0x11 (Allowed).",
+  "fn.checkTransferAllowed.params.tokenId": "The unique bytes32 ID that identifies the token.",
+  "fn.checkTransferAllowed.params.from": "The payer address the tokens would be taken from if executed.",
+  "fn.checkTransferAllowed.params.to": "The payee address the tokens would be transferred to if executed.",
+  "fn.checkTransferAllowed.params.value": "The amount that would be transferred.",
+  "fn.checkTransferAllowed.returns.status": "A status code, 0x11 (Allowed) or 0x10 (Disallowed), or an issuer-specific equivalent.",
+
+  "fn.checkMintAllowed.desc": "Checks whether minting the given value to a payee is permitted for the token, returning a status code that the token must treat as a precondition of the mint.",
+  "fn.checkMintAllowed.params.tokenId": "The unique bytes32 ID that identifies the token.",
+  "fn.checkMintAllowed.params.to": "The payee address that would receive the minted tokens.",
+  "fn.checkMintAllowed.params.value": "The amount that would be minted.",
+  "fn.checkMintAllowed.returns.status": "A status code, 0x11 (Allowed) or 0x10 (Disallowed), or an issuer-specific equivalent.",
+
+  "fn.checkBurnAllowed.desc": "Checks whether burning the given value from a holder is permitted for the token, returning a status code that must be 0x11 (Allowed) for the burn to proceed.",
+  "fn.checkBurnAllowed.params.tokenId": "The unique bytes32 ID that identifies the token.",
+  "fn.checkBurnAllowed.params.from": "The payer address the tokens would be burned from.",
+  "fn.checkBurnAllowed.params.value": "The amount that would be burned.",
+  "fn.checkBurnAllowed.returns.status": "A status code, 0x11 (Allowed) or 0x10 (Disallowed), or an issuer-specific equivalent.",
+
+  "fn.updateTransferAccumulated.desc": "Records the accumulated totals for a transfer and must be called in the same transaction as the transfer; it reverts if the update violates any compliance rule. The rule logic is left to the implementer.",
+  "fn.updateTransferAccumulated.params.tokenId": "The unique bytes32 ID that identifies the token.",
+  "fn.updateTransferAccumulated.params.from": "The payer address the tokens are taken from.",
+  "fn.updateTransferAccumulated.params.to": "The payee address the tokens are transferred to.",
+  "fn.updateTransferAccumulated.params.value": "The amount being transferred.",
+
+  "fn.addToken.desc": "Registers a token with the service under a bytes32 ID so it may call the update functions; it reverts if the ID is already in use. Whether registration is restricted is left to the implementer. Emits TokenAdded.",
+  "fn.addToken.params.tokenId": "The unique bytes32 ID to assign to the token.",
+  "fn.addToken.params.token": "The address from which the update functions will be called.",
+
+  "fn.authorizeAccumulatedOperator.desc": "Approves an operator to update the accumulated totals on behalf of the caller's token id. Returns true on success and emits AuthorizedAccumulatedOperator.",
+  "fn.authorizeAccumulatedOperator.params.operator": "The address to approve as an operator of accumulated updates.",
+  "fn.authorizeAccumulatedOperator.returns.success": "True if the operator was approved.",
+
+  "fn.revokeAccumulatedOperator.desc": "Revokes an operator's approval to update the accumulated totals on behalf of the caller's token id. Returns true on success and emits RevokedAccumulatedOperator.",
+  "fn.revokeAccumulatedOperator.params.operator": "The address to revoke as an operator of accumulated updates.",
+  "fn.revokeAccumulatedOperator.returns.success": "True if the operator's approval was revoked.",
+
+  "fn.TokenAdded.desc": "Emitted after a token has been added to the service.",
+  "fn.TokenAdded.params.tokenId": "The unique bytes32 ID that identifies the token.",
+  "fn.TokenAdded.params.token": "The address from which the update functions will be called.",
+
+  "fn.AuthorizedAccumulatedOperator.desc": "Emitted when an operator is approved to update the accumulated on behalf of a token.",
+  "fn.AuthorizedAccumulatedOperator.params.operator": "The address approved as an operator of accumulated updates.",
+  "fn.AuthorizedAccumulatedOperator.params.tokenId": "The token id on whose behalf accumulated updates may be made.",
+
+  "fn.RevokedAccumulatedOperator.desc": "Emitted when an operator is revoked from updating the accumulated on behalf of a token.",
+  "fn.RevokedAccumulatedOperator.params.operator": "The address whose operator approval was revoked.",
+  "fn.RevokedAccumulatedOperator.params.tokenId": "The token id on whose behalf accumulated updates could be made.",
+
+  "node.user": "Regulated Token",
+  "node.contract": "Compliance Service",
+  "node.storageAccumulated": "Registry & Accumulated",
+
+  "edge.callAddToken": "Call addToken()",
+  "edge.callCheck": "Call checkTransferAllowed()",
+  "edge.callUpdate": "Call updateTransferAccumulated()",
+  "edge.writeStorage": "Write registry & accumulated",
+  "edge.emitTokenAdded": "Emit TokenAdded event",
+
+  "sim.complianceCheckWalkthrough.name": "Compliance Check Walkthrough",
+  "sim.complianceCheckWalkthrough.desc": "Follow a regulated token as it registers with the service, checks a transfer, and records the accumulated total.",
+  "sim.complianceCheckWalkthrough.param.from": "Payer",
+  "sim.complianceCheckWalkthrough.param.to": "Payee",
+  "sim.complianceCheckWalkthrough.param.value": "Amount",
+  "sim.complianceCheckWalkthrough.step.register": "The token is registered with the service by addToken, which stores its address under a bytes32 id and emits TokenAdded.",
+  "sim.complianceCheckWalkthrough.step.register.mobile": "Register the token",
+  "sim.complianceCheckWalkthrough.step.check": "Before the transfer, the token calls checkTransferAllowed and the service returns 0x11 (Allowed).",
+  "sim.complianceCheckWalkthrough.step.check.mobile": "Check the transfer",
+  "sim.complianceCheckWalkthrough.step.update": "In the same transaction, the token calls updateTransferAccumulated, which updates the accumulated total or reverts on a rule breach.",
+  "sim.complianceCheckWalkthrough.step.update.mobile": "Update accumulated"
+}

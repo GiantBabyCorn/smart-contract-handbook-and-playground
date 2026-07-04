@@ -1,0 +1,32 @@
+{
+  "short": "アカウント抽象化の検証スコープルール",
+  "introduction": "ERC-7562は、バンドラーがアカウント抽象化のUserOperationを共有メモリプールに受け入れる前にオフチェーンで適用する検証スコープルールを定義します。2023年9月にYoav Weiss、Dror Tirosh、Alex Forshtat、Shahaf Nacsonによって提案されました。これらのルールは、検証フレームが実行できるopcodeとアクセスできるストレージスロットを制限し、無関係なオペレーション同士が低コストで互いを無効化できないようにします。注意：ERC-7562はDraft（ドラフト）であり、仕様は現在も活発に開発が進められており、大幅に変更される可能性があります。",
+  "designPurpose": "ERC-7562は、アカウント抽象化のメモリプールを通常のEOAメモリプールと同等のサービス拒否耐性に保つために設計されました。検証は可変ストレージ上で任意のEVMコードを実行するため、そのままでは無関係なUserOperation同士が大量に互いを無効化しかねません。これらのルールは各検証フレームをサンドボックス化します。TIMESTAMPやNUMBERなどの環境系opcodeをブロックし、ストレージアクセスをアカウントに関連付けられたスロットに限定し、グローバルに共有されるエンティティにステークの拠出を求めることで、不正な振る舞いをするエンティティをスロットルできるようにします。",
+  "commonUsage": "これらのルールは、アカウント抽象化のメモリプールを運用するバンドラーとブロックビルダーによって実装され、主にERC-4337のUserOperationとRIP-7560のネイティブアカウント抽象化を対象とします。バンドラーは各UserOperationの検証フェーズをトレースし、opcode・ストレージ・レピュテーションのルールに違反するものを伝播前に拒否します。ステーキングモデルはpaymaster・factory・aggregatorコントラクトの書き方にも影響します。ステーク済みのエンティティのみが、アカウント自身のスロットを超えたストレージにアクセスできるためです。",
+
+  "node.sender": "オペレーション送信者",
+  "node.contract": "バンドラー検証",
+  "node.storageAssociated": "関連ストレージ",
+  "node.storageReputation": "レピュテーションカウンター",
+  "node.mempool": "正規メモリプール",
+  "node.peer": "ピアバンドラー",
+
+  "edge.submitOp": "UserOperationを送信",
+  "edge.checkStorage": "ストレージスコープを確認",
+  "edge.updateReputation": "レピュテーションを更新",
+  "edge.acceptOp": "メモリプールに受け入れ",
+  "edge.propagate": "ピアに伝播",
+
+  "sim.validateOpWalkthrough.name": "UserOperationの検証",
+  "sim.validateOpWalkthrough.desc": "UserOperationを送信から追跡し、opcodeとストレージスコープのルール、レピュテーションチェックを経て共有メモリプールに入るまでを追います。",
+  "sim.validateOpWalkthrough.param.entity": "エンティティタイプ",
+  "sim.validateOpWalkthrough.param.staked": "エンティティはステーク済み",
+  "sim.validateOpWalkthrough.step.submit": "送信者はバンドラーにUserOperationを送信し、バンドラーはメモリプールに追加する前にその検証フェーズのトレースを開始します。",
+  "sim.validateOpWalkthrough.step.submit.mobile": "UserOperationを送信",
+  "sim.validateOpWalkthrough.step.trace": "バンドラーはopcodeルールを適用し、検証フレームがそのアカウント自身のストレージ、またはそのアドレスに関連付けられたスロットのみにアクセスすることを確認します。",
+  "sim.validateOpWalkthrough.step.trace.mobile": "スコープルールを確認",
+  "sim.validateOpWalkthrough.step.reputation": "バンドラーはそのエンティティのopsSeenカウンターをインクリメントし、インクルージョンレートを評価して、エンティティがOK・スロットル・バンのいずれの状態かを判定します。",
+  "sim.validateOpWalkthrough.step.reputation.mobile": "レピュテーションを更新",
+  "sim.validateOpWalkthrough.step.accept": "すべてのルールを通過すると、UserOperationは正規メモリプールに受け入れられ、P2Pネットワークを介してピアバンドラーに伝播されます。",
+  "sim.validateOpWalkthrough.step.accept.mobile": "受け入れて伝播"
+}

@@ -1,0 +1,32 @@
+{
+  "short": "계정 추상화 검증 범위 규칙",
+  "introduction": "ERC-7562는 번들러가 계정 추상화 UserOperation을 공유 멤풀에 수락하기 전에 오프체인에서 적용하는 검증 범위 규칙을 정의합니다. 이 규칙은 2023년 9월 Yoav Weiss, Dror Tirosh, Alex Forshtat, Shahaf Nacson이 제안했습니다. 이 규칙들은 검증 프레임이 실행할 수 있는 opcode와 접근할 수 있는 스토리지 슬롯을 제한하여, 서로 관련 없는 오퍼레이션이 낮은 비용으로 서로를 무효화하지 못하도록 합니다. 참고: ERC-7562는 Draft(초안)이며, 명세는 여전히 활발히 개발 중이고 크게 변경될 수 있습니다.",
+  "designPurpose": "ERC-7562는 계정 추상화 멤풀을 일반 EOA 멤풀과 동등한 수준의 서비스 거부 저항성으로 유지하기 위해 설계되었습니다. 검증은 가변 스토리지 위에서 임의의 EVM 코드를 실행하므로, 그대로 두면 서로 관련 없는 UserOperation이 대량으로 서로를 무효화할 수 있습니다. 이 규칙들은 각 검증 프레임을 샌드박스화합니다. TIMESTAMP와 NUMBER 같은 환경 opcode를 차단하고, 스토리지 접근을 계정과 연관된 슬롯으로 제한하며, 전역으로 공유되는 엔티티가 스테이크를 예치하도록 요구하여 오작동하는 엔티티를 스로틀할 수 있게 합니다.",
+  "commonUsage": "이 규칙들은 계정 추상화 멤풀을 운영하는 번들러와 블록 빌더가 구현하며, 주로 ERC-4337 UserOperation과 RIP-7560 네이티브 계정 추상화를 대상으로 합니다. 번들러는 각 UserOperation의 검증 단계를 추적하고, opcode, 스토리지 또는 평판 규칙을 위반하는 것을 전파하기 전에 거부합니다. 스테이킹 모델은 paymaster, factory, aggregator 컨트랙트의 작성 방식에도 영향을 미치는데, 스테이킹된 엔티티만이 계정 자체 슬롯을 넘어서는 스토리지에 접근할 수 있기 때문입니다.",
+
+  "node.sender": "오퍼레이션 발신자",
+  "node.contract": "번들러 검증",
+  "node.storageAssociated": "연관 스토리지",
+  "node.storageReputation": "평판 카운터",
+  "node.mempool": "정규 멤풀",
+  "node.peer": "피어 번들러",
+
+  "edge.submitOp": "UserOperation 제출",
+  "edge.checkStorage": "스토리지 범위 확인",
+  "edge.updateReputation": "평판 업데이트",
+  "edge.acceptOp": "멤풀에 수락",
+  "edge.propagate": "피어에 전파",
+
+  "sim.validateOpWalkthrough.name": "UserOperation 검증",
+  "sim.validateOpWalkthrough.desc": "UserOperation을 제출부터 opcode 및 스토리지 범위 규칙과 평판 검사를 거쳐 공유 멤풀에 들어가기까지 추적합니다.",
+  "sim.validateOpWalkthrough.param.entity": "엔티티 유형",
+  "sim.validateOpWalkthrough.param.staked": "엔티티가 스테이킹됨",
+  "sim.validateOpWalkthrough.step.submit": "발신자가 번들러에 UserOperation을 제출하면, 번들러는 이를 멤풀에 추가하기 전에 검증 단계의 추적을 시작합니다.",
+  "sim.validateOpWalkthrough.step.submit.mobile": "UserOperation 제출",
+  "sim.validateOpWalkthrough.step.trace": "번들러는 opcode 규칙을 적용하고, 검증 프레임이 해당 계정 자체의 스토리지 또는 그 주소와 연관된 슬롯에만 접근하는지 확인합니다.",
+  "sim.validateOpWalkthrough.step.trace.mobile": "범위 규칙 확인",
+  "sim.validateOpWalkthrough.step.reputation": "번들러는 해당 엔티티의 opsSeen 카운터를 증가시키고 포함률을 평가하여, 엔티티가 OK, 스로틀, 차단 중 어느 상태인지 판정합니다.",
+  "sim.validateOpWalkthrough.step.reputation.mobile": "평판 업데이트",
+  "sim.validateOpWalkthrough.step.accept": "모든 규칙을 통과하면 UserOperation은 정규 멤풀에 수락되고 P2P 네트워크를 통해 피어 번들러에 전파됩니다.",
+  "sim.validateOpWalkthrough.step.accept.mobile": "수락 후 전파"
+}

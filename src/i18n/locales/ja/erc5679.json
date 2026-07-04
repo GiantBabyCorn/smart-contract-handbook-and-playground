@@ -1,0 +1,55 @@
+{
+  "short": "トークンのミント・バーン拡張",
+  "introduction": "ERC-5679 は、EIP-20、EIP-721、EIP-1155 標準を拡張し、代替可能トークン・非代替性トークン・マルチトークン資産のミントとバーンに一貫したインターフェースを定義します。2022年9月に Zainan Victor Zhou によって提案されました。この標準は、トークンの種類ごとに専用の mint 関数と burn 関数を規定します。これには受信側コントラクトを検査する safe-mint の派生形や EIP-1155 向けのバッチ操作が含まれ、また供給量の変化を観測可能に保つため、ミント時に既存の Transfer イベントをゼロアドレスから発行することを要求します。",
+  "designPurpose": "ERC-5679 は、EIP-20、EIP-721、EIP-1155 が規定していないトークンの作成と破棄の方法を標準化するために設計されました。それ以前は、実装が転送メソッドを再利用したり、独自形式の mint・burn 関数を考案したりしていたため、ツールは共通のインターフェースに依存できず、アクセス制御のミスも起こりやすい状況でした。トークンの種類ごとに独自の EIP-165 識別子を持つ独立した mint 関数と burn 関数を定義することで、この標準は供給量を変化させる操作を転送から分離し、そのサポートをオンチェーンで検出可能にします。",
+  "commonUsage": "ミントとバーンのインターフェースは、準備金に応じて供給量を拡大・縮小するステーブルコインの発行者、ロックされた資産のラップ表現をミントし償還時にバーンするブリッジ、トークンを発行または回収する NFT・ゲームプラットフォームで利用されます。ERC-5679 はトークンの種類ごとに1つのインターフェースを定義するため、コントラクトはこれを対応する EIP-20、EIP-721、または EIP-1155 のベースと組み合わせ、新しい関数をアクセス制御ロールの背後に置き、呼び出し側がミント前にサポートを確認できるよう EIP-165 識別子を公開します。",
+
+  "fn.mint.desc": "EIP-20 拡張の一部として、_amount 個の新しい代替可能トークンを作成し、_to に割り当てます。総供給量が増加し、あたかもトークンがゼロアドレスから来たかのように Transfer イベントが発行されます。",
+  "fn.mint.params._to": "新しくミントされたトークンを受け取るアドレス。",
+  "fn.mint.params._amount": "作成するトークンの数量。",
+  "fn.mint.params._data": "mint 呼び出しとともに渡される、形式が指定されていない追加データ。",
+
+  "fn.burn.desc": "EIP-20 拡張の一部として、_from が保有する _amount 個の代替可能トークンを破棄します。総供給量が減少し、あたかもトークンがゼロアドレスへ送られたかのように Transfer イベントが発行されます。",
+  "fn.burn.params._from": "トークンが破棄されるアドレス。",
+  "fn.burn.params._amount": "破棄するトークンの数量。",
+  "fn.burn.params._data": "burn 呼び出しとともに渡される、形式が指定されていない追加データ。",
+
+  "fn.safeMint.desc": "_id で識別される EIP-721 トークンを _to にミントし、safeTransferFrom と同じ受信側チェックを適用することで、トークンを受け取れないコントラクトへ決して送られないようにします。",
+  "fn.safeMint.params._to": "新しくミントされたトークンを受け取るアドレス。",
+  "fn.safeMint.params._id": "ミントする EIP-721 トークンの識別子。",
+  "fn.safeMint.params._data": "受取人の onERC721Received コールバックへ転送される追加データ。",
+
+  "fn.safeMintBatch.desc": "複数の EIP-1155 残高を一度にミントし、ids 内の対応する id ごとに amounts 内の各数量を作成して、セーフ転送の受信側チェックを行いながら受取人に割り当てます。",
+  "fn.safeMintBatch.params.to": "ミントされた残高を受け取るアドレス。",
+  "fn.safeMintBatch.params.ids": "ミントするトークン識別子のリスト。",
+  "fn.safeMintBatch.params.amounts": "対応する各識別子に対してミントする数量。",
+  "fn.safeMintBatch.params.data": "受取人のバッチ受信コールバックへ転送される追加データ。",
+
+  "fn.burnBatch.desc": "複数の EIP-1155 残高を一度に破棄し、ids 内の対応する id ごとに amounts 内の各数量を _from から取り除き、それに応じて総供給量を減少させます。",
+  "fn.burnBatch.params._from": "残高が破棄されるアドレス。",
+  "fn.burnBatch.params.ids": "バーンするトークン識別子のリスト。",
+  "fn.burnBatch.params.amounts": "対応する各識別子に対してバーンする数量。",
+  "fn.burnBatch.params._data": "burn 呼び出しとともに渡される、形式が指定されていない追加データ。",
+
+  "node.user": "トークン発行者",
+  "node.contract": "ERC-5679 トークン",
+  "node.storageSupply": "供給量と残高",
+  "node.recipient": "受取人",
+
+  "edge.callMint": "mint() を呼び出す",
+  "edge.callBurn": "burn() を呼び出す",
+  "edge.updateSupply": "供給量と残高を更新",
+  "edge.mintTokens": "ミントしたトークンを配布",
+  "edge.emitTransfer": "Transfer イベントを発行",
+
+  "sim.mintWalkthrough.name": "トークンミントのウォークスルー",
+  "sim.mintWalkthrough.desc": "発行者からの mint 呼び出しを、供給量の更新を経て、ゼロアドレスから発行される Transfer イベントまで追跡します。",
+  "sim.mintWalkthrough.param.to": "受取人",
+  "sim.mintWalkthrough.param.amount": "数量",
+  "sim.mintWalkthrough.step.call": "発行者はトークンコントラクトで mint(_to, _amount, _data) を呼び出し、受取人のために新しいトークンを作成します。",
+  "sim.mintWalkthrough.step.call.mobile": "mint() を呼び出す",
+  "sim.mintWalkthrough.step.execute": "コントラクトは総供給量を増やし、新しくミントされた数量を受取人の残高に加算します。",
+  "sim.mintWalkthrough.step.execute.mobile": "供給量を更新",
+  "sim.mintWalkthrough.step.transfer": "コントラクトはゼロアドレスから受取人への Transfer を発行し、その数量を新規発行として記録することでインデクサーが追跡できるようにします。",
+  "sim.mintWalkthrough.step.transfer.mobile": "Transfer イベントを発行"
+}

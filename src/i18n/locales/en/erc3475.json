@@ -1,0 +1,80 @@
+{
+  "short": "Abstract Storage Bond Standard",
+  "introduction": "ERC-3475 defines an interface for tokenized bonds—on-chain obligations that store their redemption conditions, supply, and metadata directly in contract storage rather than externally. It was proposed by Yu Liu, Varun Deshpande, and co-authors in April 2021. Each bond is addressed by a class id for the bond type and a nonce id for its issuing condition; a Transaction tuple of (classId, nonceId, amount) drives issue, transfer, redeem, and burn operations, which can be batched into a single call.",
+  "designPurpose": "ERC-3475 was designed to represent obligations that existing token standards cannot express. An ERC-20 LP token carries no structure, so complex reward and redemption logic had to live in separate contracts or off-chain databases, fragmenting liquidity and raising gas costs. By giving every bond a class and nonce alongside on-chain Metadata and Values structures, the standard lets one contract hold many bond types, each with its own supply, maturity progress, and redemption terms, readable through one interface.",
+  "commonUsage": "The standard is intended for protocols that tokenize debt-like positions: fixed-income or yield bonds, redeemable liquidity receipts, and similar instruments whose terms evolve over time. Because one contract can hold many pools as distinct classes and nonces, it suits automated market makers that consolidate liquidity instead of deploying a separate ERC-20 LP token per pair. Wallets and secondary markets read balances and redemption progress through the standard's view functions to display and trade bonds.",
+
+  "fn.transferFrom.desc": "Moves the bonds listed in the Transaction array from one holder to another. The caller must hold operator approval for the relevant bond classes granted through setApprovalFor.",
+  "fn.transferFrom.params.from": "The holder whose bond balance decreases.",
+  "fn.transferFrom.params.to": "The recipient whose bond balance increases.",
+  "fn.transferFrom.params.transactions": "Array of (classId, nonceId, amount) tuples specifying which bonds to move.",
+
+  "fn.issue.desc": "Creates the bonds described by the Transaction array and assigns them to an address. It is meant to be called by a single privileged entity, typically the issuing bank contract, once the required collateral is deposited.",
+  "fn.issue.params.to": "The address the newly created bonds are issued to.",
+  "fn.issue.params.transaction": "Array of (classId, nonceId, amount) tuples describing the bonds to create.",
+
+  "fn.redeem.desc": "Redeems the listed bonds from an address after their maturity conditions are met, removing them from active supply. It should be restricted to the bank or market-maker contract.",
+  "fn.redeem.params.from": "The address the bonds are redeemed from.",
+  "fn.redeem.params.transactions": "Array of (classId, nonceId, amount) tuples describing the bonds to redeem.",
+
+  "fn.burn.desc": "Nullifies the listed bonds by sending them to the zero address. Like redeem, it is intended to be callable only by the controller or bank contract.",
+  "fn.burn.params.from": "The holder whose bonds are burned.",
+  "fn.burn.params.transactions": "Array of (classId, nonceId, amount) tuples describing the bonds to burn.",
+
+  "fn.approve.desc": "Sets the spender's allowance to exactly the bonds in the Transaction array, overwriting any previous allowance for those class and nonce pairs.",
+  "fn.approve.params.spender": "The address authorized to spend the caller's bonds.",
+  "fn.approve.params.transactions": "Array of (classId, nonceId, amount) tuples the spender is approved to transfer.",
+
+  "fn.setApprovalFor.desc": "Enables or disables an operator to manage all of the caller's bonds, returning the resulting approval state. An approved operator can transfer, redeem, and burn on the owner's behalf.",
+  "fn.setApprovalFor.params.operator": "The address being granted or revoked operator status.",
+  "fn.setApprovalFor.params.approved": "True to approve the operator, false to revoke approval.",
+  "fn.setApprovalFor.returns.approved": "The resulting approval state for the operator.",
+
+  "fn.balanceOf.desc": "Returns the number of bonds of the given class and nonce held by an account, counting bonds that have already been redeemed.",
+  "fn.balanceOf.params.account": "The address whose bond balance is queried.",
+  "fn.balanceOf.params.classId": "The class id identifying the bond type.",
+  "fn.balanceOf.params.nonceId": "The nonce id identifying the issuance within the class.",
+  "fn.balanceOf.returns.balance": "The number of bonds of that class and nonce held by the account.",
+
+  "fn.Issue.desc": "Emitted when an operator issues bonds to an address. Zero-value issuance should not emit this event.",
+  "fn.Issue.params.operator": "The operator, typically the bank, that issued the bonds; indexed.",
+  "fn.Issue.params.to": "The address that received the issued bonds; indexed.",
+  "fn.Issue.params.transactions": "The (classId, nonceId, amount) tuples that were issued.",
+
+  "fn.Redeem.desc": "Emitted when an operator redeems bonds from an address. Zero-value redemption should not emit this event.",
+  "fn.Redeem.params.operator": "The operator that redeemed the bonds; indexed.",
+  "fn.Redeem.params.from": "The address the bonds were redeemed from; indexed.",
+  "fn.Redeem.params.transactions": "The (classId, nonceId, amount) tuples that were redeemed.",
+
+  "fn.Transfer.desc": "Emitted when an operator transfers bonds between holders. A transfer from the zero address must emit Issue instead of this event.",
+  "fn.Transfer.params.operator": "The operator that carried out the transfer; indexed.",
+  "fn.Transfer.params.from": "The address the bonds were sent from; indexed.",
+  "fn.Transfer.params.to": "The address the bonds were sent to; indexed.",
+  "fn.Transfer.params.transactions": "The (classId, nonceId, amount) tuples that were transferred.",
+
+  "node.user": "Bank (Issuer)",
+  "node.contract": "ERC-3475 Bond Contract",
+  "node.storageBonds": "Bond Storage",
+  "node.holder": "Bond Holder",
+
+  "edge.callIssue": "Call issue()",
+  "edge.callRedeem": "Call redeem()",
+  "edge.updateBonds": "Update bond ledger",
+  "edge.bondsIssued": "Credit bonds",
+  "edge.emitIssue": "Emit Issue event",
+  "edge.emitRedeem": "Emit Redeem event",
+
+  "sim.issueBondWalkthrough.name": "Issue Bond Walkthrough",
+  "sim.issueBondWalkthrough.desc": "Follow an issue() call from the bank through bond storage to the Issue event.",
+  "sim.issueBondWalkthrough.param.to": "Recipient",
+  "sim.issueBondWalkthrough.param.classId": "Class id",
+  "sim.issueBondWalkthrough.param.amount": "Amount",
+  "sim.issueBondWalkthrough.step.call": "The bank calls issue() with a Transaction tuple naming the bond class, nonce, and amount to create.",
+  "sim.issueBondWalkthrough.step.call.mobile": "Call issue()",
+  "sim.issueBondWalkthrough.step.execute": "The contract writes the new bonds into storage, raising the holder's balance and the active supply for that class and nonce.",
+  "sim.issueBondWalkthrough.step.execute.mobile": "Write bonds to storage",
+  "sim.issueBondWalkthrough.step.credit": "The newly created bonds are credited to the recipient, who can later transfer, trade, or redeem them.",
+  "sim.issueBondWalkthrough.step.credit.mobile": "Credit the holder",
+  "sim.issueBondWalkthrough.step.event": "The contract emits the Issue event so wallets and indexers record the new bonds.",
+  "sim.issueBondWalkthrough.step.event.mobile": "Emit Issue event"
+}

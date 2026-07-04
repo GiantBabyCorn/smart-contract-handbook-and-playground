@@ -1,0 +1,30 @@
+{
+  "short": "Diseño de Almacenamiento con Espacios de Nombres",
+  "introduction": "ERC-7201 define una convención para disponer el almacenamiento de un contrato en espacios de nombres aislados en lugar del diseño secuencial predeterminado. Fue propuesto por Francisco Giordano, Hadrien Croubois, Ernesto García y Eric Lau en junio de 2023. Cada espacio de nombres es un struct de Solidity anotado con @custom:storage-location y con raíz en erc7201(id) = keccak256(keccak256(id) - 1) & ~0xff, un slot elegido de modo que no pueda solaparse con el árbol de almacenamiento predeterminado de Solidity o Vyper, de manera que los espacios de nombres pueden coexistir sin colisionar.",
+  "designPurpose": "ERC-7201 se diseñó para que las ubicaciones de almacenamiento dispersas que usan los contratos modulares y actualizables sean predecibles y seguras. Solidity y Vyper asignan el almacenamiento de forma secuencial a partir del slot 0, por lo que los contratos que comparten almacenamiento mediante delegatecall, o que crecen durante una actualización, pueden desplazarse o colisionar con slots existentes. Al estandarizar la fórmula erc7201 y la anotación @custom:storage-location, cada espacio de nombres obtiene una raíz disjunta y una declaración legible por máquina que las herramientas pueden interpretar.",
+  "commonUsage": "El almacenamiento con espacios de nombres lo usan los frameworks de contratos actualizables y los contratos construidos en torno a delegatecall. Las bibliotecas actualizables de OpenZeppelin adoptan el patrón para poder añadir nuevo estado entre versiones sin perturbar los slots existentes, y el patrón diamante (ERC-2535) da a cada faceta su propio espacio de nombres para que las facetas que comparten un proxy no colisionen. Como el compilador de Solidity registra la anotación en su AST desde la versión 0.8.20, las herramientas pueden localizar datos con espacios de nombres que de otro modo serían invisibles.",
+
+  "node.developer": "Desarrollador del Contrato",
+  "node.struct": "Struct del Espacio de Nombres",
+  "node.storageNamespace": "Almacenamiento del Espacio de Nombres",
+  "node.storageDefault": "Árbol de Almacenamiento Predeterminado",
+  "node.tooling": "Herramientas y Exploradores",
+
+  "edge.declareNamespace": "Declarar espacio de nombres",
+  "edge.deriveRoot": "Hashear el id del espacio de nombres",
+  "edge.rootAt": "Anclar en el slot calculado",
+  "edge.disjointFrom": "Disjunto del árbol predeterminado",
+  "edge.exposeLayout": "Exponer el diseño",
+
+  "sim.deriveNamespaceWalkthrough.name": "Derivar un Espacio de Nombres de Almacenamiento",
+  "sim.deriveNamespaceWalkthrough.desc": "Sigue un id de espacio de nombres desde su anotación @custom:storage-location, a través de la fórmula erc7201, hasta su raíz de almacenamiento aislada.",
+  "sim.deriveNamespaceWalkthrough.param.namespaceId": "Id del espacio de nombres",
+  "sim.deriveNamespaceWalkthrough.step.declare": "El desarrollador declara un struct anotado con @custom:storage-location erc7201:example.main para marcarlo como un espacio de nombres.",
+  "sim.deriveNamespaceWalkthrough.step.declare.mobile": "Declarar espacio de nombres",
+  "sim.deriveNamespaceWalkthrough.step.derive": "La fórmula erc7201 hashea el id del espacio de nombres dos veces, calculando keccak256(keccak256(id) - 1) & ~0xff como el slot raíz.",
+  "sim.deriveNamespaceWalkthrough.step.derive.mobile": "Hashear id al slot raíz",
+  "sim.deriveNamespaceWalkthrough.step.root": "Los campos del struct se disponen de forma secuencial a partir del slot raíz calculado, siguiendo las mismas reglas que el diseño predeterminado pero con la raíz alejada del slot 0.",
+  "sim.deriveNamespaceWalkthrough.step.root.mobile": "Disponer en la raíz",
+  "sim.deriveNamespaceWalkthrough.step.isolate": "El espacio de nombres ocupa su propio árbol de almacenamiento, disjunto del diseño predeterminado de Solidity, y la anotación permite que los exploradores lo localicen.",
+  "sim.deriveNamespaceWalkthrough.step.isolate.mobile": "Aislado del almacenamiento predeterminado"
+}

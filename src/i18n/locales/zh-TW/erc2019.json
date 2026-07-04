@@ -1,0 +1,80 @@
+{
+  "short": "可注資代幣標準",
+  "introduction": "ERC-2019 擴展了 ERC-20 代幣標準，使錢包所有者能夠透過鏈上訂單請求將新代幣鑄造到自己的錢包中。它由 Fernando Paris、Julio Faura 和 Daniel Lehrner 於 2019 年 5 月提出。所有者或經授權的下單方呼叫 orderFund，傳入 operationId、金額和指令；營運方結算鏈下付款，然後執行或拒絕該請求。注意：ERC-2019 處於 Stagnant（停滯）狀態——它已停止活動 6 個月以上，可能永遠不會被最終確定，但仍具有歷史或技術上的重要意義。",
+  "designPurpose": "ERC-2019 旨在將代幣生命週期中的注資環節搬到鏈上。在此之前，針對法幣或銀行付款鑄造代幣依賴於鏈下的中心化請求，在帳本上留不下可驗證的痕跡。ERC-2019 將該請求標準化為一次 orderFund 呼叫，攜帶唯一的 operationId 和自由格式的指令，使營運方能夠將其與私下的付款關聯起來，並在鏈上更新其狀態，從而使已下單、已執行或已拒絕的結果可以透過事件追溯。",
+  "commonUsage": "可注資代幣面向受監管或由銀行發行的代幣系統，在這些系統中鑄造必須與真實的法幣存款或電匯掛鉤。在這類部署中，代幣合約的所有者或代理人充當營運方，負責認可或拒絕請求，而錢包所有者可以授權下單方代表自己提交 orderFundFrom。由於它僅擴展 ERC-20，該介面是添加到現有代幣之上的，指令欄位指向一個私有的付款通道，而不是將原始銀行資訊嵌入鏈上。",
+
+  "fn.authorizeFundOperator.desc": "授權某個地址代表呼叫者的錢包提交注資訂單，從而為該下單方啟用 orderFundFrom。成功時回傳 true。",
+  "fn.authorizeFundOperator.params.orderer": "被授權為呼叫者錢包下達注資訂單的地址。",
+  "fn.authorizeFundOperator.returns.success": "如果授權已被記錄，則為 true。",
+
+  "fn.orderFund.desc": "為呼叫者自己的錢包建立一個注資請求，以唯一的 operationId 標識，並攜帶營運方將據以執行的金額和付款指令。如果該 operationId 之前已被使用，則回滾。",
+  "fn.orderFund.params.operationId": "用於在整個生命週期中追蹤該注資請求的唯一識別碼。",
+  "fn.orderFund.params.value": "要注資到錢包中的代幣數量。",
+  "fn.orderFund.params.instructions": "一個付款指令字串，營運方用它來籌措並結算資金。",
+  "fn.orderFund.returns.success": "如果注資請求已建立，則為 true。",
+
+  "fn.orderFundFrom.desc": "代表另一位錢包所有者建立注資請求，可由事先獲得授權的下單方呼叫。如果該 operationId 之前已被使用，則回滾。",
+  "fn.orderFundFrom.params.operationId": "該注資請求的唯一識別碼。",
+  "fn.orderFundFrom.params.walletToFund": "該請求為其建立並注資的錢包所有者。",
+  "fn.orderFundFrom.params.value": "要注資到錢包中的代幣數量。",
+  "fn.orderFundFrom.params.instructions": "一個付款指令字串，營運方用它來結算資金。",
+  "fn.orderFundFrom.returns.success": "如果注資請求已建立，則為 true。",
+
+  "fn.cancelFund.desc": "取消一個待處理的注資請求。只有錢包所有者或最初的下單方可以取消，且只能在營運方將其轉入處理之前取消。",
+  "fn.cancelFund.params.operationId": "要取消的注資請求的識別碼。",
+  "fn.cancelFund.returns.success": "如果請求已被取消，則為 true。",
+
+  "fn.processFund.desc": "將注資請求標記為處理中。一旦進入處理中，該請求便不能再被取消，表明營運方已開始結算付款。",
+  "fn.processFund.params.operationId": "正在處理的注資請求的識別碼。",
+  "fn.processFund.returns.success": "如果請求已被標記為處理中，則為 true。",
+
+  "fn.executeFund.desc": "發行所請求的代幣並將注資請求標記為已執行。在收到相應付款後由營運方呼叫。",
+  "fn.executeFund.params.operationId": "要執行的注資請求的識別碼。",
+  "fn.executeFund.returns.success": "如果請求已被執行且代幣已鑄造，則為 true。",
+
+  "fn.rejectFund.desc": "以人類可讀的原因拒絕一個注資請求，在不鑄造代幣的情況下結束其生命週期。原因可以使用 EIP-1066 狀態碼。",
+  "fn.rejectFund.params.operationId": "要拒絕的注資請求的識別碼。",
+  "fn.rejectFund.params.reason": "請求被拒絕的原因；可以使用 EIP-1066 狀態碼。",
+  "fn.rejectFund.returns.success": "如果請求已被拒絕，則為 true。",
+
+  "fn.FundOrdered.desc": "當錢包所有者或獲得授權的下單方建立注資請求時發出。",
+  "fn.FundOrdered.params.orderer": "下達該注資請求的地址。",
+  "fn.FundOrdered.params.operationId": "該注資請求的唯一識別碼。",
+  "fn.FundOrdered.params.walletToFund": "將接收所注資代幣的錢包。",
+  "fn.FundOrdered.params.value": "所請求的代幣數量。",
+  "fn.FundOrdered.params.instructions": "附加在該請求上的付款指令字串。",
+
+  "fn.FundInProcess.desc": "當營運方開始處理注資請求時發出，此後該請求便不能再被取消。",
+  "fn.FundInProcess.params.orderer": "下達該注資請求的地址。",
+  "fn.FundInProcess.params.operationId": "該注資請求的唯一識別碼。",
+
+  "fn.FundExecuted.desc": "當營運方執行注資請求並鑄造所請求的代幣時發出。",
+  "fn.FundExecuted.params.orderer": "下達該注資請求的地址。",
+  "fn.FundExecuted.params.operationId": "該注資請求的唯一識別碼。",
+
+  "node.user": "錢包所有者",
+  "node.contract": "可注資代幣",
+  "node.storageFunds": "注資請求",
+  "node.operator": "代幣營運方",
+
+  "edge.callOrderFund": "呼叫 orderFund()",
+  "edge.recordRequest": "記錄注資請求",
+  "edge.emitFundOrdered": "發出 FundOrdered 事件",
+  "edge.callExecuteFund": "呼叫 executeFund()",
+  "edge.emitFundExecuted": "發出 FundExecuted 事件",
+
+  "sim.fundRequestWalkthrough.name": "注資請求生命週期",
+  "sim.fundRequestWalkthrough.desc": "跟隨一個注資請求，從錢包所有者的下單，經由營運方的執行，直到 FundExecuted 事件。",
+  "sim.fundRequestWalkthrough.param.operationId": "操作 ID",
+  "sim.fundRequestWalkthrough.param.value": "注資金額",
+  "sim.fundRequestWalkthrough.param.instructions": "付款指令",
+  "sim.fundRequestWalkthrough.step.order": "錢包所有者呼叫 orderFund，傳入唯一的 operationId、金額和付款指令。",
+  "sim.fundRequestWalkthrough.step.order.mobile": "呼叫 orderFund()",
+  "sim.fundRequestWalkthrough.step.record": "合約在儲存中將該請求記錄為 Ordered（已下單），並發出 FundOrdered，以便營運方接手。",
+  "sim.fundRequestWalkthrough.step.record.mobile": "記錄請求",
+  "sim.fundRequestWalkthrough.step.execute": "在結算鏈下付款後，營運方呼叫 executeFund，將該請求推進到 Executed（已執行）。",
+  "sim.fundRequestWalkthrough.step.execute.mobile": "營運方執行",
+  "sim.fundRequestWalkthrough.step.event": "合約鑄造所請求的代幣並發出 FundExecuted，從而完成注資生命週期。",
+  "sim.fundRequestWalkthrough.step.event.mobile": "發出 FundExecuted"
+}

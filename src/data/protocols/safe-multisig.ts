@@ -120,6 +120,37 @@ export const entry: ProtocolEntry = {
     },
   ],
 
+  // ─── Schema v2 content sections ───
+  composes: [
+    { slug: 'erc1271', role: 'safe-multisig.compose.erc1271.role' },
+    { slug: 'erc165', role: 'safe-multisig.compose.erc165.role' },
+    { slug: 'erc4337', role: 'safe-multisig.compose.erc4337.role' },
+    { erc: 712, role: 'safe-multisig.compose.erc712.role' },
+  ],
+
+  references: [
+    {
+      label: 'Safe docs — Smart account signatures (EIP-1271)',
+      url: 'https://docs.safe.global/advanced/smart-account-signatures',
+      kind: 'spec',
+    },
+    {
+      label: 'Safe docs — Safe and ERC-4337 (Safe4337Module)',
+      url: 'https://docs.safe.global/advanced/erc-4337/4337-safe',
+      kind: 'spec',
+    },
+    {
+      label: 'CompatibilityFallbackHandler.sol (ERC-1271 + ERC-165)',
+      url: 'https://github.com/safe-global/safe-smart-account/blob/main/contracts/handler/CompatibilityFallbackHandler.sol',
+      kind: 'impl',
+    },
+    {
+      label: 'Safe.sol (EIP-712 SafeTx hashing)',
+      url: 'https://github.com/safe-global/safe-smart-account/blob/main/contracts/Safe.sol',
+      kind: 'impl',
+    },
+  ],
+
   // ─── ERCFlow ───
   flowNodes: [
     {

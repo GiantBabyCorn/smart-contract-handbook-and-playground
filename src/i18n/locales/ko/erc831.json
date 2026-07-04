@@ -1,0 +1,32 @@
+{
+  "short": "Ethereum용 URI 형식",
+  "introduction": "ERC-831은 Ethereum을 위한 URI 형식을 정의하며, ethereum: 또는 eth: 스킴을 사용자의 지갑에 요청을 전달하기 위한 컨테이너로 사용합니다. 이 제안은 2018년 1월 ligi가 제안했습니다. URI는 ethereum:[prefix-]payload 형식을 취하며, 선택적 접두사가 유스케이스를 나타내고 페이로드가 해당 데이터를 담습니다. 접두사가 생략되면 EIP-67과의 호환성을 위해 pay-가 가정됩니다. 참고: ERC-831은 Stagnant(정체) 상태입니다. 6개월 이상 활동이 없었고 최종 확정되지 않을 수 있지만, 역사적으로 또는 기술적으로 여전히 중요한 의미를 가집니다.",
+  "designPurpose": "ERC-831은 ethereum: 스킴을 하나의 유스케이스에 묶는 대신 여러 유스케이스에 열려 있도록 설계되었습니다. 이러한 필요성은 EIP-681을 다듬는 과정에서 생겼는데, 어떤 단일 유스케이스의 무게도 지지 않는 컨테이너가 필요했기 때문입니다. ERC-831은 당시 존재하던 결제 유스케이스를 위해 스킴 전체를 예약하는 대신, URI를 유스케이스를 나타내는 선택적 접두사와, 그 구조를 각 유스케이스 ERC가 자체적으로 정의하는 페이로드로 분리하여, 스킴을 막지 않고도 나중에 새로운 접두사를 추가할 수 있도록 합니다.",
+  "commonUsage": "이 URI 형식은 하이퍼링크, QR 코드, 이메일 또는 채팅 메시지를 통해 느슨하게 결합된 애플리케이션 간에 요청을 전달하는 지갑, dapp, QR 코드 생성기에서 사용되며, 따라서 하나의 링크로 사용자가 선호하는 지갑을 호출할 수 있습니다. pay- 접두사로 전달되고 EIP-681에 자세히 설명된 결제 유스케이스는 명세가 제시하는 예시입니다. 다른 유스케이스 ERC는 동일한 스킴에서 추가 접두사를 등록할 수 있습니다. ERC-831은 컨테이너만 정의하므로, Ethereum 요청을 위한 공통 진입점 역할을 합니다.",
+
+  "node.requester": "요청 작성자",
+  "node.uriBuilder": "URI 인코더",
+  "node.ethereumUri": "Ethereum URI",
+  "node.wallet": "지갑 파서",
+  "node.useCaseHandler": "유스케이스 핸들러",
+  "node.user": "지갑 사용자",
+
+  "edge.composeRequest": "요청 작성",
+  "edge.encodeUri": "ethereum: URI 인코딩",
+  "edge.openUri": "링크 스캔 또는 열기",
+  "edge.routePrefix": "접두사로 라우팅",
+  "edge.presentAction": "작업 표시",
+
+  "sim.uriRoutingWalkthrough.name": "URI 라우팅 워크스루",
+  "sim.uriRoutingWalkthrough.desc": "ethereum: URI에서 시작된 요청이 지갑의 접두사 라우팅을 거쳐 일치하는 유스케이스 핸들러에 도달하는 과정을 따라갑니다.",
+  "sim.uriRoutingWalkthrough.param.prefix": "유스케이스 접두사",
+  "sim.uriRoutingWalkthrough.param.target": "대상 주소",
+  "sim.uriRoutingWalkthrough.step.compose": "dapp 또는 수취인이 요청을 작성하며, 유스케이스 접두사와 전달해야 할 페이로드 데이터를 선택합니다.",
+  "sim.uriRoutingWalkthrough.step.compose.mobile": "요청 작성",
+  "sim.uriRoutingWalkthrough.step.encode": "요청은 스킴, 선택적 접두사, 페이로드로 구성된 ethereum: URI로 인코딩되어 QR 코드나 링크에 삽입할 준비가 됩니다.",
+  "sim.uriRoutingWalkthrough.step.encode.mobile": "URI 인코딩",
+  "sim.uriRoutingWalkthrough.step.open": "사용자가 링크를 스캔하거나 열면, 지갑이 ethereum: 스킴을 인식하고 접두사와 페이로드를 읽습니다.",
+  "sim.uriRoutingWalkthrough.step.open.mobile": "링크 열기",
+  "sim.uriRoutingWalkthrough.step.route": "지갑은 pay- 접두사에 따라 EIP-681 핸들러로 라우팅하며, 이 핸들러는 페이로드를 파싱하여 그 결과로 생기는 작업을 사용자가 확인하도록 표시합니다.",
+  "sim.uriRoutingWalkthrough.step.route.mobile": "접두사로 라우팅"
+}

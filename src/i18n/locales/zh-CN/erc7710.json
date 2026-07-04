@@ -1,0 +1,32 @@
+{
+  "short": "智能合约委托接口",
+  "introduction": "ERC-7710 定义了一个用于智能合约委托的最小化接口，让委托方授权委托管理器（Delegation Manager）代表其行事。该标准由 Ryan McPeck、Dan Finlay、Rob Dawson 和 Derek Chiang 于 2024 年 5 月提出。被委托方调用 redeemDelegations，传入证明其权限的权限上下文，以及 ERC-7579 的模式与 calldata；管理器验证后驱动委托方执行相应操作。注意：ERC-7710 目前处于 Draft 阶段，规范仍在积极开发中，可能发生重大变更。",
+  "designPurpose": "ERC-7710 的设计目标是取代以往的硬编码权限和定制中介合约——当一个合约需要使用另一个合约的能力时，这些做法会增加复杂度和 gas 成本。它还针对每次交互都需重新签名的摩擦，让用户只需授予一次受策略约束的委托即可。该接口仅规定了 redeemDelegations，并复用 ERC-7579 的执行编码，因此现有的智能账户无需实现新的执行方法即可充当委托方。",
+  "commonUsage": "该标准适用于长期会话和受限权限的场景：避免重复签名的持久化 dApp 会话、授予 AI 代理或自动化系统的受限权限、携带特定能力的可分享邀请链接，以及在既定策略范围内行事的第三方被委托方。由于它只涵盖兑现环节，而将委托的创建排除在范围之外，因此通常与诸如 MetaMask Delegation Framework 之类的框架搭配使用，由该框架处理签名、约束条件（caveats）和撤销。",
+
+  "fn.redeemDelegations.desc": "由被委托方调用，以兑现一个或多个委托。管理器会验证每个权限上下文，若通过授权，则通过委托方执行配对的 ERC-7579 模式和 calldata。当各数组长度不一致时，调用会回滚（revert）。",
+  "fn.redeemDelegations.params.permissionContexts": "针对每个委托的数据，用于证明调用者代表各委托方行事的权限；其结构由具体的委托管理器定义。",
+  "fn.redeemDelegations.params.modes": "由 ERC-7579 执行模式构成的数组，每个模式为相匹配的执行编码其调用行为，例如单次调用或批量调用。",
+  "fn.redeemDelegations.params.executionCallData": "由 ERC-7579 编码执行构成的数组，每个元素通常包含代表委托方运行所需的目标地址、value 和 calldata。",
+
+  "node.delegate": "被委托方（兑现者）",
+  "node.contract": "委托管理器",
+  "node.delegator": "委托方",
+  "node.target": "目标合约",
+
+  "edge.callRedeem": "调用 redeemDelegations()",
+  "edge.callDelegator": "调用委托方",
+  "edge.executeAction": "执行操作",
+
+  "sim.redeemDelegationWalkthrough.name": "兑现委托",
+  "sim.redeemDelegationWalkthrough.desc": "跟随被委托方通过委托管理器兑现一笔委托，并由委托方在目标合约上执行操作的全过程。",
+  "sim.redeemDelegationWalkthrough.param.delegator": "委托方账户",
+  "sim.redeemDelegationWalkthrough.param.target": "目标合约",
+  "sim.redeemDelegationWalkthrough.param.mode": "执行模式",
+  "sim.redeemDelegationWalkthrough.step.call": "被委托方在委托管理器上调用 redeemDelegations，传入权限上下文、执行模式，以及其想要运行操作的 calldata。",
+  "sim.redeemDelegationWalkthrough.step.call.mobile": "调用 redeemDelegations()",
+  "sim.redeemDelegationWalkthrough.step.validate": "管理器验证每个权限上下文是否证明了有效权限。若所有委托均有效，则调用相应的委托方；否则整批调用回滚。",
+  "sim.redeemDelegationWalkthrough.step.validate.mobile": "验证权限",
+  "sim.redeemDelegationWalkthrough.step.execute": "委托方在目标合约上运行 ERC-7579 编码的操作，完成被委托方获授权使用的能力。",
+  "sim.redeemDelegationWalkthrough.step.execute.mobile": "在目标合约上执行"
+}

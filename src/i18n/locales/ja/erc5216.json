@@ -1,0 +1,48 @@
+{
+  "short": "ERC-1155 アローワンス拡張",
+  "introduction": "ERC-5216 は、保有者がオペレーターに対して、コレクション全体ではなく特定のトークンIDについて限られた量だけを転送する承認を与えられるようにする、ERC-1155 標準の拡張を定義します。この規格は 2022年7月に Iván Mañús と Juan Carlos Cantó によって提案されました。ERC-20 の approve と allowance のパターンを借用し、ID ごとの支出上限を記録する approve 呼び出しと、残量を返す allowance ゲッターを追加します。注意：ERC-5216 は Last Call（Final になる前の最終レビュー期間）の段階にあります。",
+  "designPurpose": "ERC-5216 は、ERC-1155 唯一の承認メカニズムである setApprovalForAll が要求する、全か無かの信頼を取り除くために設計されました。setApprovalForAll は、保有者が所有するすべてのトークンを移動する権限をオペレーターに与えます。この権限を持つバグや悪意のあるマーケットプレイスは、残高全体を抜き取ってしまう可能性があります。ERC-20 スタイルの approve と allowance の呼び出しを再利用することで、この拡張は保有者がトークンIDごとに正確な量を承認し、自身のエクスポージャーを制限し、使用されていない承認を取り消せるようにします。そのため、オペレーターは明示的に付与された量を超えて転送することは決してできません。",
+  "commonUsage": "きめ細かい ERC-1155 の承認は、NFT および半代替性のマーケットプレイスを対象としています。そこでは出品者が特定のトークンIDを出品し、在庫全体ではなく販売する数量だけを承認したいと考えます。コントラクトは、approve と allowance の関数を ERC-1155 ベースと組み合わせ、safeTransferFrom の内部で移動した量を差し引き、インターフェースID 0x1be07d74 に対して supportsInterface が true を返すようにすることで、これを実装します。多数の ID をミントするゲームや資産分割プラットフォームも、権限を絞り込むために同じパターンを使用します。",
+
+  "fn.approve.desc": "呼び出し元の指定した ID のトークンを amount まで転送する権限をオペレーターに付与し、そのオペレーターと ID に対する以前のアローワンスを上書きします。オペレーターを呼び出し元自身にすることはできず、Approval イベントが発行されます。",
+  "fn.approve.params.operator": "呼び出し元のトークンを転送する権限を与えられるアドレス。",
+  "fn.approve.params.id": "アローワンスが適用される ERC-1155 のトークンID。",
+  "fn.approve.params.amount": "オペレーターが転送できる、その ID のトークンの最大数。",
+
+  "fn.allowance.desc": "オペレーターが現在、アカウントに代わって転送を承認されている、指定した ID のトークンの数を返します。",
+  "fn.allowance.params.account": "承認が照会されるトークン保有者。",
+  "fn.allowance.params.operator": "残りのアローワンスが照会されるオペレーター。",
+  "fn.allowance.params.id": "アローワンスを照会する ERC-1155 のトークンID。",
+  "fn.allowance.returns.amount": "オペレーターがアカウントのために転送できる、その ID の残量。",
+
+  "fn.Approval.desc": "アカウントがオペレーターに対して特定の ID を転送する権限を付与または取り消した際に発行され、承認された量を記録します。",
+  "fn.Approval.params.account": "承認を付与または取り消したトークン保有者です（indexed）。",
+  "fn.Approval.params.operator": "アローワンスが変化したオペレーターです（indexed）。",
+  "fn.Approval.params.id": "この承認が適用されるトークンID。",
+  "fn.Approval.params.amount": "そのオペレーターと ID に対して新たに承認された量。",
+
+  "node.user": "トークン保有者",
+  "node.contract": "ERC-5216トークン",
+  "node.storageAllowances": "アローワンスマッピング",
+  "node.operator": "承認されたオペレーター",
+
+  "edge.callApprove": "approve()を呼び出す",
+  "edge.updateAllowance": "アローワンスを更新",
+  "edge.emitApproval": "Approvalイベントを発行",
+  "edge.grantAllowance": "限定アローワンスを付与",
+  "edge.spendAllowance": "safeTransferFromで消費",
+
+  "sim.approveWalkthrough.name": "限定承認のウォークスルー",
+  "sim.approveWalkthrough.desc": "1つのトークンIDに対して上限付きのアローワンスをオペレーターに付与する approve 呼び出しを追い、その後 safeTransferFrom がそれを消費する様子を見ます。",
+  "sim.approveWalkthrough.param.operator": "オペレーター",
+  "sim.approveWalkthrough.param.id": "トークンID",
+  "sim.approveWalkthrough.param.amount": "数量",
+  "sim.approveWalkthrough.step.call": "保有者は approve(operator, id, amount) を呼び出し、その ID のトークンを限られた数だけオペレーターに承認します。",
+  "sim.approveWalkthrough.step.call.mobile": "approve()を呼び出す",
+  "sim.approveWalkthrough.step.execute": "コントラクトは、保有者・オペレーター・ID をキーとしてアローワンスマッピングにその量を記録し、以前の承認を置き換えます。",
+  "sim.approveWalkthrough.step.execute.mobile": "アローワンスを更新",
+  "sim.approveWalkthrough.step.event": "コントラクトは Approval を発行し、オペレーターは包括的な転送権限ではなく、上限付きのアローワンスを保持するようになります。",
+  "sim.approveWalkthrough.step.event.mobile": "Approvalイベントを発行",
+  "sim.approveWalkthrough.step.spend": "オペレーターが safeTransferFrom を呼び出すと、コントラクトはその ID について記録されたアローワンスから、移動した量を差し引きます。",
+  "sim.approveWalkthrough.step.spend.mobile": "アローワンスを消費"
+}

@@ -1,0 +1,80 @@
+{
+  "short": "Estándar de Token Financiable",
+  "introduction": "ERC-2019 amplía el estándar de token ERC-20 para que el propietario de una billetera pueda solicitar la acuñación de nuevos tokens en su billetera mediante una orden on-chain. Fue propuesto por Fernando Paris, Julio Faura y Daniel Lehrner en mayo de 2019. El propietario o un ordenante autorizado llama a orderFund con un operationId, un importe y unas instrucciones; el operador liquida el pago fuera de la cadena y luego lo ejecuta o lo rechaza. Nota: ERC-2019 está en estado Stagnant (estancado): ha permanecido inactivo durante más de 6 meses y puede que nunca se finalice, pero conserva relevancia histórica o técnica.",
+  "designPurpose": "ERC-2019 se diseñó para llevar el paso de financiación del ciclo de vida de un token a la cadena. Antes de él, acuñar tokens contra un pago en moneda fiduciaria o bancario dependía de una solicitud centralizada fuera de la cadena que no dejaba ningún rastro verificable en el libro mayor. ERC-2019 estandariza esa solicitud como una llamada a orderFund con un operationId único y una instrucción de formato libre, lo que permite al operador correlacionarla con un pago privado y actualizar su estado en la cadena, de modo que el resultado ordenado, ejecutado o rechazado sea rastreable a través de eventos.",
+  "commonUsage": "Los tokens financiables están pensados para sistemas de tokens regulados o emitidos por bancos, donde la acuñación debe vincularse a un depósito fiduciario real o a una transferencia bancaria. En estos despliegues, el propietario o el agente del contrato de token actúa como operador que atiende o rechaza las solicitudes, mientras que los propietarios de billeteras pueden autorizar a ordenantes para que envíen orderFundFrom en su nombre. Como solo amplía ERC-20, la interfaz se añade a un token existente, y el campo de instrucciones apunta a un canal de pago privado en lugar de incrustar los datos bancarios sin procesar en la cadena.",
+
+  "fn.authorizeFundOperator.desc": "Autoriza a una dirección a enviar órdenes de financiación en nombre de la billetera del llamante, habilitando orderFundFrom para ese ordenante. Devuelve true si tiene éxito.",
+  "fn.authorizeFundOperator.params.orderer": "La dirección que se autoriza a ordenar financiación para la billetera del llamante.",
+  "fn.authorizeFundOperator.returns.success": "True si la autorización quedó registrada.",
+
+  "fn.orderFund.desc": "Crea una solicitud de financiación para la propia billetera del llamante, identificada por un operationId único y que lleva el importe y las instrucciones de pago sobre las que actuará el operador. Revierte si el operationId ya se ha usado antes.",
+  "fn.orderFund.params.operationId": "Un identificador único que se usa para rastrear la solicitud de financiación a lo largo de su ciclo de vida.",
+  "fn.orderFund.params.value": "La cantidad de tokens que se financiará en la billetera.",
+  "fn.orderFund.params.instructions": "Una cadena de instrucción de pago que el operador usa para obtener y liquidar los fondos.",
+  "fn.orderFund.returns.success": "True si la solicitud de financiación se creó.",
+
+  "fn.orderFundFrom.desc": "Crea una solicitud de financiación en nombre de otro propietario de billetera; puede llamarla un ordenante previamente autorizado. Revierte si el operationId ya se ha usado antes.",
+  "fn.orderFundFrom.params.operationId": "Un identificador único de la solicitud de financiación.",
+  "fn.orderFundFrom.params.walletToFund": "El propietario de billetera en cuyo nombre se crea y financia la solicitud.",
+  "fn.orderFundFrom.params.value": "La cantidad de tokens que se financiará en la billetera.",
+  "fn.orderFundFrom.params.instructions": "Una cadena de instrucción de pago que el operador usa para liquidar los fondos.",
+  "fn.orderFundFrom.returns.success": "True si la solicitud de financiación se creó.",
+
+  "fn.cancelFund.desc": "Cancela una solicitud de financiación pendiente. Solo el propietario de la billetera o el ordenante original pueden cancelar, y únicamente antes de que el operador la haya pasado a procesamiento.",
+  "fn.cancelFund.params.operationId": "El identificador de la solicitud de financiación que se va a cancelar.",
+  "fn.cancelFund.returns.success": "True si la solicitud se canceló.",
+
+  "fn.processFund.desc": "Marca una solicitud de financiación como en proceso. Una vez en proceso, la solicitud ya no puede cancelarse, lo que indica que el operador ha comenzado a liquidar el pago.",
+  "fn.processFund.params.operationId": "El identificador de la solicitud de financiación que se está procesando.",
+  "fn.processFund.returns.success": "True si la solicitud se marcó como en proceso.",
+
+  "fn.executeFund.desc": "Emite los tokens solicitados y marca la solicitud de financiación como ejecutada. La llama el operador una vez que se ha recibido el pago correspondiente.",
+  "fn.executeFund.params.operationId": "El identificador de la solicitud de financiación que se va a ejecutar.",
+  "fn.executeFund.returns.success": "True si la solicitud se ejecutó y los tokens se acuñaron.",
+
+  "fn.rejectFund.desc": "Rechaza una solicitud de financiación con un motivo legible por humanos, poniendo fin a su ciclo de vida sin acuñar tokens. Para el motivo se pueden usar los códigos de estado de EIP-1066.",
+  "fn.rejectFund.params.operationId": "El identificador de la solicitud de financiación que se va a rechazar.",
+  "fn.rejectFund.params.reason": "El motivo por el que se rechazó la solicitud; se pueden usar códigos de EIP-1066.",
+  "fn.rejectFund.returns.success": "True si la solicitud se rechazó.",
+
+  "fn.FundOrdered.desc": "Se emite cuando el propietario de una billetera o un ordenante autorizado crea una solicitud de financiación.",
+  "fn.FundOrdered.params.orderer": "La dirección que realizó la solicitud de financiación.",
+  "fn.FundOrdered.params.operationId": "El identificador único de la solicitud de financiación.",
+  "fn.FundOrdered.params.walletToFund": "La billetera que recibirá los tokens financiados.",
+  "fn.FundOrdered.params.value": "La cantidad de tokens solicitada.",
+  "fn.FundOrdered.params.instructions": "La cadena de instrucción de pago adjunta a la solicitud.",
+
+  "fn.FundInProcess.desc": "Se emite cuando el operador comienza a procesar una solicitud de financiación, tras lo cual ya no puede cancelarse.",
+  "fn.FundInProcess.params.orderer": "La dirección que realizó la solicitud de financiación.",
+  "fn.FundInProcess.params.operationId": "El identificador único de la solicitud de financiación.",
+
+  "fn.FundExecuted.desc": "Se emite cuando el operador ejecuta una solicitud de financiación y acuña los tokens solicitados.",
+  "fn.FundExecuted.params.orderer": "La dirección que realizó la solicitud de financiación.",
+  "fn.FundExecuted.params.operationId": "El identificador único de la solicitud de financiación.",
+
+  "node.user": "Propietario de la Billetera",
+  "node.contract": "Token Financiable",
+  "node.storageFunds": "Solicitudes de Financiación",
+  "node.operator": "Operador de Tokens",
+
+  "edge.callOrderFund": "Llamar a orderFund()",
+  "edge.recordRequest": "Registrar la solicitud de financiación",
+  "edge.emitFundOrdered": "Emitir el evento FundOrdered",
+  "edge.callExecuteFund": "Llamar a executeFund()",
+  "edge.emitFundExecuted": "Emitir el evento FundExecuted",
+
+  "sim.fundRequestWalkthrough.name": "Ciclo de vida de la solicitud de financiación",
+  "sim.fundRequestWalkthrough.desc": "Sigue una solicitud de financiación desde la orden del propietario de la billetera, pasando por la ejecución del operador, hasta el evento FundExecuted.",
+  "sim.fundRequestWalkthrough.param.operationId": "ID de operación",
+  "sim.fundRequestWalkthrough.param.value": "Importe de financiación",
+  "sim.fundRequestWalkthrough.param.instructions": "Instrucciones de pago",
+  "sim.fundRequestWalkthrough.step.order": "El propietario de la billetera llama a orderFund con un operationId único, un importe y unas instrucciones de pago.",
+  "sim.fundRequestWalkthrough.step.order.mobile": "Llamar a orderFund()",
+  "sim.fundRequestWalkthrough.step.record": "El contrato registra la solicitud como Ordered en el almacenamiento y emite FundOrdered para que el operador pueda recogerla.",
+  "sim.fundRequestWalkthrough.step.record.mobile": "Registrar la solicitud",
+  "sim.fundRequestWalkthrough.step.execute": "Tras liquidar el pago fuera de la cadena, el operador llama a executeFund para avanzar la solicitud a Executed.",
+  "sim.fundRequestWalkthrough.step.execute.mobile": "El operador ejecuta",
+  "sim.fundRequestWalkthrough.step.event": "El contrato acuña los tokens solicitados y emite FundExecuted, completando el ciclo de vida de la financiación.",
+  "sim.fundRequestWalkthrough.step.event.mobile": "Emitir FundExecuted"
+}

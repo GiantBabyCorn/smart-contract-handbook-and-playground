@@ -1,0 +1,32 @@
+{
+  "short": "Custom Errors for Commonly-Used Tokens",
+  "introduction": "ERC-6093 defines a standard set of Solidity custom errors for the three commonly-used token standards: ERC-20, ERC-721, and ERC-1155. It was proposed by Ernesto García, Francisco Giordano, and Hadrien Croubois in December 2022. Because those standards were finalized before Solidity added custom errors in v0.8.4, they include no errors of their own; ERC-6093 fills the gap with names built from a domain prefix, an error prefix such as Invalid or Insufficient, and the failing subject.",
+  "designPurpose": "ERC-6093 was designed to replace the free-form revert strings that wallets historically parsed to explain why a token transaction failed. Revert strings are inconsistent across implementations, carry no machine-readable arguments, and add deployment bytecode. By standardizing custom errors that follow a fixed Domain-ErrorPrefix-Subject grammar and carry typed arguments like addresses and amounts, ERC-6093 lets clients decode a failure and its cause consistently while keeping custom errors' gas and size savings.",
+  "commonUsage": "The errors are intended for any ERC-20, ERC-721, or ERC-1155 implementation that reverts on invalid transfers or approvals, and for the wallets, explorers, and testing tools that decode those reverts. OpenZeppelin's token contracts adopt the ERC-6093 error set, so front-ends can map a failing call to a precise cause such as an insufficient balance or an invalid receiver. The EIP defines only error signatures and does not mandate when an implementation must revert.",
+
+  "node.user": "Token Caller",
+  "node.token": "Token Contract",
+  "node.storageState": "Token State",
+  "node.storageError": "Revert Data",
+  "node.decoder": "Error Decoder",
+  "node.wallet": "Wallet UI",
+
+  "edge.callToken": "Call transfer()",
+  "edge.checkState": "Check balance",
+  "edge.revertError": "Revert with custom error",
+  "edge.decodeError": "Decode selector and args",
+  "edge.showMessage": "Show structured message",
+
+  "sim.errorDecodingWalkthrough.name": "Custom Error Decoding Walkthrough",
+  "sim.errorDecodingWalkthrough.desc": "Follow a failing transfer as the token contract reverts with an ERC-6093 custom error and a wallet decodes it into a structured message.",
+  "sim.errorDecodingWalkthrough.param.sender": "Sender",
+  "sim.errorDecodingWalkthrough.param.amount": "Transfer amount",
+  "sim.errorDecodingWalkthrough.step.call": "The caller invokes a token transfer whose amount is larger than the sender's balance.",
+  "sim.errorDecodingWalkthrough.step.call.mobile": "Call transfer()",
+  "sim.errorDecodingWalkthrough.step.check": "The token contract reads the sender's balance from state and finds it below the amount needed for the transfer.",
+  "sim.errorDecodingWalkthrough.step.check.mobile": "Check balance",
+  "sim.errorDecodingWalkthrough.step.revert": "Instead of a revert string, the contract reverts with ERC20InsufficientBalance(sender, balance, needed), encoding the arguments into the revert data.",
+  "sim.errorDecodingWalkthrough.step.revert.mobile": "Revert with error",
+  "sim.errorDecodingWalkthrough.step.decode": "The wallet decodes the custom error selector and its arguments and shows the user a structured message explaining the failure.",
+  "sim.errorDecodingWalkthrough.step.decode.mobile": "Decode and show"
+}

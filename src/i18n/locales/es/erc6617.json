@@ -1,0 +1,52 @@
+{
+  "short": "Sistema de permisos y roles basado en bits",
+  "introduction": "ERC-6617 define un sistema de permisos y roles basado en bits en el que cada permiso es un único bit de un uint256, codificando hasta 256 permisos que se combinan en roles. Fue propuesto por Chiro y Victor Dusart en febrero de 2023. Cada permiso debe ser una potencia de dos para que ocupe un solo bit, y la interfaz expone funciones para otorgar, revocar y comprobar permisos mediante operaciones a nivel de bits, emitiendo un evento en cada cambio. Nota: ERC-6617 está en estado Review; la interfaz aún puede cambiar antes de que se finalice.",
+  "designPurpose": "ERC-6617 se diseñó para hacer que el control de acceso en cadena sea más granular y eficiente en gas que los esquemas de un solo propietario o de roles basados en cadenas de texto. Con ERC-173 un contrato tiene un único propietario, y los sistemas de roles indexados por identificadores bytes32 necesitan una lectura de almacenamiento por cada comprobación. Al empaquetar cada permiso en un bit de un uint256, ERC-6617 comprueba el acceso con una sola operación AND a nivel de bits y fusiona permisos en roles con una operación OR a nivel de bits, evitando cargas de almacenamiento adicionales. Ordenar los bits por significancia también permite clasificar los permisos como enteros.",
+  "commonUsage": "Los permisos basados en bits son adecuados para contratos que necesitan niveles de acceso diferenciados, como la administración de protocolos con múltiples roles, los derechos de acuñación y pausa de un token, o los permisos de módulos en una cuenta de contrato inteligente. Como los roles son simples valores uint256, pueden pasarse entre contratos y compararse sin búsquedas en almacenamiento. ERC-6617 también define una extensión opcional IEIP6617Meta que adjunta un nombre y una descripción a cada permiso para que los exploradores y paneles los muestren.",
+
+  "fn.hasPermission.desc": "Devuelve true cuando la máscara de bits de permisos almacenada del usuario es un superconjunto del permiso requerido, es decir, cuando cada bit activado en _requiredPermission también está activado para el usuario. La comprobación es una operación view que usa un AND a nivel de bits.",
+  "fn.hasPermission.params._user": "Dirección del usuario cuyo permiso se comprueba.",
+  "fn.hasPermission.params._requiredPermission": "El permiso, o combinación de bits de permiso, que el usuario debe poseer.",
+  "fn.hasPermission.returns.result": "true si el permiso del usuario es un superconjunto del permiso requerido; de lo contrario, false.",
+
+  "fn.grantPermission.desc": "Añade el bit de permiso indicado a la máscara de bits del usuario mediante un OR a nivel de bits y emite un evento PermissionGranted. El permiso a añadir debe ser una potencia de dos para que active exactamente un bit.",
+  "fn.grantPermission.params._user": "Dirección del usuario al que se añade el permiso.",
+  "fn.grantPermission.params._permissionToAdd": "El bit de permiso a añadir; debe ser una potencia de dos.",
+  "fn.grantPermission.returns.success": "true cuando se ha otorgado el permiso.",
+
+  "fn.revokePermission.desc": "Elimina el bit de permiso indicado de la máscara de bits del usuario y emite un evento PermissionRevoked, dejando intactos los demás permisos del usuario.",
+  "fn.revokePermission.params._user": "Dirección del usuario al que se revoca el permiso.",
+  "fn.revokePermission.params._permissionToRevoke": "El bit de permiso a eliminar.",
+  "fn.revokePermission.returns.success": "true cuando se ha revocado el permiso.",
+
+  "fn.PermissionGranted.desc": "Se emite cuando se otorga un permiso a un usuario, registrando al otorgante, el permiso y el usuario receptor.",
+  "fn.PermissionGranted.params._grantor": "Dirección que otorgó el permiso.",
+  "fn.PermissionGranted.params._permission": "El permiso que se otorgó.",
+  "fn.PermissionGranted.params._user": "Dirección del usuario que recibió el permiso.",
+
+  "fn.PermissionRevoked.desc": "Se emite cuando se revoca un permiso a un usuario, registrando a quien lo revoca, el permiso y el usuario afectado.",
+  "fn.PermissionRevoked.params._revoker": "Dirección que revocó el permiso.",
+  "fn.PermissionRevoked.params._permission": "El permiso que se revocó.",
+  "fn.PermissionRevoked.params._user": "Dirección del usuario que perdió el permiso.",
+
+  "node.user": "Otorgante del permiso",
+  "node.contract": "Contrato ERC-6617",
+  "node.storagePermissions": "Almacenamiento de permisos",
+  "node.targetUser": "Usuario objetivo",
+
+  "edge.callGrant": "Llamar a grantPermission()",
+  "edge.updatePermissions": "Establecer bit de permiso",
+  "edge.emitGranted": "Emitir evento PermissionGranted",
+  "edge.grantToUser": "Otorgar permiso al usuario",
+
+  "sim.grantPermissionWalkthrough.name": "Recorrido de otorgamiento de permiso",
+  "sim.grantPermissionWalkthrough.desc": "Sigue una llamada a grantPermission desde el otorgante, a través de la máscara de bits de permisos, hasta el evento PermissionGranted.",
+  "sim.grantPermissionWalkthrough.param.targetUser": "Usuario que recibe el permiso",
+  "sim.grantPermissionWalkthrough.param.permission": "Bit de permiso (una potencia de dos)",
+  "sim.grantPermissionWalkthrough.step.call": "El otorgante llama a grantPermission(_user, _permissionToAdd) con un permiso que es una potencia de dos, dirigido al usuario que debe recibir el bit de acceso.",
+  "sim.grantPermissionWalkthrough.step.call.mobile": "Llamar a grantPermission()",
+  "sim.grantPermissionWalkthrough.step.execute": "El contrato combina el nuevo bit de permiso mediante OR en la máscara de bits uint256 almacenada del usuario, de modo que los bits ya otorgados se conservan.",
+  "sim.grantPermissionWalkthrough.step.execute.mobile": "Establecer bit de permiso",
+  "sim.grantPermissionWalkthrough.step.event": "El contrato emite PermissionGranted con el otorgante, el permiso y el usuario, y el usuario objetivo ahora posee el permiso añadido.",
+  "sim.grantPermissionWalkthrough.step.event.mobile": "Emitir PermissionGranted"
+}

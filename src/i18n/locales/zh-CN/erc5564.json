@@ -1,0 +1,61 @@
+{
+  "short": "隐身地址",
+  "introduction": "ERC-5564 定义了一套生成和定位隐身地址的标准化方法，让发送方能够非交互式地创建一个只有接收方才能控制的全新账户。该标准由 Toni Wahrstätter、Matt Solomon、Ben DiFrancesco 和 Vitalik Buterin 于 2022 年 8 月提出。发送方根据与接收方隐身元地址之间的共享密钥推导出该地址，然后调用一个单例的 ERC5564Announcer 合约，由其触发携带临时公钥和视图标签的 Announcement 事件。",
+  "designPurpose": "ERC-5564 的设计目标是让接收方在收取资产时，不会将该笔转账与自己的链上身份关联起来。在此之前，向一个已知地址付款会暴露接收方，而各个隐私项目又各自发明了互不兼容的地址推导和公告方案。该标准固定了一个共享接口，用于从发送方与接收方之间的密钥推导隐身地址，并统一使用单个 ERC5564Announcer 合约，为钱包和索引器提供了一个统一发布和扫描公告的入口。",
+  "commonUsage": "隐身地址被注重隐私的钱包和支付工具采用，这些工具希望接收方保持不可关联，例如匿名捐赠或一次性转账等场景——在这些场景中重复使用同一地址会泄露信息。由于 Announcer 只触发事件，集成方会将其与链下扫描服务以及类似 ERC-6538 的注册表配合使用，后者将用户映射到其隐身元地址。本标准定义的带视图标签的 SECP256k1 方案（schemeId 1）是常见的起点。",
+
+  "fn.generateStealthAddress.desc": "根据接收方的隐身元地址为其生成一个隐身地址。返回该隐身地址、发送方所使用的临时公钥，以及一个可加快接收方扫描速度的视图标签。",
+  "fn.generateStealthAddress.params.stealthMetaAddress": "接收方的隐身元地址，其中编码了他们的支出公钥和查看公钥。",
+  "fn.generateStealthAddress.returns.stealthAddress": "发送方可以向其转入资金的隐身地址。",
+  "fn.generateStealthAddress.returns.ephemeralPubKey": "为该地址生成的临时公钥，会被公开发布，以便接收方重新计算共享密钥。",
+  "fn.generateStealthAddress.returns.viewTag": "从共享密钥派生出的单个字节，让接收方能够快速过滤掉不匹配的公告。",
+
+  "fn.checkStealthAddress.desc": "如果发送到指定隐身地址的资金属于控制着对应支出密钥的接收方，则返回 true。接收方会针对每一条公告运行该函数，以检测属于自己的付款。",
+  "fn.checkStealthAddress.params.stealthAddress": "要测试其归属的隐身地址。",
+  "fn.checkStealthAddress.params.ephemeralPubKey": "取自公告的临时公钥。",
+  "fn.checkStealthAddress.params.viewingKey": "接收方的查看私钥。",
+  "fn.checkStealthAddress.params.spendingPubKey": "接收方的支出公钥。",
+  "fn.checkStealthAddress.returns.isRecipient": "当该隐身地址属于此接收方时为 true。",
+
+  "fn.computeStealthKey.desc": "根据接收方的查看私钥、支出私钥以及临时公钥，计算出某个隐身地址的私钥，让接收方能够花费存放在该地址上的资金。",
+  "fn.computeStealthKey.params.stealthAddress": "要派生其私钥的隐身地址；将其包含在内是为了便于校验结果。",
+  "fn.computeStealthKey.params.ephemeralPubKey": "取自公告的临时公钥。",
+  "fn.computeStealthKey.params.viewingKey": "接收方的查看私钥。",
+  "fn.computeStealthKey.params.spendingKey": "接收方的支出私钥。",
+  "fn.computeStealthKey.returns.stealthKey": "控制该隐身地址的隐身私钥。",
+
+  "fn.announce.desc": "由集成方调用，用于触发一个 Announcement 事件，告知接收方有资产被发送到了某个隐身地址。Announcer 是一个单例合约，每条链上只有一个实例，且不保存任何状态。",
+  "fn.announce.params.schemeId": "标识所采用隐身地址方案的整数。",
+  "fn.announce.params.stealthAddress": "为接收方计算出的隐身地址。",
+  "fn.announce.params.ephemeralPubKey": "发送方使用的临时公钥。",
+  "fn.announce.params.metadata": "任意数据，其第一个字节必须是视图标签；其余字节可用于描述代币和金额。",
+
+  "fn.Announcement.desc": "每当有资产被发送到某个隐身地址时触发。索引器和接收方会扫描这些事件；schemeId、stealthAddress 和 caller 均为 indexed 字段，便于过滤。",
+  "fn.Announcement.params.schemeId": "隐身地址方案标识符（indexed）。",
+  "fn.Announcement.params.stealthAddress": "资金被发送到的隐身地址（indexed）。",
+  "fn.Announcement.params.caller": "调用 announce 的账户，即 msg.sender（indexed）。",
+  "fn.Announcement.params.ephemeralPubKey": "发送方使用的临时公钥。",
+  "fn.Announcement.params.metadata": "任意元数据，其第一个字节是视图标签。",
+
+  "node.user": "发送方",
+  "node.contract": "ERC5564Announcer",
+  "node.recipient": "接收方",
+
+  "edge.callAnnounce": "调用 announce()",
+  "edge.emitAnnouncement": "触发 Announcement 事件",
+  "edge.scanAnnouncement": "扫描公告",
+  "edge.callCheck": "调用 checkStealthAddress()",
+
+  "sim.announceWalkthrough.name": "隐身支付公告",
+  "sim.announceWalkthrough.desc": "跟踪一笔隐身支付：从发送方的 announce 调用，经由 Announcement 事件，直到接收方的扫描。",
+  "sim.announceWalkthrough.param.schemeId": "方案 ID",
+  "sim.announceWalkthrough.param.stealthAddress": "隐身地址",
+  "sim.announceWalkthrough.step.call": "发送方在 ERC5564Announcer 单例上调用 announce()，传入方案 ID、接收方的隐身地址、临时公钥以及元数据。",
+  "sim.announceWalkthrough.step.call.mobile": "调用 announce()",
+  "sim.announceWalkthrough.step.execute": "Announcer 转发该调用，并将 msg.sender 作为 indexed 的 caller 添加进来。它不保存任何状态，只负责准备事件。",
+  "sim.announceWalkthrough.step.execute.mobile": "转发至 Announcer",
+  "sim.announceWalkthrough.step.emit": "合约触发一个 Announcement 事件，其中携带方案 ID、隐身地址、caller、临时公钥，以及包含视图标签的元数据。",
+  "sim.announceWalkthrough.step.emit.mobile": "触发 Announcement 事件",
+  "sim.announceWalkthrough.step.scan": "接收方扫描 Announcement 事件，检查视图标签，并运行 checkStealthAddress() 以确认该笔付款属于自己。",
+  "sim.announceWalkthrough.step.scan.mobile": "扫描并检查"
+}

@@ -1,0 +1,36 @@
+{
+  "short": "Vaults ERC-4626 Multiactivo",
+  "introduction": "ERC-7575 adapta el estándar de vault tokenizado ERC-4626 para admitir vaults con múltiples activos o puntos de entrada que comparten un único token de participación ERC-20, incluidos los vaults que convierten entre dos tokens externos arbitrarios. Fue propuesto por Jeroen Offerijns, Alina Sinelnikova, Vikram Arun, Joey Santoro y Farhaan Ali en diciembre de 2023. Añade un método share que externaliza la participación ERC-20, una búsqueda de vault opcional que asigna cada activo a su vault y soporte obligatorio de ERC-165 para detectar contratos compatibles.",
+  "designPurpose": "ERC-7575 se diseñó para eliminar el requisito de ERC-4626 de que cada vault sea también un token de participación ERC-20. Ese requisito hace que los vaults multiactivo y los vaults de tipo proveedor de liquidez resulten poco manejables o no compatibles, porque una participación no puede acuñarse desde varios puntos de entrada denominados en activos diferentes. Al externalizar la dependencia de ERC-20 detrás de un método share que puede apuntar a un contrato independiente, ERC-7575 permite que varios vaults se vinculen a una participación común y habilita Pipes que convierten entre dos tokens externos.",
+  "commonUsage": "ERC-7575 se dirige a los vaults que no encajan en el modelo de un vault por token de ERC-4626: los Vaults Multiactivo, que exponen varios puntos de entrada de activos en torno a un token compartido, y los Pipes, que convierten entre dos tokens ERC-20 externos en una o ambas direcciones. El token de participación implementa opcionalmente una búsqueda de vault y emite VaultUpdate cuando cambia un vault vinculado, mientras que el vault y la participación anuncian los ID de interfaz ERC-165 0x2f0a18c5 y 0xf815c03d para que los front-ends y los indexadores puedan reconocer los contratos agrupados.",
+
+  "fn.share.desc": "Devuelve la dirección del token ERC-20 que representa las participaciones en el vault. Puede devolver la propia dirección del vault, o un contrato externo cuando la participación ERC-20 se gestiona por separado, y no debe revertir.",
+  "fn.share.returns.shareTokenAddress": "La dirección de la representación de participación ERC-20 del vault.",
+
+  "fn.vault.desc": "Devuelve la dirección del vault que utiliza el activo dado como punto de entrada para la participación. Se implementa en el token de participación para que los integradores puedan buscar el punto de entrada de un Vault Multiactivo por activo.",
+  "fn.vault.params.asset": "El token de activo cuyo vault vinculado se consulta.",
+  "fn.vault.returns.vault": "La dirección del vault registrado para el activo dado.",
+
+  "fn.VaultUpdate.desc": "Lo emite el token de participación cuando cambia el vault vinculado a él para un activo dado, lo que permite a las integraciones rastrear los puntos de entrada actuales de un Vault Multiactivo.",
+  "fn.VaultUpdate.params.asset": "El activo cuyo vault vinculado cambió.",
+  "fn.VaultUpdate.params.vault": "La dirección del vault recién vinculado.",
+
+  "node.user": "Integrador de Vault",
+  "node.contract": "Token de Participación ERC-7575",
+  "node.storageVaults": "Mapa de Activo a Vault",
+
+  "edge.callVault": "Llamar a vault()",
+  "edge.readVaults": "Leer mapa de vaults",
+  "edge.emitVaultUpdate": "Emitir evento VaultUpdate",
+  "edge.callShare": "Llamar a share()",
+
+  "sim.vaultLookupWalkthrough.name": "Recorrido de Búsqueda de Vault",
+  "sim.vaultLookupWalkthrough.desc": "Recorrido de una búsqueda vault(asset) en el token de participación que muestra cómo VaultUpdate mantiene actualizado el mapa de activo a vault.",
+  "sim.vaultLookupWalkthrough.param.asset": "Dirección del activo",
+  "sim.vaultLookupWalkthrough.step.lookup": "Un integrador llama a vault(asset) en el token de participación para encontrar el punto de entrada del vault de un activo dado.",
+  "sim.vaultLookupWalkthrough.step.lookup.mobile": "Llamar a vault()",
+  "sim.vaultLookupWalkthrough.step.read": "El token de participación lee su mapeo de activo a vault y devuelve la dirección del vault registrado para ese activo.",
+  "sim.vaultLookupWalkthrough.step.read.mobile": "Leer mapa de vaults",
+  "sim.vaultLookupWalkthrough.step.event": "Cada vez que cambia el vault vinculado a un activo, el token de participación emite VaultUpdate para que los indexadores puedan actualizar su mapeo en caché.",
+  "sim.vaultLookupWalkthrough.step.event.mobile": "Emitir evento VaultUpdate"
+}

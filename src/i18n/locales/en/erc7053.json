@@ -1,0 +1,35 @@
+{
+  "short": "Interoperable Digital Media Indexing",
+  "introduction": "ERC-7053 defines an interoperable indexing method for recording, discovering, and retrieving the history of digital media across EVM-compatible blockchains. It was proposed by Bofu Chen and Tammy Yang in May 2023. The standard pairs a decentralized Content Identifier (CID) for each media file with a commit function that emits a Commit event and logs the block number of every commit, letting any system associate all on-chain data about the same content and trace it from creation to its current state.",
+  "designPurpose": "ERC-7053 was designed to remove the fragmentation caused by the lack of a universal, interoperable identifier for digital media content. Before it, a file's metadata, storage location, and provenance lived in separate systems with no shared key, making cross-contract and cross-chain retrieval difficult. By anchoring each file to a cryptographic Content Identifier and standardizing one commit function with an indexed Commit event, it gives every system a predictable way to index and search the same content.",
+  "commonUsage": "ERC-7053 is intended for digital media platforms, provenance registries, and content indexers that track the history of images, video, and other files on-chain. Because the Commit event indexes both the recorder and the asset CID, off-chain services can subscribe to it and rebuild a full timeline for each asset. The specification also describes indexing media referenced by NFTs by converting the file behind a tokenURI into the same CID, so ERC-721 and ERC-1155 collections can share one scheme.",
+
+  "fn.commit.desc": "Registers a commit for the asset identified by assetCid. Emits a Commit event and records the block number of the commit for the provided assetCid, then returns that block number.",
+  "fn.commit.params.assetCid": "The content identifier (CID) of the asset being committed.",
+  "fn.commit.params.commitData": "The data associated with the commit.",
+  "fn.commit.returns.blockNumber": "The block number at which the commit was made.",
+
+  "fn.Commit.desc": "Emitted when a new commit is made, so indexers can track the recorder, the asset, and the commit data. The recorder and assetCid are indexed for filtering.",
+  "fn.Commit.params.recorder": "The address of the account making the commit.",
+  "fn.Commit.params.assetCid": "The content identifier of the asset being committed.",
+  "fn.Commit.params.commitData": "The data associated with the commit.",
+
+  "node.user": "Recorder",
+  "node.contract": "Commit Registry",
+  "node.storageLogs": "Commit Logs",
+
+  "edge.callCommit": "Call commit()",
+  "edge.updateLogs": "Record block number",
+  "edge.emitCommit": "Emit Commit event",
+
+  "sim.commitWalkthrough.name": "Commit Media Walkthrough",
+  "sim.commitWalkthrough.desc": "Follow a commit call from the recorder through the log mapping to the Commit event.",
+  "sim.commitWalkthrough.param.assetCid": "Asset CID",
+  "sim.commitWalkthrough.param.commitData": "Commit data",
+  "sim.commitWalkthrough.step.call": "The recorder calls commit(assetCid, commitData) on the registry contract to index a media file.",
+  "sim.commitWalkthrough.step.call.mobile": "Call commit()",
+  "sim.commitWalkthrough.step.execute": "The contract appends the current block number to the recordLogs entry for the asset CID, building its on-chain history.",
+  "sim.commitWalkthrough.step.execute.mobile": "Record block number",
+  "sim.commitWalkthrough.step.event": "The contract emits Commit(recorder, assetCid, commitData) so off-chain indexers can update their timeline for the asset.",
+  "sim.commitWalkthrough.step.event.mobile": "Emit Commit event"
+}

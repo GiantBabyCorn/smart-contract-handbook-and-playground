@@ -1,0 +1,30 @@
+{
+  "short": "名前空間化ストレージレイアウト",
+  "introduction": "ERC-7201 は、既定の順次レイアウトの代わりに、コントラクトのストレージを隔離された名前空間に配置するための規約を定義します。この規格は Francisco Giordano、Hadrien Croubois、Ernesto García、Eric Lau により 2023年6月 に提案されました。各名前空間は @custom:storage-location が注釈として付けられた Solidity の構造体であり、erc7201(id) = keccak256(keccak256(id) - 1) & ~0xff にルートを持ちます。このスロットは Solidity や Vyper の既定のストレージツリーと重ならないように選ばれているため、複数の名前空間が衝突せずに共存できます。",
+  "designPurpose": "ERC-7201 は、モジュール式やアップグレード可能なコントラクトが使用する分散したストレージ位置を、予測可能かつ安全にするために設計されました。Solidity と Vyper はストレージを slot 0 から順番に割り当てるため、delegatecall を通じてストレージを共有するコントラクトや、アップグレード時に拡張されるコントラクトは、既存のスロットとずれたり衝突したりする可能性があります。erc7201 の計算式と @custom:storage-location 注釈を標準化することで、各名前空間は互いに素なルートと、ツールが解釈できる機械可読の宣言を得られます。",
+  "commonUsage": "名前空間化ストレージは、アップグレード可能なコントラクトのフレームワークや、delegatecall を中心に構築されたコントラクトで使用されます。OpenZeppelin のアップグレード可能ライブラリはこのパターンを採用しており、既存のスロットを乱すことなくバージョンをまたいで新しい状態を追加できます。また、ダイヤモンドパターン（ERC-2535）は各ファセットにそれぞれの名前空間を与えるため、プロキシを共有するファセット同士が衝突しません。Solidity コンパイラはバージョン 0.8.20 以降、この注釈を AST に記録するため、ツールは本来は見えない名前空間化されたデータを見つけ出せます。",
+
+  "node.developer": "コントラクト開発者",
+  "node.struct": "名前空間の構造体",
+  "node.storageNamespace": "名前空間ストレージ",
+  "node.storageDefault": "既定のストレージツリー",
+  "node.tooling": "ツールとエクスプローラー",
+
+  "edge.declareNamespace": "名前空間を宣言",
+  "edge.deriveRoot": "名前空間 id をハッシュ化",
+  "edge.rootAt": "計算されたスロットにルートを置く",
+  "edge.disjointFrom": "既定のツリーと互いに素",
+  "edge.exposeLayout": "レイアウトを公開",
+
+  "sim.deriveNamespaceWalkthrough.name": "ストレージ名前空間の導出",
+  "sim.deriveNamespaceWalkthrough.desc": "名前空間 id を、その @custom:storage-location 注釈から erc7201 の計算式を経て、隔離されたストレージのルートまでたどります。",
+  "sim.deriveNamespaceWalkthrough.param.namespaceId": "名前空間 id",
+  "sim.deriveNamespaceWalkthrough.step.declare": "開発者は @custom:storage-location erc7201:example.main を注釈として付けた構造体を宣言し、それを名前空間として指定します。",
+  "sim.deriveNamespaceWalkthrough.step.declare.mobile": "名前空間を宣言",
+  "sim.deriveNamespaceWalkthrough.step.derive": "erc7201 の計算式は名前空間 id を 2 回ハッシュ化し、keccak256(keccak256(id) - 1) & ~0xff をルートスロットとして計算します。",
+  "sim.deriveNamespaceWalkthrough.step.derive.mobile": "id をハッシュ化してルートスロットに",
+  "sim.deriveNamespaceWalkthrough.step.root": "構造体のフィールドは、計算されたルートスロットから順番に配置され、既定のレイアウトと同じ規則に従いますが、ルートは slot 0 から離れています。",
+  "sim.deriveNamespaceWalkthrough.step.root.mobile": "ルートに配置",
+  "sim.deriveNamespaceWalkthrough.step.isolate": "この名前空間は独自のストレージツリーを占有し、Solidity の既定のレイアウトとは互いに素であり、注釈によってエクスプローラーがそれを見つけられます。",
+  "sim.deriveNamespaceWalkthrough.step.isolate.mobile": "既定のストレージから隔離"
+}

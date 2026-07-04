@@ -1,0 +1,31 @@
+{
+  "short": "所需操作的约定格式",
+  "introduction": "ERC-5568 定义了一种机器可读的格式，让智能合约能在交易成功之前告知钱包：用户必须先执行某项操作，例如授权某个代币。该标准由 Gavin John 于 2022 年 8 月提出。合约会公开一个约定的 walletSignal24 view 函数，返回 instruction_id 与 instruction_data，或以 WalletSignal24 错误回退；钱包则会模拟该调用并进行解析处理。注意：ERC-5568 目前处于 Review 状态，接口在最终定稿前仍可能发生变化。",
+  "designPurpose": "ERC-5568 旨在将操作信号逻辑从硬编码的前端代码中移出，转移到合约自身。在此之前，dApp 前端必须知道某次调用会因为缺少先决条件（例如尚未授权代币）而失败，并为每个合约手工编写相应的恢复流程。ERC-5568 让合约通过一个约定函数和一个预留的回退错误来声明所需操作，于是任何钱包都能以通用方式检测并解决它，其中携带一个 instruction id 以及至多 64 kB 的任意参数。",
+  "commonUsage": "该格式面向钱包以及与其交互的合约：交易所可以要求钱包在交易前授权某个代币、发起链下 HTTP 请求，或按计划提示用户轮换密钥。由于 instruction id 以定义它的 ERC 编号作为命名空间，其他标准可以新增指令类型，任何支持 ERC-5568 的钱包都能理解它们。作为处于 Review 阶段的提案，它主要面向钱包开发者与标准作者。",
+
+  "fn.walletSignal24.desc": "一个约定的 view 函数，钱包在广播交易之前会先模拟调用它。当用户必须执行某项操作时，它返回非零的 instruction_id 及对应的 instruction_data；当无需任何操作时，返回值为 0 的 instruction_id。",
+  "fn.walletSignal24.params.selector": "一个 selector，用于标识钱包打算执行的操作。",
+  "fn.walletSignal24.params.function_data": "描述目标操作的任意 calldata，让合约据此决定返回哪一条指令。",
+  "fn.walletSignal24.returns.instruction_id": "指令标识符，等于所需操作对应的 ERC 编号；当无需任何操作时为 0。",
+  "fn.walletSignal24.returns.instruction_data": "至多 64 kB 的指令参数，其结构由拥有该 instruction_id 的 ERC 定义。",
+
+  "node.user": "钱包",
+  "node.contract": "信号合约",
+  "node.handler": "用户",
+
+  "edge.callWalletSignal24": "模拟 walletSignal24()",
+  "edge.emitWalletSignal24": "返回 WalletSignal24 信号",
+  "edge.resolveAction": "提示所需操作",
+
+  "sim.walletSignalWalkthrough.name": "钱包信号流程演练",
+  "sim.walletSignalWalkthrough.desc": "跟随了解合约如何通过 walletSignal24 和 WalletSignal24 错误，向钱包发出所需操作的信号。",
+  "sim.walletSignalWalkthrough.param.selector": "请求的操作",
+  "sim.walletSignalWalkthrough.param.instructionId": "指令 ID",
+  "sim.walletSignalWalkthrough.step.call": "钱包在广播用户交易之前，先在合约上模拟调用 walletSignal24。",
+  "sim.walletSignalWalkthrough.step.call.mobile": "模拟 walletSignal24()",
+  "sim.walletSignalWalkthrough.step.execute": "合约判定需要执行某项操作，于是返回非零的 instruction_id，或以携带相同数据的 WalletSignal24 错误回退。",
+  "sim.walletSignalWalkthrough.step.execute.mobile": "返回信号",
+  "sim.walletSignalWalkthrough.step.signal": "钱包解析该指令，提示用户完成所需操作，然后重新评估原始交易。",
+  "sim.walletSignalWalkthrough.step.signal.mobile": "提示用户操作"
+}

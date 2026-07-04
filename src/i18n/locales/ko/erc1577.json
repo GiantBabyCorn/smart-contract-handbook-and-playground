@@ -1,0 +1,31 @@
+{
+  "short": "ENS 리졸버를 위한 contenthash 필드",
+  "introduction": "ERC-1577은 ENS 리졸버를 위한 contenthash 필드를 정의하며, 사람이 읽을 수 있는 ENS 이름을 IPFS나 Swarm 같은 네트워크상의 콘텐츠 주소에 매핑합니다. 이 표준은 2018년 11월 Dean Eigenmann과 Nick Johnson이 제안했습니다. 값은 <protoCode uvarint><value> 형식의 multicodec으로, protoCode는 스토리지 시스템을 식별하고 나머지 바이트는 콘텐츠 주소입니다. 참고: ERC-1577은 Stagnant(정체) 상태입니다. 6개월 이상 활동이 없어 최종 확정되지 않을 수 있지만, 역사적으로 또는 기술적으로 여전히 중요한 의미가 있습니다.",
+  "designPurpose": "ERC-1577은 이름을 오프체인 콘텐츠로 가리키기 위한 명확하게 정의된 하나의 필드를 ENS에 제공하도록 설계되었습니다. 그 이전에는 클라이언트가 임시방편적인 content 및 multihash 필드를 통해 이름을 IPFS나 Swarm 해시로 해석했는데, 이러한 필드는 어떤 값이 어느 네트워크나 형식을 사용하는지 기록하지 않았기 때문에 클라이언트는 대상을 어떻게 가져올지 알 수 없었습니다. 값을 multicodec——protoCode 접두사 뒤에 인코딩된 주소가 이어지는 형식——으로 만듦으로써, 이 표준은 하나의 리졸버가 여러 프로토콜을 제공할 수 있게 하고, 각 클라이언트는 protoCode를 읽어 주소를 해석합니다.",
+  "commonUsage": "contenthash 필드는 ENS 이름을 탈중앙화 웹사이트로 해석하는 지갑과 브라우저가 읽으며, 명세에 명시된 MetaMask와 Status 클라이언트가 여기에 포함됩니다. 이 필드는 .eth 웹사이트 호스팅을 뒷받침하는데, 이름이 IPFS 또는 Swarm 사이트로 해석되고 클라이언트는 인코딩된 주소에서 이를 가져옵니다. 인코딩 라이브러리는 multicodec 값을 디코딩하고 다시 인코딩하여 애플리케이션이 단일 프로토콜을 하드코딩하지 않고도 대상을 따라갈 수 있게 하며, 리졸버는 0xbc1c58d1 인터페이스 식별자를 통해 지원을 알립니다.",
+
+  "node.user": "도메인 소유자",
+  "node.encoder": "contenthash 인코더",
+  "node.storageContenthash": "리졸버 contenthash",
+  "node.resolver": "ENS 리졸버",
+  "node.decoder": "Multicodec 디코더",
+  "node.network": "콘텐츠 네트워크",
+
+  "edge.submitAddress": "콘텐츠 주소 제출",
+  "edge.encodeContenthash": "contenthash 인코딩",
+  "edge.readContenthash": "contenthash 읽기",
+  "edge.returnContenthash": "contenthash 반환",
+  "edge.fetchContent": "디코딩 후 콘텐츠 가져오기",
+
+  "sim.resolveWalkthrough.name": "contenthash 해석 워크스루",
+  "sim.resolveWalkthrough.desc": "인코딩부터 ENS 리졸버를 거쳐 디코딩된 IPFS 또는 Swarm 가져오기까지 contenthash 값을 따라갑니다.",
+  "sim.resolveWalkthrough.param.protocol": "스토리지 프로토콜",
+  "sim.resolveWalkthrough.step.submit": "도메인 소유자가 contenthash 필드에 인코딩할 콘텐츠 주소를 제출합니다.",
+  "sim.resolveWalkthrough.step.submit.mobile": "콘텐츠 주소 제출",
+  "sim.resolveWalkthrough.step.encode": "주소는 multicodec 값——protoCode 접두사 뒤에 인코딩된 콘텐츠 주소가 이어지는 형식——으로 패킹되어 리졸버에 저장됩니다.",
+  "sim.resolveWalkthrough.step.encode.mobile": "인코딩 후 저장",
+  "sim.resolveWalkthrough.step.resolve": "애플리케이션이 ENS 리졸버에 질의하면, 리졸버는 디코딩을 위해 저장된 contenthash 바이트를 반환합니다.",
+  "sim.resolveWalkthrough.step.resolve.mobile": "contenthash 해석",
+  "sim.resolveWalkthrough.step.decode": "클라이언트는 protoCode(IPFS의 경우 0xe3)를 읽어 프로토콜을 선택하고 해당 네트워크에서 콘텐츠를 가져옵니다.",
+  "sim.resolveWalkthrough.step.decode.mobile": "디코딩 후 가져오기"
+}

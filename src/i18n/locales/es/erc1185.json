@@ -1,0 +1,44 @@
+{
+  "short": "Perfil de Resolver ENS para Registros DNS",
+  "introduction": "ERC-1185 define un perfil de resolver para el Ethereum Name Service (ENS) que almacena y consulta registros DNS. Fue propuesto por Jim McDonald en junio de 2018. El perfil opera sobre conjuntos de registros, cada uno identificado por una tupla de dominio, nombre y tipo de recurso que contiene cero o más valores en DNS wire format. Dos funciones escriben registros y dos funciones de vista los leen, permitiendo que ENS actúe como un almacén autoritativo de información DNS. Nota: ERC-1185 está en estado Review; la interfaz aún puede cambiar antes de que se finalice.",
+  "designPurpose": "ERC-1185 fue diseñado para que ENS sirva como un almacén descentralizado de datos DNS autoritativos, otorgando al propietario de un dominio pleno control sobre sus registros sin confundir la propiedad con el servicio autoritativo. El DNS tradicional mantiene todos los registros de una zona en un solo archivo, lo cual es simple pero, al trasladarlo a ENS, encarece los cambios pequeños en gas. Para evitarlo, el perfil almacena conjuntos de registros individuales indexados por la tupla de dominio, nombre y recurso, de modo que un solo registro puede actualizarse sin reescribir toda la zona.",
+  "commonUsage": "Los contratos de resolver de ENS implementan este perfil para exponer datos DNS, que las billeteras, los gateways y el software compatible con DNS consultan para resolver nombres en registros como entradas A o CNAME. Los propietarios de dominios llaman a setDNSRecords para publicar registros y a clearDNSZone para restablecer una zona en una sola transacción, mientras que los resolvers llaman a hasDNSRecords para las búsquedas de comodines definidas en RFC 4592. Como el perfil reutiliza el modelo de resolver de ERC-137 y la detección de interfaces de ERC-165, normalmente se añade a un resolver existente en lugar de desplegarse por sí solo.",
+
+  "fn.setDNSRecords.desc": "Establece, actualiza o borra uno o más registros DNS para el node ENS dado. Los registros se suministran en DNS wire format, cualquier registro proporcionado sin un valor se borra, y los registros del mismo conjunto de registros deben ser contiguos.",
+  "fn.setDNSRecords.params.node": "El namehash del dominio ENS completamente cualificado para el que se establecen los registros.",
+  "fn.setDNSRecords.params.data": "Uno o más registros DNS en DNS wire format; un registro proporcionado sin valor borra ese registro.",
+
+  "fn.clearDNSZone.desc": "Elimina todos los registros DNS del dominio en una sola operación incrementando la versión de la zona, evitando la necesidad de borrar cada registro individualmente con setDNSRecords.",
+  "fn.clearDNSZone.params.node": "El namehash del dominio ENS completamente cualificado para el que se borran los registros.",
+
+  "fn.dnsRecords.desc": "Devuelve todos los registros DNS coincidentes para el node, name y resource dados en DNS wire format, o nada si no hay registros presentes.",
+  "fn.dnsRecords.params.node": "El namehash del dominio ENS completamente cualificado a consultar.",
+  "fn.dnsRecords.params.name": "El hash keccak256 del nombre del registro en DNS wire format.",
+  "fn.dnsRecords.params.resource": "El ID de tipo de registro de recurso DNS, según se define en RFC 1035 y RFCs posteriores.",
+  "fn.dnsRecords.returns.records": "Los registros coincidentes en DNS wire format, o vacío si no existe ninguno.",
+
+  "fn.hasDNSRecords.desc": "Informa si existe algún registro para el name proporcionado en el dominio. Lo usan los resolvers DNS al manejar recursos comodín según se define en RFC 4592.",
+  "fn.hasDNSRecords.params.node": "El namehash del dominio ENS completamente cualificado a consultar.",
+  "fn.hasDNSRecords.params.name": "El hash keccak256 del nombre del registro en DNS wire format.",
+  "fn.hasDNSRecords.returns.exists": "true si existe algún registro para el node y el name, de lo contrario false.",
+
+  "node.user": "Propietario del Dominio",
+  "node.contract": "Resolver DNS",
+  "node.storageRecords": "Almacenamiento de Registros",
+
+  "edge.callSetRecords": "Llamar a setDNSRecords()",
+  "edge.queryRecords": "Llamar a dnsRecords()",
+  "edge.updateRecords": "Actualizar registros",
+  "edge.emitChanged": "Emitir evento DNSRecordChanged",
+
+  "sim.setRecordsWalkthrough.name": "Recorrido para Establecer Registros DNS",
+  "sim.setRecordsWalkthrough.desc": "Sigue una llamada a setDNSRecords desde el propietario del dominio, a través del almacenamiento de registros, hasta el evento DNSRecordChanged.",
+  "sim.setRecordsWalkthrough.param.domain": "Nombre de dominio",
+  "sim.setRecordsWalkthrough.param.recordType": "Registro a establecer",
+  "sim.setRecordsWalkthrough.step.call": "El propietario del dominio llama a setDNSRecords(node, data) en el resolver, pasando el namehash del dominio y los registros en DNS wire format.",
+  "sim.setRecordsWalkthrough.step.call.mobile": "Llamar a setDNSRecords()",
+  "sim.setRecordsWalkthrough.step.execute": "El resolver analiza los datos en formato wire y escribe el conjunto de registros en el mapeo records bajo la versión actual del dominio.",
+  "sim.setRecordsWalkthrough.step.execute.mobile": "Almacenar el conjunto de registros",
+  "sim.setRecordsWalkthrough.step.event": "El resolver emite DNSRecordChanged(node, name, resource, record) para que los resolvers e indexadores fuera de cadena puedan actualizar su vista.",
+  "sim.setRecordsWalkthrough.step.event.mobile": "Emitir DNSRecordChanged"
+}

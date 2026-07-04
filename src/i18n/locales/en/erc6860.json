@@ -1,0 +1,34 @@
+{
+  "short": "Web3 URL to EVM Call Message Translation",
+  "introduction": "ERC-6860 specifies the translation of an HTTP-style web3:// URL into an EVM call message, so on-chain content is reachable via human-readable names. It was proposed by Qi Zhou, Chao Pi, Sam Wilson, and Nicolas Deschildre in September 2023. The URL is parsed into a contract name, chain id, and path; the name resolves to an address, and resolveMode() on the target decides how the path becomes calldata. Note: ERC-6860 is a Draft; the specification is still under active development and may change substantially.",
+  "designPurpose": "ERC-6860 was designed to give Ethereum a decentralized presentation layer so that on-chain web content can be reached without trusting an off-chain gateway. Before it, reading Web3 data relied on Web2 proxies such as dApp sites or explorers outside user control. As a corrected update to ERC-4804, it specifies an RFC 3986-compatible URL grammar in ABNF and a procedure that resolves the name, detects the resolve mode, and encodes the path as calldata, so the same URL always maps to the same EVM call.",
+  "commonUsage": "The translation is implemented by Web3 URL gateways and browser extensions that let users open web3:// links to view on-chain HTML, SVG, and JSON rendered straight from contracts. In manual mode the raw path is passed as calldata and the response is treated as bytes; in auto mode a method name and typed arguments are encoded with the standard contract ABI, optionally shaped by a returns attribute. It pairs with ENS (ERC-137) for name resolution and with resource-serving contracts such as those following ERC-5219.",
+
+  "fn.resolveMode.desc": "A read-only hook the target contract exposes so the protocol can pick a resolve mode. The bytes32 for 'manual' selects raw-path calldata, while 'auto', an empty value, zero, or a revert selects ABI-encoded auto mode.",
+  "fn.resolveMode.returns.mode": "The mode selector as bytes32: 'manual' for manual mode, or 'auto' (also empty, zero, or a revert) for auto mode.",
+
+  "node.browser": "Web3 Client",
+  "node.resolver": "Web3 URL Resolver",
+  "node.urlParts": "Parsed URL",
+  "node.target": "Target Contract",
+  "node.evmMessage": "EVM Call Message",
+
+  "edge.requestUrl": "Request web3:// URL",
+  "edge.parseUrl": "Parse URL",
+  "edge.detectMode": "Call resolveMode()",
+  "edge.buildMessage": "Build EVM message",
+  "edge.sendCall": "Send call",
+  "edge.returnData": "Return bytes",
+
+  "sim.urlTranslationWalkthrough.name": "Web3 URL Translation Walkthrough",
+  "sim.urlTranslationWalkthrough.desc": "Follow a web3:// URL as the resolver parses it, detects the contract's resolve mode, and turns it into an EVM call.",
+  "sim.urlTranslationWalkthrough.param.url": "Web3 URL",
+  "sim.urlTranslationWalkthrough.step.request": "The Web3 client requests a web3:// URL from the resolver instead of routing through a Web2 proxy.",
+  "sim.urlTranslationWalkthrough.step.request.mobile": "Request web3:// URL",
+  "sim.urlTranslationWalkthrough.step.parse": "The resolver parses the URL into its contract name, chain id, and path, resolving the name to an address via ENS.",
+  "sim.urlTranslationWalkthrough.step.parse.mobile": "Parse URL parts",
+  "sim.urlTranslationWalkthrough.step.detect": "The resolver calls resolveMode() on the target to choose manual or auto mode; an empty or reverting result means auto mode.",
+  "sim.urlTranslationWalkthrough.step.detect.mobile": "Detect resolve mode",
+  "sim.urlTranslationWalkthrough.step.call": "The resolver encodes the path as calldata, sends the read-only EVM call, and returns the decoded bytes to the client.",
+  "sim.urlTranslationWalkthrough.step.call.mobile": "Send call, return data"
+}

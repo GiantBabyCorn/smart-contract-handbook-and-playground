@@ -1,0 +1,31 @@
+{
+  "short": "Jerarquía Determinista de Cuentas BLS12-381",
+  "introduction": "ERC-2334 define una jerarquía determinista de cuentas para las claves BLS12-381 derivadas por ERC-2333. Fue propuesto por Carl Beekhuizen en septiembre de 2019. Las claves se direccionan mediante una ruta con la forma m / purpose / coin_type / account / use, donde purpose se fija en 12381 y coin_type separa las claves por cadena. Los validadores usan el coin_type 3600, derivando una clave de retiro en m/12381/3600/i/0 y una clave de firma en m/12381/3600/i/0/0. Nota: ERC-2334 está en estado Review; la interfaz aún puede cambiar antes de que se finalice.",
+  "designPurpose": "ERC-2334 se diseñó para dar a las claves BLS12-381 una ruta de derivación única y predecible después de que BIP44 resultara inadecuado. BIP44 está centrado en UTXO y presupone claves secp256k1 derivadas mediante BIP32, mientras que ERC-2333 usa únicamente claves endurecidas y una KDF diferente. ERC-2334 reutiliza los campos purpose, coin_type y account de BIP43 y BIP44, pero descarta los niveles específicos de UTXO que conservaban los formatos de ruta de Ethereum rivales anteriores. Su coin_type 3600, el cuadrado del coin_type 60 de secp256k1, mantiene los dos tipos de clave claramente separados.",
+  "commonUsage": "La jerarquía la usan las herramientas de staking de Ethereum que convierten una única mnemónica en claves de validador: el software de depósito y de generación de claves deriva las claves de retiro y de firma de cada validador a lo largo de m/12381/3600/i/0 y m/12381/3600/i/0/0. Como la clave de firma es el hijo 0 de la clave de retiro, almacenar de forma segura la clave de retiro como clave fría basta para recuperar más tarde la clave de firma caliente. Las configuraciones custodiadas y de secreto compartido pueden omitir algunas claves y derivarlas por otros medios, tal como permite la especificación.",
+
+  "node.user": "Generador de claves",
+  "node.deriver": "KDF de ERC-2333",
+  "node.storagePath": "Ruta de derivación",
+  "node.storageWithdrawal": "Clave de retiro",
+  "node.storageSigning": "Clave de firma",
+  "node.validator": "Validador de la Beacon Chain",
+
+  "edge.provideSeed": "Proporcionar semilla",
+  "edge.buildPath": "Construir ruta",
+  "edge.deriveWithdrawal": "Derivar clave de retiro",
+  "edge.deriveSigning": "Derivar clave de firma",
+  "edge.loadSigning": "Cargar clave de firma",
+
+  "sim.deriveKeysWalkthrough.name": "Recorrido por la derivación de claves de validador",
+  "sim.deriveKeysWalkthrough.desc": "Seguimiento de una semilla mnemónica a medida que se construye la ruta ERC-2334 y se derivan las claves de retiro y de firma de un validador.",
+  "sim.deriveKeysWalkthrough.param.accountIndex": "Índice de validador (i)",
+  "sim.deriveKeysWalkthrough.step.seed": "El operador proporciona una semilla mnemónica y un índice de validador a la función de derivación de claves de ERC-2333.",
+  "sim.deriveKeysWalkthrough.step.seed.mobile": "Proporcionar semilla",
+  "sim.deriveKeysWalkthrough.step.path": "Se ensambla la ruta m / 12381 / 3600 / account / use, fijando purpose en 12381 y coin_type en 3600 para la Beacon Chain.",
+  "sim.deriveKeysWalkthrough.step.path.mobile": "Construir ruta",
+  "sim.deriveKeysWalkthrough.step.derive": "La clave de retiro se deriva en m/12381/3600/i/0, y la clave de firma se deriva como su hijo 0 en m/12381/3600/i/0/0.",
+  "sim.deriveKeysWalkthrough.step.derive.mobile": "Derivar claves",
+  "sim.deriveKeysWalkthrough.step.load": "La clave de firma se carga en el cliente validador como clave caliente, mientras que la clave de retiro permanece en almacenamiento en frío.",
+  "sim.deriveKeysWalkthrough.step.load.mobile": "Cargar clave de firma"
+}

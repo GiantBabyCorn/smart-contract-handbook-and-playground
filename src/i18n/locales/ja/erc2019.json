@@ -1,0 +1,80 @@
+{
+  "short": "資金供給可能トークン規格",
+  "introduction": "ERC-2019 は ERC-20 トークン規格を拡張し、ウォレット所有者がオンチェーンの注文を通じて自分のウォレットに新しいトークンをミントするようリクエストできるようにします。2019年5月に Fernando Paris、Julio Faura、Daniel Lehrner によって提案されました。所有者または承認された発注者が operationId、金額、指示を指定して orderFund を呼び出し、オペレーターがオフチェーンの支払いを決済したうえで、実行または拒否します。注意：ERC-2019 は Stagnant（停滞）です — 6か月以上活動がなく、最終化されない可能性がありますが、歴史的または技術的に重要な意味を持ち続けています。",
+  "designPurpose": "ERC-2019 は、トークンのライフサイクルにおける資金供給のステップをオンチェーンに持ち込むために設計されました。それ以前は、法定通貨や銀行支払いに対してトークンをミントする処理は、台帳上に検証可能な痕跡を残さないオフチェーンの中央集権的なリクエストに依存していました。ERC-2019 はそのリクエストを、一意の operationId と自由形式の指示を伴う orderFund の呼び出しとして標準化し、オペレーターがそれを非公開の支払いと対応付け、その状態をオンチェーンで更新できるようにします。これにより、注文済み・実行済み・拒否済みという結果をイベントを通じて追跡できます。",
+  "commonUsage": "資金供給可能トークンは、規制対象または銀行発行のトークンシステムを想定しており、そこではミントを実際の法定通貨の預け入れや電信送金と結び付ける必要があります。こうした導入では、トークンコントラクトの所有者またはエージェントがオペレーターとしてリクエストを承認または拒否し、ウォレット所有者は発注者に自分の代わりに orderFundFrom を送信する権限を与えることができます。ERC-20 を拡張するだけなので、このインターフェースは既存のトークンに追加され、指示フィールドは生の銀行情報をオンチェーンに埋め込むのではなく、非公開の支払いチャネルを指し示します。",
+
+  "fn.authorizeFundOperator.desc": "呼び出し元のウォレットの代わりに資金供給の注文を送信する権限をあるアドレスに与え、その発注者による orderFundFrom を可能にします。成功時に true を返します。",
+  "fn.authorizeFundOperator.params.orderer": "呼び出し元のウォレットのために資金供給を注文する権限を与えられるアドレス。",
+  "fn.authorizeFundOperator.returns.success": "承認が記録された場合は true。",
+
+  "fn.orderFund.desc": "呼び出し元自身のウォレットに対する資金供給リクエストを作成します。一意の operationId で識別され、オペレーターが処理する金額と支払い指示を保持します。operationId が以前に使用されている場合はリバートします。",
+  "fn.orderFund.params.operationId": "資金供給リクエストをそのライフサイクル全体で追跡するために使用される一意の識別子。",
+  "fn.orderFund.params.value": "ウォレットに供給されるトークンの数量。",
+  "fn.orderFund.params.instructions": "オペレーターが資金を調達し決済するために使用する支払い指示の文字列。",
+  "fn.orderFund.returns.success": "資金供給リクエストが作成された場合は true。",
+
+  "fn.orderFundFrom.desc": "別のウォレット所有者の代わりに資金供給リクエストを作成します。事前に承認された発注者が呼び出せます。operationId が以前に使用されている場合はリバートします。",
+  "fn.orderFundFrom.params.operationId": "資金供給リクエストの一意の識別子。",
+  "fn.orderFundFrom.params.walletToFund": "リクエストが代わりに作成され、資金が供給されるウォレット所有者。",
+  "fn.orderFundFrom.params.value": "ウォレットに供給されるトークンの数量。",
+  "fn.orderFundFrom.params.instructions": "オペレーターが資金を決済するために使用する支払い指示の文字列。",
+  "fn.orderFundFrom.returns.success": "資金供給リクエストが作成された場合は true。",
+
+  "fn.cancelFund.desc": "保留中の資金供給リクエストをキャンセルします。キャンセルできるのはウォレット所有者または元の発注者のみで、オペレーターが処理中に移行させる前に限られます。",
+  "fn.cancelFund.params.operationId": "キャンセルする資金供給リクエストの識別子。",
+  "fn.cancelFund.returns.success": "リクエストがキャンセルされた場合は true。",
+
+  "fn.processFund.desc": "資金供給リクエストを処理中としてマークします。いったん処理中になると、そのリクエストはキャンセルできなくなり、オペレーターが支払いの決済を開始したことを示します。",
+  "fn.processFund.params.operationId": "処理中の資金供給リクエストの識別子。",
+  "fn.processFund.returns.success": "リクエストが処理中としてマークされた場合は true。",
+
+  "fn.executeFund.desc": "リクエストされたトークンを発行し、資金供給リクエストを実行済みとしてマークします。対応する支払いが受領された後にオペレーターによって呼び出されます。",
+  "fn.executeFund.params.operationId": "実行する資金供給リクエストの識別子。",
+  "fn.executeFund.returns.success": "リクエストが実行され、トークンがミントされた場合は true。",
+
+  "fn.rejectFund.desc": "人間が読める理由を付けて資金供給リクエストを拒否し、トークンをミントすることなくそのライフサイクルを終了します。理由には EIP-1066 のステータスコードを使用できます。",
+  "fn.rejectFund.params.operationId": "拒否する資金供給リクエストの識別子。",
+  "fn.rejectFund.params.reason": "リクエストが拒否された理由。EIP-1066 のコードを使用できます。",
+  "fn.rejectFund.returns.success": "リクエストが拒否された場合は true。",
+
+  "fn.FundOrdered.desc": "ウォレット所有者または承認された発注者が資金供給リクエストを作成したときに発行されます。",
+  "fn.FundOrdered.params.orderer": "資金供給リクエストを行ったアドレス。",
+  "fn.FundOrdered.params.operationId": "資金供給リクエストの一意の識別子。",
+  "fn.FundOrdered.params.walletToFund": "供給されたトークンを受け取るウォレット。",
+  "fn.FundOrdered.params.value": "リクエストされたトークンの数量。",
+  "fn.FundOrdered.params.instructions": "リクエストに添付された支払い指示の文字列。",
+
+  "fn.FundInProcess.desc": "オペレーターが資金供給リクエストの処理を開始したときに発行され、その後はキャンセルできなくなります。",
+  "fn.FundInProcess.params.orderer": "資金供給リクエストを行ったアドレス。",
+  "fn.FundInProcess.params.operationId": "資金供給リクエストの一意の識別子。",
+
+  "fn.FundExecuted.desc": "オペレーターが資金供給リクエストを実行し、リクエストされたトークンをミントしたときに発行されます。",
+  "fn.FundExecuted.params.orderer": "資金供給リクエストを行ったアドレス。",
+  "fn.FundExecuted.params.operationId": "資金供給リクエストの一意の識別子。",
+
+  "node.user": "ウォレット所有者",
+  "node.contract": "資金供給可能トークン",
+  "node.storageFunds": "資金供給リクエスト",
+  "node.operator": "トークンオペレーター",
+
+  "edge.callOrderFund": "orderFund() を呼び出す",
+  "edge.recordRequest": "資金供給リクエストを記録",
+  "edge.emitFundOrdered": "FundOrdered イベントを発行",
+  "edge.callExecuteFund": "executeFund() を呼び出す",
+  "edge.emitFundExecuted": "FundExecuted イベントを発行",
+
+  "sim.fundRequestWalkthrough.name": "資金供給リクエストのライフサイクル",
+  "sim.fundRequestWalkthrough.desc": "ウォレット所有者の注文からオペレーターの実行、そして FundExecuted イベントまで、資金供給リクエストを追跡します。",
+  "sim.fundRequestWalkthrough.param.operationId": "オペレーションID",
+  "sim.fundRequestWalkthrough.param.value": "資金供給額",
+  "sim.fundRequestWalkthrough.param.instructions": "支払い指示",
+  "sim.fundRequestWalkthrough.step.order": "ウォレット所有者が、一意の operationId、金額、支払い指示を指定して orderFund を呼び出します。",
+  "sim.fundRequestWalkthrough.step.order.mobile": "orderFund() を呼び出す",
+  "sim.fundRequestWalkthrough.step.record": "コントラクトはリクエストを Ordered（注文済み）としてストレージに記録し、オペレーターが受け取れるように FundOrdered を発行します。",
+  "sim.fundRequestWalkthrough.step.record.mobile": "リクエストを記録",
+  "sim.fundRequestWalkthrough.step.execute": "オフチェーンの支払いを決済した後、オペレーターは executeFund を呼び出してリクエストを Executed（実行済み）に進めます。",
+  "sim.fundRequestWalkthrough.step.execute.mobile": "オペレーターが実行",
+  "sim.fundRequestWalkthrough.step.event": "コントラクトはリクエストされたトークンをミントし、FundExecuted を発行して、資金供給のライフサイクルを完了します。",
+  "sim.fundRequestWalkthrough.step.event.mobile": "FundExecuted を発行"
+}

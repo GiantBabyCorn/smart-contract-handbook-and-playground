@@ -1,0 +1,28 @@
+{
+  "short": "tokenURI 互操作性擴充",
+  "introduction": "ERC-1046 定義了一個元資料擴充，為 ERC-20 加入 ERC-721 風格的 tokenURI 函式，並統一了 ERC-20、ERC-721 與 ERC-1155 的代幣 URI 慣例，使錢包能以相同方式讀取這三者。此標準由 Tommy Nicholas、Matt Russo、John Zettler、Matt Condon 與 Gavin John 於 2018 年 4 月提出。符合規範的 ERC-20 代幣會回傳一個 URI，該 URI 解析為一份 JSON 文件，其 interop 欄位標記了代幣類型，使應用程式無需為每個標準撰寫專門程式碼即可偵測並顯示代幣。",
+  "designPurpose": "ERC-1046 的設計目的，是將 ERC-721 透過 tokenURI 揭露的元資料帶給同質化的 ERC-20 代幣——後者過去在鏈上僅攜帶 name、symbol 與 decimals。在此之前，應用程式沒有統一的方式取得代幣的圖像或描述，也沒有低成本的方式將同質化代幣與 NFT 或多代幣合約區分開來。在各標準間重複使用 tokenURI 這個名稱，並在解析出的 JSON 中加入 interop 物件，使錢包能從單一文件讀取代幣的類型與顯示資料。",
+  "commonUsage": "ERC-1046 針對錢包、區塊瀏覽器與資產列表介面，讓它們以已用於 NFT 的相同圖像與描述來呈現 ERC-20 代幣。ERC-20 的 tokenURI 函式是符合規範所必需的，而 ERC-721 與 ERC-1155 一側則在其現有的元資料 JSON 中加入 interop 欄位，使單一解析器即可處理這三種類型。為節省 gas，此標準建議省略鏈上的 name、symbol 與 decimals，改將這些欄位放入元資料文件中。",
+
+  "fn.tokenURI.desc": "回傳一個 URI，該 URI 依 ERC-721 風格的 tokenURI 模式解析為該 ERC-20 代幣的 JSON 元資料文件。文件的 interop 欄位將其標記為 ERC-1046 元資料，使錢包將該地址視為 ERC-20 代幣。",
+  "fn.tokenURI.returns.uri": "指向代幣鏈下 JSON 元資料文件的 URI。",
+
+  "node.user": "錢包",
+  "node.contract": "代幣合約",
+  "node.storageUri": "URI 儲存",
+  "node.metadata": "元資料文件",
+
+  "edge.callTokenURI": "呼叫 tokenURI()",
+  "edge.readUri": "讀取儲存的 URI",
+  "edge.fetchMetadata": "取得元資料 JSON",
+
+  "sim.tokenUriWalkthrough.name": "代幣 URI 解析",
+  "sim.tokenUriWalkthrough.desc": "跟隨一個錢包讀取 ERC-20 代幣的元資料：呼叫 tokenURI()、解析 URI，並讀取 interop 旗標。",
+  "sim.tokenUriWalkthrough.param.token": "代幣地址",
+  "sim.tokenUriWalkthrough.step.call": "錢包在 ERC-20 代幣合約上呼叫 tokenURI() 以取得其元資料 URI。",
+  "sim.tokenUriWalkthrough.step.call.mobile": "呼叫 tokenURI()",
+  "sim.tokenUriWalkthrough.step.resolve": "合約讀取其儲存的 URI，並向錢包回傳一個連結，例如 https://example.com/token.json。",
+  "sim.tokenUriWalkthrough.step.resolve.mobile": "回傳元資料 URI",
+  "sim.tokenUriWalkthrough.step.fetch": "錢包取得該 URI 處的 JSON 並讀取 interop.erc1046，確認該地址為 ERC-20 代幣。",
+  "sim.tokenUriWalkthrough.step.fetch.mobile": "讀取 interop 旗標"
+}

@@ -1,0 +1,59 @@
+{
+  "short": "トランザクション処理モデルを備えたトークン規格",
+  "introduction": "ERC-223 は、必須の tokenReceived コールバックを通じて受信側コントラクトに着信転送を通知する、代替可能トークンのインターフェースを定義します。2017年5月に Dexaran によって提案されました。ERC-20 とは異なり、ERC-223 トークンをコントラクトへ送信すると、そのコントラクトの tokenReceived ハンドラーが呼び出され、ハンドラーが存在しない場合は revert します。そのため、受信するように作られていないコントラクトにトークンが気付かれないままロックされることはありません。1つの transfer 関数がアカウントとコントラクトの両方に対応し、任意の data ペイロードをトークンとともに送ることができます。",
+  "designPurpose": "ERC-223 は、ERC-20 でよくある失敗モード、すなわち通常の transfer 関数でコントラクトに送られたトークンが認識されず永久にロックされてしまう問題を解消するために設計されました。ERC-20 の transfer は受信側に通知しないため、コントラクトへ預け入れるには approve と transferFrom の2段階パターンが必要になります。ERC-223 はこれに対し、すべての転送で受信側の tokenReceived ハンドラーを呼び出し、それが存在しない場合は revert することで、預け入れを1回のトランザクションで完了させ、偶発的な損失を防ぎます。",
+  "commonUsage": "ERC-223 は、取引所、決済処理業者、ボールトなど、コントラクトへのトークン預け入れを受け付けるアプリケーションを対象としており、その1回の呼び出しで完結する預け入れによって ERC-20 が必要とする追加の承認トランザクションを回避します。受信側コールバックにより、コントラクトは着信トークンをその到着時に検証したり拒否したりでき、その data ペイロードは受信側への指示を運ぶことができます。ERC-20 の方が依然としてはるかに広く普及しているため、ERC-223 は主にその預け入れ通知の挙動を特に求めるプロジェクトで採用されています。",
+
+  "fn.totalSupply.desc": "現存するトークンの総数を返します。仕様では、これは ERC-20 の totalSupply 関数と同一に動作すると規定されています。",
+  "fn.totalSupply.returns.supply": "トークンの総供給量（最小単位）。",
+
+  "fn.balanceOf.desc": "指定したアカウントが保有するトークン残高を返します。その挙動は ERC-20 の balanceOf 関数と同一です。",
+  "fn.balanceOf.params.owner": "残高を照会する対象のアドレス。",
+  "fn.balanceOf.returns.balance": "そのアカウントが保有するトークンの数量（最小単位）。",
+
+  "fn.transfer.desc": "_value 個のトークンを _to に転送します。_to がコントラクトの場合、トークンはその tokenReceived ハンドラーを呼び出し、ハンドラーが存在しないときは revert します。外部所有アカウント（EOA）への転送ではコールバックはスキップされます。このオーバーロードは空のペイロードを付加し、ERC-20 との後方互換性のために存在します。",
+  "fn.transfer.params.to": "受信側のアドレス。",
+  "fn.transfer.params.value": "転送するトークンの数量（最小単位）。",
+  "fn.transfer.returns.success": "転送が成功した場合に true を返します。",
+
+  "fn.transferData.desc": "任意の _data ペイロードを付加しつつ、_value 個のトークンを _to に転送します。_to がコントラクトの場合、残高の更新後にその tokenReceived(address, uint256, bytes) ハンドラーが呼び出され、ハンドラーが実装されていなければ転送は revert します。_data は ether トランザクションにおける msg.data のように振る舞い、空でも構いません。",
+  "fn.transferData.params.to": "受信側のアドレス。",
+  "fn.transferData.params.value": "転送するトークンの数量（最小単位）。",
+  "fn.transferData.params.data": "受信側の tokenReceived ハンドラーに転送される任意のメタデータ。空でも構いません。",
+  "fn.transferData.returns.success": "転送が成功した場合に true を返します。",
+
+  "fn.tokenReceived.desc": "ERC-223 トークンを受け取るために、受信側コントラクトが実装しなければならないハンドラーです。トークンコントラクトは残高の更新後にこれを呼び出し、送信者、数量、データを渡します。転送を承認するにはマジックバリュー 0x8943ec02 を返さなければなりません。これを省略したコントラクトでは転送が revert します。",
+  "fn.tokenReceived.params.from": "トークンを送信したアドレス。",
+  "fn.tokenReceived.params.value": "着信するトークンの数量。",
+  "fn.tokenReceived.params.data": "付随するメタデータ。ether トランザクションの msg.data に相当します。",
+  "fn.tokenReceived.returns.magic": "着信転送を承認するマジックバリュー 0x8943ec02。",
+
+  "fn.Transfer.desc": "トークンが転送されたときに発行され、付加された data ペイロードを伴います。ERC-20 の Transfer イベントと互換性があり類似していますが、bytes 型の data フィールドを追加しています。",
+  "fn.Transfer.params.from": "トークンの転送元アドレス。",
+  "fn.Transfer.params.to": "トークンの転送先アドレス。",
+  "fn.Transfer.params.value": "転送されたトークンの数量。",
+  "fn.Transfer.params.data": "転送に付加された data ペイロード。",
+
+  "node.user": "トークン送信者",
+  "node.contract": "ERC-223 トークン",
+  "node.storageBalances": "トークンストレージ",
+  "node.recipient": "受信側コントラクト",
+
+  "edge.callTransfer": "transfer() を呼び出す",
+  "edge.updateBalances": "残高を更新する",
+  "edge.callTokenReceived": "tokenReceived() を呼び出す",
+  "edge.emitTransfer": "Transfer イベントを発行する",
+
+  "sim.tokenTransferWalkthrough.name": "コールバックを伴うトークン転送",
+  "sim.tokenTransferWalkthrough.desc": "ERC-223 転送を、送信者から残高更新と受信側の tokenReceived コールバックを経て Transfer イベントまで追います。",
+  "sim.tokenTransferWalkthrough.param.to": "受信側アドレス",
+  "sim.tokenTransferWalkthrough.param.value": "数量（wei 単位）",
+  "sim.tokenTransferWalkthrough.step.call": "送信者は ERC-223 トークンコントラクトに対して transfer(to, value, data) を呼び出し、受信側にトークンを送ります。",
+  "sim.tokenTransferWalkthrough.step.call.mobile": "transfer() を呼び出す",
+  "sim.tokenTransferWalkthrough.step.execute": "コントラクトは balances マッピングで、送信者からその数量を差し引き、受信側に加算します。",
+  "sim.tokenTransferWalkthrough.step.execute.mobile": "残高を更新する",
+  "sim.tokenTransferWalkthrough.step.notify": "受信側がコントラクトであるため、トークンはその tokenReceived ハンドラーを呼び出します。これは 0x8943ec02 を返さなければならず、さもなければ転送全体が revert します。",
+  "sim.tokenTransferWalkthrough.step.notify.mobile": "受信側に通知する",
+  "sim.tokenTransferWalkthrough.step.event": "コントラクトは Transfer(from, to, value, data) を発行し、オフチェーンサービスが転送とそのペイロードを追跡できるようにします。",
+  "sim.tokenTransferWalkthrough.step.event.mobile": "Transfer イベントを発行する"
+}

@@ -1,0 +1,36 @@
+{
+  "short": "コントラクトクロックインターフェース",
+  "introduction": "ERC-6372 は、コントラクトが時間の計測にどのクロックを使用しているかを報告できるようにする最小限のインターフェースを定義します。2023 年 1 月に Hadrien Croubois と Francisco Giordano によって提案されました。clock() 関数は現在の時点を非減少の uint48 として返し、その値は block.timestamp や block.number などです。また CLOCK_MODE() は、観測者が解読できるよう mode=timestamp や mode=blocknumber のような URL クエリ形式の文字列を返します。注：ERC-6372 は Review ステータスであり、確定するまでインターフェースが変更される可能性があります。",
+  "designPurpose": "ERC-6372 は、コントラクトが時間をどのように追跡するかに関する推測を排除するために設計されました。それ以前は、一部のコントラクトが遅延やスナップショットを block.timestamp で計測する一方、別のコントラクトは block.number を使用しており、外部の観測者にはどちらであるかを確実に判別する手段がなく、タイムロックや投票システムを組み合わせる際に危険な前提を強いられていました。clock() と自己記述的な CLOCK_MODE() ディスクリプタを標準化することで、ERC-6372 はコントラクトの時間基準を実行時に発見可能にし、ツールや依存するコントラクトが同じ単位に揃えられるようにします。",
+  "commonUsage": "このインターフェースは、遅延を強制したり時刻付きの履歴を保存したりするコントラクトを対象とします。これにはタイムロック、投票期間が固定された DAO ガバナー、そして時点ごとに残高のチェックポイントを記録する投票トークンが含まれます。ガバナンスフレームワークは CLOCK_MODE() と clock() を組み合わせて使用し、ガバナーとその投票トークンが、提案やスナップショットを秒単位で計測するのかブロック単位で計測するのかについて一致するようにします。どちらの関数も view 専用であるため、インデクサーやフロントエンドはトランザクションを送信せずにオフチェーンでクロックモードを照会できます。",
+
+  "fn.clock.desc": "コントラクトのクロックモードに従って、その現在の時点を返します。この値はチェーンの非減少関数でなければならず、一般的には block.timestamp（秒）または block.number です。",
+  "fn.clock.returns.timepoint": "uint48 として表される現在の時点で、CLOCK_MODE() が返す値に従って解釈されます。",
+
+  "fn.CLOCK_MODE.desc": "クロックの機械可読な記述を返します。これは new URLSearchParams() で解読できる URL クエリ文字列として整形されます。値には、秒を表す mode=timestamp や、ブロック番号を表す mode=blocknumber&from=default などがあります。",
+  "fn.CLOCK_MODE.returns.descriptor": "mode=timestamp や mode=blocknumber&from=<CAIP-2-ID> のような、URL クエリ形式のディスクリプタです。",
+
+  "node.user": "クロック観測者",
+  "node.contract": "ERC-6372 コントラクト",
+  "node.clockSource": "チェーン時間ソース",
+  "node.clockResult": "クロックレポート",
+
+  "edge.callClock": "clock() を呼び出す",
+  "edge.callClockMode": "CLOCK_MODE() を呼び出す",
+  "edge.readClockSource": "チェーン時間を読み取る",
+  "edge.buildTimepoint": "時点をパッケージ化する",
+  "edge.returnTimepoint": "クロック情報を返す",
+
+  "sim.clockDiscovery.name": "クロックモードの探索",
+  "sim.clockDiscovery.desc": "コントラクトの clock() と CLOCK_MODE() を照会し、その現在の時点を読み取って、それをどのように解釈するかを把握します。",
+  "sim.clockDiscovery.param.contractAddress": "照会するコントラクト",
+  "sim.clockDiscovery.param.mode": "クロックモード",
+  "sim.clockDiscovery.step.call": "観測者は対象のコントラクトに対して clock() を呼び出し、その現在の時点を読み取ります。",
+  "sim.clockDiscovery.step.call.mobile": "clock() を呼び出す",
+  "sim.clockDiscovery.step.read": "コントラクトは、使用するよう構成されているチェーン時間ソース（block.timestamp または block.number）を読み取り、それを uint48 として返します。",
+  "sim.clockDiscovery.step.read.mobile": "チェーン時間を読み取る",
+  "sim.clockDiscovery.step.mode": "観測者は CLOCK_MODE() を呼び出し、時点が秒単位で計測されているのかブロック番号で計測されているのかを把握します。",
+  "sim.clockDiscovery.step.mode.mobile": "CLOCK_MODE() を呼び出す",
+  "sim.clockDiscovery.step.return": "コントラクトはパッケージ化された時点とモードディスクリプタを返し、観測者が自身の遅延やスナップショットを同じクロックに揃えられるようにします。",
+  "sim.clockDiscovery.step.return.mobile": "クロック情報を返す"
+}

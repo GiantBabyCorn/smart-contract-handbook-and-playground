@@ -1,0 +1,28 @@
+{
+  "short": "tokenURI 相互運用性拡張",
+  "introduction": "ERC-1046 は、ERC-20 に ERC-721 形式の tokenURI 関数を追加し、ERC-20・ERC-721・ERC-1155 のトークン URI の慣習を揃えることで、ウォレットがこの 3 つを同じ方法で読み取れるようにするメタデータ拡張を定義します。この規格は Tommy Nicholas、Matt Russo、John Zettler、Matt Condon、Gavin John によって 2018 年 4 月に提案されました。準拠した ERC-20 トークンは、interop フィールドがトークン種別を示す JSON ドキュメントに解決される URI を返します。これにより、アプリケーションは規格ごとのコードなしにトークンを検出して表示できます。",
+  "designPurpose": "ERC-1046 は、ERC-721 が tokenURI を通じて公開するメタデータを、従来はオンチェーンで name・symbol・decimals しか持たなかった代替可能な ERC-20 トークンにもたらすために設計されました。それ以前は、アプリケーションがトークンの画像や説明を取得する統一的な方法も、代替可能トークンを NFT やマルチトークンコントラクトと安価に見分ける方法もありませんでした。規格間で tokenURI という名前を再利用し、解決された JSON に interop オブジェクトを追加することで、ウォレットは 1 つのドキュメントからトークンの種別と表示データを読み取れます。",
+  "commonUsage": "ERC-1046 は、NFT に対してすでに表示しているのと同じ画像や説明で ERC-20 トークンを描画する、ウォレット・ブロックエクスプローラー・資産一覧インターフェースを対象としています。準拠には ERC-20 の tokenURI 関数が必須であり、一方で ERC-721 と ERC-1155 の側は既存のメタデータ JSON に interop フィールドを追加するため、1 つのリゾルバーで 3 種類すべてを扱えます。gas を節約するため、この規格はオンチェーンの name・symbol・decimals を省略し、それらのフィールドを代わりにメタデータドキュメントに置くことを推奨しています。",
+
+  "fn.tokenURI.desc": "ERC-721 形式の tokenURI パターンで、ERC-20 トークンの JSON メタデータドキュメントに解決される URI を返します。ドキュメントの interop フィールドがそれを ERC-1046 メタデータとして示すため、ウォレットはそのアドレスを ERC-20 トークンとして扱います。",
+  "fn.tokenURI.returns.uri": "トークンのオフチェーン JSON メタデータドキュメントを指す URI。",
+
+  "node.user": "ウォレット",
+  "node.contract": "トークンコントラクト",
+  "node.storageUri": "URI ストレージ",
+  "node.metadata": "メタデータドキュメント",
+
+  "edge.callTokenURI": "tokenURI() を呼び出す",
+  "edge.readUri": "保存された URI を読み取る",
+  "edge.fetchMetadata": "メタデータ JSON を取得する",
+
+  "sim.tokenUriWalkthrough.name": "トークン URI の解決",
+  "sim.tokenUriWalkthrough.desc": "ウォレットが ERC-20 トークンのメタデータを読み取る流れを追います：tokenURI() を呼び出し、URI を解決し、interop フラグを読み取ります。",
+  "sim.tokenUriWalkthrough.param.token": "トークンアドレス",
+  "sim.tokenUriWalkthrough.step.call": "ウォレットは ERC-20 トークンコントラクトの tokenURI() を呼び出し、そのメタデータ URI を取得します。",
+  "sim.tokenUriWalkthrough.step.call.mobile": "tokenURI() を呼び出す",
+  "sim.tokenUriWalkthrough.step.resolve": "コントラクトは保存された URI を読み取り、https://example.com/token.json のようなリンクをウォレットに返します。",
+  "sim.tokenUriWalkthrough.step.resolve.mobile": "メタデータ URI を返す",
+  "sim.tokenUriWalkthrough.step.fetch": "ウォレットは URI の JSON を取得して interop.erc1046 を読み取り、そのアドレスが ERC-20 トークンであることを確認します。",
+  "sim.tokenUriWalkthrough.step.fetch.mobile": "interop フラグを読み取る"
+}

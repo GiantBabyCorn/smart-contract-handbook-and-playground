@@ -1,0 +1,28 @@
+{
+  "short": "Modo de Resolución ERC-4804 para ERC-5219",
+  "introduction": "ERC-6944 define un valor de modo de resolución que permite a un cliente ERC-4804 resolver las solicitudes web3:// de un contrato a través de la interfaz ERC-5219. Fue propuesto por Gavin John y Qi Zhou en abril de 2023. Un contrato señala su compatibilidad implementando IERC5219Resolver, cuya función resolveMode() devuelve el valor constante bytes32 \"5219\"; una pasarela ERC-4804 lo lee y luego usa el método request() de ERC-5219. Nota: ERC-6944 es un Draft (borrador); la especificación aún está en desarrollo activo y puede cambiar sustancialmente.",
+  "designPurpose": "ERC-6944 se diseñó para hacer que ERC-5219 pueda usarse como un modo de resolución dentro del esquema web3:// de ERC-4804. Un cliente ERC-4804 necesita saber cómo espera cada contrato que se resuelvan sus solicitudes, pero antes de esta propuesta no existía ningún indicador para la interfaz request() de ERC-5219, solo los modos integrados automático y manual. ERC-6944 llena ese vacío con una única función pure, resolveMode(), que devuelve la constante bytes32 fija \"5219\". Evita ERC-165, ya que un cliente puede comprobar la compatibilidad llamando a resolveMode() por sí mismo.",
+  "commonUsage": "ERC-6944 lo implementan los contratos que alojan un front-end en la cadena mediante ERC-5219 y quieren que los navegadores y las pasarelas lo alcancen a través de una URL web3://. El valor lo lee el software de pasarela web3:// y las billeteras o extensiones de navegador que resuelven direcciones ERC-4804 en nombre de un usuario. Dado que resolveMode() es pure y devuelve una constante de tiempo de compilación, las implementaciones suelen heredar un pequeño contrato abstracto que fija en el código el valor de retorno \"5219\", sin añadir almacenamiento y con un gas insignificante para el contrato anfitrión.",
+
+  "fn.resolveMode.desc": "Devuelve el modo de resolución ERC-4804 del contrato. Es una función pure que debe devolver el valor constante bytes32 \"5219\" (sin distinción entre mayúsculas y minúsculas) para señalar que las solicitudes deben resolverse a través de la interfaz request() de ERC-5219.",
+  "fn.resolveMode.returns.mode": "El identificador del modo de resolución, fijado al valor bytes32 \"5219\" para la resolución mediante ERC-5219.",
+
+  "node.user": "Pasarela Web3",
+  "node.contract": "Resolver ERC-5219",
+  "node.storageMode": "Valor del Modo de Resolución",
+  "node.browser": "Navegador del Usuario",
+
+  "edge.callResolveMode": "Llamar a resolveMode()",
+  "edge.readMode": "Leer modo de resolución",
+  "edge.serveResponse": "Servir respuesta ERC-5219",
+
+  "sim.resolveModeWalkthrough.name": "Recorrido del Modo de Resolución",
+  "sim.resolveModeWalkthrough.desc": "Sigue a un cliente ERC-4804 mientras llama a resolveMode() y aprende a resolver el contrato a través de ERC-5219.",
+  "sim.resolveModeWalkthrough.param.target": "Contrato resolver",
+  "sim.resolveModeWalkthrough.step.call": "La pasarela web3:// llama a resolveMode() en el contrato de destino para saber cómo deben resolverse sus solicitudes.",
+  "sim.resolveModeWalkthrough.step.call.mobile": "Llamar a resolveMode()",
+  "sim.resolveModeWalkthrough.step.resolve": "El contrato devuelve la constante bytes32 fija \"5219\", identificándose como un resolver ERC-5219.",
+  "sim.resolveModeWalkthrough.step.resolve.mobile": "Devolver modo 5219",
+  "sim.resolveModeWalkthrough.step.serve": "Al ver el modo \"5219\", la pasarela resuelve la solicitud a través de ERC-5219 y sirve la respuesta al navegador.",
+  "sim.resolveModeWalkthrough.step.serve.mobile": "Servir vía ERC-5219"
+}

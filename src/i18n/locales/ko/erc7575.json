@@ -1,0 +1,36 @@
+{
+  "short": "다중 자산 ERC-4626 볼트",
+  "introduction": "ERC-7575는 ERC-4626 토큰화 볼트 표준을 확장하여, 단일 ERC-20 지분 토큰을 공유하는 여러 자산 또는 여러 진입점을 가진 볼트(두 개의 임의 외부 토큰 간에 변환하는 볼트 포함)를 지원합니다. 2023년 12월 Jeroen Offerijns, Alina Sinelnikova, Vikram Arun, Joey Santoro, Farhaan Ali가 제안했습니다. ERC-20 지분을 외부화하는 share 메서드, 각 자산을 해당 볼트에 매핑하는 선택적 볼트 조회, 그리고 준수 컨트랙트를 감지하기 위한 필수 ERC-165 지원을 추가합니다.",
+  "designPurpose": "ERC-7575는 모든 볼트가 동시에 ERC-20 지분 토큰이어야 한다는 ERC-4626의 요구 사항을 제거하기 위해 설계되었습니다. 이 요구 사항은 다중 자산 볼트와 유동성 공급자 형태의 볼트를 다루기 어렵거나 표준을 준수할 수 없게 만드는데, 서로 다른 자산으로 표시된 여러 진입점에서 하나의 지분을 발행할 수 없기 때문입니다. ERC-7575는 별도의 컨트랙트를 가리킬 수 있는 share 메서드 뒤로 ERC-20 의존성을 외부화함으로써, 여러 볼트가 하나의 공통 지분에 연결될 수 있게 하고 두 개의 외부 토큰 간에 변환하는 Pipe를 가능하게 합니다.",
+  "commonUsage": "ERC-7575는 ERC-4626의 '하나의 볼트, 하나의 토큰' 모델에 맞지 않는 볼트를 대상으로 합니다. 즉, 공유 토큰을 중심으로 여러 자산 진입점을 노출하는 다중 자산 볼트와, 두 개의 외부 ERC-20 토큰 간에 단방향 또는 양방향으로 변환하는 Pipe입니다. 지분 토큰은 선택적으로 볼트 조회를 구현하며 연결된 볼트가 변경되면 VaultUpdate를 발생시키고, 볼트와 지분은 ERC-165 인터페이스 ID 0x2f0a18c5와 0xf815c03d를 공개하여 프런트엔드와 인덱서가 그룹화된 컨트랙트를 인식할 수 있게 합니다.",
+
+  "fn.share.desc": "볼트의 지분을 나타내는 ERC-20 토큰의 주소를 반환합니다. 볼트 자체의 주소를 반환할 수도 있고, ERC-20 지분이 별도로 관리되는 경우 외부 컨트랙트의 주소를 반환할 수도 있으며, 되돌려서는 안 됩니다.",
+  "fn.share.returns.shareTokenAddress": "볼트의 ERC-20 지분 표현의 주소.",
+
+  "fn.vault.desc": "주어진 자산을 지분의 진입점으로 사용하는 볼트의 주소를 반환합니다. 지분 토큰에 구현되어 통합자가 자산별로 다중 자산 볼트의 진입점을 조회할 수 있습니다.",
+  "fn.vault.params.asset": "연결된 볼트를 조회할 대상 자산 토큰.",
+  "fn.vault.returns.vault": "주어진 자산에 대해 등록된 볼트의 주소.",
+
+  "fn.VaultUpdate.desc": "특정 자산에 대해 지분 토큰에 연결된 볼트가 변경될 때 지분 토큰이 발생시키며, 통합 시스템이 다중 자산 볼트의 현재 진입점을 추적할 수 있게 합니다.",
+  "fn.VaultUpdate.params.asset": "연결된 볼트가 변경된 자산.",
+  "fn.VaultUpdate.params.vault": "새로 연결된 볼트의 주소.",
+
+  "node.user": "볼트 통합자",
+  "node.contract": "ERC-7575 지분 토큰",
+  "node.storageVaults": "자산-볼트 맵",
+
+  "edge.callVault": "vault() 호출",
+  "edge.readVaults": "볼트 맵 읽기",
+  "edge.emitVaultUpdate": "VaultUpdate 이벤트 발생",
+  "edge.callShare": "share() 호출",
+
+  "sim.vaultLookupWalkthrough.name": "볼트 조회 워크스루",
+  "sim.vaultLookupWalkthrough.desc": "지분 토큰에서 vault(asset) 조회를 따라가며 VaultUpdate가 자산-볼트 맵을 어떻게 최신 상태로 유지하는지 확인합니다.",
+  "sim.vaultLookupWalkthrough.param.asset": "자산 주소",
+  "sim.vaultLookupWalkthrough.step.lookup": "통합자가 지분 토큰에서 vault(asset)을 호출하여 주어진 자산의 볼트 진입점을 찾습니다.",
+  "sim.vaultLookupWalkthrough.step.lookup.mobile": "vault() 호출",
+  "sim.vaultLookupWalkthrough.step.read": "지분 토큰이 자산-볼트 매핑을 읽고 해당 자산에 대해 등록된 볼트의 주소를 반환합니다.",
+  "sim.vaultLookupWalkthrough.step.read.mobile": "볼트 맵 읽기",
+  "sim.vaultLookupWalkthrough.step.event": "자산에 연결된 볼트가 변경될 때마다 지분 토큰이 VaultUpdate를 발생시켜 인덱서가 캐시된 매핑을 새로 고칠 수 있게 합니다.",
+  "sim.vaultLookupWalkthrough.step.event.mobile": "VaultUpdate 이벤트 발생"
+}

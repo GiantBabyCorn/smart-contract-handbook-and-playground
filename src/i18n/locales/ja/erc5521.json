@@ -1,0 +1,64 @@
+{
+  "short": "参照可能NFT関係拡張",
+  "introduction": "ERC-5521はERC-721の拡張で、非代替性トークンが他のNFTとの参照関係を記録できるようにします。Saber Yuと共著者らによって2022年8月に提案されました。この規格は、あるトークンが参照するNFTを指す参照リスト（referring list）と、そのトークンを参照しているNFTを記録する被参照リスト（referred list）を、ブロックレベルのcreatedTimestampとともに追加します。参照は必ずより古いトークンを指す必要があるため、これらの関係は有向非巡回グラフを形成し、ウォレットやインデクサーがクエリ・追跡・分析できます。",
+  "designPurpose": "ERC-5521は、互いに積み重なっていくNFTを結び付けるために設計されました。ERC-721はトークンを孤立した単発の存在として扱います。それ以前は、NFTは自身が派生した作品へのオンチェーンのリンクを持たず、作者は系譜をたどることも、作品が再利用されるにつれて価値を蓄積することもできませんでした。この規格は参照を参照リストと被参照リストとしてオンチェーンに記録し、各トークンに作成時刻を刻むため、任意のコントラクトが引用グラフを再構築できます。参照がより古いトークンのみを指すよう求めることで、グラフを非巡回に保ちます。",
+  "commonUsage": "参照可能NFTは、創作物が過去の作品の上に築かれる場面を想定しています。アーティストが過去のNFTから作品を派生させる、ミュージシャンが参照した楽曲をリミックスする、あるいは後発のトークンが出典をクレジットする引用グラフといった用途です。参照はTargetContractインターフェースを通じてコントラクトをまたげるため、トークンはERC-165のサポートを確認したうえで他のコレクションのNFTを引用できます。この拡張はERC-721コントラクトに追加され、参照リストと被参照リストによってマーケットプレイスやエクスプローラーが来歴を表示できます。",
+
+  "fn.setNode.desc": "あるrNFTの参照リストを設定し、それが指すすべてのNFTの被参照リストを更新して関係を記録し、現在のブロックタイムスタンプでトークンに刻印します。変更された各ノードについてUpdateNodeを発行します。",
+  "fn.setNode.params.tokenId": "参照を設定する対象のrNFT。",
+  "fn.setNode.params.addresses": "参照先のrNFTを保有するコントラクトアドレス。",
+  "fn.setNode.params.tokenIds": "各アドレスについて、このrNFTが参照するトークンIDのリスト。",
+
+  "fn.setNodeReferredExternal.desc": "ターゲットコントラクト上で呼び出され、指定したrNFTの被参照リストにtokenIdを追加し、参照が2つのコントラクトにまたがれるようにします。呼び出し元がターゲットのインターフェース対応を確認した後にのみ呼び出されます。",
+  "fn.setNodeReferredExternal.params._address": "外部参照を行うコントラクトのアドレス。",
+  "fn.setNodeReferredExternal.params.tokenId": "各ターゲットの被参照リストに追加される、参照元のrNFT。",
+  "fn.setNodeReferredExternal.params._tokenIds": "参照先となるターゲットコントラクト上のトークンID。",
+
+  "fn.referringOf.desc": "あるrNFTの参照リストを返します。コントラクトアドレスと、各アドレスについてこのNFTが指すトークンIDです。アドレスがこのコントラクトでない場合はコントラクトをまたいだ照会に対応します。",
+  "fn.referringOf.params._address": "照会するrNFTに紐づくコントラクトアドレス。",
+  "fn.referringOf.params.tokenId": "参照リストを取得する対象のrNFT。",
+  "fn.referringOf.returns.addresses": "参照先NFTのコントラクトアドレス。",
+  "fn.referringOf.returns.tokenIds": "各アドレスについて、このrNFTが参照するトークンID。",
+
+  "fn.referredOf.desc": "あるrNFTの被参照リストを返します。そのrNFTを指すNFTのコントラクトアドレスとトークンIDです。アドレスがこのコントラクトでない場合はコントラクトをまたいだ照会に対応します。",
+  "fn.referredOf.params._address": "照会するrNFTに紐づくコントラクトアドレス。",
+  "fn.referredOf.params.tokenId": "被参照リストを取得する対象のrNFT。",
+  "fn.referredOf.returns.addresses": "参照元NFTのコントラクトアドレス。",
+  "fn.referredOf.returns.tokenIds": "各アドレスについて、このrNFTを参照するトークンID。",
+
+  "fn.createdTimestampOf.desc": "rNFTが作成されたときに記録されたブロックタイムスタンプを返します。この規格はこれを用いて参照を順序付け、トークンが先行するものだけを参照できるようにします。",
+  "fn.createdTimestampOf.params._address": "照会するrNFTに紐づくコントラクトアドレス。",
+  "fn.createdTimestampOf.params.tokenId": "作成タイムスタンプを取得する対象のrNFT。",
+  "fn.createdTimestampOf.returns.timestamp": "rNFTが作成されたブロックタイムスタンプ。",
+
+  "fn.UpdateNode.desc": "setNodeがノードを変更するたびに発行され、トークン、その所有者、および完全な参照リストと被参照リストを伝えるため、インデクサーが参照グラフを追跡できます。",
+  "fn.UpdateNode.params.tokenId": "関係が変更されたrNFT。",
+  "fn.UpdateNode.params.owner": "変更されたrNFTの所有者。",
+  "fn.UpdateNode.params._address_referringList": "トークンの参照リストに含まれるコントラクトアドレス。",
+  "fn.UpdateNode.params._tokenIds_referringList": "アドレスごとに、トークンが参照するトークンID。",
+  "fn.UpdateNode.params._address_referredList": "トークンの被参照リストに含まれるコントラクトアドレス。",
+  "fn.UpdateNode.params._tokenIds_referredList": "アドレスごとに、トークンを参照するトークンID。",
+
+  "node.user": "rNFT作成者",
+  "node.contract": "ERC-5521 rNFT",
+  "node.storageRelationship": "関係ストレージ",
+  "node.targetContract": "参照先rNFTコントラクト",
+
+  "edge.callSetNode": "setNode()を呼び出す",
+  "edge.updateRelationship": "関係を更新",
+  "edge.referExternal": "外部rNFTを参照",
+  "edge.emitUpdateNode": "UpdateNodeイベントを発行",
+
+  "sim.setNodeWalkthrough.name": "setNodeウォークスルー",
+  "sim.setNodeWalkthrough.desc": "新しいrNFTが参照リストを記録し、参照する先行トークンを更新し、UpdateNodeを発行するまでのsetNode呼び出しを追います。",
+  "sim.setNodeWalkthrough.param.tokenId": "新しいrNFTのID",
+  "sim.setNodeWalkthrough.param.referredTokenId": "参照先rNFTのID",
+  "sim.setNodeWalkthrough.step.call": "作成者がrNFTコントラクト上でsetNode(tokenId, addresses, tokenIds)を呼び出し、1つ以上の既存トークンを参照します。",
+  "sim.setNodeWalkthrough.step.call.mobile": "setNode()を呼び出す",
+  "sim.setNodeWalkthrough.step.referring": "コントラクトは新しいトークンの参照リストを記録し、関係ストレージ内で現在のブロックタイムスタンプを刻印します。",
+  "sim.setNodeWalkthrough.step.referring.mobile": "参照を記録",
+  "sim.setNodeWalkthrough.step.referred": "参照された各トークンについて、コントラクトはこのトークンをその被参照リストに追加し、参照がコントラクトをまたぐ場合は他のコントラクト上でsetNodeReferredExternalを呼び出します。",
+  "sim.setNodeWalkthrough.step.referred.mobile": "被参照リストを更新",
+  "sim.setNodeWalkthrough.step.event": "コントラクトは変更された各トークンについてUpdateNodeを発行し、インデクサーが参照グラフを更新できるようにします。",
+  "sim.setNodeWalkthrough.step.event.mobile": "UpdateNodeイベントを発行"
+}

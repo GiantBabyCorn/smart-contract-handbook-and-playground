@@ -1,0 +1,35 @@
+{
+  "short": "相互運用可能なデジタルメディアインデックス",
+  "introduction": "ERC-7053 は、EVM 互換ブロックチェーン全体でデジタルメディアの履歴を記録・発見・取得するための、相互運用可能なインデックス手法を定義します。2023年5月に Bofu Chen 氏と Tammy Yang 氏によって提案されました。この規格は、各メディアファイルに対する分散型のコンテンツ識別子（CID）を、Commit イベントを発行して各コミットのブロック番号を記録する commit 関数と組み合わせることで、あらゆるシステムが同一コンテンツに関するすべてのオンチェーンデータを関連付け、その作成から現在の状態までを追跡できるようにします。",
+  "designPurpose": "ERC-7053 は、デジタルメディアコンテンツに汎用的で相互運用可能な識別子が存在しないことによって生じる断片化を解消するために設計されました。それ以前は、ファイルのメタデータ、保存場所、来歴がそれぞれ別々のシステムに存在し、共通のキーがなかったため、コントラクト間およびチェーン間での取得が困難でした。各ファイルを暗号学的なコンテンツ識別子に結び付け、インデックス付きの Commit イベントを持つ単一の commit 関数を標準化することで、あらゆるシステムが同一コンテンツをインデックス化して検索する予測可能な手段を得られます。",
+  "commonUsage": "ERC-7053 は、画像・動画・その他のファイルの履歴をオンチェーンで追跡するデジタルメディアプラットフォーム、来歴レジストリ、コンテンツインデクサーを対象としています。Commit イベントは recorder と資産 CID の両方をインデックスするため、オフチェーンサービスはこれを購読して各資産の完全なタイムラインを再構築できます。仕様では、tokenURI の背後にあるファイルを同一の CID に変換することで NFT が参照するメディアをインデックス化する方法も説明されており、ERC-721 と ERC-1155 のコレクションが 1 つのスキームを共有できます。",
+
+  "fn.commit.desc": "assetCid で識別される資産に対するコミットを登録します。Commit イベントを発行し、指定された assetCid についてそのコミットのブロック番号を記録したうえで、そのブロック番号を返します。",
+  "fn.commit.params.assetCid": "コミット対象となる資産のコンテンツ識別子（CID）。",
+  "fn.commit.params.commitData": "そのコミットに関連付けられるデータ。",
+  "fn.commit.returns.blockNumber": "そのコミットが行われたブロック番号。",
+
+  "fn.Commit.desc": "新しいコミットが行われたときに発行され、インデクサーが recorder・資産・コミットデータを追跡できるようにします。recorder と assetCid はフィルタリングのためにインデックスされます。",
+  "fn.Commit.params.recorder": "コミットを行うアカウントのアドレス。",
+  "fn.Commit.params.assetCid": "コミット対象となる資産のコンテンツ識別子。",
+  "fn.Commit.params.commitData": "そのコミットに関連付けられるデータ。",
+
+  "node.user": "記録者",
+  "node.contract": "コミットレジストリ",
+  "node.storageLogs": "コミットログ",
+
+  "edge.callCommit": "commit() を呼び出す",
+  "edge.updateLogs": "ブロック番号を記録",
+  "edge.emitCommit": "Commit イベントを発行",
+
+  "sim.commitWalkthrough.name": "メディアコミットのウォークスルー",
+  "sim.commitWalkthrough.desc": "記録者からログマッピングを経て Commit イベントに至るまでのコミット呼び出しを追跡します。",
+  "sim.commitWalkthrough.param.assetCid": "資産 CID",
+  "sim.commitWalkthrough.param.commitData": "コミットデータ",
+  "sim.commitWalkthrough.step.call": "記録者はメディアファイルをインデックス化するため、レジストリコントラクトに対して commit(assetCid, commitData) を呼び出します。",
+  "sim.commitWalkthrough.step.call.mobile": "commit() を呼び出す",
+  "sim.commitWalkthrough.step.execute": "コントラクトは資産 CID に対応する recordLogs エントリに現在のブロック番号を追加し、そのオンチェーン履歴を構築します。",
+  "sim.commitWalkthrough.step.execute.mobile": "ブロック番号を記録",
+  "sim.commitWalkthrough.step.event": "コントラクトは Commit(recorder, assetCid, commitData) を発行し、オフチェーンのインデクサーがその資産のタイムラインを更新できるようにします。",
+  "sim.commitWalkthrough.step.event.mobile": "Commit イベントを発行"
+}

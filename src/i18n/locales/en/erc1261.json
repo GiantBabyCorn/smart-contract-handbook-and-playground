@@ -1,0 +1,60 @@
+{
+  "short": "Membership Verification Token (MVT) Standard",
+  "introduction": "ERC-1261 defines a standard interface for Membership Verification Tokens (MVTs): non-transferable, revocable tokens that record whether an address belongs to an on-chain organization called an entity. It was proposed by Chaitanya Potti and Partha Bhattacharya in July 2018. The entity owner assigns and revokes memberships, while members may request or forfeit their own. Note: ERC-1261 is Stagnant — it has been inactive for 6+ months and may never be finalized, but remains historically or technically significant.",
+  "designPurpose": "ERC-1261 was designed to bring permissioned membership on-chain without relying on token balances, which earlier governance systems used as a proxy for eligibility even though a balance conflates wealth with the right to participate. Unlike claim registries such as ERC-725/735, where the subject holds their own claims and could ignore a removal, an MVT is controlled entirely by the issuing entity, which can assign, modify, or revoke a membership and its attributes at any time.",
+  "commonUsage": "Because MVTs are non-transferable and revocable, they suit use cases like membership cards, not tradable assets. The specification describes intended applications such as permissioned voting, where the member count gives a turnout denominator; compliance that restricts security tokens to accredited addresses; and credential issuance for passports, licenses, or software entitlements. Per-member attributes let a poll filter its voter base, and an optional metadata extension exposes an organization's name and symbol.",
+
+  "fn.requestMembership.desc": "Lets any address request membership in the entity, emitting RequestedMembership so the owner can approve or discard it. Reverts if the caller already holds the token; it is payable, so implementations may charge a fee.",
+  "fn.requestMembership.params.attributeIndexes": "Indexes of the attribute values to associate with the prospective member.",
+
+  "fn.forfeitMembership.desc": "Lets a current member voluntarily give up their own membership, emitting the Revoked event. Reverts if the caller does not hold the token.",
+
+  "fn.approveRequest.desc": "Called by the owner to approve a pending membership request, assigning the token and emitting the ApprovedMembership and Assigned events. Reverts if the user has no pending request or the caller is not the owner.",
+  "fn.approveRequest.params.user": "The address whose pending membership request is approved.",
+
+  "fn.discardRequest.desc": "Called by the owner to reject a pending membership request without assigning a token. Reverts if the user has no pending request or the caller is not the owner.",
+  "fn.discardRequest.params.user": "The address whose pending membership request is discarded.",
+
+  "fn.assignTo.desc": "Called by the owner to assign membership directly to an address, emitting the Assigned event. Reverts if the address already holds the token, is the zero address, or the caller is not the owner.",
+  "fn.assignTo.params.to": "The address to which the membership token is assigned.",
+  "fn.assignTo.params.attributeIndexes": "Indexes of the attribute values recorded for the new member.",
+
+  "fn.revokeFrom.desc": "Called by the owner to remove an address's membership, emitting the Revoked event. Reverts if the address is not a member, is the zero address, or the caller is not the owner.",
+  "fn.revokeFrom.params.from": "The current member address whose membership is revoked.",
+
+  "fn.isCurrentMember.desc": "Returns whether an address is currently a member of the entity. Throws for queries about the zero address, whose token is always considered invalid.",
+  "fn.isCurrentMember.params.to": "The address whose membership status is queried.",
+  "fn.isCurrentMember.returns.isMember": "True if the address currently holds a valid membership token.",
+
+  "fn.Assigned.desc": "Emitted when a membership token is assigned to an address, either directly by the owner or on approval of a request.",
+  "fn.Assigned.params.to": "The address that received the membership token.",
+  "fn.Assigned.params.attributeIndexes": "The attribute value indexes recorded for the member.",
+
+  "fn.Revoked.desc": "Emitted when a membership is revoked by the owner or forfeited by the member.",
+  "fn.Revoked.params.to": "The address whose membership was revoked.",
+
+  "fn.RequestedMembership.desc": "Emitted when an address requests membership in the entity, signalling the owner to approve or discard the request.",
+  "fn.RequestedMembership.params.to": "The address that requested membership.",
+
+  "node.user": "Entity Owner",
+  "node.contract": "ERC-1261 Entity",
+  "node.storageMembers": "Membership Storage",
+  "node.member": "Member",
+
+  "edge.callAssign": "Call assignTo()",
+  "edge.updateMembers": "Update membership",
+  "edge.emitAssigned": "Emit Assigned event",
+  "edge.grantMembership": "Grant membership",
+  "edge.callRevoke": "Call revokeFrom()",
+
+  "sim.assignMembership.name": "Assign Membership",
+  "sim.assignMembership.desc": "Follow an assignTo call from the entity owner through membership storage to the Assigned event that recognizes the new member.",
+  "sim.assignMembership.param.to": "New member address",
+  "sim.assignMembership.param.attributeIndexes": "Attribute indexes",
+  "sim.assignMembership.step.call": "The entity owner calls assignTo(_to, _attributeIndexes) on the ERC-1261 contract to grant membership to an address.",
+  "sim.assignMembership.step.call.mobile": "Call assignTo()",
+  "sim.assignMembership.step.execute": "The contract records the address as a current member and stores its attribute indexes in the membership mappings.",
+  "sim.assignMembership.step.execute.mobile": "Record membership",
+  "sim.assignMembership.step.event": "The contract emits the Assigned event, and the address is now a recognized member of the entity.",
+  "sim.assignMembership.step.event.mobile": "Emit Assigned event"
+}

@@ -1,0 +1,31 @@
+{
+  "short": "ENS 解析器的 contenthash 欄位",
+  "introduction": "ERC-1577 定義了 ENS 解析器的 contenthash 欄位，將人類可讀的 ENS 名稱對應到 IPFS 或 Swarm 等網路上的內容位址。該標準由 Dean Eigenmann 與 Nick Johnson 於 2018 年 11 月提出。其值是一個形如 <protoCode uvarint><value> 的 multicodec：protoCode 用於識別儲存系統，其餘位元組則是內容位址。注意：ERC-1577 處於 Stagnant（停滯）狀態——它已有 6 個月以上未活躍，可能永遠不會最終定稿，但仍具有歷史或技術上的重要意義。",
+  "designPurpose": "ERC-1577 的設計目的是為 ENS 提供一個定義明確的欄位，用於將名稱指向鏈下內容。在此之前，客戶端透過臨時的 content 與 multihash 欄位將名稱解析為 IPFS 或 Swarm 雜湊，而這些欄位並不記錄某個值使用了哪個網路或格式，因此客戶端無從判斷如何取得目標。透過將值設為 multicodec——protoCode 前綴後接編碼後的位址——該標準讓一個解析器能服務於多種協定，而每個客戶端透過讀取 protoCode 來解析位址。",
+  "commonUsage": "contenthash 欄位由將 ENS 名稱解析到去中心化網站的錢包與瀏覽器讀取，包括規範中點名的 MetaMask 與 Status 客戶端。它支撐著 .eth 網站託管：一個名稱解析到 IPFS 或 Swarm 站點，客戶端從編碼位址取得該站點。編碼函式庫對 multicodec 值進行解碼與重新編碼，使應用程式無需硬編碼單一協定即可跟隨目標，而解析器透過 0xbc1c58d1 介面識別碼宣告支援。",
+
+  "node.user": "域名所有者",
+  "node.encoder": "contenthash 編碼器",
+  "node.storageContenthash": "解析器 contenthash",
+  "node.resolver": "ENS 解析器",
+  "node.decoder": "Multicodec 解碼器",
+  "node.network": "內容網路",
+
+  "edge.submitAddress": "提交內容位址",
+  "edge.encodeContenthash": "編碼 contenthash",
+  "edge.readContenthash": "讀取 contenthash",
+  "edge.returnContenthash": "回傳 contenthash",
+  "edge.fetchContent": "解碼並取得內容",
+
+  "sim.resolveWalkthrough.name": "解析 contenthash 演練",
+  "sim.resolveWalkthrough.desc": "跟隨一個 contenthash 值，從編碼經過 ENS 解析器，直到解碼後的 IPFS 或 Swarm 取得。",
+  "sim.resolveWalkthrough.param.protocol": "儲存協定",
+  "sim.resolveWalkthrough.step.submit": "域名所有者提交一個內容位址，以便將其編碼進 contenthash 欄位。",
+  "sim.resolveWalkthrough.step.submit.mobile": "提交內容位址",
+  "sim.resolveWalkthrough.step.encode": "該位址被打包成一個 multicodec 值——protoCode 前綴後接編碼後的內容位址——並儲存於解析器中。",
+  "sim.resolveWalkthrough.step.encode.mobile": "編碼並儲存",
+  "sim.resolveWalkthrough.step.resolve": "應用程式查詢 ENS 解析器，解析器回傳儲存的 contenthash 位元組以供解碼。",
+  "sim.resolveWalkthrough.step.resolve.mobile": "解析 contenthash",
+  "sim.resolveWalkthrough.step.decode": "客戶端讀取 protoCode（IPFS 為 0xe3）以選擇協定，並從該網路取得內容。",
+  "sim.resolveWalkthrough.step.decode.mobile": "解碼並取得"
+}

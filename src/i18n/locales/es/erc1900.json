@@ -1,0 +1,64 @@
+{
+  "short": "Sistema de Tipos Descentralizado para la EVM",
+  "introduction": "ERC-1900 define dType, un registro on-chain y una interfaz común para declarar tipos de datos reutilizables en Ethereum a partir de estructuras de Solidity. Fue propuesto por Loredana Cirstea y Christian Tzurcanu en marzo de 2019. Cada tipo se almacena con metadatos ABI indexados por un identificador que se calcula como el keccak256 de su nombre, lo que permite que las herramientas y los contratos compartan definiciones de tipos coherentes. Nota: ERC-1900 está en estado Stagnant (estancado): ha permanecido inactivo durante más de 6 meses y puede que nunca se finalice, pero conserva relevancia histórica o técnica.",
+  "designPurpose": "dType se diseñó para dar a Ethereum un vocabulario compartido de tipos de datos, en lugar de dejar que cada proyecto redefina las mismas estructuras de forma aislada. Sin un registro común, los datos on-chain no pueden fluir con fluidez entre protocolos y las herramientas fuera de la cadena, como los exploradores de bloques, no pueden decodificar estructuras arbitrarias. Al registrar los metadatos ABI de cada tipo on-chain bajo un identificador determinista, dType permite que los contratos hagan referencia a definiciones existentes y que las herramientas almacenen en caché y busquen en la colección.",
+  "commonUsage": "dType está orientado a la infraestructura que necesita definiciones de tipos legibles por máquina: exploradores de bloques que decodifican los efectos secundarios de las transacciones, complementos de editores que autocompletan contratos tipados y protocolos que interoperan sobre un modelo de datos compartido. La propuesta plantea dType como la capa base de extensiones posteriores: un sistema de tipos con almacenamiento de datos (ERC-2158) y bibliotecas de funciones pure sobre cada tipo. Como nunca alcanzó el estado Final, ERC-1900 solo tuvo trabajo de implementación de referencia en lugar de adopción en producción.",
+
+  "fn.insert.desc": "Registra un nuevo tipo almacenando su estructura de metadatos dType en el registro. Devuelve el identificador, calculado como el keccak256 del nombre del tipo, y emite un evento LogNew.",
+  "fn.insert.params.data": "La estructura de metadatos dType que describe el tipo: su typeChoice, la dirección del contrato, el hash de origen de Swarm, el nombre y los subtipos.",
+  "fn.insert.returns.identifier": "El identificador principal del tipo, el keccak256 de su nombre.",
+
+  "fn.remove.desc": "Elimina el registro de tipo con el identificador dado y libera su slot de almacenamiento. La especificación señala que esta función es opcional y puede omitirse para garantizar la inmutabilidad.",
+  "fn.remove.params.identifier": "El identificador del tipo que se va a eliminar.",
+  "fn.remove.returns.index": "El índice del array que ocupaba el registro eliminado.",
+
+  "fn.count.desc": "Devuelve el número de tipos registrados actualmente.",
+  "fn.count.returns.counter": "El recuento total de tipos registrados.",
+
+  "fn.getTypeIdentifier.desc": "Calcula el identificador de un nombre de tipo sin acceder al almacenamiento, como el keccak256 del nombre empaquetado. Quienes lo llaman lo usan para derivar la clave de otras búsquedas.",
+  "fn.getTypeIdentifier.params.name": "El nombre del tipo, tal como se escribe en Solidity.",
+  "fn.getTypeIdentifier.returns.identifier": "El identificador derivado del nombre.",
+
+  "fn.getByIdentifier.desc": "Devuelve la estructura de metadatos dType completa almacenada bajo el identificador dado.",
+  "fn.getByIdentifier.params.identifier": "El identificador del tipo que se va a obtener.",
+  "fn.getByIdentifier.returns.dtype": "La estructura de metadatos dType almacenada.",
+
+  "fn.get.desc": "Devuelve la estructura de metadatos dType de un tipo buscado por su nombre, resolviendo el identificador internamente.",
+  "fn.get.params.name": "El nombre del tipo que se va a buscar.",
+  "fn.get.returns.dtype": "La estructura de metadatos dType almacenada.",
+
+  "fn.isRegistered.desc": "Indica si un tipo con el identificador dado existe en el registro.",
+  "fn.isRegistered.params.identifier": "El identificador que se va a comprobar.",
+  "fn.isRegistered.returns.registered": "True si hay un tipo registrado con ese identificador.",
+
+  "fn.LogNew.desc": "Se emite cuando se inserta un nuevo tipo en el registro.",
+  "fn.LogNew.params.identifier": "El identificador del tipo recién registrado.",
+  "fn.LogNew.params.index": "El índice del tipo en el array de identificadores del registro.",
+
+  "fn.LogUpdate.desc": "Se emite cuando se actualiza un registro de tipo existente.",
+  "fn.LogUpdate.params.identifier": "El identificador del tipo actualizado.",
+  "fn.LogUpdate.params.index": "El índice del tipo en el array de identificadores del registro.",
+
+  "fn.LogRemove.desc": "Se emite cuando se elimina un registro de tipo del registro.",
+  "fn.LogRemove.params.identifier": "El identificador del tipo eliminado.",
+  "fn.LogRemove.params.index": "El índice que ocupaba el tipo eliminado en el array de identificadores.",
+
+  "node.user": "Autor del Tipo",
+  "node.contract": "Registro dType",
+  "node.storageTypes": "Almacenamiento de Tipos",
+
+  "edge.callInsert": "Llamar a insert()",
+  "edge.updateTypes": "Almacenar registro de tipo",
+  "edge.emitLogNew": "Emitir evento LogNew",
+
+  "sim.insertWalkthrough.name": "Recorrido de Registro de un Tipo",
+  "sim.insertWalkthrough.desc": "Sigue una llamada a insert desde el autor, a través del almacenamiento del registro, hasta el evento LogNew.",
+  "sim.insertWalkthrough.param.name": "Nombre del tipo",
+  "sim.insertWalkthrough.param.typeChoice": "Elección de tipo",
+  "sim.insertWalkthrough.step.call": "El autor llama a insert(data) con una estructura dType que describe el tipo que se va a registrar.",
+  "sim.insertWalkthrough.step.call.mobile": "Llamar a insert()",
+  "sim.insertWalkthrough.step.execute": "El registro deriva identifier = keccak256(name), escribe el registro de tipo en el mapping typeStruct y lo añade al array typeIndex.",
+  "sim.insertWalkthrough.step.execute.mobile": "Almacenar registro de tipo",
+  "sim.insertWalkthrough.step.event": "El registro emite LogNew(identifier, index) para que los indexadores fuera de la cadena puedan rastrear el nuevo tipo.",
+  "sim.insertWalkthrough.step.event.mobile": "Emitir evento LogNew"
+}

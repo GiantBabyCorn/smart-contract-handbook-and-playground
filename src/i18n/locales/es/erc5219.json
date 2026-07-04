@@ -1,0 +1,35 @@
+{
+  "short": "Solicitudes de Recursos de Contrato",
+  "introduction": "ERC-5219 define una interfaz de contrato de solo lectura, IDecentralizedApp, que permite a los clientes solicitar recursos de un contrato inteligente y recibir respuestas similares a HTTP. Fue propuesto por Gavin John en julio de 2022. Un llamador invoca request() con una ruta de recurso dividida en segmentos y una lista de parámetros de consulta, y el contrato devuelve un código de estado HTTP, un cuerpo de respuesta y encabezados de respuesta. Dado que request() es una función view, no necesita ninguna transacción, por lo que un front-end puede servirse directamente desde código en la cadena.",
+  "designPurpose": "ERC-5219 fue diseñado para eliminar el servidor web centralizado del que la mayoría de las aplicaciones descentralizadas todavía dependen para su interfaz de usuario. Cuando un front-end se aloja en un sitio web ordinario, puede ser censurado, retirado o alterado de forma silenciosa, y otros contratos no pueden leerlo. Al especificar una única función view que devuelve un código de estado, un cuerpo y encabezados, ERC-5219 permite que una interfaz viva en la cadena, de modo que puede obtenerse sin necesidad de confianza, es tan permanente como el propio contrato y puede ser leída por otros contratos inteligentes.",
+  "commonUsage": "ERC-5219 lo utilizan los proyectos que publican un front-end totalmente en la cadena junto a su lógica de aplicación, y el software de pasarela que traduce las solicitudes web ordinarias en llamadas a request() para que un navegador pueda cargar el resultado. Para mantener bajos los costos de gas, quienes lo implementan suelen devolver una respuesta message/external-body que apunta a contenido en IPFS en lugar de almacenar activos grandes en la cadena. La interfaz se combina de forma natural con la detección de interfaces, lo que permite a los clientes descubrir qué contratos hablan el protocolo.",
+
+  "fn.request.desc": "Envía una solicitud similar a HTTP GET de un recurso y devuelve una respuesta al estilo HTTP. La ruta del recurso se pasa como un arreglo de segmentos y la cadena de consulta como pares clave/valor; la función es view, por lo que nunca cambia el estado.",
+  "fn.request.params.resource": "La ruta del recurso solicitado dividida en segmentos, de modo que \"/asdf/1234\" se convierte en [\"asdf\", \"1234\"].",
+  "fn.request.params.params": "Los parámetros de consulta como pares clave/valor, de modo que \"?foo=bar\" se convierte en [{ key: \"foo\", value: \"bar\" }].",
+  "fn.request.returns.statusCode": "El código de estado HTTP de la respuesta, como 200 para éxito o 404 cuando no se encuentra el recurso.",
+  "fn.request.returns.body": "El cuerpo de la respuesta, por ejemplo un documento HTML o una carga útil JSON.",
+  "fn.request.returns.headers": "Una lista de encabezados de respuesta como pares clave/valor, como Content-Type.",
+
+  "node.user": "Cliente / Navegador",
+  "node.contract": "Contrato DApp",
+  "node.resources": "Almacén de Recursos",
+  "node.response": "Respuesta HTTP",
+
+  "edge.callRequest": "Llamar a request()",
+  "edge.readResources": "Leer recurso",
+  "edge.buildResponse": "Construir respuesta",
+  "edge.returnResponse": "Devolver respuesta",
+
+  "sim.requestWalkthrough.name": "Recorrido de Solicitud de Recurso",
+  "sim.requestWalkthrough.desc": "Sigue una llamada a request() desde el cliente, a través del contrato, hasta la respuesta similar a HTTP que devuelve.",
+  "sim.requestWalkthrough.param.resource": "Ruta del recurso",
+  "sim.requestWalkthrough.step.call": "El cliente llama a request() en el contrato DApp, pasando la ruta del recurso y los parámetros de consulta.",
+  "sim.requestWalkthrough.step.call.mobile": "Llamar a request()",
+  "sim.requestWalkthrough.step.resolve": "El contrato resuelve la ruta y lee el contenido coincidente de su almacén de recursos.",
+  "sim.requestWalkthrough.step.resolve.mobile": "Leer recurso",
+  "sim.requestWalkthrough.step.build": "El contrato ensambla una respuesta similar a HTTP con un código de estado, un cuerpo y encabezados.",
+  "sim.requestWalkthrough.step.build.mobile": "Construir respuesta",
+  "sim.requestWalkthrough.step.return": "La respuesta se devuelve al cliente, que la renderiza igual que una página web normal.",
+  "sim.requestWalkthrough.step.return.mobile": "Devolver respuesta"
+}

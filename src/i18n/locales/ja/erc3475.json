@@ -1,0 +1,80 @@
+{
+  "short": "抽象ストレージ債券規格",
+  "introduction": "ERC-3475は、トークン化された債券——償還条件、供給量、メタデータを外部ではなくコントラクトストレージに直接保存するオンチェーンの債務——のためのインターフェースを定義します。2021年4月にYu Liu、Varun Deshpandeらによって提案されました。各債券は、債券タイプを表すclass idと、その発行条件を表すnonce idによってアドレス指定されます。(classId, nonceId, amount)のTransactionタプルが発行・転送・償還・バーンの各操作を駆動し、これらは単一の呼び出しにバッチ処理できます。",
+  "designPurpose": "ERC-3475は、既存のトークン規格では表現できない債務を表すために設計されました。ERC-20のLPトークンは構造を持たないため、複雑な報酬・償還ロジックは別個のコントラクトやオフチェーンのデータベースに置く必要があり、流動性を分断してガスコストを押し上げていました。各債券にclassとnonceを付与し、あわせてオンチェーンのMetadataおよびValues構造体を持たせることで、この標準は1つのコントラクトが多数の債券タイプを保持できるようにします。各タイプはそれぞれ独自の供給量、満期の進捗、償還条件を持ち、1つのインターフェースを通じて読み取れます。",
+  "commonUsage": "この標準は、負債に類する（デットライクな）ポジションをトークン化するプロトコル向けを想定しています。たとえば、固定金利債やイールド債、償還可能な流動性レシート、そして条件が時間とともに変化する類似の金融商品です。1つのコントラクトが多数のプールを異なるclassとnonceとして保持できるため、ペアごとに個別のERC-20 LPトークンをデプロイする代わりに流動性を集約する自動マーケットメイカー（AMM）に適しています。ウォレットやセカンダリーマーケットは、債券を表示・取引するために、この標準のview関数を通じて残高と償還の進捗を読み取ります。",
+
+  "fn.transferFrom.desc": "Transaction配列に列挙された債券を、ある保有者から別の保有者へ移動します。呼び出し元は、setApprovalForを通じて付与された、該当する債券classに対するオペレーター承認を保持している必要があります。",
+  "fn.transferFrom.params.from": "債券残高が減少する保有者。",
+  "fn.transferFrom.params.to": "債券残高が増加する受取人。",
+  "fn.transferFrom.params.transactions": "移動する債券を指定する(classId, nonceId, amount)タプルの配列。",
+
+  "fn.issue.desc": "Transaction配列に記述された債券を作成し、あるアドレスに割り当てます。この関数は、必要な担保が預け入れられた後に、単一の特権を持つエンティティ（通常は発行元の銀行コントラクト）によって呼び出されることを意図しています。",
+  "fn.issue.params.to": "新しく作成された債券が発行されるアドレス。",
+  "fn.issue.params.transaction": "作成する債券を記述する(classId, nonceId, amount)タプルの配列。",
+
+  "fn.redeem.desc": "満期条件が満たされた後、指定されたアドレスから列挙された債券を償還し、有効供給量から取り除きます。銀行またはマーケットメイカーのコントラクトに限定すべきです。",
+  "fn.redeem.params.from": "債券が償還されるアドレス。",
+  "fn.redeem.params.transactions": "償還する債券を記述する(classId, nonceId, amount)タプルの配列。",
+
+  "fn.burn.desc": "列挙された債券をゼロアドレスに送ることで無効化します。redeemと同様に、コントローラーまたは銀行コントラクトのみが呼び出せることを意図しています。",
+  "fn.burn.params.from": "債券がバーンされる保有者。",
+  "fn.burn.params.transactions": "バーンする債券を記述する(classId, nonceId, amount)タプルの配列。",
+
+  "fn.approve.desc": "spenderのアローワンスをTransaction配列内の債券とちょうど一致するように設定し、それらのclassとnonceの組み合わせに対する以前のアローワンスを上書きします。",
+  "fn.approve.params.spender": "呼び出し元の債券を使用する権限を付与されたアドレス。",
+  "fn.approve.params.transactions": "spenderが転送を承認された(classId, nonceId, amount)タプルの配列。",
+
+  "fn.setApprovalFor.desc": "オペレーターが呼び出し元のすべての債券を管理することを有効または無効にし、結果として得られる承認状態を返します。承認されたオペレーターは、所有者に代わって転送、償還、バーンを行えます。",
+  "fn.setApprovalFor.params.operator": "オペレーターのステータスを付与または取り消されるアドレス。",
+  "fn.setApprovalFor.params.approved": "オペレーターを承認する場合はtrue、承認を取り消す場合はfalse。",
+  "fn.setApprovalFor.returns.approved": "オペレーターの結果として得られる承認状態。",
+
+  "fn.balanceOf.desc": "指定されたclassとnonceの、あるアカウントが保有する債券の数を返します。すでに償還された債券も含めて数えます。",
+  "fn.balanceOf.params.account": "債券残高を照会するアドレス。",
+  "fn.balanceOf.params.classId": "債券タイプを識別するclass id。",
+  "fn.balanceOf.params.nonceId": "class内の発行を識別するnonce id。",
+  "fn.balanceOf.returns.balance": "そのclassとnonceの、アカウントが保有する債券の数。",
+
+  "fn.Issue.desc": "オペレーターがアドレスに債券を発行したときに発行されます。ゼロ値の発行ではこのイベントを発行すべきではありません。",
+  "fn.Issue.params.operator": "債券を発行したオペレーター（通常は銀行、indexed）。",
+  "fn.Issue.params.to": "発行された債券を受け取ったアドレス（indexed）。",
+  "fn.Issue.params.transactions": "発行された(classId, nonceId, amount)タプル。",
+
+  "fn.Redeem.desc": "オペレーターがアドレスから債券を償還したときに発行されます。ゼロ値の償還ではこのイベントを発行すべきではありません。",
+  "fn.Redeem.params.operator": "債券を償還したオペレーター（indexed）。",
+  "fn.Redeem.params.from": "債券が償還されたアドレス（indexed）。",
+  "fn.Redeem.params.transactions": "償還された(classId, nonceId, amount)タプル。",
+
+  "fn.Transfer.desc": "オペレーターが保有者間で債券を転送したときに発行されます。ゼロアドレスからの転送では、このイベントの代わりにIssueを発行しなければなりません。",
+  "fn.Transfer.params.operator": "転送を実行したオペレーター（indexed）。",
+  "fn.Transfer.params.from": "債券の送信元アドレス（indexed）。",
+  "fn.Transfer.params.to": "債券の送信先アドレス（indexed）。",
+  "fn.Transfer.params.transactions": "転送された(classId, nonceId, amount)タプル。",
+
+  "node.user": "銀行（発行者）",
+  "node.contract": "ERC-3475 債券コントラクト",
+  "node.storageBonds": "債券ストレージ",
+  "node.holder": "債券保有者",
+
+  "edge.callIssue": "issue() を呼び出し",
+  "edge.callRedeem": "redeem() を呼び出し",
+  "edge.updateBonds": "債券台帳を更新",
+  "edge.bondsIssued": "債券を付与",
+  "edge.emitIssue": "Issueイベントを発行",
+  "edge.emitRedeem": "Redeemイベントを発行",
+
+  "sim.issueBondWalkthrough.name": "債券発行のウォークスルー",
+  "sim.issueBondWalkthrough.desc": "銀行からのissue()呼び出しを、債券ストレージを経てIssueイベントまで追跡します。",
+  "sim.issueBondWalkthrough.param.to": "受取人",
+  "sim.issueBondWalkthrough.param.classId": "Class id",
+  "sim.issueBondWalkthrough.param.amount": "数量",
+  "sim.issueBondWalkthrough.step.call": "銀行が、作成する債券のclass、nonce、数量を指定するTransactionタプルを添えてissue()を呼び出します。",
+  "sim.issueBondWalkthrough.step.call.mobile": "issue() を呼び出し",
+  "sim.issueBondWalkthrough.step.execute": "コントラクトが新しい債券をストレージに書き込み、そのclassとnonceについて保有者の残高と有効供給量を増加させます。",
+  "sim.issueBondWalkthrough.step.execute.mobile": "債券をストレージに書き込み",
+  "sim.issueBondWalkthrough.step.credit": "新しく作成された債券が受取人に付与され、受取人は後でそれらを転送、取引、または償還できます。",
+  "sim.issueBondWalkthrough.step.credit.mobile": "保有者に付与",
+  "sim.issueBondWalkthrough.step.event": "コントラクトがIssueイベントを発行し、ウォレットやインデクサーが新しい債券を記録できるようにします。",
+  "sim.issueBondWalkthrough.step.event.mobile": "Issueイベントを発行"
+}

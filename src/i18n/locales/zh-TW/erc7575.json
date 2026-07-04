@@ -1,0 +1,36 @@
+{
+  "short": "多資產 ERC-4626 金庫",
+  "introduction": "ERC-7575 對 ERC-4626 代幣化金庫標準進行擴充，以支援擁有多種資產或多個入口、且共用單一 ERC-20 份額代幣的金庫，包括在兩個任意外部代幣之間進行轉換的金庫。它由 Jeroen Offerijns、Alina Sinelnikova、Vikram Arun、Joey Santoro 與 Farhaan Ali 於 2023 年 12 月提出。它新增了一個將 ERC-20 份額外部化的 share 方法、一個將每種資產對應到其金庫的選用金庫查詢，以及用於偵測相容合約的強制性 ERC-165 支援。",
+  "designPurpose": "ERC-7575 的設計目的是移除 ERC-4626 中要求每個金庫同時也是一個 ERC-20 份額代幣的限制。該限制使得多資產金庫與流動性提供者式的金庫變得笨重或無法相容，因為無法從多個以不同資產計價的入口鑄造出同一種份額。透過將 ERC-20 相依性隱藏在一個可指向獨立合約的 share 方法之後，ERC-7575 讓多個金庫能夠連結到同一個共用份額，並支援可在兩個外部代幣之間進行轉換的 Pipe。",
+  "commonUsage": "ERC-7575 針對的是不符合 ERC-4626「一金庫一代幣」模型的金庫：圍繞共用代幣暴露多個資產入口的多資產金庫，以及在兩個外部 ERC-20 代幣之間單向或雙向轉換的 Pipe。份額代幣可選擇性地實作金庫查詢，並在所連結的金庫發生變化時發出 VaultUpdate，而金庫與份額則公布 ERC-165 介面 ID 0x2f0a18c5 與 0xf815c03d，讓前端與索引器能夠辨識這些分組的合約。",
+
+  "fn.share.desc": "回傳代表金庫份額的 ERC-20 代幣的位址。它可能回傳金庫自身的位址，或在 ERC-20 份額被單獨管理時回傳一個外部合約的位址，並且不得回滾。",
+  "fn.share.returns.shareTokenAddress": "金庫的 ERC-20 份額表示的位址。",
+
+  "fn.vault.desc": "回傳將給定資產用作份額入口的金庫的位址。此方法實作於份額代幣上，讓整合方可以依資產查詢多資產金庫的入口。",
+  "fn.vault.params.asset": "要查詢其所連結金庫的資產代幣。",
+  "fn.vault.returns.vault": "為給定資產註冊的金庫的位址。",
+
+  "fn.VaultUpdate.desc": "當份額代幣針對某個資產所連結的金庫發生變化時由其發出，讓整合方能夠追蹤多資產金庫目前的入口。",
+  "fn.VaultUpdate.params.asset": "其所連結金庫發生變化的資產。",
+  "fn.VaultUpdate.params.vault": "新連結的金庫的位址。",
+
+  "node.user": "金庫整合方",
+  "node.contract": "ERC-7575 份額代幣",
+  "node.storageVaults": "資產對金庫對應表",
+
+  "edge.callVault": "呼叫 vault()",
+  "edge.readVaults": "讀取金庫對應表",
+  "edge.emitVaultUpdate": "發出 VaultUpdate 事件",
+  "edge.callShare": "呼叫 share()",
+
+  "sim.vaultLookupWalkthrough.name": "金庫查詢演練",
+  "sim.vaultLookupWalkthrough.desc": "跟隨份額代幣上的一次 vault(asset) 查詢，了解 VaultUpdate 如何讓資產對金庫對應表保持最新狀態。",
+  "sim.vaultLookupWalkthrough.param.asset": "資產位址",
+  "sim.vaultLookupWalkthrough.step.lookup": "整合方在份額代幣上呼叫 vault(asset)，以查找給定資產的金庫入口。",
+  "sim.vaultLookupWalkthrough.step.lookup.mobile": "呼叫 vault()",
+  "sim.vaultLookupWalkthrough.step.read": "份額代幣讀取其資產對金庫對應表，並回傳為該資產註冊的金庫的位址。",
+  "sim.vaultLookupWalkthrough.step.read.mobile": "讀取金庫對應表",
+  "sim.vaultLookupWalkthrough.step.event": "每當某個資產所連結的金庫發生變化時，份額代幣便發出 VaultUpdate，以便索引器可以重新整理其快取的對應表。",
+  "sim.vaultLookupWalkthrough.step.event.mobile": "發出 VaultUpdate 事件"
+}

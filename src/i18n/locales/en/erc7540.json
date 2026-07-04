@@ -1,0 +1,90 @@
+{
+  "short": "Asynchronous ERC-4626 Tokenized Vaults",
+  "introduction": "ERC-7540 extends the ERC-4626 tokenized vault standard with asynchronous deposit and redemption flows, called Requests. It was proposed by Jeroen Offerijns, Alina Sinelnikova, Vikram Arun, Joey Santoro, Farhaan Ali, and João Martins in October 2023. A user calls requestDeposit or requestRedeem to place assets or shares in a Pending state, and once the vault fulfills the Request the amount becomes Claimable and is collected through the existing deposit, mint, withdraw, or redeem methods.",
+  "designPurpose": "ERC-7540 was designed to bring vaults with settlement delays into the ERC-4626 ecosystem. The base standard assumes deposits and redemptions clear atomically up to a limit, which excludes real-world asset protocols, undercollateralized or cross-chain lending, liquid staking tokens, and insurance modules whose flows settle over time. Instead of a parallel interface, it adds requestDeposit and requestRedeem to enter a Pending state and reuses the ERC-4626 claim methods once a Request is Claimable.",
+  "commonUsage": "Asynchronous vaults are intended for systems where entering or exiting a position is not instantaneous: real-world asset and undercollateralized lending protocols that settle off-chain, cross-chain lending vaults, liquid staking tokens, and insurance modules. Because pending positions are only semi-fungible, implementations may keep them as internal accounting or wrap them in other token standards, and integrators read the ERC-165 interface IDs to tell whether a vault is async on deposits, redemptions, or both.",
+
+  "fn.requestDeposit.desc": "Transfers assets from owner into the vault and opens a deposit Request, moving the amount into Pending state and increasing pendingDepositRequest for the controller. Returns a requestId and emits DepositRequest.",
+  "fn.requestDeposit.params.assets": "The amount of underlying assets to lock for the deposit Request.",
+  "fn.requestDeposit.params.controller": "The account that will control the Request and later claim the shares.",
+  "fn.requestDeposit.params.owner": "The account whose assets are transferred in; must be msg.sender or an approved operator.",
+  "fn.requestDeposit.returns.requestId": "The identifier of the Request, used together with the controller to look up its state.",
+
+  "fn.pendingDepositRequest.desc": "Returns the amount of assets from the controller's deposit Request that are still Pending and not yet Claimable.",
+  "fn.pendingDepositRequest.params.requestId": "The identifier of the Request to query.",
+  "fn.pendingDepositRequest.params.controller": "The account that owns the Request.",
+  "fn.pendingDepositRequest.returns.assets": "The assets still in Pending state for the controller.",
+
+  "fn.claimableDepositRequest.desc": "Returns the amount of assets from the controller's deposit Request that are now Claimable and can be turned into shares via deposit or mint.",
+  "fn.claimableDepositRequest.params.requestId": "The identifier of the Request to query.",
+  "fn.claimableDepositRequest.params.controller": "The account that owns the Request.",
+  "fn.claimableDepositRequest.returns.assets": "The assets in Claimable state for the controller.",
+
+  "fn.requestRedeem.desc": "Takes control of shares from owner and opens a redemption Request, moving the amount into Pending state and increasing pendingRedeemRequest for the controller. Returns a requestId and emits RedeemRequest.",
+  "fn.requestRedeem.params.shares": "The amount of vault shares to lock for the redemption Request.",
+  "fn.requestRedeem.params.controller": "The account that will control the Request and later claim the assets.",
+  "fn.requestRedeem.params.owner": "The account whose shares are removed from custody; must be msg.sender, an approved operator, or an approved spender.",
+  "fn.requestRedeem.returns.requestId": "The identifier of the Request, used together with the controller to look up its state.",
+
+  "fn.pendingRedeemRequest.desc": "Returns the amount of shares from the controller's redemption Request that are still Pending and not yet Claimable.",
+  "fn.pendingRedeemRequest.params.requestId": "The identifier of the Request to query.",
+  "fn.pendingRedeemRequest.params.controller": "The account that owns the Request.",
+  "fn.pendingRedeemRequest.returns.shares": "The shares still in Pending state for the controller.",
+
+  "fn.claimableRedeemRequest.desc": "Returns the amount of shares from the controller's redemption Request that are now Claimable and can be turned into assets via redeem or withdraw.",
+  "fn.claimableRedeemRequest.params.requestId": "The identifier of the Request to query.",
+  "fn.claimableRedeemRequest.params.controller": "The account that owns the Request.",
+  "fn.claimableRedeemRequest.returns.shares": "The shares in Claimable state for the controller.",
+
+  "fn.setOperator.desc": "Grants or revokes an operator that can manage Requests on behalf of msg.sender. Emits OperatorSet and returns true.",
+  "fn.setOperator.params.operator": "The account whose operator status is being set.",
+  "fn.setOperator.params.approved": "True to grant operator permission, false to revoke it.",
+  "fn.setOperator.returns.success": "Always true when the call succeeds.",
+
+  "fn.deposit.desc": "Claims a Claimable deposit Request by minting shares to receiver and decreasing claimableDepositRequest for the controller. This overload adds a controller argument to the ERC-4626 deposit method.",
+  "fn.deposit.params.assets": "The amount of previously requested assets to claim.",
+  "fn.deposit.params.receiver": "The account that receives the minted shares.",
+  "fn.deposit.params.controller": "The account whose Claimable Request is drawn down; must be msg.sender or an approved operator.",
+  "fn.deposit.returns.shares": "The amount of shares minted to the receiver.",
+
+  "fn.DepositRequest.desc": "Emitted when a deposit Request is submitted through requestDeposit, recording the controller, owner, requestId, caller, and requested assets.",
+  "fn.DepositRequest.params.controller": "The account that controls the new Request.",
+  "fn.DepositRequest.params.owner": "The account whose assets were locked.",
+  "fn.DepositRequest.params.requestId": "The identifier assigned to the Request.",
+  "fn.DepositRequest.params.sender": "The caller of requestDeposit, which may differ from owner.",
+  "fn.DepositRequest.params.assets": "The amount of assets locked for the Request.",
+
+  "fn.RedeemRequest.desc": "Emitted when a redemption Request is submitted through requestRedeem, recording the controller, owner, requestId, caller, and requested shares.",
+  "fn.RedeemRequest.params.controller": "The account that controls the new Request.",
+  "fn.RedeemRequest.params.owner": "The account whose shares were locked.",
+  "fn.RedeemRequest.params.requestId": "The identifier assigned to the Request.",
+  "fn.RedeemRequest.params.sender": "The caller of requestRedeem, which may differ from owner.",
+  "fn.RedeemRequest.params.shares": "The amount of shares locked for the Request.",
+
+  "fn.OperatorSet.desc": "Emitted when a controller sets an operator's approval status through setOperator.",
+  "fn.OperatorSet.params.controller": "The account granting or revoking operator permission.",
+  "fn.OperatorSet.params.operator": "The account whose operator status changed.",
+  "fn.OperatorSet.params.approved": "The new operator approval status.",
+
+  "node.user": "Vault User",
+  "node.contract": "Async ERC-4626 Vault",
+  "node.storageRequests": "Request State",
+
+  "edge.callRequestDeposit": "Call requestDeposit()",
+  "edge.updateRequests": "Update request state",
+  "edge.emitDepositRequest": "Emit DepositRequest event",
+  "edge.callDeposit": "Call deposit()",
+
+  "sim.requestDepositWalkthrough.name": "Deposit Request Walkthrough",
+  "sim.requestDepositWalkthrough.desc": "Follow an asynchronous deposit from requestDeposit through the Pending and Claimable states to the deposit claim.",
+  "sim.requestDepositWalkthrough.param.assets": "Assets to request",
+  "sim.requestDepositWalkthrough.param.controller": "Controller address",
+  "sim.requestDepositWalkthrough.step.request": "The user calls requestDeposit(assets, controller, owner), and the vault transfers the assets in and opens the Request.",
+  "sim.requestDepositWalkthrough.step.request.mobile": "Call requestDeposit()",
+  "sim.requestDepositWalkthrough.step.pending": "The vault increases pendingDepositRequest for the controller, holding the assets in Pending state until it fulfills the Request.",
+  "sim.requestDepositWalkthrough.step.pending.mobile": "Record pending request",
+  "sim.requestDepositWalkthrough.step.event": "The vault emits DepositRequest so indexers and the controller can track the new Request by its requestId.",
+  "sim.requestDepositWalkthrough.step.event.mobile": "Emit DepositRequest event",
+  "sim.requestDepositWalkthrough.step.claim": "Once the Request is Claimable, the controller calls deposit to mint shares and draw down claimableDepositRequest.",
+  "sim.requestDepositWalkthrough.step.claim.mobile": "Claim shares via deposit()"
+}

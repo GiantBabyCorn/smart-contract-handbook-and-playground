@@ -1,0 +1,28 @@
+{
+  "short": "ERC-5219를 위한 ERC-4804 해석 모드",
+  "introduction": "ERC-6944는 ERC-4804 클라이언트가 ERC-5219 인터페이스를 통해 컨트랙트의 web3:// 요청을 해석할 수 있게 하는 해석 모드 값을 정의합니다. 이 제안은 2023년 4월 Gavin John과 Qi Zhou에 의해 제안되었습니다. 컨트랙트는 IERC5219Resolver를 구현하여 지원을 알리며, 그 resolveMode() 함수는 상수 bytes32 값 \"5219\"를 반환합니다. ERC-4804 게이트웨이는 이 값을 읽은 다음 ERC-5219의 request() 메서드를 사용합니다. 참고: ERC-6944는 Draft(초안) 상태로, 명세가 여전히 활발히 개발 중이며 크게 변경될 수 있습니다.",
+  "designPurpose": "ERC-6944는 ERC-5219를 ERC-4804의 web3:// 스킴 내에서 해석 모드로 사용할 수 있도록 설계되었습니다. ERC-4804 클라이언트는 각 컨트랙트가 자신의 요청을 어떻게 해석하기를 기대하는지 알아야 하지만, 이 제안 이전에는 ERC-5219 request() 인터페이스를 위한 플래그가 없었고 내장된 자동 및 수동 모드만 있었습니다. ERC-6944는 고정된 bytes32 상수 \"5219\"를 반환하는 단일 pure 함수 resolveMode()로 그 공백을 메웁니다. 클라이언트가 resolveMode()를 직접 호출하여 호환성을 확인할 수 있으므로 ERC-165를 피합니다.",
+  "commonUsage": "ERC-6944는 ERC-5219를 통해 온체인 프런트엔드를 호스팅하고 브라우저와 게이트웨이가 web3:// URL로 이에 도달하기를 원하는 컨트랙트가 구현합니다. 이 값은 web3:// 게이트웨이 소프트웨어와, 사용자를 대신하여 ERC-4804 주소를 해석하는 지갑이나 브라우저 확장 프로그램이 읽습니다. resolveMode()는 pure이며 컴파일 타임 상수를 반환하므로, 구현체는 일반적으로 \"5219\" 반환 값을 하드코딩한 작은 추상 컨트랙트를 상속하여, 저장 공간을 추가하지 않고 호스트 컨트랙트에 무시할 만한 gas만 더합니다.",
+
+  "fn.resolveMode.desc": "컨트랙트의 ERC-4804 해석 모드를 반환합니다. 요청이 ERC-5219의 request() 인터페이스를 통해 해석되어야 함을 알리기 위해 상수 bytes32 값 \"5219\"(대소문자 구분 없음)를 반드시 반환해야 하는 pure 함수입니다.",
+  "fn.resolveMode.returns.mode": "해석 모드 식별자로, ERC-5219 해석을 위해 bytes32 값 \"5219\"로 고정됩니다.",
+
+  "node.user": "Web3 게이트웨이",
+  "node.contract": "ERC-5219 리졸버",
+  "node.storageMode": "해석 모드 값",
+  "node.browser": "사용자 브라우저",
+
+  "edge.callResolveMode": "resolveMode() 호출",
+  "edge.readMode": "해석 모드 읽기",
+  "edge.serveResponse": "ERC-5219 응답 제공",
+
+  "sim.resolveModeWalkthrough.name": "해석 모드 둘러보기",
+  "sim.resolveModeWalkthrough.desc": "ERC-4804 클라이언트가 resolveMode()를 호출하고 ERC-5219를 통해 컨트랙트를 해석하는 방법을 익히는 과정을 따라갑니다.",
+  "sim.resolveModeWalkthrough.param.target": "리졸버 컨트랙트",
+  "sim.resolveModeWalkthrough.step.call": "web3:// 게이트웨이가 요청을 어떻게 해석해야 하는지 알기 위해 대상 컨트랙트에서 resolveMode()를 호출합니다.",
+  "sim.resolveModeWalkthrough.step.call.mobile": "resolveMode() 호출",
+  "sim.resolveModeWalkthrough.step.resolve": "컨트랙트가 고정된 bytes32 상수 \"5219\"를 반환하여 자신이 ERC-5219 리졸버임을 나타냅니다.",
+  "sim.resolveModeWalkthrough.step.resolve.mobile": "모드 5219 반환",
+  "sim.resolveModeWalkthrough.step.serve": "\"5219\" 모드를 확인한 게이트웨이는 ERC-5219를 통해 요청을 해석하고 응답을 브라우저에 제공합니다.",
+  "sim.resolveModeWalkthrough.step.serve.mobile": "ERC-5219로 제공"
+}

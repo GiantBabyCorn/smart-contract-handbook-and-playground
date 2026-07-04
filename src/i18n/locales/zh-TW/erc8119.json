@@ -1,0 +1,29 @@
+{
+  "short": "參數化儲存鍵",
+  "introduction": "ERC-8119 為 EVM 鍵值儲存中使用的參數化字串鍵定義了標準格式，用於讓一種元資料類型表示多個實例。它由 Prem Makeig 於 2025 年 1 月提出。它規定了兩種編碼方式：用於單一參數的斜線或冒號形式，寫作 key-label/key-parameter；以及用於多個有序參數的方括號形式，寫作 key-label[parameter-1][parameter-2]。注意：ERC-8119 是一份 Draft（草案）；規範仍在積極開發中，可能會有重大變動。",
+  "designPurpose": "ERC-8119 的設計目標是消除合約儲存同一元資料類型的多個實例時出現的不一致。在此之前，每種實作都各自發明連接標籤與參數的約定，因此 registration-1 和 registration1 這樣的鍵無法在不同工具之間解析或共享。透過固定兩種明確的編碼，並從標籤中保留斜線、冒號和左方括號字元，ERC-8119 為解析器提供了一條確定性規則，用於將鍵拆分為標籤和參數。",
+  "commonUsage": "該格式面向將元資料保存在 mapping(string => bytes) 或類似儲存中的合約，例如名稱註冊表、檔案記錄和按實例的組態。斜線和冒號形式適合 registration/1 或 website/http://website.com 這類較長的文字值，而方括號形式適合 resource[chain][1][token][42] 這類多參數鍵。由於它是一種命名約定而非介面，應用程式只需一致地格式化和解析鍵即可採用它，無需更改鏈上程式碼。",
+
+  "node.app": "應用程式",
+  "node.formatter": "鍵格式化器",
+  "node.storageMetadata": "元資料儲存",
+  "node.parser": "鍵解析器",
+
+  "edge.buildSlash": "建構斜線/冒號鍵",
+  "edge.buildBracket": "建構方括號鍵",
+  "edge.writeKey": "寫入元資料",
+  "edge.parseKey": "解析鍵",
+
+  "sim.buildKeyWalkthrough.name": "建構參數化鍵",
+  "sim.buildKeyWalkthrough.desc": "跟隨一個斜線形式的鍵，從應用程式經過元資料儲存，到達將其重新拆分為標籤和參數的解析器。",
+  "sim.buildKeyWalkthrough.param.keyLabel": "鍵標籤",
+  "sim.buildKeyWalkthrough.param.keyParameter": "鍵參數",
+  "sim.buildKeyWalkthrough.step.build": "應用程式用斜線連接 key-label 和參數，形成參數化鍵 registration/1。",
+  "sim.buildKeyWalkthrough.step.build.mobile": "建構鍵",
+  "sim.buildKeyWalkthrough.step.format": "格式化器檢查標籤中不含空格、斜線、冒號或左方括號，從而產生符合標準的鍵。",
+  "sim.buildKeyWalkthrough.step.format.mobile": "驗證鍵格式",
+  "sim.buildKeyWalkthrough.step.store": "合約將該值寫入 mapping(string => bytes) 元資料儲存中鍵 registration/1 之下。",
+  "sim.buildKeyWalkthrough.step.store.mobile": "寫入元資料",
+  "sim.buildKeyWalkthrough.step.parse": "解析器讀取該鍵，在第一個斜線或冒號處將其拆分，還原出標籤 registration 和參數 1。",
+  "sim.buildKeyWalkthrough.step.parse.mobile": "拆回鍵"
+}

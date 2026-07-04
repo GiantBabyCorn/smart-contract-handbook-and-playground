@@ -1,0 +1,32 @@
+{
+  "short": "スマートコントラクトのステータスコード",
+  "introduction": "ERC-1066 は、コントラクト向けに共有された 1 バイトのステータスコードのセットを定義する規格で、HTTP ステータスをモデルとしており、関数が単なる true/false や revert ではなく意味のある結果を返せるようにします。2018 年 5 月に Brooklyn Zelenka、Tom Carchrae、Gleb Naumenko によって提案されました。各バイトは、16×16 の表から上位ニブルのカテゴリと下位ニブルの理由を組み合わせたもので、複数の戻り値の最初に返されます。注意：ERC-1066 は Stagnant（停滞）状態です。6 か月以上活動がなく、最終化されない可能性がありますが、歴史的または技術的に重要な意味を持ち続けています。",
+  "designPurpose": "ERC-1066 は、コントラクトが依存していた低コンテキストなシグナル方式を置き換えるために設計されました。従来は、成功に満たない場合はすべて revert するか、理由を持たない不透明な true/false を返すというものでした。それ以前は、各プロジェクトが独自のエラー方式を考案していたため、コントラクトは相手側の独自の enum を知らなければ互いの結果に反応できませんでした。カテゴリと理由のコードを有限で HTTP に似た表として標準化することで、ERC-1066 はコントラクトに自律的に分岐するための共有された語彙を与えつつ、理由付きの revert とも互換性を保ちます。",
+  "commonUsage": "ERC-1066 は、成功か失敗かだけにとどまらない情報を伝える必要があるコントラクトを対象としています。転送がなぜブロックされたかを報告するバリデータ、許可または停止を表すコードを返す権限チェック、そして一方のコントラクトが他方の結果に基づいて分岐するフローなどです。仕様書では、0x10（Disallowed、不許可）または 0x11（Allowed、許可）を返す規制対象トークンのバリデータを例として示しています。Stagnant な提案であるため本番環境で広く採用されることはなく、その人間が読める翻訳レイヤーは ERC-1444 に分離されました。",
+
+  "node.caller": "呼び出し元コントラクト",
+  "node.contract": "ステータスを返すコントラクト",
+  "node.storageCodeTable": "ステータスコード表",
+  "node.storageReturn": "返されたステータスバイト",
+  "node.consumer": "反応するコンシューマー",
+  "node.translator": "翻訳レイヤー",
+
+  "edge.callFunction": "関数を呼び出す",
+  "edge.selectCode": "カテゴリと理由を選択",
+  "edge.encodeByte": "ステータスバイトをエンコード",
+  "edge.reactToCode": "コードに反応する",
+  "edge.translateCode": "コードを翻訳する",
+  "edge.showMessage": "メッセージを表示",
+
+  "sim.statusCodeWalkthrough.name": "ステータスコードのウォークスルー",
+  "sim.statusCodeWalkthrough.desc": "ステータスコードを、コントラクトの呼び出しからエンコードを経て、反応するコンシューマーと人間が読めるメッセージまで追跡します。",
+  "sim.statusCodeWalkthrough.param.outcome": "関数の結果",
+  "sim.statusCodeWalkthrough.step.call": "呼び出し元コントラクトが、ステータスを返すコントラクトの関数を呼び出し、最初の戻り値としてバイトのステータスコードを期待します。",
+  "sim.statusCodeWalkthrough.step.call.mobile": "関数を呼び出す",
+  "sim.statusCodeWalkthrough.step.encode": "コントラクトは 16×16 のコード表からカテゴリと理由を 1 つずつ選び、それらを 1 つのステータスバイトにまとめます。",
+  "sim.statusCodeWalkthrough.step.encode.mobile": "ステータスバイトをエンコード",
+  "sim.statusCodeWalkthrough.step.return": "ステータスバイトは最初の値として返されます。コンシューマーはそれに基づいて分岐し、偶数のコードをブロッキング、奇数のコードを非ブロッキングとして扱います。",
+  "sim.statusCodeWalkthrough.step.return.mobile": "コードに反応する",
+  "sim.statusCodeWalkthrough.step.translate": "翻訳レイヤーが、後に ERC-1444 で規定されるとおり、コードを人間が読めるメッセージにマッピングします。",
+  "sim.statusCodeWalkthrough.step.translate.mobile": "メッセージを表示"
+}

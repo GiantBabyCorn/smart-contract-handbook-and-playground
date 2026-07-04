@@ -1,0 +1,59 @@
+{
+  "short": "트랜잭션 처리 모델을 갖춘 토큰 표준",
+  "introduction": "ERC-223은 필수 tokenReceived 콜백을 통해 수신 컨트랙트에 들어오는 전송을 알리는 대체 가능 토큰 인터페이스를 정의합니다. 2017년 5월 Dexaran이 제안했습니다. ERC-20과 달리 ERC-223 토큰을 컨트랙트로 보내면 해당 컨트랙트의 tokenReceived 핸들러가 호출되며, 핸들러가 없으면 revert됩니다. 따라서 토큰을 받도록 만들어지지 않은 컨트랙트에 토큰이 조용히 잠기는 일이 발생하지 않습니다. 하나의 transfer 함수가 계정과 컨트랙트 모두를 처리하며, 선택적인 data 페이로드를 토큰과 함께 보낼 수 있습니다.",
+  "designPurpose": "ERC-223은 ERC-20의 흔한 실패 모드, 즉 일반 transfer 함수로 컨트랙트에 보낸 토큰이 인식되지 못하고 영구히 묶여 버리는 문제를 제거하기 위해 설계되었습니다. ERC-20의 transfer는 수신자에게 알리지 않기 때문에, 컨트랙트에 예치하려면 approve와 transferFrom의 2단계 패턴을 대신 사용해야 합니다. ERC-223은 모든 전송이 수신자의 tokenReceived 핸들러를 호출하도록 하고 그것이 없으면 revert하게 함으로써 이에 대응하며, 예치가 단일 트랜잭션으로 완료되어 우발적인 손실을 방지합니다.",
+  "commonUsage": "ERC-223은 거래소, 결제 처리업체, 볼트처럼 컨트랙트로의 토큰 예치를 받는 애플리케이션을 대상으로 하며, 단일 호출 예치를 통해 ERC-20이 필요로 하는 추가 승인 트랜잭션을 피합니다. 수신자 콜백은 컨트랙트가 들어오는 토큰을 도착 시점에 검증하거나 거부할 수 있게 하며, 그 data 페이로드는 수신자를 위한 지시를 담을 수 있습니다. ERC-20이 여전히 훨씬 더 널리 배포되어 있으므로, ERC-223은 주로 그 예치 알림 동작을 특별히 원하는 프로젝트에서 채택됩니다.",
+
+  "fn.totalSupply.desc": "현존하는 토큰의 총개수를 반환합니다. 명세는 이것이 ERC-20의 totalSupply 함수와 동일하게 동작한다고 명시합니다.",
+  "fn.totalSupply.returns.supply": "총 토큰 공급량(최소 단위).",
+
+  "fn.balanceOf.desc": "지정한 계정이 보유한 토큰 잔액을 반환합니다. 그 동작은 ERC-20의 balanceOf 함수와 동일합니다.",
+  "fn.balanceOf.params.owner": "잔액을 조회할 주소.",
+  "fn.balanceOf.returns.balance": "해당 계정이 보유한 토큰 수량(최소 단위).",
+
+  "fn.transfer.desc": "_value개의 토큰을 _to로 전송합니다. _to가 컨트랙트이면 토큰은 그 tokenReceived 핸들러를 호출하고, 해당 핸들러가 없으면 revert합니다. 외부 소유 계정(EOA)으로의 전송은 콜백을 건너뜁니다. 이 오버로드는 빈 페이로드를 첨부하며 ERC-20 하위 호환성을 위해 존재합니다.",
+  "fn.transfer.params.to": "수신자 주소.",
+  "fn.transfer.params.value": "전송할 토큰 수량(최소 단위).",
+  "fn.transfer.returns.success": "전송이 성공하면 true를 반환합니다.",
+
+  "fn.transferData.desc": "임의의 _data 페이로드를 첨부하면서 _value개의 토큰을 _to로 전송합니다. _to가 컨트랙트이면 잔액이 갱신된 후 그 tokenReceived(address, uint256, bytes) 핸들러가 호출되며, 핸들러가 구현되어 있지 않으면 전송이 revert됩니다. _data는 ether 트랜잭션의 msg.data처럼 동작하며 비어 있어도 됩니다.",
+  "fn.transferData.params.to": "수신자 주소.",
+  "fn.transferData.params.value": "전송할 토큰 수량(최소 단위).",
+  "fn.transferData.params.data": "수신자의 tokenReceived 핸들러로 전달되는 임의의 메타데이터. 비어 있어도 됩니다.",
+  "fn.transferData.returns.success": "전송이 성공하면 true를 반환합니다.",
+
+  "fn.tokenReceived.desc": "수신 컨트랙트가 ERC-223 토큰을 받으려면 반드시 구현해야 하는 핸들러입니다. 토큰 컨트랙트는 잔액을 갱신한 후 이를 호출하여 발신자, 수량, 데이터를 전달하며, 전송을 확인하기 위해 매직 값 0x8943ec02를 반환해야 합니다. 이를 생략한 컨트랙트는 전송이 revert됩니다.",
+  "fn.tokenReceived.params.from": "토큰을 보낸 주소.",
+  "fn.tokenReceived.params.value": "들어오는 토큰의 수량.",
+  "fn.tokenReceived.params.data": "첨부된 메타데이터로, ether 트랜잭션의 msg.data에 해당합니다.",
+  "fn.tokenReceived.returns.magic": "들어오는 전송을 확인하는 매직 값 0x8943ec02.",
+
+  "fn.Transfer.desc": "토큰이 전송될 때 발생하며 첨부된 data 페이로드를 함께 전달합니다. ERC-20의 Transfer 이벤트와 호환되고 유사하지만 bytes 타입의 data 필드를 추가합니다.",
+  "fn.Transfer.params.from": "토큰이 전송되는 출발 주소.",
+  "fn.Transfer.params.to": "토큰이 전송되는 도착 주소.",
+  "fn.Transfer.params.value": "전송된 토큰 수량.",
+  "fn.Transfer.params.data": "전송에 첨부된 data 페이로드.",
+
+  "node.user": "토큰 발신자",
+  "node.contract": "ERC-223 토큰",
+  "node.storageBalances": "토큰 스토리지",
+  "node.recipient": "수신 컨트랙트",
+
+  "edge.callTransfer": "transfer() 호출",
+  "edge.updateBalances": "잔액 갱신",
+  "edge.callTokenReceived": "tokenReceived() 호출",
+  "edge.emitTransfer": "Transfer 이벤트 발생",
+
+  "sim.tokenTransferWalkthrough.name": "콜백을 포함한 토큰 전송",
+  "sim.tokenTransferWalkthrough.desc": "ERC-223 전송을 발신자에서 시작해 잔액 갱신과 수신자의 tokenReceived 콜백을 거쳐 Transfer 이벤트까지 따라갑니다.",
+  "sim.tokenTransferWalkthrough.param.to": "수신자 주소",
+  "sim.tokenTransferWalkthrough.param.value": "수량(wei 단위)",
+  "sim.tokenTransferWalkthrough.step.call": "발신자는 ERC-223 토큰 컨트랙트에서 transfer(to, value, data)를 호출하여 수신자에게 토큰을 보냅니다.",
+  "sim.tokenTransferWalkthrough.step.call.mobile": "transfer() 호출",
+  "sim.tokenTransferWalkthrough.step.execute": "컨트랙트는 balances 매핑에서 발신자로부터 해당 수량을 차감하고 수신자에게 더합니다.",
+  "sim.tokenTransferWalkthrough.step.execute.mobile": "잔액 갱신",
+  "sim.tokenTransferWalkthrough.step.notify": "수신자가 컨트랙트이므로 토큰은 그 tokenReceived 핸들러를 호출하며, 이 핸들러는 0x8943ec02를 반환해야 하고 그렇지 않으면 전송 전체가 revert됩니다.",
+  "sim.tokenTransferWalkthrough.step.notify.mobile": "수신자에게 알림",
+  "sim.tokenTransferWalkthrough.step.event": "컨트랙트는 Transfer(from, to, value, data)를 발생시켜 오프체인 서비스가 전송과 그 페이로드를 추적할 수 있게 합니다.",
+  "sim.tokenTransferWalkthrough.step.event.mobile": "Transfer 이벤트 발생"
+}

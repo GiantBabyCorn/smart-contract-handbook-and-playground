@@ -107,6 +107,21 @@ export const entry: ProtocolEntry = {
     },
   ],
 
+  // ─── Schema v2 content sections ───
+  composes: [
+    { slug: 'erc20', role: 'lido-steth.compose.erc20.role' },
+    { slug: 'erc2612', role: 'lido-steth.compose.erc2612.role' },
+    { slug: 'erc1271', role: 'lido-steth.compose.erc1271.role' },
+  ],
+
+  references: [
+    {
+      label: 'Lido docs — Lido tokens integration guide (stETH/wstETH)',
+      url: 'https://docs.lido.fi/guides/lido-tokens-integration-guide/',
+      kind: 'spec',
+    },
+  ],
+
   // ─── ERCFlow ───
   flowNodes: [
     {

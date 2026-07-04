@@ -1,0 +1,68 @@
+{
+  "short": "NFT 权利管理",
+  "introduction": "ERC-5218 定义了一个接口，用于在链上记录版权许可并将其绑定到 ERC-721 NFT。该标准由 James Grimmelmann、Yan Ji 和 Tyler Kell 于 2022 年 7 月提出。每个 NFT 都有一份由其所有者持有的根许可，所有者可以授予形成树状结构的子许可；每份许可指向一个条款 URI，并且可以被创建、转移、撤销或查询是否有效。注意：ERC-5218 处于停滞（Stagnant）状态——它已有 6 个月以上无活动，可能永远不会最终定案，但仍具有历史或技术上的重要意义。",
+  "designPurpose": "ERC-5218 旨在弥合「拥有 NFT」与「持有其所代表作品的合法权利」之间的鸿沟。在此之前，NFT 许可存在于链下，代币无法表明适用哪些权利，子许可无从追溯，一些项目甚至铸造独立的 NFT 来充当许可。通过将每一份许可记录在以许可标识符和代币标识符为键的链上树中，每份许可都带有条款 URI 和撤销者，该标准让创作者、持有者和审计者能够通过事件日志追溯完整的权利历史。",
+  "commonUsage": "ERC-5218 面向那些将创意作品——图像、音乐或其他媒体——附加到其代币上，并希望许可明确且可转移的 NFT 项目。合规的合约继承自 ERC-721，并对 supportsInterface 返回 0xac7b5ca9，因此市场和浏览器可以检测许可支持情况，并从每个 URI 解析条款。由于该规范从未达到 Final 状态，其链上采用有限，主要作为权利管理的参考设计而存在。",
+
+  "fn.isLicenseActive.desc": "返回给定许可当前是否有效。不存在或已被撤销的许可为无效；当某个许可的某一祖先许可已被撤销时，该许可同样视为无效。",
+  "fn.isLicenseActive.params.licenseId": "所查询许可的标识符。",
+  "fn.isLicenseActive.returns.active": "若许可有效则为 true，否则为 false。",
+
+  "fn.getLicenseIdByTokenId.desc": "返回绑定到给定 NFT 的根许可标识符。若该 NFT 没有根许可，则返回一个不指向任何许可的特殊标识符，例如 0。",
+  "fn.getLicenseIdByTokenId.params.tokenId": "查询其根许可的 NFT 的标识符。",
+  "fn.getLicenseIdByTokenId.returns.licenseId": "该 NFT 的根许可标识符；若不存在则为 0。",
+
+  "fn.createLicense.desc": "在 NFT 上创建一份新许可并返回其标识符。根许可可由 NFT 所有者创建，子许可则可由有效父许可的持有者创建。会发出 CreateLicense 事件。",
+  "fn.createLicense.params.tokenId": "颁发该许可的 NFT。",
+  "fn.createLicense.params.parentLicenseId": "父许可标识符；对于根许可则为特殊值，例如 0。",
+  "fn.createLicense.params.licenseHolder": "将持有新许可的地址。",
+  "fn.createLicense.params.uri": "指向许可条款的 URI。",
+  "fn.createLicense.params.revoker": "被允许撤销该许可的地址。",
+  "fn.createLicense.returns.licenseId": "分配给所创建许可的标识符。",
+
+  "fn.revokeLicense.desc": "撤销一份有效的许可；只有该许可指定的撤销者可以调用它。撤销根许可会将 NFT 归还给其创作者，被撤销许可之下的子许可也会随之变为无效。",
+  "fn.revokeLicense.params.licenseId": "要撤销的许可的标识符。",
+
+  "fn.transferSublicense.desc": "将一份有效的子许可转移给新的持有者；只有当前持有者可以调用它。根许可不通过此方式转移，因为它们会随 NFT 通过 ERC-721 转移而一同移动。",
+  "fn.transferSublicense.params.licenseId": "要转移的子许可的标识符。",
+  "fn.transferSublicense.params.licenseHolder": "新子许可持有者的地址。",
+
+  "fn.CreateLicense.desc": "当通过任何机制创建新许可时发出，记录其标识符、NFT、父许可、持有者、条款 URI 和撤销者。",
+  "fn.CreateLicense.params.licenseId": "新创建许可的标识符。",
+  "fn.CreateLicense.params.tokenId": "颁发该许可的 NFT。",
+  "fn.CreateLicense.params.parentLicenseId": "父许可标识符；对于根许可则为 0。",
+  "fn.CreateLicense.params.licenseHolder": "持有新许可的地址。",
+  "fn.CreateLicense.params.uri": "指向许可条款的 URI。",
+  "fn.CreateLicense.params.revoker": "被允许撤销该许可的地址。",
+
+  "fn.RevokeLicense.desc": "当许可被撤销时发出。在某些条款下，祖先许可上的单个事件即意味着其所有子许可均被撤销。",
+  "fn.RevokeLicense.params.licenseId": "被撤销许可的标识符。",
+
+  "fn.TransferLicense.desc": "当许可转移给新持有者时发出，包括根许可随其 NFT 转移给新所有者的情形。",
+  "fn.TransferLicense.params.licenseId": "被转移许可的标识符。",
+  "fn.TransferLicense.params.licenseHolder": "新许可持有者的地址。",
+
+  "node.user": "NFT 所有者",
+  "node.contract": "ERC-5218 合约",
+  "node.storageLicenses": "许可存储",
+  "node.licenseHolder": "许可持有者",
+
+  "edge.callCreateLicense": "调用 createLicense()",
+  "edge.recordLicense": "记录许可",
+  "edge.emitCreateLicense": "发出 CreateLicense 事件",
+  "edge.grantLicense": "授予许可",
+
+  "sim.createLicenseWalkthrough.name": "创建许可演练",
+  "sim.createLicenseWalkthrough.desc": "跟随一次 createLicense 调用，从 NFT 所有者经由存储到达许可持有者，以及 CreateLicense 事件。",
+  "sim.createLicenseWalkthrough.param.tokenId": "代币 ID",
+  "sim.createLicenseWalkthrough.param.parentLicenseId": "父许可 ID",
+  "sim.createLicenseWalkthrough.param.licenseHolder": "许可持有者",
+  "sim.createLicenseWalkthrough.step.call": "NFT 所有者在合约上调用 createLicense()，传入代币 ID、父许可、持有者、条款 URI 和撤销者。",
+  "sim.createLicenseWalkthrough.step.call.mobile": "调用 createLicense()",
+  "sim.createLicenseWalkthrough.step.execute": "合约记录一个新的 License 条目，对于根许可，还会在 _licenseIds 映射中将其关联到该 NFT。",
+  "sim.createLicenseWalkthrough.step.execute.mobile": "记录许可",
+  "sim.createLicenseWalkthrough.step.grant": "新许可被分配给指定的持有者，该持有者获得由许可 URI 所描述的链上权利。",
+  "sim.createLicenseWalkthrough.step.grant.mobile": "分配给持有者",
+  "sim.createLicenseWalkthrough.step.event": "合约发出 CreateLicense，以便索引器和审计者能够追溯该 NFT 的完整许可树。",
+  "sim.createLicenseWalkthrough.step.event.mobile": "发出 CreateLicense 事件"
+}

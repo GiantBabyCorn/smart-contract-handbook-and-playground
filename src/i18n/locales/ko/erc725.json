@@ -1,0 +1,75 @@
+{
+  "short": "범용 데이터 키/값 저장소 및 실행",
+  "introduction": "ERC-725는 스마트 컨트랙트 계정을 위한 두 가지 구성 요소를 정의합니다: bytes32 키를 임의의 bytes 값에 매핑하는 키/값 데이터 저장소(ERC725Y)와, 다른 컨트랙트를 호출·생성하거나 delegatecall하기 위한 범용 실행 함수(ERC725X)입니다. 2017년 10월 Fabian Vogelsteller와 Tyler Yasaka에 의해 제안되었습니다. 두 부분 모두 ERC-173을 통해 소유자에 의해 제어되며, 함께 또는 개별적으로 사용할 수 있습니다. 참고: ERC-725는 Draft 상태이며, 명세는 여전히 활발히 개발 중이고 크게 변경될 수 있습니다.",
+  "designPurpose": "ERC-725는 스마트 컨트랙트 계정에 장기적으로 사용할 수 있을 만큼 유연하면서도 도구가 의존할 수 있을 만큼 표준화된 데이터 및 실행 레이아웃을 제공하기 위해 설계되었습니다. 그 이전에는 각 프로젝트가 고유한 스토리지 변수와 실행 진입점을 고안했기 때문에 외부 컨트랙트와 오프체인 앱이 이를 일관된 방식으로 읽거나 구동할 수 없었습니다. 모든 데이터를 하나의 mapping(bytes32 => bytes) 아래에 보관하고 외부로 나가는 동작을 단일 execute 함수를 통해 라우팅함으로써, 프로토콜은 인터페이스를 변경하지 않고도 해당 데이터를 재해석할 수 있습니다.",
+  "commonUsage": "ERC-725는 모듈식 스마트 컨트랙트 계정과 업그레이드 가능한 온체인 메타데이터의 기반 역할을 합니다. 그 ERC725Y 저장소는 NFT, 토큰 및 기타 컨트랙트에 변경 가능한 메타데이터를 첨부하기 위해 단독으로 사용되며, ERC725X는 사용자를 대신하여 동작하는 계정형 컨트랙트에 범용 execute 진입점을 제공합니다. 명세에 따르면 계정 형태는 LSP0-ERC725Account로 표준화되며, LSP2-ERC725JSONSchema가 키와 값의 인코딩 방식을 정의합니다.",
+
+  "fn.execute.desc": "계정에서 단일 작업을 실행합니다: operationType에 의해 선택되는 call, CREATE 또는 CREATE2를 통한 컨트랙트 생성, staticcall 또는 delegatecall입니다. 현재 소유자만 호출할 수 있으며, 작업이 실패하면 되돌립니다.",
+  "fn.execute.params.operationType": "수행할 작업 유형: CALL은 0, CREATE는 1, CREATE2는 2, STATICCALL은 3, DELEGATECALL은 4입니다.",
+  "fn.execute.params.target": "호출할 컨트랙트 또는 주소; 컨트랙트를 생성할 때는 address(0)이어야 합니다.",
+  "fn.execute.params.value": "전송할 네이티브 토큰의 양, wei 단위입니다.",
+  "fn.execute.params.data": "콜 데이터, 또는 컨트랙트를 배포할 때의 생성 바이트코드입니다.",
+  "fn.execute.returns.returnData": "호출된 함수가 반환한 데이터, 또는 배포된 컨트랙트의 주소입니다.",
+
+  "fn.executeBatch.desc": "하나의 트랜잭션에서 일괄 작업을 실행하며, 길이가 동일한 작업 유형, 대상, 값, 콜 데이터 배열을 받습니다. 소유자만 호출할 수 있으며, 어떤 작업이든 실패하면 되돌립니다.",
+  "fn.executeBatch.params.operationsType": "각 호출에 대해 수행할 작업 유형 목록입니다.",
+  "fn.executeBatch.params.targets": "각 작업에 대해 호출할 주소 목록입니다.",
+  "fn.executeBatch.params.values": "전송할 네이티브 토큰 양 목록, wei 단위입니다.",
+  "fn.executeBatch.params.datas": "콜 데이터 또는 컨트랙트 생성 바이트코드 목록입니다.",
+  "fn.executeBatch.returns.results": "반환된 데이터 또는 배포된 컨트랙트 주소의 배열입니다.",
+
+  "fn.getData.desc": "ERC725Y 저장소에서 단일 데이터 키에 저장된 bytes 값을 반환합니다. 모든 호출자가 읽을 수 있습니다.",
+  "fn.getData.params.dataKey": "값을 가져올 데이터 키입니다.",
+  "fn.getData.returns.dataValue": "요청된 데이터 키에 저장된 bytes 값입니다.",
+
+  "fn.getDataBatch.desc": "한 번의 호출로 여러 데이터 키에 저장된 값을 반환하여, 대량 읽기의 gas 비용을 낮게 유지합니다.",
+  "fn.getDataBatch.params.dataKeys": "값을 가져올 데이터 키 목록입니다.",
+  "fn.getDataBatch.returns.dataValues": "요청된 데이터 키에 대한 bytes 값의 배열입니다.",
+
+  "fn.setData.desc": "ERC725Y 저장소에서 단일 데이터 키에 bytes 값을 저장하며, 이전 값을 덮어씁니다. 소유자만 호출할 수 있으며, DataChanged를 발생시킵니다.",
+  "fn.setData.params.dataKey": "값을 설정할 데이터 키입니다.",
+  "fn.setData.params.dataValue": "저장할 bytes 값입니다.",
+
+  "fn.setDataBatch.desc": "한 번의 호출로 여러 데이터 키에 값을 저장하며, 길이가 동일한 키와 값 배열을 받습니다. 소유자만 호출할 수 있으며, 각 키에 대해 DataChanged를 발생시킵니다.",
+  "fn.setDataBatch.params.dataKeys": "값을 설정할 데이터 키 목록입니다.",
+  "fn.setDataBatch.params.dataValues": "저장할 bytes 값 목록입니다.",
+
+  "fn.Executed.desc": "execute가 CALL, STATICCALL 또는 DELEGATECALL(작업 유형 0, 3, 4)을 수행할 때 발생합니다.",
+  "fn.Executed.params.operationType": "실행된 작업 유형입니다.",
+  "fn.Executed.params.target": "호출된 주소입니다.",
+  "fn.Executed.params.value": "전송된 네이티브 토큰의 양, wei 단위입니다.",
+  "fn.Executed.params.data": "콜 데이터의 처음 4바이트로, 일반적으로 함수 선택자입니다.",
+
+  "fn.ContractCreated.desc": "execute가 CREATE 또는 CREATE2(작업 유형 1, 2)를 통해 새 컨트랙트를 배포할 때 발생합니다.",
+  "fn.ContractCreated.params.operationType": "컨트랙트를 배포하는 데 사용된 작업 유형입니다.",
+  "fn.ContractCreated.params.contractAddress": "새로 배포된 컨트랙트의 주소입니다.",
+  "fn.ContractCreated.params.value": "새 컨트랙트로 전송된 네이티브 토큰의 양, wei 단위입니다.",
+  "fn.ContractCreated.params.salt": "CREATE2 배포에 사용된 bytes32 salt입니다.",
+
+  "fn.DataChanged.desc": "ERC725Y 저장소에서 데이터 키의 값이 성공적으로 설정될 때마다 발생합니다.",
+  "fn.DataChanged.params.dataKey": "값이 변경된 데이터 키입니다.",
+  "fn.DataChanged.params.dataValue": "해당 키에 저장된 새 bytes 값입니다.",
+
+  "node.user": "계정 소유자",
+  "node.contract": "ERC-725 계정",
+  "node.storageData": "데이터 저장소",
+  "node.target": "대상 컨트랙트",
+
+  "edge.callExecute": "execute() 호출",
+  "edge.callSetData": "setData() 호출",
+  "edge.forwardCall": "호출 전달",
+  "edge.updateStore": "데이터 저장소 업데이트",
+  "edge.emitExecuted": "Executed 이벤트 발생",
+  "edge.emitDataChanged": "DataChanged 이벤트 발생",
+
+  "sim.setDataWalkthrough.name": "setData 단계별 안내",
+  "sim.setDataWalkthrough.desc": "소유자로부터의 setData 호출을 ERC725Y 데이터 저장소를 거쳐 DataChanged 이벤트까지 따라갑니다.",
+  "sim.setDataWalkthrough.param.dataKey": "데이터 키",
+  "sim.setDataWalkthrough.param.dataValue": "데이터 값",
+  "sim.setDataWalkthrough.step.call": "소유자가 ERC-725 계정에서 setData(dataKey, dataValue)를 호출하여 값을 저장합니다.",
+  "sim.setDataWalkthrough.step.call.mobile": "setData() 호출",
+  "sim.setDataWalkthrough.step.execute": "컨트랙트는 호출자가 소유자인지 확인한 후, 값을 bytes32-to-bytes 데이터 저장소에 기록하여 해당 키의 이전 값을 덮어씁니다.",
+  "sim.setDataWalkthrough.step.execute.mobile": "데이터 저장소에 기록",
+  "sim.setDataWalkthrough.step.event": "컨트랙트가 DataChanged(dataKey, dataValue)를 발생시켜 인덱서와 오프체인 앱이 업데이트를 추적할 수 있게 합니다.",
+  "sim.setDataWalkthrough.step.event.mobile": "DataChanged 이벤트 발생"
+}

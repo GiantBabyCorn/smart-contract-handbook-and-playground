@@ -1,0 +1,34 @@
+{
+  "short": "アドレスメタデータレジストリ",
+  "introduction": "ERC-926 は、任意のアドレスをメタデータプロバイダーコントラクトにマッピングする単一のレジストリを定義し、あらゆるアカウントやコントラクトが自身のメタデータを公開できるようにします。この規格は 2018年3月に Nick Johnson によって提案されました。値を直接保存するのではなく、間接参照を用います。setProvider が呼び出し元のプロバイダーを記録し、provider がそれを返します。また、各プロバイダーは ERC-165 を通じて型付きのレコードインターフェースを公開します。注記：ERC-926 は Stagnant（停滞）です。6か月以上活動がなく、最終化されない可能性がありますが、歴史的または技術的に重要な意味を持ち続けています。",
+  "designPurpose": "ERC-926 は、単一目的のレジストリコントラクトが乱立するのを防ぐために設計されました。それ以前は、汎用的な認可、トークン受け入れ設定、クレームレジストリといったユースケースがそれぞれ独自のストレージコントラクトをデプロイしていたため、呼び出し元はメタデータの種類ごとに異なるアドレスとレイアウトを把握する必要がありました。アドレスごとのプロバイダーを返す単一のレジストリを標準化することで、ERC-926 は共有の key/value スキーマを再デプロイすることなく、新しいメタデータ型を個別のプロバイダーインターフェースとして追加できるようにします。",
+  "commonUsage": "このレジストリは、汎用的な認可スキーム、トークン受け入れ設定、クレームや評判レコードなど、アドレスに構造化データを付与するアプリケーションを対象としています。プロバイダーは標準化されたレコード型インターフェースの任意のサブセットを実装し、それを ERC-165 を通じて宣言できるため、ウォレット、dapp、インデクサーは単一の固定されたレジストリアドレスに問い合わせ、間接参照をたどってプロバイダーに到達し、自分が理解できるレコード型のみを読み取ります。Stagnant な提案であるため、本番環境ではほとんど利用されませんでした。",
+
+  "fn.provider.desc": "指定されたアドレスに対して現在登録されているメタデータプロバイダーコントラクトのアドレスを返します。設定されていない場合はゼロアドレスを返します。",
+  "fn.provider.params.target": "登録済みメタデータプロバイダーを照会する対象のアドレス。",
+  "fn.provider.returns.provider": "照会されたアドレスに登録されているプロバイダーコントラクト。未設定の場合はゼロアドレス。",
+
+  "fn.setProvider.desc": "呼び出し元自身のアドレスに対してメタデータプロバイダーコントラクトを登録し、以前のプロバイダーを上書きします。レジストリはエントリを msg.sender をキーとして管理するため、アドレスは自身のプロバイダーのみを設定できます。",
+  "fn.setProvider.params.provider": "呼び出し元のアドレスに関連付けるメタデータプロバイダーコントラクト。",
+
+  "node.user": "アドレス所有者",
+  "node.contract": "メタデータレジストリ",
+  "node.storageProviders": "プロバイダーマッピング",
+  "node.consumer": "メタデータコンシューマー",
+
+  "edge.callSetProvider": "setProvider() を呼び出す",
+  "edge.updateProvider": "プロバイダーマッピングを更新",
+  "edge.callProvider": "provider() を呼び出す",
+  "edge.readProvider": "プロバイダーマッピングを読み取る",
+
+  "sim.registerProviderWalkthrough.name": "プロバイダーの登録と解決",
+  "sim.registerProviderWalkthrough.desc": "アドレスがメタデータプロバイダーを登録し、コンシューマーがレジストリを通じてそれを解決する流れを追います。",
+  "sim.registerProviderWalkthrough.param.provider": "プロバイダーアドレス",
+  "sim.registerProviderWalkthrough.param.target": "照会するアドレス",
+  "sim.registerProviderWalkthrough.step.set": "アドレス所有者がレジストリ上で setProvider(_provider) を呼び出し、選択したメタデータプロバイダーコントラクトを登録します。",
+  "sim.registerProviderWalkthrough.step.set.mobile": "setProvider() を呼び出す",
+  "sim.registerProviderWalkthrough.step.store": "レジストリは呼び出し元のアドレスの下にあるプロバイダーマッピングにプロバイダーを書き込み、以前のエントリを置き換えます。",
+  "sim.registerProviderWalkthrough.step.store.mobile": "プロバイダーマッピングを更新",
+  "sim.registerProviderWalkthrough.step.lookup": "コンシューマーが provider(target) を呼び出すと、レジストリはマッピングを読み取り、登録されているプロバイダーアドレスを返します。",
+  "sim.registerProviderWalkthrough.step.lookup.mobile": "プロバイダーを解決"
+}

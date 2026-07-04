@@ -1,0 +1,29 @@
+{
+  "short": "Compact Signature Representation",
+  "introduction": "ERC-2098 defines a compact, 64-byte representation of an Ethereum secp256k1 signature, replacing the traditional 65-byte (r, s, v) triplet with two 32-byte words, r and yParityAndS. It was proposed by Richard Moore and Nick Johnson in March 2019. The encoding relies on the top bit of the s value being zero in canonical signatures, so the yParity bit is stored in that free high bit, giving yParityAndS = (yParity << 255) | s. Decoding reverses it to recover r, s, and yParity for ecrecover.",
+  "designPurpose": "ERC-2098 was designed to shrink signature payloads that waste space and gas. A canonical signature needs 65 bytes, but once padded to 256-bit EVM words it occupies 96 bytes with 31 injected zero bytes, and RLP-encoded transactions spend on average 1.5 extra bytes on yParity. By packing the yParity bit into the always-zero high bit of s, the standard fits a full signature into two aligned 32-byte words, cutting calldata size and the gas cost of passing signatures without losing any information.",
+  "commonUsage": "Compact signatures are used wherever signatures travel as calldata and space matters: meta-transaction relayers, multi-signature wallets, and permit-style approvals. The ethers.js library exposes the packed form as an internal split-signature property, and recovery utilities accept the (r, yParityAndS) layout alongside the classic (r, s, v) form before calling ecrecover. Because the representation is a pure encoding, it composes with any scheme that already relies on ECDSA signatures.",
+
+  "node.signer": "Signer",
+  "node.encoder": "Compact Encoder",
+  "node.compactSig": "Compact Signature",
+  "node.verifier": "On-chain Verifier",
+  "node.recovered": "Recovered Signer",
+
+  "edge.sign": "Sign digest",
+  "edge.pack": "Pack into 64 bytes",
+  "edge.submit": "Submit compact signature",
+  "edge.recover": "Recover signer",
+
+  "sim.compactEncoding.name": "Compact Signature Encoding",
+  "sim.compactEncoding.desc": "Follow a signature from canonical (r, s, v) form through compact packing to on-chain recovery.",
+  "sim.compactEncoding.param.yParity": "yParity bit",
+  "sim.compactEncoding.step.sign": "The signer produces a canonical secp256k1 signature with components r, s, and yParity.",
+  "sim.compactEncoding.step.sign.mobile": "Sign digest",
+  "sim.compactEncoding.step.pack": "The encoder stores yParity in the top bit of s, producing r and yParityAndS as two 32-byte words.",
+  "sim.compactEncoding.step.pack.mobile": "Pack to 64 bytes",
+  "sim.compactEncoding.step.submit": "The 64-byte compact signature is submitted on-chain as the pair (r, yParityAndS).",
+  "sim.compactEncoding.step.submit.mobile": "Submit signature",
+  "sim.compactEncoding.step.recover": "The verifier unpacks yParity and s from yParityAndS, then calls ecrecover to recover the signer address.",
+  "sim.compactEncoding.step.recover.mobile": "Recover signer"
+}

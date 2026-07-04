@@ -107,6 +107,25 @@ export const entry: ProtocolEntry = {
     },
   ],
 
+  // ─── Schema v2 content sections ───
+  composes: [
+    { slug: 'erc20', role: 'compound-v3.compose.erc20.role' },
+    { erc: 712, role: 'compound-v3.compose.erc712.role' },
+  ],
+
+  references: [
+    {
+      label: 'Compound III docs — Account Management (ERC-20 compatibility, allowBySig)',
+      url: 'https://docs.compound.finance/account-management/',
+      kind: 'spec',
+    },
+    {
+      label: 'Compound III docs — Collateral & Borrowing',
+      url: 'https://docs.compound.finance/collateral-and-borrowing/',
+      kind: 'spec',
+    },
+  ],
+
   // ─── ERCFlow ───
   flowNodes: [
     {

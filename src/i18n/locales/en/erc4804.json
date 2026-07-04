@@ -1,0 +1,32 @@
+{
+  "short": "Web3 URL to EVM Call Message Translation",
+  "introduction": "ERC-4804 defines a standard translation of an HTTP-style web3:// URL into an EVM call message, so clients can read on-chain content through human-readable URLs instead of raw calldata. It was proposed by Qi Zhou, Chao Pi, and Sam Wilson in February 2022. The URL encodes a contract name or address, an optional chain id, a method, and arguments; a resolver parses these fields, resolves any name-service suffix such as .eth to an address, and builds a read-only view call whose returned data is shown as web content.",
+  "designPurpose": "ERC-4804 was designed to remove the Web2 proxies that normally stand between users and on-chain data. Before it, reading a contract's content meant trusting a dApp website, a node provider, or a block explorer to translate a request into an EVM call, all outside the user's control. By fixing a URL grammar and a resolve-mode convention, ERC-4804 lets any client turn a web3:// URL directly into a view call, so on-chain HTML, SVG, and other resources can be fetched without a trusted intermediary.",
+  "commonUsage": "The scheme is used to serve fully on-chain websites and media, where an address or ENS name plus a path maps to a contract method that returns HTML, SVG, or JSON. Browsers and gateways that understand web3:// resolve the name, choose the automatic or manual resolve mode, and display the result like an ordinary web page. It pairs naturally with ERC-5219, which formalizes the request-and-response contract interface that many web3:// resources implement.",
+
+  "node.browser": "Web3 Client",
+  "node.resolver": "Web3 URL Resolver",
+  "node.url": "Parsed Web3 URL",
+  "node.nameService": "Name Service (ENS)",
+  "node.callMessage": "EVM Call Message",
+  "node.target": "Target Contract",
+
+  "edge.submitUrl": "Submit web3:// URL",
+  "edge.parseUrl": "Parse URL grammar",
+  "edge.resolveName": "Resolve contract name",
+  "edge.buildMessage": "Build EVM message",
+  "edge.callTarget": "Send view call",
+  "edge.returnContent": "Return content",
+
+  "sim.resolveUrlWalkthrough.name": "Resolve a Web3 URL",
+  "sim.resolveUrlWalkthrough.desc": "Follow a web3:// URL as a resolver parses it, resolves the name, builds an EVM call message, and returns the rendered content.",
+  "sim.resolveUrlWalkthrough.param.url": "Web3 URL",
+  "sim.resolveUrlWalkthrough.step.submit": "The client submits a web3:// URL to a resolver that understands the scheme.",
+  "sim.resolveUrlWalkthrough.step.submit.mobile": "Submit web3:// URL",
+  "sim.resolveUrlWalkthrough.step.parse": "The resolver parses the URL into its contract name, method, and arguments, then resolves the name to an address through the name service.",
+  "sim.resolveUrlWalkthrough.step.parse.mobile": "Parse and resolve name",
+  "sim.resolveUrlWalkthrough.step.build": "The resolver assembles an EVM call message, setting To to the resolved address and Calldata to the ABI-encoded method call.",
+  "sim.resolveUrlWalkthrough.step.build.mobile": "Build call message",
+  "sim.resolveUrlWalkthrough.step.call": "The read-only view call runs on the target contract, and its returned bytes are rendered back in the client as web content.",
+  "sim.resolveUrlWalkthrough.step.call.mobile": "Call and render"
+}

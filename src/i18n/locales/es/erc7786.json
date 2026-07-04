@@ -1,0 +1,54 @@
+{
+  "short": "Puerta de Enlace de Mensajería Entre Cadenas",
+  "introduction": "ERC-7786 define una interfaz y un flujo de trabajo comunes para que los contratos inteligentes envíen y reciban datos arbitrarios entre cadenas a través de cualquier puente que lo adopte. Fue propuesto por Francisco Giordano, Hadrien Croubois, Ernesto García y otros en octubre de 2024. La función sendMessage de una puerta de enlace de origen despacha una carga útil a un destinatario nombrado por una dirección interoperable ERC-7930 (Interoperable Address) y emite MessageSent; la puerta de enlace de destino la entrega mediante receiveMessage. Las funciones del puente viajan como atributos con clave bytes4 en lugar de llamadas propietarias.",
+  "designPurpose": "ERC-7786 se diseñó para superar la fragmentación entre los protocolos de mensajería entre cadenas, cada uno de los cuales expone su propia interfaz y flujo de trabajo propietarios. Esa falta de portabilidad hace que los contratos genéricos entre cadenas sean poco prácticos y ata una aplicación a un único puente que puede quedar pausado o en desuso. Al estandarizar sendMessage y receiveMessage en torno a las direcciones ERC-7930, el ERC permite que un contrato cambie de puerta de enlace actualizando una única dirección almacenada, mientras que los atributos exponen opciones específicas del puente detrás de un núcleo compartido.",
+  "commonUsage": "La interfaz está dirigida a los contratos nativos entre cadenas y a las puertas de enlace que los conectan: protocolos que la implementan directamente y puertas de enlace adaptadoras que envuelven puentes existentes tras API intercambiables. Una aplicación llama a sendMessage para pasar una carga útil opaca a un destinatario e implementa receiveMessage para aceptar las entregas, comprobando primero que quien llama es una puerta de enlace de confianza. Los atributos estandarizados como sus propios ERC, como un límite mínimo de gas en el destino, solicitan funciones del puente sin una llamada propietaria.",
+
+  "fn.supportsAttribute.desc": "Devuelve si la puerta de enlace admite el atributo identificado por su clave de selector de 4 bytes. La compatibilidad puede añadirse mediante actualizaciones, pero no debería eliminarse, preservando la compatibilidad con versiones anteriores para quienes llaman.",
+  "fn.supportsAttribute.params.selector": "La clave de atributo de 4 bytes, que se recomienda que sea un selector de función de Solidity.",
+  "fn.supportsAttribute.returns.supported": "True si la puerta de enlace admite la clave de atributo dada.",
+
+  "fn.sendMessage.desc": "Inicia el envío de un mensaje a un destinatario en otra cadena, transportando la carga útil, cualquier value de la llamada y una lista de atributos. Revierte con UnsupportedAttribute ante un atributo desconocido, emite MessageSent y puede devolver un identificador de envío distinto de cero.",
+  "fn.sendMessage.params.recipient": "El destinatario de la cadena de destino como una dirección interoperable ERC-7930 binaria; puede omitirse o ponerse a cero para un destino no especificado.",
+  "fn.sendMessage.params.payload": "La carga útil opaca de bytes que se entregará al destinatario.",
+  "fn.sendMessage.params.attributes": "Una lista de atributos, cada uno concatenando una clave de 4 bytes y su valor codificado, que solicitan funciones específicas del puente; una lista vacía es válida.",
+  "fn.sendMessage.returns.sendId": "Un identificador de envío único distinto de cero para rastrear el mensaje, o cero cuando la puerta de enlace no asigna ninguno.",
+
+  "fn.receiveMessage.desc": "Entrega un mensaje enviado desde otra cadena al contrato destinatario; la puerta de enlace de destino la invoca con el identificador, el remitente y la carga útil. El destinatario debe verificar que quien llama es una puerta de enlace de confianza y devolver el selector receiveMessage.",
+  "fn.receiveMessage.params.receiveId": "Un identificador único del mensaje entregado para la puerta de enlace que llama, o vacío.",
+  "fn.receiveMessage.params.sender": "El remitente de la cadena de origen como una dirección interoperable ERC-7930 binaria.",
+  "fn.receiveMessage.params.payload": "La carga útil opaca de bytes entregada desde la cadena de origen.",
+  "fn.receiveMessage.returns.selector": "Debe ser igual a IERC7786Recipient.receiveMessage.selector (0x2432ef26) para confirmar la aceptación.",
+
+  "fn.MessageSent.desc": "Emitido por una puerta de enlace de origen cuando un remitente solicita el envío de un mensaje, registrando el identificador de envío, las direcciones del remitente y del destinatario, la carga útil, el value y los atributos.",
+  "fn.MessageSent.params.sendId": "El identificador de envío indexado (indexed) devuelto por sendMessage, o cero si no hay ninguno.",
+  "fn.MessageSent.params.sender": "El remitente de la cadena de origen como una dirección interoperable ERC-7930 binaria.",
+  "fn.MessageSent.params.recipient": "El destinatario de la cadena de destino como una dirección interoperable ERC-7930 binaria.",
+  "fn.MessageSent.params.payload": "La carga útil opaca de bytes que se entregará.",
+  "fn.MessageSent.params.value": "El valor de token nativo que se enviará con el mensaje.",
+  "fn.MessageSent.params.attributes": "La lista de atributos codificados adjuntos al mensaje.",
+
+  "node.user": "Remitente del Mensaje",
+  "node.contract": "Puerta de Enlace de Origen",
+  "node.bridge": "Protocolo Entre Cadenas",
+  "node.recipient": "Contrato Destinatario",
+
+  "edge.callSendMessage": "Llamar a sendMessage()",
+  "edge.emitMessageSent": "Emitir evento MessageSent",
+  "edge.relayMessage": "Retransmitir mensaje",
+  "edge.deliverMessage": "Entregar mensaje",
+
+  "sim.sendMessageWalkthrough.name": "Recorrido de Mensaje Entre Cadenas",
+  "sim.sendMessageWalkthrough.desc": "Sigue un mensaje desde el remitente, a través de la puerta de enlace de origen y el puente, hasta la llamada receiveMessage del destinatario.",
+  "sim.sendMessageWalkthrough.param.recipient": "Dirección del destinatario",
+  "sim.sendMessageWalkthrough.param.payload": "Carga útil del mensaje",
+  "sim.sendMessageWalkthrough.param.value": "Valor de token nativo",
+  "sim.sendMessageWalkthrough.step.call": "El remitente llama a sendMessage en la puerta de enlace de origen con la dirección interoperable del destinatario, la carga útil y cualquier atributo.",
+  "sim.sendMessageWalkthrough.step.call.mobile": "Llamar a sendMessage()",
+  "sim.sendMessageWalkthrough.step.emit": "La puerta de enlace valida los atributos, registra un identificador de envío y emite un evento MessageSent que describe el mensaje solicitado.",
+  "sim.sendMessageWalkthrough.step.emit.mobile": "Emitir evento MessageSent",
+  "sim.sendMessageWalkthrough.step.relay": "El protocolo entre cadenas subyacente toma el mensaje y lo retransmite a la cadena de destino una vez finalizada la transacción de origen.",
+  "sim.sendMessageWalkthrough.step.relay.mobile": "Retransmitir entre cadenas",
+  "sim.sendMessageWalkthrough.step.receive": "La puerta de enlace de destino llama a receiveMessage en el destinatario, que verifica al llamante de confianza y devuelve el selector 0x2432ef26 para confirmar la entrega.",
+  "sim.sendMessageWalkthrough.step.receive.mobile": "Entregar al destinatario"
+}

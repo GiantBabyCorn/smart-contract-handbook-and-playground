@@ -1,0 +1,34 @@
+{
+  "short": "地址元数据注册表",
+  "introduction": "ERC-926 定义了一个将任意地址映射到元数据提供者合约的注册表，使任何账户或合约都能发布自己的元数据。该标准由 Nick Johnson 于 2018 年 3 月提出。它不直接存储值，而是采用间接引用的方式：setProvider 记录调用者的提供者，provider 则将其返回，每个提供者通过 ERC-165 公开类型化的记录接口。注意：ERC-926 处于 Stagnant（停滞）状态——它已有 6 个月以上未活跃，可能永远不会最终定稿，但仍具有历史或技术上的重要意义。",
+  "designPurpose": "ERC-926 旨在遏制单一用途注册表合约的泛滥。在此标准之前，诸如通用授权、代币接受设置和声明注册表等用例各自部署了自己的存储合约，因此调用者必须为每一种元数据了解不同的地址和布局。通过标准化一个为每个地址返回提供者的注册表，ERC-926 让新的元数据类型能够作为独立的提供者接口加入，而无需重新部署共享的键/值模式。",
+  "commonUsage": "该注册表面向那些为地址附加结构化数据的应用，例如通用授权方案、代币接受偏好，以及声明或声誉记录。由于提供者可以实现标准化记录类型接口的任意子集并通过 ERC-165 公布它们，钱包、dapp 和索引器只需查询一个固定的注册表地址，沿着间接引用找到提供者，并只读取它们能够理解的记录类型。作为一个 Stagnant 提案，它在生产环境中鲜有使用。",
+
+  "fn.provider.desc": "返回当前为所提供地址注册的元数据提供者合约地址；若未设置，则返回零地址。",
+  "fn.provider.params.target": "要查询其已注册元数据提供者的地址。",
+  "fn.provider.returns.provider": "为被查询地址注册的提供者合约；若未设置，则为零地址。",
+
+  "fn.setProvider.desc": "为调用者自己的地址注册元数据提供者合约，覆盖任何先前的提供者。注册表以 msg.sender 作为条目的键，因此一个地址只能设置自己的提供者。",
+  "fn.setProvider.params.provider": "要与调用者地址关联的元数据提供者合约。",
+
+  "node.user": "地址所有者",
+  "node.contract": "元数据注册表",
+  "node.storageProviders": "提供者映射",
+  "node.consumer": "元数据消费者",
+
+  "edge.callSetProvider": "调用 setProvider()",
+  "edge.updateProvider": "更新提供者映射",
+  "edge.callProvider": "调用 provider()",
+  "edge.readProvider": "读取提供者映射",
+
+  "sim.registerProviderWalkthrough.name": "注册并解析提供者",
+  "sim.registerProviderWalkthrough.desc": "跟踪一个地址注册其元数据提供者，以及一个消费者通过注册表将其解析出来的过程。",
+  "sim.registerProviderWalkthrough.param.provider": "提供者地址",
+  "sim.registerProviderWalkthrough.param.target": "被查询地址",
+  "sim.registerProviderWalkthrough.step.set": "地址所有者在注册表上调用 setProvider(_provider)，以注册其选定的元数据提供者合约。",
+  "sim.registerProviderWalkthrough.step.set.mobile": "调用 setProvider()",
+  "sim.registerProviderWalkthrough.step.store": "注册表将提供者写入调用者地址下的提供者映射，替换任何先前的条目。",
+  "sim.registerProviderWalkthrough.step.store.mobile": "更新提供者映射",
+  "sim.registerProviderWalkthrough.step.lookup": "消费者调用 provider(target)，注册表读取映射并返回已注册的提供者地址。",
+  "sim.registerProviderWalkthrough.step.lookup.mobile": "解析提供者"
+}

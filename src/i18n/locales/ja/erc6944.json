@@ -1,0 +1,28 @@
+{
+  "short": "ERC-5219向けERC-4804解決モード",
+  "introduction": "ERC-6944は、ERC-4804クライアントがERC-5219インターフェースを通じてコントラクトのweb3://リクエストを解決できるようにする解決モード値を定義します。この提案は2023年4月にGavin JohnとQi Zhouによって提案されました。コントラクトはIERC5219Resolverを実装することでサポートを示し、そのresolveMode()関数は定数bytes32値「5219」を返します。ERC-4804ゲートウェイはこの値を読み取り、その後ERC-5219のrequest()メソッドを使用します。注意：ERC-6944はDraft（ドラフト）ステータスであり、仕様は現在も活発に開発が進められており、大幅に変更される可能性があります。",
+  "designPurpose": "ERC-6944は、ERC-5219をERC-4804のweb3://スキーム内の解決モードとして利用できるようにするために設計されました。ERC-4804クライアントは、各コントラクトが自身のリクエストをどのように解決してほしいかを知る必要がありますが、この提案以前にはERC-5219のrequest()インターフェース向けのフラグがなく、組み込みの自動モードと手動モードしかありませんでした。ERC-6944は、固定のbytes32定数「5219」を返す単一のpure関数resolveMode()によってその隙間を埋めます。クライアントが自らresolveMode()を呼び出して互換性を確認できるため、ERC-165を避けています。",
+  "commonUsage": "ERC-6944は、ERC-5219を通じてオンチェーンのフロントエンドをホストし、ブラウザやゲートウェイがweb3:// URLでそこに到達できるようにしたいコントラクトによって実装されます。この値は、web3://ゲートウェイソフトウェアや、ユーザーに代わってERC-4804アドレスを解決するウォレット・ブラウザ拡張機能によって読み取られます。resolveMode()はpureであり、コンパイル時定数を返すため、実装は通常「5219」という返り値をハードコードした小さな抽象コントラクトを継承し、ストレージを追加せず、ホストコントラクトにごくわずかなgasしか加えません。",
+
+  "fn.resolveMode.desc": "コントラクトのERC-4804解決モードを返します。リクエストをERC-5219のrequest()インターフェースを通じて解決すべきであることを示すために、定数bytes32値「5219」（大文字・小文字を区別しない）を返さなければならないpure関数です。",
+  "fn.resolveMode.returns.mode": "解決モードの識別子で、ERC-5219による解決を表すbytes32値「5219」に固定されています。",
+
+  "node.user": "Web3ゲートウェイ",
+  "node.contract": "ERC-5219リゾルバー",
+  "node.storageMode": "解決モード値",
+  "node.browser": "ユーザーブラウザ",
+
+  "edge.callResolveMode": "resolveMode()を呼び出す",
+  "edge.readMode": "解決モードを読み取る",
+  "edge.serveResponse": "ERC-5219レスポンスを配信",
+
+  "sim.resolveModeWalkthrough.name": "解決モードのウォークスルー",
+  "sim.resolveModeWalkthrough.desc": "ERC-4804クライアントがresolveMode()を呼び出し、ERC-5219を通じてコントラクトを解決する方法を学ぶ様子をたどります。",
+  "sim.resolveModeWalkthrough.param.target": "リゾルバーコントラクト",
+  "sim.resolveModeWalkthrough.step.call": "web3://ゲートウェイは、リクエストをどのように解決すべきかを知るために、対象のコントラクトでresolveMode()を呼び出します。",
+  "sim.resolveModeWalkthrough.step.call.mobile": "resolveMode()を呼び出す",
+  "sim.resolveModeWalkthrough.step.resolve": "コントラクトは固定のbytes32定数「5219」を返し、自身がERC-5219リゾルバーであることを示します。",
+  "sim.resolveModeWalkthrough.step.resolve.mobile": "モード5219を返す",
+  "sim.resolveModeWalkthrough.step.serve": "「5219」モードを確認したゲートウェイは、ERC-5219を通じてリクエストを解決し、レスポンスをブラウザに配信します。",
+  "sim.resolveModeWalkthrough.step.serve.mobile": "ERC-5219経由で配信"
+}

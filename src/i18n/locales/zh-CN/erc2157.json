@@ -1,0 +1,68 @@
+{
+  "short": "面向 EVM 的 dType 存储扩展",
+  "introduction": "ERC-2157 为 dType 定义了一个可选的存储扩展（dType 是源自 ERC-1900 的去中心化类型系统），并对存储类型实例的合约的 ABI 进行标准化。它由 Loredana Cirstea 和 Christian Tzurcanu 于 2019 年 6 月提出。每个存储合约都暴露一个通用的 CRUD 接口，使每条记录都可以通过确定性标识符或索引来寻址。注意：ERC-2157 处于 Stagnant（停滞）状态——它已停止活动 6 个月以上，可能永远不会最终定稿，但仍具有历史或技术意义。",
+  "designPurpose": "ERC-2157 旨在为 Ethereum 上的公共数据提供确定性的可寻址能力。ERC-1900 标准化了类型定义，但将数据检索留给了链下区块链分析或区块浏览器等中心化缓存，因此链上合约无法可靠地定位另一个项目的实例。通过固定一个通用的存储 ABI，以及一个将每种类型与其库和存储关联起来的 TypeRootContract，ERC-2157 让任何合约或工具都能沿着已知路径找到某条记录，并从 dType 注册表重建其 ABI。",
+  "commonUsage": "该扩展面向构建在共享公共数据之上的应用：直接从已知存储合约读取商品记录的去中心化市场、在 Ethereum 分片之间或跨链同步类型实例的数据桥，以及从注册表推断合约 ABI 的工具。该提案将访问控制与可变性控制留待未来的扩展处理。由于 ERC-2157 从未达到 Final 状态，它只停留在参考实现层面，而没有进入生产采用。",
+
+  "fn.insert.desc": "存储一个新的类型实例，将其写入记录映射并追加到索引数组中。返回由类型库的 getIdentifier 函数计算出的主标识符，并发出 LogNew 事件。",
+  "fn.insert.params.data": "要存储的类型实例，其类型由合约的类型库定义。",
+  "fn.insert.returns.identifier": "该记录的主标识符，由 getIdentifier 根据其取值派生。",
+
+  "fn.insertBytes.desc": "存储以 ABI 编码字节形式提供的新类型实例，在写入记录前先用类型库对其解码。",
+  "fn.insertBytes.params.data": "要存储的 ABI 编码类型实例。",
+  "fn.insertBytes.returns.identifier": "所存储记录的主标识符。",
+
+  "fn.remove.desc": "删除具有给定标识符的记录并释放其存储槽，返回该记录曾占用的索引。",
+  "fn.remove.params.identifier": "要删除记录的主标识符。",
+  "fn.remove.returns.index": "被删除记录在索引数组中曾占用的索引。",
+
+  "fn.update.desc": "用新的类型实例取值覆盖以给定标识符存储的记录，返回被更新记录的标识符。",
+  "fn.update.params.identifier": "要更新记录的主标识符。",
+  "fn.update.params.data": "要存储的新类型实例取值。",
+  "fn.update.returns.identifier": "被更新记录的标识符。",
+
+  "fn.isStored.desc": "报告存储合约中是否存在具有给定标识符的记录。",
+  "fn.isStored.params.identifier": "要检查的主标识符。",
+  "fn.isStored.returns.stored": "若存在具有该标识符的记录则为 true。",
+
+  "fn.getByHash.desc": "返回以给定主标识符存储的类型实例。",
+  "fn.getByHash.params.identifier": "要获取记录的主标识符。",
+  "fn.getByHash.returns.data": "所存储的类型实例。",
+
+  "fn.getByIndex.desc": "返回索引数组中给定位置处存储的类型实例，从而支持对记录进行枚举。",
+  "fn.getByIndex.params.index": "记录在索引数组中的位置。",
+  "fn.getByIndex.returns.data": "所存储的类型实例。",
+
+  "fn.count.desc": "返回合约中当前存储的记录数量。",
+  "fn.count.returns.counter": "所存储记录的总数。",
+
+  "fn.LogNew.desc": "当有新的类型实例插入存储合约时发出。",
+  "fn.LogNew.params.identifier": "所插入记录的主标识符。",
+  "fn.LogNew.params.index": "该记录在索引数组中的索引。",
+
+  "fn.LogUpdate.desc": "当已有记录被更新时发出。",
+  "fn.LogUpdate.params.identifier": "被更新记录的主标识符。",
+  "fn.LogUpdate.params.index": "该记录在索引数组中的索引。",
+
+  "fn.LogRemove.desc": "当有记录从存储合约中被删除时发出。",
+  "fn.LogRemove.params.identifier": "被删除记录的主标识符。",
+  "fn.LogRemove.params.index": "被删除记录在索引数组中曾占用的索引。",
+
+  "node.user": "数据发布者",
+  "node.contract": "类型存储合约",
+  "node.storageRecords": "记录存储",
+
+  "edge.callInsert": "调用 insert()",
+  "edge.updateRecords": "存储类型实例",
+  "edge.emitLogNew": "发出 LogNew 事件",
+
+  "sim.insertWalkthrough.name": "存储类型实例演练",
+  "sim.insertWalkthrough.desc": "跟随一次 insert 调用，从发布者经由记录存储直到 LogNew 事件。",
+  "sim.insertWalkthrough.param.record": "类型实例",
+  "sim.insertWalkthrough.step.call": "发布者调用 insert(data)，将一个类型实例添加到存储合约中。",
+  "sim.insertWalkthrough.step.call.mobile": "调用 insert()",
+  "sim.insertWalkthrough.step.execute": "合约使用类型库的 getIdentifier 函数派生标识符，将记录写入 typeStruct 映射，并将其标识符追加到 typeIndex 数组中。",
+  "sim.insertWalkthrough.step.execute.mobile": "存储记录",
+  "sim.insertWalkthrough.step.event": "合约发出 LogNew(identifier, index)，以便链下索引器能够追踪新记录。",
+  "sim.insertWalkthrough.step.event.mobile": "发出 LogNew 事件"
+}

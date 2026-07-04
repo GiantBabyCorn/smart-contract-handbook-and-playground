@@ -1,0 +1,64 @@
+{
+  "short": "EVM을 위한 탈중앙화 타입 시스템",
+  "introduction": "ERC-1900은 dType을 정의합니다. 이는 이더리움에서 Solidity 구조체로부터 재사용 가능한 데이터 타입을 선언하기 위한 온체인 레지스트리이자 공통 인터페이스입니다. 이 제안은 2019년 3월 Loredana Cirstea와 Christian Tzurcanu가 제안했습니다. 각 타입은 ABI 메타데이터와 함께 저장되며, 그 이름의 keccak256으로 계산된 식별자를 키로 사용하므로, 도구와 컨트랙트가 일관된 타입 정의를 공유할 수 있습니다. 참고: ERC-1900은 Stagnant(정체) 상태입니다. 6개월 이상 활동이 없었고 최종 확정되지 않을 수 있지만, 역사적으로 또는 기술적으로 여전히 중요한 의미를 가집니다.",
+  "designPurpose": "dType은 모든 프로젝트가 동일한 구조체를 각자 고립된 채 다시 정의하도록 두는 대신, 이더리움에 데이터 타입의 공유 어휘를 제공하도록 설계되었습니다. 공통 레지스트리가 없으면 온체인 데이터가 프로토콜 간에 원활하게 흐를 수 없고, 블록 익스플로러와 같은 오프체인 도구는 임의의 구조를 디코딩할 수 없습니다. 각 타입의 ABI 메타데이터를 결정론적 식별자 아래 온체인에 기록함으로써, dType은 컨트랙트가 기존 정의를 참조할 수 있게 하고 도구가 해당 컬렉션을 캐시하고 검색할 수 있게 합니다.",
+  "commonUsage": "dType은 기계가 읽을 수 있는 타입 정의가 필요한 인프라를 대상으로 합니다. 트랜잭션 부작용을 디코딩하는 블록 익스플로러, 타입이 지정된 컨트랙트를 자동 완성하는 에디터 플러그인, 공유 데이터 모델 위에서 상호 운용되는 프로토콜 등이 그 예입니다. 이 제안은 dType을 이후 확장의 기반 레이어로 규정합니다. 즉, 데이터 스토리지를 갖춘 타입 시스템(ERC-2158)과 각 타입에 대한 pure 함수 라이브러리입니다. Final 상태에 도달하지 못했기 때문에 ERC-1900은 프로덕션 채택이 아니라 참조 구현 작업에만 그쳤습니다.",
+
+  "fn.insert.desc": "dType 메타데이터 구조체를 레지스트리에 저장하여 새 타입을 등록합니다. 타입 이름의 keccak256으로 계산된 식별자를 반환하고 LogNew 이벤트를 발생시킵니다.",
+  "fn.insert.params.data": "타입을 설명하는 dType 메타데이터 구조체: 해당 typeChoice, 컨트랙트 주소, Swarm 소스 해시, 이름, 서브타입을 포함합니다.",
+  "fn.insert.returns.identifier": "타입의 기본 식별자로, 이름의 keccak256입니다.",
+
+  "fn.remove.desc": "주어진 식별자를 가진 타입 레코드를 삭제하고 해당 스토리지 슬롯을 해제합니다. 명세는 이 함수가 선택 사항이며 불변성을 보장하기 위해 생략할 수 있다고 명시합니다.",
+  "fn.remove.params.identifier": "제거할 타입의 식별자.",
+  "fn.remove.returns.index": "제거된 레코드가 차지하고 있던 배열 인덱스.",
+
+  "fn.count.desc": "현재 등록된 타입의 수를 반환합니다.",
+  "fn.count.returns.counter": "등록된 타입의 총 개수.",
+
+  "fn.getTypeIdentifier.desc": "스토리지에 접근하지 않고 패킹된 이름의 keccak256으로 타입 이름의 식별자를 계산합니다. 호출자는 이를 사용하여 다른 조회를 위한 키를 도출합니다.",
+  "fn.getTypeIdentifier.params.name": "Solidity에 작성된 그대로의 타입 이름.",
+  "fn.getTypeIdentifier.returns.identifier": "이름에서 도출된 식별자.",
+
+  "fn.getByIdentifier.desc": "주어진 식별자 아래에 저장된 전체 dType 메타데이터 구조체를 반환합니다.",
+  "fn.getByIdentifier.params.identifier": "가져올 타입의 식별자.",
+  "fn.getByIdentifier.returns.dtype": "저장된 dType 메타데이터 구조체.",
+
+  "fn.get.desc": "이름으로 조회한 타입의 dType 메타데이터 구조체를 반환하며, 식별자를 내부적으로 해석합니다.",
+  "fn.get.params.name": "조회할 타입 이름.",
+  "fn.get.returns.dtype": "저장된 dType 메타데이터 구조체.",
+
+  "fn.isRegistered.desc": "주어진 식별자를 가진 타입이 레지스트리에 존재하는지 여부를 알려줍니다.",
+  "fn.isRegistered.params.identifier": "확인할 식별자.",
+  "fn.isRegistered.returns.registered": "해당 식별자를 가진 타입이 등록되어 있으면 true입니다.",
+
+  "fn.LogNew.desc": "새 타입이 레지스트리에 삽입될 때 발생합니다.",
+  "fn.LogNew.params.identifier": "새로 등록된 타입의 식별자.",
+  "fn.LogNew.params.index": "레지스트리의 식별자 배열에서 타입의 인덱스.",
+
+  "fn.LogUpdate.desc": "기존 타입 레코드가 업데이트될 때 발생합니다.",
+  "fn.LogUpdate.params.identifier": "업데이트된 타입의 식별자.",
+  "fn.LogUpdate.params.index": "레지스트리의 식별자 배열에서 타입의 인덱스.",
+
+  "fn.LogRemove.desc": "타입 레코드가 레지스트리에서 제거될 때 발생합니다.",
+  "fn.LogRemove.params.identifier": "제거된 타입의 식별자.",
+  "fn.LogRemove.params.index": "제거된 타입이 식별자 배열에서 차지하고 있던 인덱스.",
+
+  "node.user": "타입 작성자",
+  "node.contract": "dType 레지스트리",
+  "node.storageTypes": "타입 스토리지",
+
+  "edge.callInsert": "insert() 호출",
+  "edge.updateTypes": "타입 레코드 저장",
+  "edge.emitLogNew": "LogNew 이벤트 발생",
+
+  "sim.insertWalkthrough.name": "타입 등록 워크스루",
+  "sim.insertWalkthrough.desc": "작성자로부터 레지스트리 스토리지를 거쳐 LogNew 이벤트에 이르기까지 insert 호출을 따라갑니다.",
+  "sim.insertWalkthrough.param.name": "타입 이름",
+  "sim.insertWalkthrough.param.typeChoice": "타입 선택",
+  "sim.insertWalkthrough.step.call": "작성자는 등록할 타입을 설명하는 dType 구조체와 함께 insert(data)를 호출합니다.",
+  "sim.insertWalkthrough.step.call.mobile": "insert() 호출",
+  "sim.insertWalkthrough.step.execute": "레지스트리는 identifier = keccak256(name)을 도출하고, 레코드를 typeStruct 매핑에 기록한 뒤 typeIndex 배열에 추가합니다.",
+  "sim.insertWalkthrough.step.execute.mobile": "타입 레코드 저장",
+  "sim.insertWalkthrough.step.event": "레지스트리는 LogNew(identifier, index)를 발생시켜 오프체인 인덱서가 새 타입을 추적할 수 있도록 합니다.",
+  "sim.insertWalkthrough.step.event.mobile": "LogNew 이벤트 발생"
+}

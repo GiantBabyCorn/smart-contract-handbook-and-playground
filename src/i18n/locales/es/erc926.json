@@ -1,0 +1,34 @@
+{
+  "short": "Registro de Metadatos de Dirección",
+  "introduction": "ERC-926 define un único registro que asigna cualquier dirección a un contrato proveedor de metadatos, de modo que cualquier cuenta o contrato pueda publicar sus propios metadatos. Fue propuesto por Nick Johnson en marzo de 2018. En lugar de almacenar los valores directamente, utiliza indirección: setProvider registra el proveedor del llamante y provider lo devuelve, y cada proveedor expone interfaces de registros tipados a través de ERC-165. Nota: ERC-926 está Stagnant (estancado): ha estado inactivo durante más de 6 meses y puede que nunca se finalice, pero conserva relevancia histórica o técnica.",
+  "designPurpose": "ERC-926 se diseñó para frenar la proliferación de contratos de registro de un solo propósito. Antes de él, casos de uso como las autorizaciones generalizadas, los ajustes de aceptación de tokens y los registros de reclamaciones desplegaban cada uno su propio contrato de almacenamiento, por lo que los llamantes tenían que conocer una dirección y una disposición diferentes para cada tipo de metadatos. Al estandarizar un único registro que devuelve un proveedor por dirección, ERC-926 permite añadir nuevos tipos de metadatos como interfaces de proveedor independientes sin volver a desplegar un esquema clave/valor compartido.",
+  "commonUsage": "El registro está dirigido a aplicaciones que adjuntan datos estructurados a una dirección, como esquemas de autorización generalizada, preferencias de aceptación de tokens y registros de reclamaciones o de reputación. Dado que un proveedor puede implementar cualquier subconjunto de interfaces de tipos de registro estandarizadas y anunciarlas a través de ERC-165, las billeteras, dapps e indexadores consultan una única dirección de registro fija, siguen la indirección hasta el proveedor y leen solo los tipos de registro que entienden. Como propuesta Stagnant, tuvo poco uso en producción.",
+
+  "fn.provider.desc": "Devuelve la dirección del contrato proveedor de metadatos registrado actualmente para la dirección proporcionada, o la dirección cero si no se ha establecido ninguno.",
+  "fn.provider.params.target": "La dirección cuyo proveedor de metadatos registrado se consulta.",
+  "fn.provider.returns.provider": "El contrato proveedor registrado para la dirección consultada, o la dirección cero cuando no está establecido.",
+
+  "fn.setProvider.desc": "Registra el contrato proveedor de metadatos para la propia dirección del llamante, sobrescribiendo cualquier proveedor anterior. El registro indexa la entrada por msg.sender, por lo que una dirección solo puede establecer su propio proveedor.",
+  "fn.setProvider.params.provider": "El contrato proveedor de metadatos que se asociará con la dirección del llamante.",
+
+  "node.user": "Propietario de la Dirección",
+  "node.contract": "Registro de Metadatos",
+  "node.storageProviders": "Mapeo de Proveedores",
+  "node.consumer": "Consumidor de Metadatos",
+
+  "edge.callSetProvider": "Llamar a setProvider()",
+  "edge.updateProvider": "Actualizar mapeo de proveedores",
+  "edge.callProvider": "Llamar a provider()",
+  "edge.readProvider": "Leer mapeo de proveedores",
+
+  "sim.registerProviderWalkthrough.name": "Registrar y Resolver Proveedor",
+  "sim.registerProviderWalkthrough.desc": "Sigue a una dirección que registra su proveedor de metadatos y a un consumidor que lo resuelve a través del registro.",
+  "sim.registerProviderWalkthrough.param.provider": "Dirección del proveedor",
+  "sim.registerProviderWalkthrough.param.target": "Dirección consultada",
+  "sim.registerProviderWalkthrough.step.set": "El propietario de la dirección llama a setProvider(_provider) en el registro para registrar el contrato proveedor de metadatos que ha elegido.",
+  "sim.registerProviderWalkthrough.step.set.mobile": "Llamar a setProvider()",
+  "sim.registerProviderWalkthrough.step.store": "El registro escribe el proveedor en el mapeo de proveedores bajo la dirección del llamante, reemplazando cualquier entrada anterior.",
+  "sim.registerProviderWalkthrough.step.store.mobile": "Actualizar mapeo de proveedores",
+  "sim.registerProviderWalkthrough.step.lookup": "Un consumidor llama a provider(target) y el registro lee el mapeo, devolviendo la dirección del proveedor registrada.",
+  "sim.registerProviderWalkthrough.step.lookup.mobile": "Resolver proveedor"
+}

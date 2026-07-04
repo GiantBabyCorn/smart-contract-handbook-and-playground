@@ -1,0 +1,34 @@
+{
+  "short": "Address Metadata Registry",
+  "introduction": "ERC-926 defines one registry that maps any address to a metadata provider contract, so any account or contract can publish its own metadata. It was proposed by Nick Johnson in March 2018. Rather than store values directly, it uses indirection: setProvider records the caller's provider and provider returns it, and each provider exposes typed record interfaces via ERC-165. Note: ERC-926 is Stagnant — it has been inactive for 6+ months and may never be finalized, but remains historically or technically significant.",
+  "designPurpose": "ERC-926 was designed to stop the proliferation of single-purpose registry contracts. Before it, use cases such as generalised authorisations, token acceptance settings, and claims registries each deployed their own storage contract, so callers had to know a different address and layout for every kind of metadata. By standardizing one registry that returns a per-address provider, ERC-926 lets new metadata types be added as separate provider interfaces without redeploying a shared key/value schema.",
+  "commonUsage": "The registry targets applications that attach structured data to an address, such as generalised authorization schemes, token acceptance preferences, and claims or reputation records. Because a provider can implement any subset of standardized record-type interfaces and advertise them through ERC-165, wallets, dapps, and indexers query one fixed registry address, follow the indirection to the provider, and read only the record types they understand. As a Stagnant proposal it saw little production use.",
+
+  "fn.provider.desc": "Returns the address of the metadata provider contract currently registered for the supplied address, or the zero address if none has been set.",
+  "fn.provider.params.target": "The address whose registered metadata provider is being queried.",
+  "fn.provider.returns.provider": "The provider contract registered for the queried address, or the zero address when unset.",
+
+  "fn.setProvider.desc": "Registers the metadata provider contract for the caller's own address, overwriting any previous provider. The registry keys the entry by msg.sender, so an address can only set its own provider.",
+  "fn.setProvider.params.provider": "The metadata provider contract to associate with the caller's address.",
+
+  "node.user": "Address Owner",
+  "node.contract": "Metadata Registry",
+  "node.storageProviders": "Provider Mapping",
+  "node.consumer": "Metadata Consumer",
+
+  "edge.callSetProvider": "Call setProvider()",
+  "edge.updateProvider": "Update provider mapping",
+  "edge.callProvider": "Call provider()",
+  "edge.readProvider": "Read provider mapping",
+
+  "sim.registerProviderWalkthrough.name": "Register & Resolve Provider",
+  "sim.registerProviderWalkthrough.desc": "Follow an address registering its metadata provider and a consumer resolving it through the registry.",
+  "sim.registerProviderWalkthrough.param.provider": "Provider address",
+  "sim.registerProviderWalkthrough.param.target": "Queried address",
+  "sim.registerProviderWalkthrough.step.set": "The address owner calls setProvider(_provider) on the registry to register its chosen metadata provider contract.",
+  "sim.registerProviderWalkthrough.step.set.mobile": "Call setProvider()",
+  "sim.registerProviderWalkthrough.step.store": "The registry writes the provider into the provider mapping under the caller's address, replacing any earlier entry.",
+  "sim.registerProviderWalkthrough.step.store.mobile": "Update provider mapping",
+  "sim.registerProviderWalkthrough.step.lookup": "A consumer calls provider(target) and the registry reads the mapping, returning the registered provider address.",
+  "sim.registerProviderWalkthrough.step.lookup.mobile": "Resolve provider"
+}

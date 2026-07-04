@@ -1,0 +1,32 @@
+{
+  "short": "URL Format for Transaction Requests",
+  "introduction": "ERC-681 defines a URL format that encodes Ethereum transaction requests, especially payment requests in ether and ERC-20 tokens, so they can be embedded in QR codes, hyperlinks, emails, or chat messages. It was proposed by Daniel A. Nagy in August 2017. A request uses the ethereum: scheme followed by a target address, an optional chain ID, an optional function name, and query parameters such as value, gas, and ABI-typed arguments. Opening the URL launches the user's wallet with a pre-filled transaction to confirm.",
+  "designPurpose": "ERC-681 was designed to bring the convenience of Bitcoin-style payment URLs to Ethereum. Before it there was no standard way to hand a fully parameterized transaction to a wallet, so senders copied addresses and amounts by hand, inviting errors and phishing. By standardizing an ethereum: URL with a target address, optional chain ID, function name, and typed parameters, ERC-681 lets any channel deliver a request that a wallet can parse and present for confirmation, while leaving every amount editable by the user.",
+  "commonUsage": "Payment-request URLs are used by wallets, point-of-sale systems, and donation pages that render an ethereum: link or QR code for a specific address and amount. The native-token form requests ether through a value parameter, while the token form targets an ERC-20 contract's transfer function with address and uint256 arguments. ENS names resolved through ERC-137 may stand in for hexadecimal addresses, though clients give raw 0x addresses precedence to reduce phishing risk.",
+
+  "node.payee": "Payment Requester",
+  "node.urlBuilder": "URL Encoder",
+  "node.paymentUrl": "Ethereum Payment URL",
+  "node.wallet": "Payer Wallet",
+  "node.payer": "Payer",
+  "node.transaction": "Signed Transaction",
+
+  "edge.buildRequest": "Build payment request",
+  "edge.encodeUrl": "Encode ethereum: URL",
+  "edge.scanUrl": "Scan or open link",
+  "edge.confirm": "Confirm and sign",
+  "edge.buildTx": "Build transaction",
+
+  "sim.paymentRequestWalkthrough.name": "Payment Request Walkthrough",
+  "sim.paymentRequestWalkthrough.desc": "Follow a payment request from an ethereum: URL through the payer's wallet to a signed transaction.",
+  "sim.paymentRequestWalkthrough.param.targetAddress": "Beneficiary address",
+  "sim.paymentRequestWalkthrough.param.value": "Amount in wei",
+  "sim.paymentRequestWalkthrough.step.build": "The payee chooses a beneficiary address and an amount to request payment for.",
+  "sim.paymentRequestWalkthrough.step.build.mobile": "Build request",
+  "sim.paymentRequestWalkthrough.step.encode": "The address, chain ID, and value are encoded into an ethereum: URL that can be shown as a QR code or hyperlink.",
+  "sim.paymentRequestWalkthrough.step.encode.mobile": "Encode URL",
+  "sim.paymentRequestWalkthrough.step.scan": "The payer scans or opens the link; the wallet parses the URL and presents a pre-filled, editable transaction for confirmation.",
+  "sim.paymentRequestWalkthrough.step.scan.mobile": "Scan and confirm",
+  "sim.paymentRequestWalkthrough.step.send": "After the payer confirms, the wallet signs and broadcasts a transaction sending the requested value to the target address.",
+  "sim.paymentRequestWalkthrough.step.send.mobile": "Sign and send"
+}

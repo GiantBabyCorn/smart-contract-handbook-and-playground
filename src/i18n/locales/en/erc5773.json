@@ -1,0 +1,70 @@
+{
+  "short": "Context-Dependent Multi-Asset Tokens",
+  "introduction": "ERC-5773 defines an interface for multi-asset NFTs, where a single non-fungible token holds several assets and exposes the one suited to the context in which it is accessed. It was proposed by Bruno Škvorc, Cicada, Steven Pineda, Stevan Bogosavljevic, and Jan Turk in October 2022. Each asset is a namespaced token URI referenced by a uint64 identifier, ordered by priority and added through a propose-commit pattern: a new asset enters a pending array and must be accepted by the owner before it becomes active.",
+  "designPurpose": "ERC-5773 was designed to extend ERC-721 so that an NFT is no longer bound to a single tokenURI. Before it, giving a token a different representation per app, or mirroring its metadata across storage networks, meant replacing one URI and erasing its lineage. ERC-5773 instead stores assets by reference as uint64 identifiers and orders them by owner-set priority, so a consumer picks the asset that fits its medium. A propose-commit flow lets the issuer suggest or replace an asset while the owner keeps final approval.",
+  "commonUsage": "Multi-asset tokens suit cases where one NFT must serve different outputs to different consumers: an e-book that resolves to a PDF in a reader and an MP3 in an audiobook app, a game cosmetic carrying per-engine asset files, or metadata mirrored across IPFS, Arweave, and other networks for redundancy. Because the standard extends ERC-721, implementations reuse existing ERC-721 tooling and add ERC-165 detection, plus per-token and operator approvals dedicated to managing assets separately from transfers.",
+
+  "fn.acceptAsset.desc": "Migrates an asset from the token's pending array to its active array. The caller must own the token or be approved to manage its assets, and the index and expected assetId must match. Emits an AssetAccepted event.",
+  "fn.acceptAsset.params.tokenId": "ID of the token for which to accept the pending asset.",
+  "fn.acceptAsset.params.index": "Index of the asset in the pending array to accept.",
+  "fn.acceptAsset.params.assetId": "ID of the asset expected at that index, checked to prevent race conditions.",
+
+  "fn.rejectAsset.desc": "Removes a single asset from the token's pending array without activating it. The caller must own the token or be approved to manage its assets, and the index and expected assetId must match. Emits an AssetRejected event.",
+  "fn.rejectAsset.params.tokenId": "ID of the token the asset is being rejected from.",
+  "fn.rejectAsset.params.index": "Index of the asset in the pending array to reject.",
+  "fn.rejectAsset.params.assetId": "ID of the asset expected at that index.",
+
+  "fn.rejectAllAssets.desc": "Clears the token's entire pending array in one call, capped at maxRejections to avoid dropping assets that arrive just before the operation. Emits an AssetRejected event with assetId 0.",
+  "fn.rejectAllAssets.params.tokenId": "ID of the token whose pending array is cleared.",
+  "fn.rejectAllAssets.params.maxRejections": "Maximum number of assets to reject, guarding against assets added just before the call.",
+
+  "fn.setPriority.desc": "Sets a new priority ordering for the token's active assets, where the lowest value is highest priority and 0 means uninitialised. The priorities array length must equal the active assets count. Emits an AssetPrioritySet event.",
+  "fn.setPriority.params.tokenId": "ID of the token to set the priorities for.",
+  "fn.setPriority.params.priorities": "Array of priorities for the active assets, matching the order of the active array.",
+
+  "fn.getActiveAssets.desc": "Returns the array of active asset IDs for the given token; asset data is fetched separately with getAssetMetadata.",
+  "fn.getActiveAssets.params.tokenId": "ID of the token to query for active asset IDs.",
+  "fn.getActiveAssets.returns.assetIds": "Array of active asset IDs of the given token.",
+
+  "fn.getPendingAssets.desc": "Returns the array of pending asset IDs awaiting the owner's acceptance or rejection for the given token.",
+  "fn.getPendingAssets.params.tokenId": "ID of the token to query for pending asset IDs.",
+  "fn.getPendingAssets.returns.assetIds": "Array of pending asset IDs of the given token.",
+
+  "fn.getAssetMetadata.desc": "Returns the metadata URI of a given active asset of a token, which resolves to the asset's media or descriptor and enables the context-dependent output.",
+  "fn.getAssetMetadata.params.tokenId": "ID of the token to read the asset metadata from.",
+  "fn.getAssetMetadata.params.assetId": "ID of the asset, which must be in the token's active assets array.",
+  "fn.getAssetMetadata.returns.metadata": "The metadata URI of the specified asset.",
+
+  "fn.AssetAccepted.desc": "Emitted when a pending asset is accepted and migrated to the token's active array, including the ID of any asset it replaces.",
+  "fn.AssetAccepted.params.tokenId": "ID of the token that had a new asset accepted.",
+  "fn.AssetAccepted.params.assetId": "ID of the asset that was accepted.",
+  "fn.AssetAccepted.params.replacesId": "ID of the asset that was replaced, or 0 if none.",
+
+  "fn.AssetRejected.desc": "Emitted when an asset is dropped from a token's pending array; an assetId of 0 signals that the whole pending array was cleared.",
+  "fn.AssetRejected.params.tokenId": "ID of the token that had an asset rejected.",
+  "fn.AssetRejected.params.assetId": "ID of the asset that was rejected, or 0 when the whole pending array is cleared.",
+
+  "fn.AssetPrioritySet.desc": "Emitted when a token's active-asset priority ordering is updated.",
+  "fn.AssetPrioritySet.params.tokenId": "ID of the token whose asset priority array was updated.",
+
+  "node.user": "Token Owner",
+  "node.contract": "Multi-Asset Token",
+  "node.storageAssets": "Asset Storage",
+
+  "edge.callAcceptAsset": "Call acceptAsset()",
+  "edge.callRejectAsset": "Call rejectAsset()",
+  "edge.updateAssets": "Update asset arrays",
+  "edge.emitAssetAccepted": "Emit AssetAccepted event",
+
+  "sim.acceptAssetWalkthrough.name": "Accept Asset Walkthrough",
+  "sim.acceptAssetWalkthrough.desc": "Follow an acceptAsset call as a pending asset is migrated to the active array and the AssetAccepted event is emitted.",
+  "sim.acceptAssetWalkthrough.param.tokenId": "Token ID",
+  "sim.acceptAssetWalkthrough.param.index": "Pending index",
+  "sim.acceptAssetWalkthrough.param.assetId": "Asset ID",
+  "sim.acceptAssetWalkthrough.step.call": "The token owner calls acceptAsset(tokenId, index, assetId) to approve a pending asset, passing the expected assetId to guard against index changes.",
+  "sim.acceptAssetWalkthrough.step.call.mobile": "Call acceptAsset()",
+  "sim.acceptAssetWalkthrough.step.execute": "The contract removes the asset from the pending array and appends it to the token's active assets array.",
+  "sim.acceptAssetWalkthrough.step.execute.mobile": "Migrate to active",
+  "sim.acceptAssetWalkthrough.step.event": "The contract emits AssetAccepted so indexers and marketplaces can refresh the token's active assets.",
+  "sim.acceptAssetWalkthrough.step.event.mobile": "Emit AssetAccepted"
+}

@@ -1,0 +1,77 @@
+{
+  "short": "規制対象トークン向けコンプライアンスサービス",
+  "introduction": "ERC-2009 は、規制対象トークンが転送・ミント・バーンの実行前に KYC および AML チェックを完全にオンチェーンで実行できるようにするコンプライアンスサービスインターフェースを定義します。2019 年 5 月に Daniel Lehrner によって提案されました。トークンはチェック関数を呼び出し、その関数は 0x11（Allowed、許可）または 0x10（Disallowed、不許可）のステータスコードを返します。その後、同一トランザクション内で更新関数を通じて上限を記録します。注意：ERC-2009 は Stagnant（停滞）状態です。6 か月以上活動がなく、最終化されない可能性がありますが、歴史的または技術的に重要な意味を持ち続けています。",
+  "designPurpose": "ERC-2009 は、規制対象トークンのコンプライアンスチェックを分散化することを目的として設計されました。それ以前は、KYC および AML の検証はオフチェーンで実行されることが多く、それが転送を中央集権化し、より遅く非アトミックな二次確認ステップを強いていました。ERC-1462 はトークンにどのようなチェックが必要かを提案しましたが、それらをどう実装するかは規定しませんでした。ERC-2009 は、チェック関数と更新関数からなるオンチェーンインターフェースでこれに応え、ルールのロジックは実装者に委ね、状態を bytes32 の token id をキーとして保持します。これにより、トークンはデータを移行することなくコントラクトをアップグレードできます。",
+  "commonUsage": "コンプライアンスサービスは、KYC、AML、および法域固有の転送上限をコントラクト内で直接強制する必要がある規制対象トークンおよびセキュリティトークンを対象としています。1 つのサービスが bytes32 id によって多数のトークンを登録できるため、立法者や発行者がある法域内のすべてのトークンについて共有のコンプライアンスルールを維持できるように設計されています。Stagnant な提案であるため本番環境で広く採用されることはなく、実際にはオンチェーンのコンプライアンスは ERC-3643 のような許可制トークンフレームワークによって処理されることの方が一般的です。",
+
+  "fn.checkTransferAllowed.desc": "指定された数量をある保有者から別の保有者へ転送することがそのトークンで許可されているかをチェックし、ステータスコードを返します。コードが 0x11（Allowed、許可）でない限り、トークンは revert しなければなりません。",
+  "fn.checkTransferAllowed.params.tokenId": "そのトークンを識別する一意の bytes32 ID。",
+  "fn.checkTransferAllowed.params.from": "実行された場合にトークンが引き落とされる支払人アドレス。",
+  "fn.checkTransferAllowed.params.to": "実行された場合にトークンが転送される受取人アドレス。",
+  "fn.checkTransferAllowed.params.value": "転送される数量。",
+  "fn.checkTransferAllowed.returns.status": "ステータスコード。0x11（Allowed、許可）または 0x10（Disallowed、不許可）、あるいは発行者固有の同等コード。",
+
+  "fn.checkMintAllowed.desc": "指定された数量を受取人にミントすることがそのトークンで許可されているかをチェックし、ステータスコードを返します。トークンはこのコードをミントの前提条件として扱わなければなりません。",
+  "fn.checkMintAllowed.params.tokenId": "そのトークンを識別する一意の bytes32 ID。",
+  "fn.checkMintAllowed.params.to": "ミントされたトークンを受け取る受取人アドレス。",
+  "fn.checkMintAllowed.params.value": "ミントされる数量。",
+  "fn.checkMintAllowed.returns.status": "ステータスコード。0x11（Allowed、許可）または 0x10（Disallowed、不許可）、あるいは発行者固有の同等コード。",
+
+  "fn.checkBurnAllowed.desc": "指定された数量を保有者からバーンすることがそのトークンで許可されているかをチェックし、ステータスコードを返します。バーンを続行するには、このコードが 0x11（Allowed、許可）である必要があります。",
+  "fn.checkBurnAllowed.params.tokenId": "そのトークンを識別する一意の bytes32 ID。",
+  "fn.checkBurnAllowed.params.from": "トークンがバーンされる支払人アドレス。",
+  "fn.checkBurnAllowed.params.value": "バーンされる数量。",
+  "fn.checkBurnAllowed.returns.status": "ステータスコード。0x11（Allowed、許可）または 0x10（Disallowed、不許可）、あるいは発行者固有の同等コード。",
+
+  "fn.updateTransferAccumulated.desc": "転送の累計値を記録します。転送と同一のトランザクション内で呼び出す必要があり、更新がいずれかのコンプライアンスルールに違反する場合は revert します。ルールのロジックは実装者に委ねられます。",
+  "fn.updateTransferAccumulated.params.tokenId": "そのトークンを識別する一意の bytes32 ID。",
+  "fn.updateTransferAccumulated.params.from": "トークンが引き落とされる支払人アドレス。",
+  "fn.updateTransferAccumulated.params.to": "トークンが転送される受取人アドレス。",
+  "fn.updateTransferAccumulated.params.value": "転送される数量。",
+
+  "fn.addToken.desc": "トークンを bytes32 ID の下でサービスに登録し、更新関数を呼び出せるようにします。ID が既に使用されている場合は revert します。登録を制限するかどうかは実装者に委ねられます。TokenAdded を発行します。",
+  "fn.addToken.params.tokenId": "そのトークンに割り当てる一意の bytes32 ID。",
+  "fn.addToken.params.token": "更新関数が呼び出されるアドレス。",
+
+  "fn.authorizeAccumulatedOperator.desc": "呼び出し元の token id を代表して累計値を更新する権限をオペレーターに承認します。成功時に true を返し、AuthorizedAccumulatedOperator を発行します。",
+  "fn.authorizeAccumulatedOperator.params.operator": "累計更新のオペレーターとして承認するアドレス。",
+  "fn.authorizeAccumulatedOperator.returns.success": "オペレーターが承認された場合は true。",
+
+  "fn.revokeAccumulatedOperator.desc": "呼び出し元の token id を代表して累計値を更新するオペレーターの承認を取り消します。成功時に true を返し、RevokedAccumulatedOperator を発行します。",
+  "fn.revokeAccumulatedOperator.params.operator": "累計更新のオペレーターとして取り消すアドレス。",
+  "fn.revokeAccumulatedOperator.returns.success": "オペレーターの承認が取り消された場合は true。",
+
+  "fn.TokenAdded.desc": "トークンがサービスに追加された後に発行されます。",
+  "fn.TokenAdded.params.tokenId": "そのトークンを識別する一意の bytes32 ID。",
+  "fn.TokenAdded.params.token": "更新関数が呼び出されるアドレス。",
+
+  "fn.AuthorizedAccumulatedOperator.desc": "オペレーターがトークンを代表して累計値を更新する権限を承認されたときに発行されます。",
+  "fn.AuthorizedAccumulatedOperator.params.operator": "累計更新のオペレーターとして承認されたアドレス。",
+  "fn.AuthorizedAccumulatedOperator.params.tokenId": "累計更新を代行できる対象の token id。",
+
+  "fn.RevokedAccumulatedOperator.desc": "オペレーターがトークンを代表して累計値を更新する権限を取り消されたときに発行されます。",
+  "fn.RevokedAccumulatedOperator.params.operator": "オペレーター承認が取り消されたアドレス。",
+  "fn.RevokedAccumulatedOperator.params.tokenId": "それまで累計更新を代行できていた対象の token id。",
+
+  "node.user": "規制対象トークン",
+  "node.contract": "コンプライアンスサービス",
+  "node.storageAccumulated": "レジストリと累計値",
+
+  "edge.callAddToken": "addToken() を呼び出す",
+  "edge.callCheck": "checkTransferAllowed() を呼び出す",
+  "edge.callUpdate": "updateTransferAccumulated() を呼び出す",
+  "edge.writeStorage": "レジストリと累計値を書き込む",
+  "edge.emitTokenAdded": "TokenAdded イベントを発行する",
+
+  "sim.complianceCheckWalkthrough.name": "コンプライアンスチェックのウォークスルー",
+  "sim.complianceCheckWalkthrough.desc": "規制対象トークンがサービスに登録し、転送をチェックし、累計値を記録するまでを追います。",
+  "sim.complianceCheckWalkthrough.param.from": "支払人",
+  "sim.complianceCheckWalkthrough.param.to": "受取人",
+  "sim.complianceCheckWalkthrough.param.value": "数量",
+  "sim.complianceCheckWalkthrough.step.register": "トークンは addToken によってサービスに登録され、この関数はそのアドレスを bytes32 id の下に保存し、TokenAdded を発行します。",
+  "sim.complianceCheckWalkthrough.step.register.mobile": "トークンを登録",
+  "sim.complianceCheckWalkthrough.step.check": "転送の前に、トークンは checkTransferAllowed を呼び出し、サービスは 0x11（Allowed、許可）を返します。",
+  "sim.complianceCheckWalkthrough.step.check.mobile": "転送をチェック",
+  "sim.complianceCheckWalkthrough.step.update": "同一トランザクション内で、トークンは updateTransferAccumulated を呼び出し、この関数は累計値を更新するか、ルール違反があれば revert します。",
+  "sim.complianceCheckWalkthrough.step.update.mobile": "累計値を更新"
+}

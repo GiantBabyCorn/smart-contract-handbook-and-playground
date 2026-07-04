@@ -1,0 +1,80 @@
+{
+  "short": "Fundable Token Standard",
+  "introduction": "ERC-2019 extends the ERC-20 token standard so a wallet owner can request new tokens minted into their wallet through an on-chain order. It was proposed by Fernando Paris, Julio Faura, and Daniel Lehrner in May 2019. The owner or an approved orderer calls orderFund with an operationId, amount, and instructions; the operator settles the off-chain payment, then executes or rejects it. Note: ERC-2019 is Stagnant — it has been inactive for 6+ months and may never be finalized, but remains historically or technically significant.",
+  "designPurpose": "ERC-2019 was designed to bring the funding step of a token's lifecycle on chain. Before it, minting tokens against a fiat or bank payment relied on an off-chain, centralized request that left no verifiable trace on the ledger. ERC-2019 standardizes that request as an orderFund call with a unique operationId and a free-form instruction, letting the operator correlate it with a private payment and update its status on chain so the ordered, executed, or rejected outcome is traceable through events.",
+  "commonUsage": "Fundable tokens are intended for regulated or bank-issued token systems, where minting must be tied to a real fiat deposit or wire transfer. In these deployments the token contract owner or agent acts as the operator honoring or rejecting requests, while wallet owners can authorize orderers to submit orderFundFrom on their behalf. Because it only extends ERC-20, the interface is added to an existing token, and the instruction field points to a private payment channel rather than embedding raw bank details on chain.",
+
+  "fn.authorizeFundOperator.desc": "Authorizes an address to submit fund orders on behalf of the caller's wallet, enabling orderFundFrom for that orderer. Returns true on success.",
+  "fn.authorizeFundOperator.params.orderer": "The address being authorized to order funding for the caller's wallet.",
+  "fn.authorizeFundOperator.returns.success": "True if the authorization was recorded.",
+
+  "fn.orderFund.desc": "Creates a fund request for the caller's own wallet, identified by a unique operationId and carrying the amount and payment instructions the operator will act on. Reverts if the operationId has been used before.",
+  "fn.orderFund.params.operationId": "A unique identifier used to track the fund request through its lifecycle.",
+  "fn.orderFund.params.value": "The amount of tokens to be funded into the wallet.",
+  "fn.orderFund.params.instructions": "A payment instruction string the operator uses to source and settle the funds.",
+  "fn.orderFund.returns.success": "True if the fund request was created.",
+
+  "fn.orderFundFrom.desc": "Creates a fund request on behalf of another wallet owner, callable by a previously authorized orderer. Reverts if the operationId has been used before.",
+  "fn.orderFundFrom.params.operationId": "A unique identifier for the fund request.",
+  "fn.orderFundFrom.params.walletToFund": "The wallet owner on whose behalf the request is created and funded.",
+  "fn.orderFundFrom.params.value": "The amount of tokens to be funded into the wallet.",
+  "fn.orderFundFrom.params.instructions": "A payment instruction string the operator uses to settle the funds.",
+  "fn.orderFundFrom.returns.success": "True if the fund request was created.",
+
+  "fn.cancelFund.desc": "Cancels a pending fund request. Only the wallet owner or the original orderer can cancel, and only before the operator has moved it into processing.",
+  "fn.cancelFund.params.operationId": "The identifier of the fund request to cancel.",
+  "fn.cancelFund.returns.success": "True if the request was cancelled.",
+
+  "fn.processFund.desc": "Marks a fund request as in process. Once in process the request can no longer be cancelled, signalling that the operator has begun settling the payment.",
+  "fn.processFund.params.operationId": "The identifier of the fund request being processed.",
+  "fn.processFund.returns.success": "True if the request was marked in process.",
+
+  "fn.executeFund.desc": "Issues the requested tokens and marks the fund request as executed. Called by the operator once the corresponding payment has been received.",
+  "fn.executeFund.params.operationId": "The identifier of the fund request to execute.",
+  "fn.executeFund.returns.success": "True if the request was executed and tokens minted.",
+
+  "fn.rejectFund.desc": "Rejects a fund request with a human-readable reason, ending its lifecycle without minting tokens. EIP-1066 status codes can be used for the reason.",
+  "fn.rejectFund.params.operationId": "The identifier of the fund request to reject.",
+  "fn.rejectFund.params.reason": "The reason the request was rejected; EIP-1066 codes may be used.",
+  "fn.rejectFund.returns.success": "True if the request was rejected.",
+
+  "fn.FundOrdered.desc": "Emitted when a wallet owner or authorized orderer creates a fund request.",
+  "fn.FundOrdered.params.orderer": "The address that placed the fund request.",
+  "fn.FundOrdered.params.operationId": "The unique identifier of the fund request.",
+  "fn.FundOrdered.params.walletToFund": "The wallet that will receive the funded tokens.",
+  "fn.FundOrdered.params.value": "The amount of tokens requested.",
+  "fn.FundOrdered.params.instructions": "The payment instruction string attached to the request.",
+
+  "fn.FundInProcess.desc": "Emitted when the operator starts processing a fund request, after which it can no longer be cancelled.",
+  "fn.FundInProcess.params.orderer": "The address that placed the fund request.",
+  "fn.FundInProcess.params.operationId": "The unique identifier of the fund request.",
+
+  "fn.FundExecuted.desc": "Emitted when the operator executes a fund request and mints the requested tokens.",
+  "fn.FundExecuted.params.orderer": "The address that placed the fund request.",
+  "fn.FundExecuted.params.operationId": "The unique identifier of the fund request.",
+
+  "node.user": "Wallet Owner",
+  "node.contract": "Fundable Token",
+  "node.storageFunds": "Fund Requests",
+  "node.operator": "Token Operator",
+
+  "edge.callOrderFund": "Call orderFund()",
+  "edge.recordRequest": "Record fund request",
+  "edge.emitFundOrdered": "Emit FundOrdered event",
+  "edge.callExecuteFund": "Call executeFund()",
+  "edge.emitFundExecuted": "Emit FundExecuted event",
+
+  "sim.fundRequestWalkthrough.name": "Fund Request Lifecycle",
+  "sim.fundRequestWalkthrough.desc": "Follow a fund request from the wallet owner's order through the operator's execution and the FundExecuted event.",
+  "sim.fundRequestWalkthrough.param.operationId": "Operation ID",
+  "sim.fundRequestWalkthrough.param.value": "Fund amount",
+  "sim.fundRequestWalkthrough.param.instructions": "Payment instructions",
+  "sim.fundRequestWalkthrough.step.order": "The wallet owner calls orderFund with a unique operationId, an amount, and payment instructions.",
+  "sim.fundRequestWalkthrough.step.order.mobile": "Call orderFund()",
+  "sim.fundRequestWalkthrough.step.record": "The contract records the request as Ordered in storage and emits FundOrdered so the operator can pick it up.",
+  "sim.fundRequestWalkthrough.step.record.mobile": "Record request",
+  "sim.fundRequestWalkthrough.step.execute": "After settling the off-chain payment, the operator calls executeFund to advance the request to Executed.",
+  "sim.fundRequestWalkthrough.step.execute.mobile": "Operator executes",
+  "sim.fundRequestWalkthrough.step.event": "The contract mints the requested tokens and emits FundExecuted, completing the funding lifecycle.",
+  "sim.fundRequestWalkthrough.step.event.mobile": "Emit FundExecuted"
+}

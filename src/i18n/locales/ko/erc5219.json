@@ -1,0 +1,35 @@
+{
+  "short": "컨트랙트 리소스 요청",
+  "introduction": "ERC-5219는 클라이언트가 스마트 컨트랙트에 리소스를 요청하고 HTTP와 유사한 응답을 받을 수 있게 하는 읽기 전용 컨트랙트 인터페이스 IDecentralizedApp을 정의합니다. 2022년 7월 Gavin John에 의해 제안되었습니다. 호출자는 세그먼트로 분할된 리소스 경로와 쿼리 매개변수 목록을 전달하여 request()를 호출하고, 컨트랙트는 HTTP 상태 코드, 응답 본문, 응답 헤더를 반환합니다. request()는 view 함수이므로 트랜잭션이 필요 없으며, 따라서 프런트엔드를 온체인 코드에서 직접 제공할 수 있습니다.",
+  "designPurpose": "ERC-5219는 대부분의 탈중앙화 애플리케이션이 사용자 인터페이스를 위해 여전히 의존하는 중앙화된 웹 서버를 제거하기 위해 설계되었습니다. 프런트엔드가 일반 웹사이트에서 호스팅되면 검열되거나, 내려가거나, 조용히 변경될 수 있으며, 다른 컨트랙트가 이를 읽을 수 없습니다. 상태 코드, 본문, 헤더를 반환하는 단일 view 함수를 규정함으로써 ERC-5219는 인터페이스가 온체인에 존재하도록 하여, 신뢰 없이 가져올 수 있고, 컨트랙트 자체만큼 영구적이며, 다른 스마트 컨트랙트가 읽을 수 있게 합니다.",
+  "commonUsage": "ERC-5219는 애플리케이션 로직과 함께 완전히 온체인 프런트엔드를 게시하는 프로젝트와, 브라우저가 결과를 로드할 수 있도록 일반 웹 요청을 request() 호출로 변환하는 게이트웨이 소프트웨어에서 사용됩니다. gas 비용을 낮게 유지하기 위해 구현자는 큰 자산을 온체인에 저장하는 대신 IPFS의 콘텐츠를 가리키는 message/external-body 응답을 반환하는 경우가 많습니다. 이 인터페이스는 인터페이스 감지와 자연스럽게 결합되어, 어떤 컨트랙트가 이 프로토콜을 지원하는지 클라이언트가 발견할 수 있게 합니다.",
+
+  "fn.request.desc": "리소스에 대한 HTTP GET과 유사한 요청을 보내고 HTTP 형식의 응답을 반환합니다. 리소스 경로는 세그먼트 배열로, 쿼리 문자열은 키/값 쌍으로 전달됩니다. 이 함수는 view이므로 상태를 절대 변경하지 않습니다.",
+  "fn.request.params.resource": "세그먼트로 분할된 요청 리소스 경로. 따라서 \"/asdf/1234\"는 [\"asdf\", \"1234\"]가 됩니다.",
+  "fn.request.params.params": "키/값 쌍으로 표현된 쿼리 매개변수. 따라서 \"?foo=bar\"는 [{ key: \"foo\", value: \"bar\" }]가 됩니다.",
+  "fn.request.returns.statusCode": "응답의 HTTP 상태 코드. 예를 들어 성공 시 200, 리소스를 찾을 수 없을 때 404 등.",
+  "fn.request.returns.body": "응답의 본문. 예를 들어 HTML 문서나 JSON 페이로드 등.",
+  "fn.request.returns.headers": "Content-Type과 같은 응답 헤더를 키/값 쌍으로 나타낸 목록.",
+
+  "node.user": "클라이언트 / 브라우저",
+  "node.contract": "DApp 컨트랙트",
+  "node.resources": "리소스 저장소",
+  "node.response": "HTTP 응답",
+
+  "edge.callRequest": "request() 호출",
+  "edge.readResources": "리소스 읽기",
+  "edge.buildResponse": "응답 구성",
+  "edge.returnResponse": "응답 반환",
+
+  "sim.requestWalkthrough.name": "리소스 요청 둘러보기",
+  "sim.requestWalkthrough.desc": "클라이언트에서 컨트랙트를 거쳐 반환되는 HTTP와 유사한 응답까지 request() 호출을 따라갑니다.",
+  "sim.requestWalkthrough.param.resource": "리소스 경로",
+  "sim.requestWalkthrough.step.call": "클라이언트가 DApp 컨트랙트에서 request()를 호출하여 리소스 경로와 쿼리 매개변수를 전달합니다.",
+  "sim.requestWalkthrough.step.call.mobile": "request() 호출",
+  "sim.requestWalkthrough.step.resolve": "컨트랙트가 경로를 해석하고 리소스 저장소에서 일치하는 콘텐츠를 읽습니다.",
+  "sim.requestWalkthrough.step.resolve.mobile": "리소스 읽기",
+  "sim.requestWalkthrough.step.build": "컨트랙트가 상태 코드, 본문, 헤더를 포함한 HTTP와 유사한 응답을 조립합니다.",
+  "sim.requestWalkthrough.step.build.mobile": "응답 구성",
+  "sim.requestWalkthrough.step.return": "응답이 클라이언트에 반환되고, 클라이언트는 이를 일반 웹 페이지처럼 렌더링합니다.",
+  "sim.requestWalkthrough.step.return.mobile": "응답 반환"
+}

@@ -1,0 +1,61 @@
+{
+  "short": "ステルスアドレス",
+  "introduction": "ERC-5564 は、ステルスアドレスを生成・特定するための標準化された方法を定義しており、送信者が受信者のみが管理できる新しいアカウントを非対話的に作成できるようにします。この規格は 2022 年 8 月に Toni Wahrstätter、Matt Solomon、Ben DiFrancesco、Vitalik Buterin によって提案されました。送信者は受信者のステルスメタアドレスとの共有シークレットからアドレスを導出し、その後シングルトンの ERC5564Announcer コントラクトを呼び出して、エフェメラル公開鍵とビュータグを含む Announcement イベントを発行させます。",
+  "designPurpose": "ERC-5564 は、受信者がその転送をオンチェーンのアイデンティティに結び付けることなく資産を受け取れるようにするために設計されました。それ以前は、既知のアドレスへ支払うと受信者が露呈し、各プライバシープロジェクトが互いに互換性のないアドレス導出方式とアナウンス方式を独自に考案していました。この規格は、送信者と受信者の間のシークレットからステルスアドレスを導出するための共通インターフェースと、単一の ERC5564Announcer コントラクトを定め、ウォレットやインデクサーがアナウンスを公開・スキャンするための単一の場所を提供します。",
+  "commonUsage": "ステルスアドレスは、受信者をリンク不可能な状態に保ちたいプライバシー重視のウォレットや決済ツールで使用されます。たとえば、匿名の寄付や、アドレスの再利用によって情報が漏れてしまう一度限りの送金といった場面です。Announcer はイベントを発行するだけなので、統合者はこれをオフチェーンのスキャンサービスや、ユーザーをそのステルスメタアドレスに対応付ける ERC-6538 のようなレジストリと組み合わせて利用します。ここで定義されているビュータグ付きの SECP256k1 スキーム（schemeId 1）が一般的な出発点です。",
+
+  "fn.generateStealthAddress.desc": "受信者のステルスメタアドレスから、その受信者向けのステルスアドレスを生成します。ステルスアドレス、送信者が使用したエフェメラル公開鍵、そして受信者のスキャンを高速化するビュータグを返します。",
+  "fn.generateStealthAddress.params.stealthMetaAddress": "受信者のステルスメタアドレスで、その支出公開鍵と閲覧公開鍵をエンコードしたものです。",
+  "fn.generateStealthAddress.returns.stealthAddress": "送信者が資金を送ることができるステルスアドレスです。",
+  "fn.generateStealthAddress.returns.ephemeralPubKey": "このアドレス用に生成されたエフェメラル公開鍵で、受信者が共有シークレットを再計算できるよう公開されます。",
+  "fn.generateStealthAddress.returns.viewTag": "共有シークレットから導出される 1 バイトの値で、受信者が一致しないアナウンスを素早くフィルタリングできるようにします。",
+
+  "fn.checkStealthAddress.desc": "指定したステルスアドレスに送られた資金が、対応する支出鍵を管理する受信者のものである場合に true を返します。受信者は各アナウンスに対してこれを実行し、自分宛ての支払いを検出します。",
+  "fn.checkStealthAddress.params.stealthAddress": "所有権を確認する対象のステルスアドレスです。",
+  "fn.checkStealthAddress.params.ephemeralPubKey": "アナウンスから取得したエフェメラル公開鍵です。",
+  "fn.checkStealthAddress.params.viewingKey": "受信者の閲覧用秘密鍵です。",
+  "fn.checkStealthAddress.params.spendingPubKey": "受信者の支出公開鍵です。",
+  "fn.checkStealthAddress.returns.isRecipient": "このステルスアドレスがこの受信者に属する場合に true になります。",
+
+  "fn.computeStealthKey.desc": "受信者の閲覧用秘密鍵と支出用秘密鍵、およびエフェメラル公開鍵から、あるステルスアドレスの秘密鍵を計算し、受信者がそのアドレスに保有された資金を支出できるようにします。",
+  "fn.computeStealthKey.params.stealthAddress": "秘密鍵を導出する対象のステルスアドレスです。結果を検証できるように含められています。",
+  "fn.computeStealthKey.params.ephemeralPubKey": "アナウンスから取得したエフェメラル公開鍵です。",
+  "fn.computeStealthKey.params.viewingKey": "受信者の閲覧用秘密鍵です。",
+  "fn.computeStealthKey.params.spendingKey": "受信者の支出用秘密鍵です。",
+  "fn.computeStealthKey.returns.stealthKey": "ステルスアドレスを管理するステルス秘密鍵です。",
+
+  "fn.announce.desc": "統合者によって呼び出され、ステルスアドレスに何かが送られたことを受信者に伝える Announcement イベントを発行します。Announcer はチェーンごとに 1 つのインスタンスを持つシングルトンコントラクトで、状態を保持しません。",
+  "fn.announce.params.schemeId": "適用されるステルスアドレススキームを識別する整数です。",
+  "fn.announce.params.stealthAddress": "受信者向けに計算されたステルスアドレスです。",
+  "fn.announce.params.ephemeralPubKey": "送信者が使用したエフェメラル公開鍵です。",
+  "fn.announce.params.metadata": "任意のデータで、その最初のバイトはビュータグでなければなりません。残りのバイトはトークンと金額を記述できます。",
+
+  "fn.Announcement.desc": "ステルスアドレスに何かが送られるたびに発行されます。インデクサーと受信者はこれらのイベントをスキャンします。schemeId、stealthAddress、caller はフィルタリングのために indexed になっています。",
+  "fn.Announcement.params.schemeId": "ステルスアドレススキームの識別子です（indexed）。",
+  "fn.Announcement.params.stealthAddress": "資金が送られたステルスアドレスです（indexed）。",
+  "fn.Announcement.params.caller": "announce を呼び出したアカウント、すなわち msg.sender です（indexed）。",
+  "fn.Announcement.params.ephemeralPubKey": "送信者が使用したエフェメラル公開鍵です。",
+  "fn.Announcement.params.metadata": "任意のメタデータで、その最初のバイトはビュータグです。",
+
+  "node.user": "送信者",
+  "node.contract": "ERC5564Announcer",
+  "node.recipient": "受信者",
+
+  "edge.callAnnounce": "announce() を呼び出す",
+  "edge.emitAnnouncement": "Announcement イベントを発行",
+  "edge.scanAnnouncement": "アナウンスをスキャン",
+  "edge.callCheck": "checkStealthAddress() を呼び出す",
+
+  "sim.announceWalkthrough.name": "ステルス支払いのアナウンス",
+  "sim.announceWalkthrough.desc": "送信者の announce 呼び出しから、Announcement イベントを経て受信者のスキャンに至るまで、ステルス支払いの流れを追います。",
+  "sim.announceWalkthrough.param.schemeId": "スキームID",
+  "sim.announceWalkthrough.param.stealthAddress": "ステルスアドレス",
+  "sim.announceWalkthrough.step.call": "送信者は ERC5564Announcer シングルトンに対して announce() を呼び出し、スキームID、受信者のステルスアドレス、エフェメラル公開鍵、メタデータを渡します。",
+  "sim.announceWalkthrough.step.call.mobile": "announce() を呼び出す",
+  "sim.announceWalkthrough.step.execute": "Announcer は呼び出しを転送し、msg.sender を indexed の caller として追加します。状態は保持せず、イベントを準備するだけです。",
+  "sim.announceWalkthrough.step.execute.mobile": "Announcer へ転送",
+  "sim.announceWalkthrough.step.emit": "コントラクトは、スキームID、ステルスアドレス、caller、エフェメラル公開鍵、およびビュータグを含むメタデータを載せた Announcement イベントを発行します。",
+  "sim.announceWalkthrough.step.emit.mobile": "Announcement を発行",
+  "sim.announceWalkthrough.step.scan": "受信者は Announcement イベントをスキャンし、ビュータグを確認し、checkStealthAddress() を実行して支払いが自分のものであることを確定します。",
+  "sim.announceWalkthrough.step.scan.mobile": "スキャンして確認"
+}

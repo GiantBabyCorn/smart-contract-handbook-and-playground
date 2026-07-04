@@ -1,0 +1,42 @@
+{
+  "short": "EIP-721 컨슈머블 확장",
+  "introduction": "ERC-4400은 ERC-721에 대한 선택적 확장을 정의하며, 대체 불가능 토큰에 표준화된 컨슈머 역할을 추가하여 소유자가 소유권을 이전하지 않고도 다른 주소에 NFT 사용을 허가할 수 있도록 합니다. 2021년 10월 Daniel Ivanov와 George Spasov가 제안했습니다. 이 확장은 현재 컨슈머를 조회하는 읽기 함수, 이를 설정하거나 재확인하는 쓰기 함수, 그리고 ConsumerChanged 이벤트를 추가합니다. 또한 모든 전송 시 컨슈머를 기본 주소로 재설정하도록 요구하며, 영 주소를 사용할 것을 권장합니다.",
+  "designPurpose": "ERC-4400은 많은 ERC-721 프로젝트가 각자의 커스텀 권한으로 구현해 온 사용 역할을 표준화하기 위해 설계되었습니다. 그 이전에는 메타버스, 게임, 대여 플랫폼이 각각 임시방편적인 오퍼레이터나 기여자 역할을 정의했기 때문에, 지갑과 마켓플레이스는 누가 토큰을 사용할 자격이 있는지 일관된 방식으로 알 수 없었습니다. 소유자·오퍼레이터·승인 권한을 결코 얻어서는 안 되는 단일 컨슈머 역할을 확보함으로써, ERC-4400은 어떤 NFT를 한 당사자가 사용하면서도 다른 당사자가 소유하고 이전할 수 있도록 합니다.",
+  "commonUsage": "컨슈머 역할은 NFT를 사용하는 것과 소유하는 것이 구분되는 애플리케이션을 위한 것입니다. 예를 들어 테넌트가 장면을 배포하는 메타버스 랜드, 플레이어에게 대여되는 게임 내 자산, 이벤트 패스, 그리고 스테이커가 토큰을 스테이킹 컨트랙트에 예치한 후에도 사용 가치를 유지하는 NFT 기반 일드 파밍 등입니다. 이 확장은 consumerOf와 changeConsumer, 그리고 ERC-165를 통한 인터페이스 ID 0x953c8dfa 감지만 노출하므로, 일반적으로 단독으로 배포되기보다는 기존 ERC-721 컨트랙트에 통합됩니다.",
+
+  "fn.consumerOf.desc": "주어진 NFT의 현재 컨슈머 주소를 반환하며, 컨슈머가 설정되지 않은 경우 영 주소를 반환합니다. token id가 유효한 NFT가 아니면 되돌립니다.",
+  "fn.consumerOf.params.tokenId": "컨슈머 주소를 조회할 NFT.",
+  "fn.consumerOf.returns.consumer": "해당 NFT의 컨슈머 주소이며, 없으면 영 주소.",
+
+  "fn.changeConsumer.desc": "NFT의 컨슈머 주소를 설정하거나 재확인하며, 영 주소를 사용하면 해제됩니다. 호출자가 NFT의 소유자, 승인된 오퍼레이터, 또는 승인된 주소가 아니면 되돌리며, ConsumerChanged를 발생시킵니다.",
+  "fn.changeConsumer.params.consumer": "NFT의 새 컨슈머이며, 영 주소는 컨슈머가 없음을 나타냅니다.",
+  "fn.changeConsumer.params.tokenId": "컨슈머를 변경할 NFT.",
+
+  "fn.ConsumerChanged.desc": "소유자가 NFT의 컨슈머를 변경할 때 발생합니다. 컨슈머가 영 주소이면 컨슈머가 없음을 나타내며, Transfer 역시 컨슈머를 없음으로 재설정합니다.",
+  "fn.ConsumerChanged.params.owner": "컨슈머가 변경된 NFT의 소유자.",
+  "fn.ConsumerChanged.params.consumer": "새 컨슈머 주소이며, 해제된 경우 영 주소.",
+  "fn.ConsumerChanged.params.tokenId": "컨슈머가 변경된 NFT.",
+
+  "node.user": "NFT 소유자",
+  "node.contract": "ERC-4400 NFT 컨트랙트",
+  "node.storageConsumers": "컨슈머 스토리지",
+  "node.consumer": "컨슈머",
+
+  "edge.callChangeConsumer": "changeConsumer() 호출",
+  "edge.updateConsumers": "컨슈머 매핑 업데이트",
+  "edge.emitConsumerChanged": "ConsumerChanged 이벤트 발생",
+  "edge.grantConsumer": "사용 권한 부여",
+
+  "sim.changeConsumerWalkthrough.name": "NFT 컨슈머 설정",
+  "sim.changeConsumerWalkthrough.desc": "소유자의 changeConsumer 호출을 스토리지를 거쳐 컨슈머에게 사용 권한을 부여하는 ConsumerChanged 이벤트까지 따라갑니다.",
+  "sim.changeConsumerWalkthrough.param.consumer": "컨슈머 주소",
+  "sim.changeConsumerWalkthrough.param.tokenId": "Token ID",
+  "sim.changeConsumerWalkthrough.step.call": "NFT 소유자가 컨트랙트의 changeConsumer(consumer, tokenId)를 호출하여 토큰에 컨슈머를 할당합니다.",
+  "sim.changeConsumerWalkthrough.step.call.mobile": "changeConsumer() 호출",
+  "sim.changeConsumerWalkthrough.step.execute": "컨트랙트는 호출자가 소유자, 승인된 오퍼레이터, 또는 승인된 주소인지 확인한 다음, 새 컨슈머를 해당 토큰의 _consumers 매핑에 기록합니다.",
+  "sim.changeConsumerWalkthrough.step.execute.mobile": "컨슈머 저장",
+  "sim.changeConsumerWalkthrough.step.event": "컨트랙트는 ConsumerChanged(owner, consumer, tokenId)를 발생시켜 인덱서와 인터페이스가 새 컨슈머를 추적할 수 있도록 합니다.",
+  "sim.changeConsumerWalkthrough.step.event.mobile": "ConsumerChanged 발생",
+  "sim.changeConsumerWalkthrough.step.grant": "할당된 컨슈머는 이제 소유자·오퍼레이터·승인 권한을 얻지 않고도 애플리케이션 내에서 NFT를 사용할 수 있습니다.",
+  "sim.changeConsumerWalkthrough.step.grant.mobile": "컨슈머가 사용 권한 획득"
+}

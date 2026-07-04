@@ -1,0 +1,28 @@
+{
+  "short": "Extensión de Interoperabilidad de tokenURI",
+  "introduction": "ERC-1046 define una extensión de metadatos que añade a ERC-20 una función tokenURI al estilo de ERC-721 y alinea las convenciones de URI de token de ERC-20, ERC-721 y ERC-1155 para que las billeteras puedan leer las tres de la misma manera. Fue propuesto por Tommy Nicholas, Matt Russo, John Zettler, Matt Condon y Gavin John en abril de 2018. Un token ERC-20 conforme devuelve un URI que se resuelve en un documento JSON cuyo campo interop indica el tipo de token, lo que permite a las aplicaciones detectar y mostrar tokens sin código específico para cada estándar.",
+  "designPurpose": "ERC-1046 se diseñó para llevar los metadatos que ERC-721 expone a través de tokenURI a los tokens fungibles ERC-20, que históricamente solo llevaban name, symbol y decimals en la cadena. Antes de él, las aplicaciones no tenían una forma uniforme de obtener una imagen o una descripción de un token, ni una manera económica de distinguir un token fungible de un NFT o de un contrato multitoken. Reutilizar el nombre tokenURI entre estándares y añadir un objeto interop al JSON resuelto permite a las billeteras leer el tipo de un token y sus datos de visualización desde un único documento.",
+  "commonUsage": "ERC-1046 está dirigido a billeteras, exploradores de bloques e interfaces de listado de activos que representan los tokens ERC-20 con las mismas imágenes y descripciones que ya muestran para los NFT. La función tokenURI de ERC-20 es obligatoria para la conformidad, mientras que las partes de ERC-721 y ERC-1155 añaden un campo interop a su JSON de metadatos existente para que un único resolutor pueda gestionar los tres tipos. Para ahorrar gas, el estándar recomienda omitir name, symbol y decimals en la cadena y colocar esos campos en el documento de metadatos en su lugar.",
+
+  "fn.tokenURI.desc": "Devuelve un URI que se resuelve en un documento JSON de metadatos del token ERC-20, siguiendo el patrón tokenURI al estilo de ERC-721. El campo interop del documento lo marca como metadatos de ERC-1046, de modo que las billeteras tratan la dirección como un token ERC-20.",
+  "fn.tokenURI.returns.uri": "El URI que apunta al documento JSON de metadatos fuera de la cadena del token.",
+
+  "node.user": "Billetera",
+  "node.contract": "Contrato de token",
+  "node.storageUri": "Almacenamiento de URI",
+  "node.metadata": "Documento de metadatos",
+
+  "edge.callTokenURI": "Llamar a tokenURI()",
+  "edge.readUri": "Leer el URI almacenado",
+  "edge.fetchMetadata": "Obtener el JSON de metadatos",
+
+  "sim.tokenUriWalkthrough.name": "Resolución del URI del token",
+  "sim.tokenUriWalkthrough.desc": "Sigue a una billetera que lee los metadatos de un token ERC-20: llama a tokenURI(), resuelve el URI y lee el indicador interop.",
+  "sim.tokenUriWalkthrough.param.token": "Dirección del token",
+  "sim.tokenUriWalkthrough.step.call": "La billetera llama a tokenURI() en el contrato del token ERC-20 para obtener su URI de metadatos.",
+  "sim.tokenUriWalkthrough.step.call.mobile": "Llamar a tokenURI()",
+  "sim.tokenUriWalkthrough.step.resolve": "El contrato lee su URI almacenado y devuelve a la billetera un enlace como https://example.com/token.json.",
+  "sim.tokenUriWalkthrough.step.resolve.mobile": "Devolver el URI de metadatos",
+  "sim.tokenUriWalkthrough.step.fetch": "La billetera obtiene el JSON en el URI y lee interop.erc1046, confirmando que la dirección es un token ERC-20.",
+  "sim.tokenUriWalkthrough.step.fetch.mobile": "Leer el indicador interop"
+}

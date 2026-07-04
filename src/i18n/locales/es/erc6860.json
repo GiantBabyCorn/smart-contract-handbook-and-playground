@@ -1,0 +1,34 @@
+{
+  "short": "Traducción de URL Web3 a Mensaje de Llamada EVM",
+  "introduction": "ERC-6860 especifica la traducción de una URL web3:// de estilo HTTP en un mensaje de llamada EVM, de modo que el contenido on-chain sea alcanzable mediante nombres legibles por humanos. Fue propuesto por Qi Zhou, Chao Pi, Sam Wilson y Nicolas Deschildre en septiembre de 2023. La URL se analiza en un nombre de contrato, un id de cadena y una ruta; el nombre se resuelve a una dirección, y resolveMode() en el objetivo decide cómo la ruta se convierte en calldata. Nota: ERC-6860 es un Draft; la especificación aún está en desarrollo activo y puede cambiar sustancialmente.",
+  "designPurpose": "ERC-6860 se diseñó para dar a Ethereum una capa de presentación descentralizada, de modo que el contenido web on-chain pueda alcanzarse sin confiar en una puerta de enlace fuera de la cadena. Antes de él, leer datos Web3 dependía de proxies Web2 como sitios dApp o exploradores fuera del control del usuario. Como actualización corregida de ERC-4804, especifica una gramática de URL compatible con RFC 3986 en ABNF y un procedimiento que resuelve el nombre, detecta el resolve mode y codifica la ruta como calldata, de modo que la misma URL siempre se corresponda con la misma llamada EVM.",
+  "commonUsage": "La traducción la implementan las puertas de enlace de URL Web3 y las extensiones de navegador que permiten a los usuarios abrir enlaces web3:// para ver HTML, SVG y JSON on-chain renderizados directamente desde los contratos. En modo manual, la ruta en bruto se pasa como calldata y la respuesta se trata como bytes; en modo auto, un nombre de método y argumentos tipados se codifican con el ABI de contrato estándar, opcionalmente moldeados por un atributo returns. Se combina con ENS (ERC-137) para la resolución de nombres y con contratos que sirven recursos, como los que siguen ERC-5219.",
+
+  "fn.resolveMode.desc": "Un hook de solo lectura que el contrato objetivo expone para que el protocolo pueda elegir un resolve mode. El bytes32 para 'manual' selecciona calldata de ruta en bruto, mientras que 'auto', un valor vacío, cero o un revert selecciona el modo auto codificado con ABI.",
+  "fn.resolveMode.returns.mode": "El selector de modo como bytes32: 'manual' para el modo manual, o 'auto' (también vacío, cero o un revert) para el modo auto.",
+
+  "node.browser": "Cliente Web3",
+  "node.resolver": "Resolutor de URL Web3",
+  "node.urlParts": "URL analizada",
+  "node.target": "Contrato objetivo",
+  "node.evmMessage": "Mensaje de llamada EVM",
+
+  "edge.requestUrl": "Solicitar URL web3://",
+  "edge.parseUrl": "Analizar URL",
+  "edge.detectMode": "Llamar a resolveMode()",
+  "edge.buildMessage": "Construir mensaje EVM",
+  "edge.sendCall": "Enviar llamada",
+  "edge.returnData": "Devolver bytes",
+
+  "sim.urlTranslationWalkthrough.name": "Recorrido de Traducción de URL Web3",
+  "sim.urlTranslationWalkthrough.desc": "Un recorrido de una URL web3:// a medida que el resolutor la analiza, detecta el resolve mode del contrato y la convierte en una llamada EVM.",
+  "sim.urlTranslationWalkthrough.param.url": "URL Web3",
+  "sim.urlTranslationWalkthrough.step.request": "El cliente Web3 solicita una URL web3:// al resolutor en lugar de enrutar a través de un proxy Web2.",
+  "sim.urlTranslationWalkthrough.step.request.mobile": "Solicitar URL web3://",
+  "sim.urlTranslationWalkthrough.step.parse": "El resolutor analiza la URL en su nombre de contrato, id de cadena y ruta, resolviendo el nombre a una dirección mediante ENS.",
+  "sim.urlTranslationWalkthrough.step.parse.mobile": "Analizar partes de la URL",
+  "sim.urlTranslationWalkthrough.step.detect": "El resolutor llama a resolveMode() en el objetivo para elegir el modo manual o auto; un resultado vacío o con revert significa modo auto.",
+  "sim.urlTranslationWalkthrough.step.detect.mobile": "Detectar resolve mode",
+  "sim.urlTranslationWalkthrough.step.call": "El resolutor codifica la ruta como calldata, envía la llamada EVM de solo lectura y devuelve los bytes decodificados al cliente.",
+  "sim.urlTranslationWalkthrough.step.call.mobile": "Enviar llamada, devolver datos"
+}

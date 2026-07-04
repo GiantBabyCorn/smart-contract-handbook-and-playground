@@ -1,0 +1,36 @@
+{
+  "short": "合约时钟接口",
+  "introduction": "ERC-6372 定义了一个最小接口，让合约能够报告它使用哪一种时钟来度量时间。该标准由 Hadrien Croubois 与 Francisco Giordano 于 2023 年 1 月提出。clock() 函数以非递减的 uint48 返回当前时间点，例如 block.timestamp 或 block.number；CLOCK_MODE() 则返回一个采用 URL 查询字符串格式的字符串，如 mode=timestamp 或 mode=blocknumber，供观察者解析。注：ERC-6372 处于 Review 状态；在最终定稿之前接口仍可能变更。",
+  "designPurpose": "ERC-6372 旨在消除对合约如何跟踪时间的猜测。在此之前，一些合约用 block.timestamp 度量延迟和快照，另一些则使用 block.number，而外部观察者无法可靠地判断究竟是哪一种，这迫使在组合时间锁与投票系统时做出有风险的假设。通过标准化 clock() 以及一个自我描述的 CLOCK_MODE() 描述符，ERC-6372 让合约的时间基准可以在运行时被发现，从而使工具和依赖它的合约能够对齐到同一个单位。",
+  "commonUsage": "该接口针对那些强制执行延迟或存储带时间记录的合约，包括时间锁、具有固定投票期的 DAO 治理合约，以及按时间点为余额设置检查点的投票代币。治理框架将 CLOCK_MODE() 与 clock() 搭配使用，使治理合约与其投票代币就提案和快照是以秒还是以区块来度量达成一致。由于这两个函数都是只读的，索引器与前端可以在链下查询时钟模式，而无需发送交易。",
+
+  "fn.clock.desc": "根据合约的时钟模式返回其当前时间点。该值必须是链的非递减函数，通常为 block.timestamp（秒）或 block.number。",
+  "fn.clock.returns.timepoint": "以 uint48 表示的当前时间点，按 CLOCK_MODE() 返回的值来解释。",
+
+  "fn.CLOCK_MODE.desc": "返回时钟的机器可读描述，格式为可用 new URLSearchParams() 解析的 URL 查询字符串。取值包括表示秒的 mode=timestamp，以及表示区块号的 mode=blocknumber&from=default。",
+  "fn.CLOCK_MODE.returns.descriptor": "一个采用 URL 查询字符串格式的描述符，如 mode=timestamp 或 mode=blocknumber&from=<CAIP-2-ID>。",
+
+  "node.user": "时钟观察者",
+  "node.contract": "ERC-6372 合约",
+  "node.clockSource": "链上时间源",
+  "node.clockResult": "时钟报告",
+
+  "edge.callClock": "调用 clock()",
+  "edge.callClockMode": "调用 CLOCK_MODE()",
+  "edge.readClockSource": "读取链上时间",
+  "edge.buildTimepoint": "打包时间点",
+  "edge.returnTimepoint": "返回时钟信息",
+
+  "sim.clockDiscovery.name": "时钟模式发现",
+  "sim.clockDiscovery.desc": "查询合约的 clock() 与 CLOCK_MODE()，读取其当前时间点并了解如何解释它。",
+  "sim.clockDiscovery.param.contractAddress": "要查询的合约",
+  "sim.clockDiscovery.param.mode": "时钟模式",
+  "sim.clockDiscovery.step.call": "观察者对目标合约调用 clock()，以读取其当前时间点。",
+  "sim.clockDiscovery.step.call.mobile": "调用 clock()",
+  "sim.clockDiscovery.step.read": "合约读取其配置为使用的链上时间源（block.timestamp 或 block.number），并以 uint48 形式返回。",
+  "sim.clockDiscovery.step.read.mobile": "读取链上时间",
+  "sim.clockDiscovery.step.mode": "观察者调用 CLOCK_MODE()，以了解时间点是以秒还是以区块号来度量。",
+  "sim.clockDiscovery.step.mode.mobile": "调用 CLOCK_MODE()",
+  "sim.clockDiscovery.step.return": "合约返回打包好的时间点与模式描述符，使观察者能够将其延迟与快照对齐到同一个时钟。",
+  "sim.clockDiscovery.step.return.mobile": "返回时钟信息"
+}

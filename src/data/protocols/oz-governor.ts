@@ -158,6 +158,26 @@ export const entry: ProtocolEntry = {
     },
   ],
 
+  // ─── Schema v2 content sections ───
+  composes: [
+    { slug: 'erc20', role: 'oz-governor.compose.erc20.role' },
+    { slug: 'erc721', role: 'oz-governor.compose.erc721.role' },
+    { erc: 712, role: 'oz-governor.compose.erc712.role' },
+  ],
+
+  references: [
+    {
+      label: 'OpenZeppelin docs — How to set up on-chain governance',
+      url: 'https://docs.openzeppelin.com/contracts/5.x/governance',
+      kind: 'spec',
+    },
+    {
+      label: 'OpenZeppelin docs — Governance API (castVoteBySig, GovernorVotes)',
+      url: 'https://docs.openzeppelin.com/contracts/5.x/api/governance',
+      kind: 'spec',
+    },
+  ],
+
   // ─── ERCFlow ───
   flowNodes: [
     {

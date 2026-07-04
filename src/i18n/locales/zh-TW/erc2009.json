@@ -1,0 +1,77 @@
+{
+  "short": "面向受監管代幣的合規服務",
+  "introduction": "ERC-2009 定義了一個合規服務介面，讓受監管代幣在轉帳、鑄造或銷毀執行前完全在鏈上執行 KYC 與 AML 檢查。它由 Daniel Lehrner 於 2019 年 5 月提出。代幣查詢檢查函式，這些函式回傳 0x11（Allowed，允許）或 0x10（Disallowed，不允許）的狀態碼，隨後在同一筆交易中透過更新函式記錄限額。注意：ERC-2009 處於 Stagnant 狀態——它已有 6 個月以上未活動，可能永遠不會最終定案，但在歷史或技術上仍具重要意義。",
+  "designPurpose": "ERC-2009 旨在使受監管代幣的合規檢查去中心化。在此之前，KYC 與 AML 驗證往往在鏈下執行，這使轉帳變得中心化，並強制引入一個較慢、非原子性的二次確認步驟。ERC-1462 提出了代幣需要哪些檢查，但沒有規定如何實作它們。ERC-2009 以一個由檢查函式與更新函式組成的鏈上介面回應了這一問題，將規則邏輯留給實作者，並將狀態以 bytes32 token id 作為鍵儲存，從而使代幣能夠升級其合約而無需遷移資料。",
+  "commonUsage": "合規服務面向那些必須在合約中直接強制執行 KYC、AML 以及特定司法管轄區轉帳限額的受監管代幣和證券型代幣。由於一個服務可以透過 bytes32 id 註冊多個代幣，它的設計使立法者或發行方能夠為某一司法管轄區內的每一個代幣維護共享的合規規則。作為一項 Stagnant 提案，它從未在生產環境中被廣泛採用；實務中，鏈上合規更常由 ERC-3643 等許可型代幣框架來處理。",
+
+  "fn.checkTransferAllowed.desc": "檢查該代幣是否允許將給定數額從一個持有者轉帳給另一個持有者，並回傳一個狀態碼；除非該狀態碼為 0x11（Allowed，允許），否則代幣必須 revert。",
+  "fn.checkTransferAllowed.params.tokenId": "用於標識該代幣的唯一 bytes32 ID。",
+  "fn.checkTransferAllowed.params.from": "若執行，代幣將從該付款方地址扣除。",
+  "fn.checkTransferAllowed.params.to": "若執行，代幣將轉帳至該收款方地址。",
+  "fn.checkTransferAllowed.params.value": "將被轉帳的數額。",
+  "fn.checkTransferAllowed.returns.status": "一個狀態碼，0x11（Allowed，允許）或 0x10（Disallowed，不允許），或發行方自訂的等價代碼。",
+
+  "fn.checkMintAllowed.desc": "檢查該代幣是否允許向收款方鑄造給定數額，並回傳一個狀態碼，代幣必須將其視為鑄造的前置條件。",
+  "fn.checkMintAllowed.params.tokenId": "用於標識該代幣的唯一 bytes32 ID。",
+  "fn.checkMintAllowed.params.to": "將接收所鑄造代幣的收款方地址。",
+  "fn.checkMintAllowed.params.value": "將被鑄造的數額。",
+  "fn.checkMintAllowed.returns.status": "一個狀態碼，0x11（Allowed，允許）或 0x10（Disallowed，不允許），或發行方自訂的等價代碼。",
+
+  "fn.checkBurnAllowed.desc": "檢查該代幣是否允許從持有者處銷毀給定數額，並回傳一個狀態碼；該狀態碼必須為 0x11（Allowed，允許），銷毀才能繼續。",
+  "fn.checkBurnAllowed.params.tokenId": "用於標識該代幣的唯一 bytes32 ID。",
+  "fn.checkBurnAllowed.params.from": "代幣將從該付款方地址銷毀。",
+  "fn.checkBurnAllowed.params.value": "將被銷毀的數額。",
+  "fn.checkBurnAllowed.returns.status": "一個狀態碼，0x11（Allowed，允許）或 0x10（Disallowed，不允許），或發行方自訂的等價代碼。",
+
+  "fn.updateTransferAccumulated.desc": "記錄一筆轉帳的累計總額，並且必須在與該轉帳相同的交易中呼叫；如果此次更新違反任何合規規則，它將 revert。規則邏輯留給實作者。",
+  "fn.updateTransferAccumulated.params.tokenId": "用於標識該代幣的唯一 bytes32 ID。",
+  "fn.updateTransferAccumulated.params.from": "代幣從該付款方地址扣除。",
+  "fn.updateTransferAccumulated.params.to": "代幣轉帳至該收款方地址。",
+  "fn.updateTransferAccumulated.params.value": "正在轉帳的數額。",
+
+  "fn.addToken.desc": "以一個 bytes32 ID 將代幣註冊到服務中，使其可以呼叫更新函式；如果該 ID 已被佔用，它將 revert。註冊是否受限留給實作者決定。觸發 TokenAdded。",
+  "fn.addToken.params.tokenId": "要指派給該代幣的唯一 bytes32 ID。",
+  "fn.addToken.params.token": "將從該地址呼叫更新函式。",
+
+  "fn.authorizeAccumulatedOperator.desc": "授權一個操作者代表呼叫者的 token id 更新累計總額。成功時回傳 true 並觸發 AuthorizedAccumulatedOperator。",
+  "fn.authorizeAccumulatedOperator.params.operator": "要授權為累計更新操作者的地址。",
+  "fn.authorizeAccumulatedOperator.returns.success": "如果操作者被成功授權，則為 true。",
+
+  "fn.revokeAccumulatedOperator.desc": "撤銷某個操作者代表呼叫者的 token id 更新累計總額的授權。成功時回傳 true 並觸發 RevokedAccumulatedOperator。",
+  "fn.revokeAccumulatedOperator.params.operator": "要撤銷其累計更新操作者身分的地址。",
+  "fn.revokeAccumulatedOperator.returns.success": "如果操作者的授權已被撤銷，則為 true。",
+
+  "fn.TokenAdded.desc": "在代幣被加入到服務之後觸發。",
+  "fn.TokenAdded.params.tokenId": "用於標識該代幣的唯一 bytes32 ID。",
+  "fn.TokenAdded.params.token": "將從該地址呼叫更新函式。",
+
+  "fn.AuthorizedAccumulatedOperator.desc": "當某個操作者被授權代表某個代幣更新累計總額時觸發。",
+  "fn.AuthorizedAccumulatedOperator.params.operator": "被授權為累計更新操作者的地址。",
+  "fn.AuthorizedAccumulatedOperator.params.tokenId": "可以代表其進行累計更新的 token id。",
+
+  "fn.RevokedAccumulatedOperator.desc": "當某個操作者代表某個代幣更新累計總額的權限被撤銷時觸發。",
+  "fn.RevokedAccumulatedOperator.params.operator": "其操作者授權被撤銷的地址。",
+  "fn.RevokedAccumulatedOperator.params.tokenId": "先前可以代表其進行累計更新的 token id。",
+
+  "node.user": "受監管代幣",
+  "node.contract": "合規服務",
+  "node.storageAccumulated": "註冊表與累計總額",
+
+  "edge.callAddToken": "呼叫 addToken()",
+  "edge.callCheck": "呼叫 checkTransferAllowed()",
+  "edge.callUpdate": "呼叫 updateTransferAccumulated()",
+  "edge.writeStorage": "寫入註冊表與累計總額",
+  "edge.emitTokenAdded": "觸發 TokenAdded 事件",
+
+  "sim.complianceCheckWalkthrough.name": "合規檢查演練",
+  "sim.complianceCheckWalkthrough.desc": "跟隨一個受監管代幣，看它如何註冊到服務、檢查一筆轉帳並記錄累計總額。",
+  "sim.complianceCheckWalkthrough.param.from": "付款方",
+  "sim.complianceCheckWalkthrough.param.to": "收款方",
+  "sim.complianceCheckWalkthrough.param.value": "數額",
+  "sim.complianceCheckWalkthrough.step.register": "代幣透過 addToken 註冊到服務，該函式以一個 bytes32 id 儲存其地址並觸發 TokenAdded。",
+  "sim.complianceCheckWalkthrough.step.register.mobile": "註冊代幣",
+  "sim.complianceCheckWalkthrough.step.check": "在轉帳之前，代幣呼叫 checkTransferAllowed，服務回傳 0x11（Allowed，允許）。",
+  "sim.complianceCheckWalkthrough.step.check.mobile": "檢查轉帳",
+  "sim.complianceCheckWalkthrough.step.update": "在同一筆交易中，代幣呼叫 updateTransferAccumulated，該函式更新累計總額，或在違反規則時 revert。",
+  "sim.complianceCheckWalkthrough.step.update.mobile": "更新累計總額"
+}

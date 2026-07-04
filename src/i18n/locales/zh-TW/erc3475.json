@@ -1,0 +1,80 @@
+{
+  "short": "抽象儲存債券標準",
+  "introduction": "ERC-3475 定義了一個用於代幣化債券的介面——這類鏈上債務將其贖回條件、供應量和元資料直接儲存在合約儲存中，而非存放於外部。該標準由 Yu Liu、Varun Deshpande 及其共同作者於 2021 年 4 月提出。每份債券由標識債券類型的 class id 和標識其發行條件的 nonce id 來定址；由 (classId, nonceId, amount) 組成的 Transaction 元組驅動發行、轉移、贖回和銷毀操作，這些操作可批次合併為單次呼叫。",
+  "designPurpose": "ERC-3475 旨在表示現有代幣標準無法表達的債務。ERC-20 LP 代幣不帶有任何結構，因此複雜的獎勵和贖回邏輯必須存放在獨立的合約或鏈下資料庫中，從而割裂流動性並抬高 gas 成本。透過為每份債券賦予一個 class 和 nonce，並搭配鏈上的 Metadata 和 Values 結構，該標準讓單一合約能夠持有多種債券類型，每種類型都擁有各自的供應量、到期進度和贖回條款，且皆可透過一個介面讀取。",
+  "commonUsage": "該標準適用於將類債務部位代幣化的協議：固定收益或收益型債券、可贖回的流動性憑證，以及條款隨時間演變的類似金融工具。由於單一合約能夠以不同的 class 和 nonce 持有多個資金池，它適合那些整合流動性、而非為每個交易對部署獨立 ERC-20 LP 代幣的自動做市商（AMM）。錢包和次級市場透過該標準的 view 函式讀取餘額和贖回進度，以顯示和交易債券。",
+
+  "fn.transferFrom.desc": "將 Transaction 陣列中列出的債券從一個持有者轉移到另一個持有者。呼叫者必須持有透過 setApprovalFor 授予的、針對相關債券 class 的操作者授權。",
+  "fn.transferFrom.params.from": "債券餘額減少的持有者。",
+  "fn.transferFrom.params.to": "債券餘額增加的接收者。",
+  "fn.transferFrom.params.transactions": "由 (classId, nonceId, amount) 元組組成的陣列，指定要轉移哪些債券。",
+
+  "fn.issue.desc": "建立 Transaction 陣列所描述的債券，並將它們分配給某個地址。此函式應由單一特權實體呼叫，通常是發行方銀行合約，且需在存入所需抵押品之後呼叫。",
+  "fn.issue.params.to": "新建立的債券所發行到的地址。",
+  "fn.issue.params.transaction": "由 (classId, nonceId, amount) 元組組成的陣列，描述要建立的債券。",
+
+  "fn.redeem.desc": "在債券的到期條件滿足後，從某個地址贖回所列出的債券，並將其從活躍供應量中移除。此函式應僅限銀行或做市商合約呼叫。",
+  "fn.redeem.params.from": "贖回債券的來源地址。",
+  "fn.redeem.params.transactions": "由 (classId, nonceId, amount) 元組組成的陣列，描述要贖回的債券。",
+
+  "fn.burn.desc": "透過將所列出的債券發送到零地址來使其失效。與 redeem 類似，此函式應僅可由控制器或銀行合約呼叫。",
+  "fn.burn.params.from": "債券被銷毀的持有者。",
+  "fn.burn.params.transactions": "由 (classId, nonceId, amount) 元組組成的陣列，描述要銷毀的債券。",
+
+  "fn.approve.desc": "將花費者的授權額度精確設定為 Transaction 陣列中的債券，覆蓋針對這些 class 和 nonce 組合的任何先前授權額度。",
+  "fn.approve.params.spender": "被授權花費呼叫者債券的地址。",
+  "fn.approve.params.transactions": "由 (classId, nonceId, amount) 元組組成的陣列，即花費者被授權轉移的債券。",
+
+  "fn.setApprovalFor.desc": "啟用或停用某個操作者管理呼叫者的所有債券，並回傳最終的授權狀態。經授權的操作者可代表所有者進行轉移、贖回和銷毀。",
+  "fn.setApprovalFor.params.operator": "被授予或撤銷操作者身分的地址。",
+  "fn.setApprovalFor.params.approved": "true 表示授權該操作者，false 表示撤銷授權。",
+  "fn.setApprovalFor.returns.approved": "該操作者最終的授權狀態。",
+
+  "fn.balanceOf.desc": "回傳某個帳戶持有的、給定 class 和 nonce 的債券數量，其中包含已被贖回的債券。",
+  "fn.balanceOf.params.account": "被查詢債券餘額的地址。",
+  "fn.balanceOf.params.classId": "標識債券類型的 class id。",
+  "fn.balanceOf.params.nonceId": "標識該 class 內某次發行的 nonce id。",
+  "fn.balanceOf.returns.balance": "該帳戶持有的、該 class 和 nonce 的債券數量。",
+
+  "fn.Issue.desc": "當操作者向某個地址發行債券時觸發。零值發行不應觸發此事件。",
+  "fn.Issue.params.operator": "發行債券的操作者，通常是銀行（indexed）。",
+  "fn.Issue.params.to": "接收所發行債券的地址（indexed）。",
+  "fn.Issue.params.transactions": "被發行的 (classId, nonceId, amount) 元組。",
+
+  "fn.Redeem.desc": "當操作者從某個地址贖回債券時觸發。零值贖回不應觸發此事件。",
+  "fn.Redeem.params.operator": "贖回債券的操作者（indexed）。",
+  "fn.Redeem.params.from": "債券被贖回的來源地址（indexed）。",
+  "fn.Redeem.params.transactions": "被贖回的 (classId, nonceId, amount) 元組。",
+
+  "fn.Transfer.desc": "當操作者在持有者之間轉移債券時觸發。來自零地址的轉移必須觸發 Issue 而非此事件。",
+  "fn.Transfer.params.operator": "執行該轉移的操作者（indexed）。",
+  "fn.Transfer.params.from": "債券的發送來源地址（indexed）。",
+  "fn.Transfer.params.to": "債券的發送目標地址（indexed）。",
+  "fn.Transfer.params.transactions": "被轉移的 (classId, nonceId, amount) 元組。",
+
+  "node.user": "銀行（發行方）",
+  "node.contract": "ERC-3475 債券合約",
+  "node.storageBonds": "債券儲存",
+  "node.holder": "債券持有者",
+
+  "edge.callIssue": "呼叫 issue()",
+  "edge.callRedeem": "呼叫 redeem()",
+  "edge.updateBonds": "更新債券帳本",
+  "edge.bondsIssued": "記入債券",
+  "edge.emitIssue": "發出 Issue 事件",
+  "edge.emitRedeem": "發出 Redeem 事件",
+
+  "sim.issueBondWalkthrough.name": "債券發行流程詳解",
+  "sim.issueBondWalkthrough.desc": "跟隨一次來自銀行的 issue() 呼叫，從債券儲存一路走到 Issue 事件。",
+  "sim.issueBondWalkthrough.param.to": "接收方",
+  "sim.issueBondWalkthrough.param.classId": "Class id",
+  "sim.issueBondWalkthrough.param.amount": "數量",
+  "sim.issueBondWalkthrough.step.call": "銀行呼叫 issue()，傳入一個 Transaction 元組，指定要建立的債券 class、nonce 和數量。",
+  "sim.issueBondWalkthrough.step.call.mobile": "呼叫 issue()",
+  "sim.issueBondWalkthrough.step.execute": "合約將新債券寫入儲存，提升該 class 和 nonce 下持有者的餘額以及活躍供應量。",
+  "sim.issueBondWalkthrough.step.execute.mobile": "將債券寫入儲存",
+  "sim.issueBondWalkthrough.step.credit": "新建立的債券被記入接收方帳戶，接收方之後可對其進行轉移、交易或贖回。",
+  "sim.issueBondWalkthrough.step.credit.mobile": "記入持有者帳戶",
+  "sim.issueBondWalkthrough.step.event": "合約觸發 Issue 事件，以便錢包和索引器記錄這些新債券。",
+  "sim.issueBondWalkthrough.step.event.mobile": "發出 Issue 事件"
+}

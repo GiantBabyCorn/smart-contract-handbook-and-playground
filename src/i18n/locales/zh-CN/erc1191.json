@@ -1,0 +1,35 @@
+{
+  "short": "链 ID 混合大小写校验和地址编码",
+  "introduction": "ERC-1191 通过在哈希计算中可选地加入 EIP-155 链 ID，扩展了 ERC-55 的混合大小写地址校验和。它由 Juliano Rizzo 于 2018 年 3 月提出。当某个链 ID 属于选择加入此变体的网络时，地址会先加上链 ID 和 '0x' 分隔符前缀，再计算 Keccak-256 哈希，该哈希随后驱动 ERC-55 的字母大小写规则。注意：ERC-1191 处于 Last Call 阶段，即成为 Final 之前的最后审查窗口。",
+  "designPurpose": "ERC-1191 旨在防止当某个基于 Ethereum 的网络上的有效地址被用于另一个网络时导致资金损失。ERC-55 能捕捉输入错误，但对所有网络一视同仁，因此为测试网或同类链生成的地址在主网上仍能通过校验和。ERC-1191 为选择加入的网络将链 ID 混入哈希输入，因此为某个链 ID 生成校验和的地址在另一个链 ID 下会验证失败，从而让钱包能以对现有 ERC-55 代码的极小改动来标记跨网络错误。",
+  "commonUsage": "ERC-1191 由钱包和库在显示或验证地址时于链下应用，因此不需要任何链上合约或存储。规范将 RSK Mainnet（链 ID 30）和 RSK Testnet（链 ID 31）列为选择加入此变体的网络，其测试向量给出了这些链以及 Ethereum 主网的预期大小写。规范中提到的实现包括 MyCrypto、MyEtherWallet、web3.js 以及 Ledger 和 Trezor 硬件钱包。",
+
+  "node.user": "地址来源",
+  "node.encoder": "校验和编码器",
+  "node.storageInput": "链前缀输入",
+  "node.storageHash": "Keccak-256 哈希",
+  "node.storageResult": "带校验和的地址",
+  "node.verifier": "网络验证器",
+  "node.consumer": "验证钱包",
+
+  "edge.submitAddress": "提交地址和链 ID",
+  "edge.prefixChainId": "添加链 ID 前缀",
+  "edge.hashInput": "计算带前缀输入的哈希",
+  "edge.applyCasing": "应用字母大小写",
+  "edge.readHash": "读取哈希位",
+  "edge.checkCasing": "检查大小写",
+  "edge.deliverAddress": "交付验证后的地址",
+
+  "sim.checksumWalkthrough.name": "链 ID 校验和演练",
+  "sim.checksumWalkthrough.desc": "跟随一个地址和链 ID，观察编码器如何添加链 ID 前缀、对输入求哈希、应用 ERC-1191 大小写规则，以及网络客户端如何验证结果。",
+  "sim.checksumWalkthrough.param.address": "小写地址",
+  "sim.checksumWalkthrough.param.chainId": "网络链 ID",
+  "sim.checksumWalkthrough.step.submit": "钱包提交一个小写地址，并附带其所属网络的链 ID。",
+  "sim.checksumWalkthrough.step.submit.mobile": "提交地址和链",
+  "sim.checksumWalkthrough.step.prefix": "对于选择加入的链 ID，编码器在地址前加上链 ID 和 '0x' 分隔符前缀，然后计算该字符串的 Keccak-256 哈希。",
+  "sim.checksumWalkthrough.step.prefix.mobile": "加链 ID 前缀并哈希",
+  "sim.checksumWalkthrough.step.case": "当每个十六进制字母对应的哈希半字节为 8 或更大时，该字母大写，否则保持小写，从而产生一个特定于链的混合大小写地址。",
+  "sim.checksumWalkthrough.step.case.mobile": "应用字母大小写",
+  "sim.checksumWalkthrough.step.verify": "同一网络上的客户端从带链前缀的哈希重新推导大小写，仅当每个字母都匹配时才接受该地址。",
+  "sim.checksumWalkthrough.step.verify.mobile": "验证校验和"
+}

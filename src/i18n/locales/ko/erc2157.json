@@ -1,0 +1,68 @@
+{
+  "short": "EVM용 dType 스토리지 확장",
+  "introduction": "ERC-2157은 ERC-1900에서 유래한 탈중앙화 타입 시스템인 dType을 위한 선택적 스토리지 확장을 정의하며, 타입 인스턴스를 저장하는 컨트랙트의 ABI를 표준화합니다. 이는 2019년 6월 Loredana Cirstea와 Christian Tzurcanu가 제안했습니다. 각 스토리지 컨트랙트는 공통 CRUD 인터페이스를 노출하여 모든 레코드를 결정론적 식별자나 인덱스로 주소 지정할 수 있게 합니다. 참고: ERC-2157은 Stagnant(정체) 상태입니다. 6개월 이상 활동이 없어 최종 확정되지 않을 수 있지만, 역사적 또는 기술적으로 중요한 의미를 지닙니다.",
+  "designPurpose": "ERC-2157은 공개 데이터에 대한 결정론적 주소 지정 가능성을 Ethereum에 제공하기 위해 설계되었습니다. ERC-1900은 타입 정의를 표준화했지만 데이터 검색은 오프체인 블록체인 분석이나 블록 익스플로러 같은 중앙화된 캐시에 맡겼기 때문에, 온체인 컨트랙트는 다른 프로젝트의 인스턴스를 안정적으로 찾을 수 없었습니다. 공통 스토리지 ABI와 각 타입을 그 라이브러리 및 스토리지에 연결하는 TypeRootContract를 고정함으로써, ERC-2157은 모든 컨트랙트나 도구가 알려진 경로를 따라 레코드에 도달하고 dType 레지스트리로부터 그 ABI를 재구성할 수 있게 합니다.",
+  "commonUsage": "이 확장은 공유된 공개 데이터를 기반으로 구축된 애플리케이션을 대상으로 합니다. 즉, 알려진 스토리지 컨트랙트에서 상품 레코드를 직접 읽는 탈중앙화 마켓플레이스, Ethereum 샤드 간이나 체인 간에 타입 인스턴스를 동기화하는 데이터 브리지, 그리고 레지스트리로부터 컨트랙트의 ABI를 추론하는 도구입니다. 이 제안은 접근 제어와 가변성 제어를 향후 확장으로 미룹니다. ERC-2157은 Final 상태에 도달하지 못했기 때문에 프로덕션 채택이 아니라 참조 구현 작업에만 머물렀습니다.",
+
+  "fn.insert.desc": "새 타입 인스턴스를 저장하여 레코드 매핑에 기록하고 인덱스 배열에 추가합니다. 타입 라이브러리의 getIdentifier 함수로 계산된 기본 식별자를 반환하고 LogNew 이벤트를 발생시킵니다.",
+  "fn.insert.params.data": "저장할 타입 인스턴스로, 컨트랙트의 타입 라이브러리에 의해 타입이 지정됩니다.",
+  "fn.insert.returns.identifier": "레코드의 기본 식별자로, getIdentifier가 그 값에서 도출합니다.",
+
+  "fn.insertBytes.desc": "ABI로 인코딩된 바이트로 제공되는 새 타입 인스턴스를 저장하며, 레코드를 기록하기 전에 타입 라이브러리로 디코딩합니다.",
+  "fn.insertBytes.params.data": "저장할 ABI 인코딩된 타입 인스턴스.",
+  "fn.insertBytes.returns.identifier": "저장된 레코드의 기본 식별자.",
+
+  "fn.remove.desc": "주어진 식별자를 가진 레코드를 삭제하고 해당 스토리지 슬롯을 해제하며, 그 레코드가 차지하던 인덱스를 반환합니다.",
+  "fn.remove.params.identifier": "제거할 레코드의 기본 식별자.",
+  "fn.remove.returns.index": "제거된 레코드가 인덱스 배열에서 차지하던 인덱스.",
+
+  "fn.update.desc": "주어진 식별자로 저장된 레코드를 새 타입 인스턴스 값으로 덮어쓰고, 업데이트된 레코드의 식별자를 반환합니다.",
+  "fn.update.params.identifier": "업데이트할 레코드의 기본 식별자.",
+  "fn.update.params.data": "저장할 새 타입 인스턴스 값.",
+  "fn.update.returns.identifier": "업데이트된 레코드의 식별자.",
+
+  "fn.isStored.desc": "주어진 식별자를 가진 레코드가 스토리지 컨트랙트에 존재하는지 여부를 알려줍니다.",
+  "fn.isStored.params.identifier": "확인할 기본 식별자.",
+  "fn.isStored.returns.stored": "해당 식별자를 가진 레코드가 존재하면 true.",
+
+  "fn.getByHash.desc": "주어진 기본 식별자로 저장된 타입 인스턴스를 반환합니다.",
+  "fn.getByHash.params.identifier": "가져올 레코드의 기본 식별자.",
+  "fn.getByHash.returns.data": "저장된 타입 인스턴스.",
+
+  "fn.getByIndex.desc": "인덱스 배열의 주어진 위치에 저장된 타입 인스턴스를 반환하여 레코드를 열거할 수 있게 합니다.",
+  "fn.getByIndex.params.index": "인덱스 배열에서 레코드의 위치.",
+  "fn.getByIndex.returns.data": "저장된 타입 인스턴스.",
+
+  "fn.count.desc": "컨트랙트에 현재 저장된 레코드의 수를 반환합니다.",
+  "fn.count.returns.counter": "저장된 레코드의 총수.",
+
+  "fn.LogNew.desc": "새 타입 인스턴스가 스토리지 컨트랙트에 삽입될 때 발생합니다.",
+  "fn.LogNew.params.identifier": "삽입된 레코드의 기본 식별자.",
+  "fn.LogNew.params.index": "인덱스 배열에서 레코드의 인덱스.",
+
+  "fn.LogUpdate.desc": "기존 레코드가 업데이트될 때 발생합니다.",
+  "fn.LogUpdate.params.identifier": "업데이트된 레코드의 기본 식별자.",
+  "fn.LogUpdate.params.index": "인덱스 배열에서 레코드의 인덱스.",
+
+  "fn.LogRemove.desc": "레코드가 스토리지 컨트랙트에서 제거될 때 발생합니다.",
+  "fn.LogRemove.params.identifier": "제거된 레코드의 기본 식별자.",
+  "fn.LogRemove.params.index": "제거된 레코드가 인덱스 배열에서 차지하던 인덱스.",
+
+  "node.user": "데이터 게시자",
+  "node.contract": "타입 스토리지 컨트랙트",
+  "node.storageRecords": "레코드 스토리지",
+
+  "edge.callInsert": "insert() 호출",
+  "edge.updateRecords": "타입 인스턴스 저장",
+  "edge.emitLogNew": "LogNew 이벤트 발생",
+
+  "sim.insertWalkthrough.name": "타입 인스턴스 저장 둘러보기",
+  "sim.insertWalkthrough.desc": "게시자로부터 시작해 레코드 스토리지를 거쳐 LogNew 이벤트에 이르는 insert 호출을 따라갑니다.",
+  "sim.insertWalkthrough.param.record": "타입 인스턴스",
+  "sim.insertWalkthrough.step.call": "게시자는 스토리지 컨트랙트에 추가할 타입 인스턴스와 함께 insert(data)를 호출합니다.",
+  "sim.insertWalkthrough.step.call.mobile": "insert() 호출",
+  "sim.insertWalkthrough.step.execute": "컨트랙트는 타입 라이브러리의 getIdentifier 함수로 식별자를 도출하고, 레코드를 typeStruct 매핑에 기록하며, 그 식별자를 typeIndex 배열에 추가합니다.",
+  "sim.insertWalkthrough.step.execute.mobile": "레코드 저장",
+  "sim.insertWalkthrough.step.event": "컨트랙트는 LogNew(identifier, index)를 발생시켜 오프체인 인덱서가 새 레코드를 추적할 수 있게 합니다.",
+  "sim.insertWalkthrough.step.event.mobile": "LogNew 이벤트 발생"
+}

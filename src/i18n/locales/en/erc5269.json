@@ -1,0 +1,43 @@
+{
+  "short": "ERC Detection and Discovery",
+  "introduction": "ERC-5269 defines an interface for detecting which ERCs a smart contract supports, identifying each standard by its ERC number, not a hashed function selector. It was proposed by Zainan Victor Zhou in July 2022. Its core method, supportERC, takes a caller, an ERC number, and a sub-behavior identifier, and returns a bytes32 status such as keccak256(\"FINAL\"). Contracts may also emit an OnSupportERC event to advertise support. Note: ERC-5269 is in Review status; the interface may still change before it is finalized.",
+  "designPurpose": "ERC-5269 was designed to address limitations of ERC-165. ERC-165 hashes a method signature, so it cannot describe standards that define no method, such as data-format or signature schemes, and it cannot answer differently depending on who is asking. ERC-5269 instead queries support by ERC number, which is human-readable and easier to use with named contracts such as ENS, and it adds a caller parameter so a contract can report different support for different callers, as with a transparent proxy admin.",
+  "commonUsage": "Because ERC-5269 competes with the widely used ERC-165, it is intended for contracts that want to advertise the ERCs they implement in a human-readable form. A contract emits OnSupportERC(address(0), 5269, 0, status) on construction or upgrade to declare its compliance, and callers can query supportERC to learn whether a given standard is available to an address. The specification illustrates the pattern with an ERC-721 contract that also declares support for its Metadata and Enumerable extensions.",
+
+  "fn.supportERC.desc": "Returns a bytes32 status indicating whether the contract supports the ERC given by majorERCIdentifier and the sub-behavior in minorERCIdentifier. Returns keccak256(\"FINAL\") for Final ERCs; a zero return means not supported.",
+  "fn.supportERC.params.caller": "The address whose access to the queried ERC is being checked; support may vary by caller.",
+  "fn.supportERC.params.majorERCIdentifier": "The ERC number being queried, which should be in the range (0, 2^32-1].",
+  "fn.supportERC.params.minorERCIdentifier": "A bytes32 identifier for a sub-behavior; a value of 0 refers to the main behavior of the ERC.",
+  "fn.supportERC.params.extraData": "Extra calldata reserved for ERC-5750 style future extensions.",
+  "fn.supportERC.returns.ercStatus": "A bytes32 status: keccak256(\"FINAL\") for Final ERCs, keccak256(\"DRAFT\") or another documented value otherwise, and 0 for unsupported.",
+
+  "fn.OnSupportERC.desc": "Optionally emitted, typically on construction or upgrade, to declare that the contract supports a given ERC or sub-behavior. An emission with caller address(0) applies to all callers.",
+  "fn.OnSupportERC.params.caller": "The caller the declaration applies to; address(0) means all callers.",
+  "fn.OnSupportERC.params.majorERCIdentifier": "The ERC number the contract is declaring support for.",
+  "fn.OnSupportERC.params.minorERCIdentifier": "The sub-behavior identifier; a value of 0 means the entire ERC.",
+  "fn.OnSupportERC.params.ercStatus": "The status value declared for the ERC, such as keccak256(\"FINAL\").",
+  "fn.OnSupportERC.params.extraData": "Additional data reserved for future extensions.",
+
+  "node.user": "Querying Caller",
+  "node.contract": "ERC-5269 Contract",
+  "node.storageSupport": "Declared Support Table",
+
+  "edge.callSupportERC": "Call supportERC()",
+  "edge.readSupport": "Look up ERC status",
+  "edge.returnStatus": "Return ercStatus",
+  "edge.emitOnSupport": "Emit OnSupportERC event",
+
+  "sim.supportQueryWalkthrough.name": "Support Query Walkthrough",
+  "sim.supportQueryWalkthrough.desc": "Query a contract for whether it supports a given ERC number using supportERC(), then see how the contract advertises support.",
+  "sim.supportQueryWalkthrough.param.caller": "Caller address to check",
+  "sim.supportQueryWalkthrough.param.majorERCIdentifier": "ERC number to query",
+  "sim.supportQueryWalkthrough.param.minorERCIdentifier": "Sub-behavior identifier",
+  "sim.supportQueryWalkthrough.step.call": "The caller invokes supportERC(caller, majorERCIdentifier, minorERCIdentifier, extraData) on the contract to ask whether an ERC is supported.",
+  "sim.supportQueryWalkthrough.step.call.mobile": "Call supportERC()",
+  "sim.supportQueryWalkthrough.step.lookup": "The view function checks the contract's declared support for the requested ERC number and sub-behavior, without mutating any state.",
+  "sim.supportQueryWalkthrough.step.lookup.mobile": "Look up ERC status",
+  "sim.supportQueryWalkthrough.step.return": "The contract returns the bytes32 status, such as keccak256(\"DRAFTv1\") here; a zero value would mean the ERC is not supported.",
+  "sim.supportQueryWalkthrough.step.return.mobile": "Return ercStatus",
+  "sim.supportQueryWalkthrough.step.declare": "Separately, the contract emits OnSupportERC on construction or upgrade so indexers can discover the ERCs it supports.",
+  "sim.supportQueryWalkthrough.step.declare.mobile": "Emit OnSupportERC event"
+}

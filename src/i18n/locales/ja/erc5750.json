@@ -1,0 +1,27 @@
+{
+  "short": "メソッド動作の汎用的な拡張性",
+  "introduction": "ERC-5750 は、コントラクトのメソッドの最後の引数（動的サイズの bytes フィールド）を動作拡張のための開かれたスロットとして指定することで、メソッドを拡張可能にするための規約を定義します。この規格は 2022年10月に Zainan Victor Zhou によって提案されました。準拠メソッドは、将来のニーズごとに新しいメソッドを追加する代わりに、署名・ノンス・コミットメントといった任意のペイロードを運ぶ末尾の bytes 引数を受け取ります。そのフィールドが空の場合、メソッドはそれを持たないオーバーロードされた同名メソッドとまったく同じように振る舞わなければなりません。",
+  "designPurpose": "ERC-5750 は、既存の呼び出し元を壊すことなくメソッドのインターフェースを進化させられるように設計されました。それ以前は、関数を拡張するには、新しいメソッドを考案して命名や関数シグネチャに関するあらゆる問題を抱えるか、既存のパラメータを流用して曖昧さのリスクを負うかのいずれかでした。この規格は、非構造化の拡張データ用に末尾の bytes パラメータを 1つ予約することで、あらゆる将来の方式をエンコードできる前方互換の逃げ道を各メソッドに与えつつ、データが空のときの動作を素のメソッドと同一に保ちます。",
+  "commonUsage": "すでにいくつかの確立された規格が準拠メソッドを含んでいます。ERC-721 と ERC-1155 の safeTransferFrom 関数、および ERC-777 の burn と send 関数は、いずれも末尾に bytes 型の data パラメータを配置しています。より新しい設計はこの規約を採用し、署名を添付したり、commit-reveal 方式のためにソルト・ノンス・コミットメントを運んだり、受信側のコールバックへデータを転送したりします。またこの規格は、ERC-2535 の diamondCut のように末尾の bytes がすでに実質的な役割を担っているメソッドを、準拠にはオーバーロードが必要なものとして示しています。",
+
+  "node.user": "呼び出し元",
+  "node.contract": "準拠コントラクト",
+  "node.storageData": "拡張ペイロード",
+  "node.extension": "拡張動作",
+
+  "edge.callMethod": "data を付けて methodName1() を呼び出す",
+  "edge.readData": "data パラメータを読み取る",
+  "edge.invokeExtension": "拡張動作を呼び出す",
+  "edge.forwardData": "ペイロードを転送する",
+
+  "sim.extensionCallWalkthrough.name": "メソッド拡張のウォークスルー",
+  "sim.extensionCallWalkthrough.desc": "末尾の bytes ペイロードが拡張動作をトリガーする準拠メソッド呼び出しをたどります。",
+  "sim.extensionCallWalkthrough.param.param1": "メソッドパラメータ",
+  "sim.extensionCallWalkthrough.param.data": "拡張ペイロード",
+  "sim.extensionCallWalkthrough.step.call": "呼び出し元が準拠コントラクトの methodName1 を呼び出し、末尾の bytes data パラメータとして拡張ペイロードを付加します。",
+  "sim.extensionCallWalkthrough.step.call.mobile": "data を付けて呼び出す",
+  "sim.extensionCallWalkthrough.step.execute": "コントラクトはコアの動作を実行し、末尾の data パラメータを読み取ります。そのフィールドが空の場合、この呼び出しはパラメータを持たない同名メソッドと一致します。",
+  "sim.extensionCallWalkthrough.step.execute.mobile": "data パラメータを読み取る",
+  "sim.extensionCallWalkthrough.step.extension": "コントラクトはペイロードをデコードし、署名の検証やコミットメントの記録といった拡張動作を呼び出します。",
+  "sim.extensionCallWalkthrough.step.extension.mobile": "拡張を呼び出す"
+}

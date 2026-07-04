@@ -1,0 +1,26 @@
+{
+  "short": "分层 BLS12-381 密钥生成",
+  "introduction": "ERC-2333 定义了一种从单个熵种子派生出分层 BLS12-381 私钥树的方法。它由 Carl Beekhuizen 于 2019 年 9 月提出。主密钥位于树根；每个子密钥都由其父密钥和一个 32 位索引计算得出，因此众多密钥都源自同一个祖先。派生过程会将熵经过用 SHA256 哈希的中间 Lamport 密钥，这些密钥同时兼作后量子备份。注：ERC-2333 处于 Review 状态；在最终定稿之前接口仍可能变更。",
+  "designPurpose": "设计 ERC-2333 的原因在于：以太坊针对 secp256k1 密钥常用的 BIP32 方案对 BLS12-381 并不安全——它生成的密钥中有超过 54% 会超出曲线的子群阶而变得无效。为避免这一点，该标准使用 HKDF_mod_r（来自 IETF BLS 签名草案的 KeyGen 函数）将每个父密钥哈希到有效的私钥范围内。尽早对派生方式加以标准化还能让各种工具相互协作，而且它只使用硬化密钥，相比 UTXO 式的非硬化密钥更适合用于签署。",
+  "commonUsage": "该方案用于生成和管理 BLS12-381 密钥，其中最典型的是以太坊信标链（Beacon Chain）上使用的验证者密钥——在那里，一个助记词种子就能备份整整一族密钥。规范建议使用 BIP-39 方法来派生该种子，这样遵循此方法的钱包和密钥生成工具就能在不同程序之间恢复出相同的密钥。由于每个密钥只需要一个父密钥和一个子索引，便可从单个祖先为不同用途配置出各组密钥。",
+
+  "node.user": "种子所有者",
+  "node.scheme": "密钥派生方案",
+  "node.storageTree": "密钥树",
+
+  "edge.provideSeed": "提供种子",
+  "edge.storeMaster": "存储主密钥",
+  "edge.deriveChild": "派生子密钥",
+  "edge.populateTree": "填充密钥树",
+
+  "sim.deriveKeysWalkthrough.name": "密钥派生演练",
+  "sim.deriveKeysWalkthrough.desc": "跟随一个种子，观察方案如何派生出主密钥，再在树中派生出子密钥。",
+  "sim.deriveKeysWalkthrough.param.seed": "熵种子",
+  "sim.deriveKeysWalkthrough.param.index": "子索引",
+  "sim.deriveKeysWalkthrough.step.seed": "种子所有者向派生方案的入口点 derive_master_SK 提供一个熵种子。",
+  "sim.deriveKeysWalkthrough.step.seed.mobile": "提供种子",
+  "sim.deriveKeysWalkthrough.step.master": "方案将种子哈希到 BLS 私钥范围内，并将结果作为主密钥存储在树的根部。",
+  "sim.deriveKeysWalkthrough.step.master.mobile": "派生主密钥",
+  "sim.deriveKeysWalkthrough.step.child": "以主密钥作为父密钥并使用一个 32 位索引，derive_child_SK 计算出一个子密钥来填充这棵树。",
+  "sim.deriveKeysWalkthrough.step.child.mobile": "派生子密钥"
+}

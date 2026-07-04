@@ -1,0 +1,59 @@
+{
+  "short": "Estándar de Token con Modelo de Manejo de Transacciones",
+  "introduction": "ERC-223 define una interfaz de token fungible que notifica a los contratos receptores las transferencias entrantes mediante un callback tokenReceived obligatorio. Fue propuesto por Dexaran en mayo de 2017. A diferencia de ERC-20, enviar tokens ERC-223 a un contrato invoca el manejador tokenReceived de ese contrato y revierte cuando el manejador está ausente, de modo que los tokens no pueden quedar bloqueados silenciosamente en contratos que no fueron creados para recibirlos. Una única función transfer sirve tanto para cuentas como para contratos, y una carga útil de datos opcional puede viajar junto con los tokens.",
+  "designPurpose": "ERC-223 se diseñó para eliminar un modo de fallo común de ERC-20, en el que los tokens enviados a un contrato con la función transfer sencilla no se reconocen y quedan atascados de forma permanente. Como el transfer de ERC-20 no notifica al receptor, depositar en un contrato requiere en su lugar el patrón de dos pasos approve y transferFrom. ERC-223 responde a esto haciendo que cada transferencia invoque el manejador tokenReceived del destinatario y revirtiendo cuando falta, de modo que los depósitos se completan en una sola transacción, evitando pérdidas accidentales.",
+  "commonUsage": "ERC-223 está dirigido a aplicaciones que aceptan depósitos de tokens en contratos, como exchanges, procesadores de pagos y vaults, donde su depósito de una sola llamada evita la transacción de aprobación adicional que ERC-20 necesita. El callback del receptor permite que un contrato valide o rechace los tokens entrantes a medida que llegan, y su carga útil de datos puede transportar instrucciones para el receptor. ERC-20 sigue estando mucho más ampliamente desplegado, por lo que ERC-223 lo adoptan principalmente los proyectos que desean específicamente su comportamiento de notificación de depósitos.",
+
+  "fn.totalSupply.desc": "Devuelve el número total de tokens existentes. La especificación indica que se comporta de forma idéntica a la función totalSupply de ERC-20.",
+  "fn.totalSupply.returns.supply": "El suministro total de tokens, en la unidad más pequeña.",
+
+  "fn.balanceOf.desc": "Devuelve el saldo de tokens que posee la cuenta indicada. Su comportamiento es idéntico al de la función balanceOf de ERC-20.",
+  "fn.balanceOf.params.owner": "La dirección cuyo saldo se consulta.",
+  "fn.balanceOf.returns.balance": "El número de tokens que posee la cuenta, en la unidad más pequeña.",
+
+  "fn.transfer.desc": "Transfiere _value tokens a _to. Si _to es un contrato, el token llama a su manejador tokenReceived y revierte cuando ese manejador está ausente; las transferencias a cuentas de propiedad externa omiten el callback. Esta sobrecarga adjunta una carga útil vacía y existe por compatibilidad con ERC-20.",
+  "fn.transfer.params.to": "La dirección del destinatario.",
+  "fn.transfer.params.value": "La cantidad de tokens a transferir, en la unidad más pequeña.",
+  "fn.transfer.returns.success": "Devuelve true cuando la transferencia tiene éxito.",
+
+  "fn.transferData.desc": "Transfiere _value tokens a _to adjuntando una carga útil _data arbitraria. Cuando _to es un contrato, su manejador tokenReceived(address, uint256, bytes) se invoca después de actualizar los saldos, y la transferencia revierte si el manejador no está implementado. El _data se comporta como msg.data en una transacción de ether y puede estar vacío.",
+  "fn.transferData.params.to": "La dirección del destinatario.",
+  "fn.transferData.params.value": "La cantidad de tokens a transferir, en la unidad más pequeña.",
+  "fn.transferData.params.data": "Metadatos arbitrarios que se reenvían al manejador tokenReceived del destinatario; puede estar vacío.",
+  "fn.transferData.returns.success": "Devuelve true cuando la transferencia tiene éxito.",
+
+  "fn.tokenReceived.desc": "Manejador que un contrato receptor debe implementar para aceptar tokens ERC-223. El contrato del token lo llama tras actualizar los saldos, pasando el remitente, la cantidad y los datos, y debe devolver el valor mágico 0x8943ec02 para confirmar la transferencia. Los contratos que lo omiten hacen que la transferencia revierta.",
+  "fn.tokenReceived.params.from": "La dirección que envió los tokens.",
+  "fn.tokenReceived.params.value": "La cantidad de tokens entrantes.",
+  "fn.tokenReceived.params.data": "Metadatos adjuntos, análogos a msg.data de una transacción de ether.",
+  "fn.tokenReceived.returns.magic": "El valor mágico 0x8943ec02 que confirma la transferencia entrante.",
+
+  "fn.Transfer.desc": "Se emite cuando se transfieren tokens y lleva la carga útil de datos adjunta. Es compatible y similar al evento Transfer de ERC-20, pero añade un campo data de tipo bytes.",
+  "fn.Transfer.params.from": "La dirección desde la que se transfieren los tokens.",
+  "fn.Transfer.params.to": "La dirección a la que se transfieren los tokens.",
+  "fn.Transfer.params.value": "El número de tokens transferidos.",
+  "fn.Transfer.params.data": "La carga útil de datos adjunta a la transferencia.",
+
+  "node.user": "Emisor del token",
+  "node.contract": "Token ERC-223",
+  "node.storageBalances": "Almacenamiento del token",
+  "node.recipient": "Contrato receptor",
+
+  "edge.callTransfer": "Llamar a transfer()",
+  "edge.updateBalances": "Actualizar saldos",
+  "edge.callTokenReceived": "Llamar a tokenReceived()",
+  "edge.emitTransfer": "Emitir el evento Transfer",
+
+  "sim.tokenTransferWalkthrough.name": "Transferencia de token con callback",
+  "sim.tokenTransferWalkthrough.desc": "Sigue una transferencia ERC-223 desde el emisor, a través de las actualizaciones de saldo y el callback tokenReceived del destinatario, hasta el evento Transfer.",
+  "sim.tokenTransferWalkthrough.param.to": "Dirección del destinatario",
+  "sim.tokenTransferWalkthrough.param.value": "Cantidad (en wei)",
+  "sim.tokenTransferWalkthrough.step.call": "El emisor llama a transfer(to, value, data) en el contrato de token ERC-223 para enviar tokens al destinatario.",
+  "sim.tokenTransferWalkthrough.step.call.mobile": "Llamar a transfer()",
+  "sim.tokenTransferWalkthrough.step.execute": "El contrato descuenta la cantidad del emisor y la acredita al destinatario en el mapping balances.",
+  "sim.tokenTransferWalkthrough.step.execute.mobile": "Actualizar saldos",
+  "sim.tokenTransferWalkthrough.step.notify": "Como el destinatario es un contrato, el token llama a su manejador tokenReceived, que debe devolver 0x8943ec02 o toda la transferencia revierte.",
+  "sim.tokenTransferWalkthrough.step.notify.mobile": "Notificar al destinatario",
+  "sim.tokenTransferWalkthrough.step.event": "El contrato emite Transfer(from, to, value, data) para que los servicios fuera de la cadena puedan rastrear la transferencia y su carga útil.",
+  "sim.tokenTransferWalkthrough.step.event.mobile": "Emitir el evento Transfer"
+}

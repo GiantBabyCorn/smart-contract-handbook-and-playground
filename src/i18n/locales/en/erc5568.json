@@ -1,0 +1,31 @@
+{
+  "short": "Well-Known Format for Required Actions",
+  "introduction": "ERC-5568 defines a machine-readable format that lets a smart contract tell a wallet the user must take an action, such as approving a token, before a transaction succeeds. It was proposed by Gavin John in August 2022. A contract exposes a well-known walletSignal24 view function that returns an instruction_id and instruction_data, or reverts with a WalletSignal24 error, and the wallet simulates the call and resolves it. Note: ERC-5568 is in Review status; the interface may still change before it is finalized.",
+  "designPurpose": "ERC-5568 was designed to move action-signaling logic out of hard-coded front-end code and into the contract itself. Before it, a dApp interface had to know that a call would fail without, say, a prior token approval, and encode that recovery flow by hand for every contract. ERC-5568 lets the contract declare the needed action through one well-known function and a reserved revert error, so any wallet can detect and resolve it generically, carrying an instruction id plus up to 64 kB of arbitrary parameters.",
+  "commonUsage": "The format targets wallets and the contracts they interact with: an exchange can ask the wallet to approve a token before a trade, request an off-chain HTTP request, or prompt the user to rotate keys on a schedule. Because an instruction id is namespaced to the ERC number that defines it, other standards can add new instruction types that any ERC-5568-aware wallet understands. As a Review-stage proposal, it is mainly of interest to wallet developers and standards authors.",
+
+  "fn.walletSignal24.desc": "A well-known view function a wallet simulates before broadcasting a transaction. It returns a nonzero instruction_id with instruction_data when the user must act, or an instruction_id of 0 when no action is needed.",
+  "fn.walletSignal24.params.selector": "A selector identifying the operation the wallet intends to perform.",
+  "fn.walletSignal24.params.function_data": "Arbitrary calldata describing the intended operation, letting the contract decide which instruction to return.",
+  "fn.walletSignal24.returns.instruction_id": "The instruction identifier, equal to the ERC number of the required action, or 0 when no action is needed.",
+  "fn.walletSignal24.returns.instruction_data": "Up to 64 kB of instruction parameters, whose structure is defined by the ERC that owns the instruction_id.",
+
+  "node.user": "Wallet",
+  "node.contract": "Signaling Contract",
+  "node.handler": "User",
+
+  "edge.callWalletSignal24": "Simulate walletSignal24()",
+  "edge.emitWalletSignal24": "Return WalletSignal24 signal",
+  "edge.resolveAction": "Prompt required action",
+
+  "sim.walletSignalWalkthrough.name": "Wallet Signal Walkthrough",
+  "sim.walletSignalWalkthrough.desc": "Follow how a contract signals a required action to a wallet through walletSignal24 and the WalletSignal24 error.",
+  "sim.walletSignalWalkthrough.param.selector": "Requested action",
+  "sim.walletSignalWalkthrough.param.instructionId": "Instruction ID",
+  "sim.walletSignalWalkthrough.step.call": "The wallet simulates walletSignal24 on the contract before broadcasting the user's transaction.",
+  "sim.walletSignalWalkthrough.step.call.mobile": "Simulate walletSignal24()",
+  "sim.walletSignalWalkthrough.step.execute": "The contract determines that an action is required and returns a nonzero instruction_id, or reverts with the WalletSignal24 error carrying the same data.",
+  "sim.walletSignalWalkthrough.step.execute.mobile": "Return signal",
+  "sim.walletSignalWalkthrough.step.signal": "The wallet parses the instruction, prompts the user to complete the required action, then re-evaluates the original transaction.",
+  "sim.walletSignalWalkthrough.step.signal.mobile": "Prompt user action"
+}

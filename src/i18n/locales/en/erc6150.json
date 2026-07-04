@@ -1,0 +1,52 @@
+{
+  "short": "Filesystem-Like Hierarchical NFTs",
+  "introduction": "ERC-6150 defines an extension to ERC-721 that arranges NFTs into a filesystem-like hierarchy, where each token is a node with one parent and any number of children. It was proposed by Keegan Lee, msfew, Kartin, and qizhou in December 2022. Token ID zero means no parent, so every real node has an ID above zero and a root reports a parent of zero. The interface adds read functions for a node's parent and children and to test whether it is a root or a leaf, plus a Minted event marking each new node.",
+  "designPurpose": "ERC-6150 was designed to bring tree-structured data on-chain through a single contract, instead of the ad-hoc parent pointers or side registries that applications bolted onto ERC-721. Hierarchies are common in filesystems and in category trees on sites like eBay or Reddit, yet plain NFTs express no relationship between tokens. By standardizing the Minted event and the parentOf, childrenOf, isRoot, and isLeaf queries, the design keeps the tree on-chain for any front-end to traverse permissionlessly.",
+  "commonUsage": "ERC-6150 targets applications whose data is naturally tree-shaped: on-chain forums like Reddit, social feeds organized into lists, organizational charts for on-chain corporations, and e-commerce category trees like eBay's. Because each directory or category is itself an NFT, ownership of a branch can be transferred or governed by a DAO. The specification defines optional extensions for enumerating children, burning leaf nodes, reparenting a node, and per-node access control, so implementers add only what they need.",
+
+  "fn.parentOf.desc": "Returns the parent token of the given node. A root node returns zero, since token ID zero is reserved to mean the token has no parent.",
+  "fn.parentOf.params.tokenId": "The child token whose parent is looked up.",
+  "fn.parentOf.returns.parentId": "The parent token's ID, or zero when the node is a root.",
+
+  "fn.childrenOf.desc": "Returns the array of child tokens directly under the given node. A leaf node returns an empty array.",
+  "fn.childrenOf.params.tokenId": "The parent token whose direct children are listed.",
+  "fn.childrenOf.returns.childrenIds": "The IDs of the tokens whose parent is tokenId.",
+
+  "fn.isRoot.desc": "Returns true when the given token is a root node, meaning it has no parent. Roots are the top-level entries of the hierarchy.",
+  "fn.isRoot.params.tokenId": "The token to test.",
+  "fn.isRoot.returns.root": "True if the token is a root node with no parent.",
+
+  "fn.isLeaf.desc": "Returns true when the given token is a leaf node, meaning it has no children. Leaves sit at the bottom of the hierarchy.",
+  "fn.isLeaf.params.tokenId": "The token to test.",
+  "fn.isLeaf.returns.leaf": "True if the token is a leaf node with no children.",
+
+  "fn.Minted.desc": "Emitted when a new token is minted under a parent. A parentId of zero indicates the minted token is a root; the minted token ID is required to be greater than zero.",
+  "fn.Minted.params.minter": "The address that minted the token.",
+  "fn.Minted.params.to": "The address that received the minted token.",
+  "fn.Minted.params.parentId": "The parent token's ID, or zero when the minted token is a root.",
+  "fn.Minted.params.tokenId": "The ID of the newly minted token, required to be greater than zero.",
+
+  "node.user": "NFT Owner",
+  "node.contract": "Hierarchical NFT Contract",
+  "node.storageHierarchy": "Hierarchy Storage",
+  "node.recipient": "Child Node Recipient",
+
+  "edge.mintChild": "Mint child node",
+  "edge.updateHierarchy": "Update hierarchy",
+  "edge.emitMinted": "Emit Minted event",
+  "edge.assignChild": "Assign child node",
+  "edge.callParentOf": "Call parentOf()",
+  "edge.callChildrenOf": "Call childrenOf()",
+
+  "sim.mintChild.name": "Mint a Child Node",
+  "sim.mintChild.desc": "Follow the minting of a child node under a parent, from the owner's call through the hierarchy storage update to the Minted event.",
+  "sim.mintChild.param.parentId": "Parent token ID",
+  "sim.mintChild.param.tokenId": "New child token ID",
+  "sim.mintChild.param.to": "Recipient address",
+  "sim.mintChild.step.call": "The owner mints a new token under parent 1, passing the recipient address and the new child token ID to the hierarchical NFT contract.",
+  "sim.mintChild.step.call.mobile": "Mint child node",
+  "sim.mintChild.step.execute": "The contract links the new token to its parent, writing the parent pointer and appending the child to the parent's children list.",
+  "sim.mintChild.step.execute.mobile": "Update hierarchy",
+  "sim.mintChild.step.event": "The contract emits Minted(minter, to, parentId, tokenId) and assigns the new child node to the recipient.",
+  "sim.mintChild.step.event.mobile": "Emit Minted event"
+}

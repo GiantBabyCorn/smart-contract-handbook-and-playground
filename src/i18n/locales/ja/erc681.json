@@ -1,0 +1,32 @@
+{
+  "short": "トランザクションリクエストのURL形式",
+  "introduction": "ERC-681は、Ethereumのトランザクションリクエスト、特にetherやERC-20トークンでの支払いリクエストをエンコードするURL形式を定義しており、QRコード、ハイパーリンク、メール、チャットメッセージに埋め込めるようにします。この規格は2017年8月にDaniel A. Nagyによって提案されました。リクエストはethereum:スキームに続いて、ターゲットアドレス、オプションのチェーンID、オプションの関数名、そしてvalue、gas、ABI型付き引数などのクエリパラメータを使用します。URLを開くと、ユーザーのウォレットが事前入力済みのトランザクションとともに起動し、確認を求めます。",
+  "designPurpose": "ERC-681は、Bitcoinスタイルの支払いURLの利便性をEthereumにもたらすために設計されました。それ以前は、完全にパラメータ化されたトランザクションをウォレットに渡す標準的な方法が存在せず、送信者はアドレスと金額を手作業でコピーしていたため、誤りやフィッシングを招いていました。ターゲットアドレス、オプションのチェーンID、関数名、型付きパラメータを含むethereum: URLを標準化することで、ERC-681は、ウォレットが解析して確認のために提示できるリクエストをあらゆるチャネルが配信できるようにし、同時にすべての金額をユーザーが編集可能な状態に保ちます。",
+  "commonUsage": "支払いリクエストURLは、特定のアドレスと金額に対してethereum:リンクやQRコードを表示するウォレット、POSシステム、寄付ページで使用されます。ネイティブトークン形式はvalueパラメータを通じてetherを要求し、トークン形式はaddressとuint256の引数を用いてERC-20コントラクトのtransfer関数を対象とします。ERC-137を通じて解決されるENS名は16進数アドレスの代わりに使用できますが、クライアントはフィッシングリスクを軽減するために生の0xアドレスを優先します。",
+
+  "node.payee": "支払いリクエスト元",
+  "node.urlBuilder": "URLエンコーダー",
+  "node.paymentUrl": "Ethereum支払いURL",
+  "node.wallet": "支払人のウォレット",
+  "node.payer": "支払人",
+  "node.transaction": "署名済みトランザクション",
+
+  "edge.buildRequest": "支払いリクエストを作成",
+  "edge.encodeUrl": "ethereum: URLをエンコード",
+  "edge.scanUrl": "リンクをスキャンまたは開く",
+  "edge.confirm": "確認して署名",
+  "edge.buildTx": "トランザクションを作成",
+
+  "sim.paymentRequestWalkthrough.name": "支払いリクエストのウォークスルー",
+  "sim.paymentRequestWalkthrough.desc": "支払いリクエストを、ethereum: URLから支払人のウォレットを経て署名済みトランザクションに至るまで追います。",
+  "sim.paymentRequestWalkthrough.param.targetAddress": "受取人のアドレス",
+  "sim.paymentRequestWalkthrough.param.value": "wei単位の金額",
+  "sim.paymentRequestWalkthrough.step.build": "支払いリクエスト元が、受取人のアドレスと支払いを要求する金額を選択します。",
+  "sim.paymentRequestWalkthrough.step.build.mobile": "リクエストを作成",
+  "sim.paymentRequestWalkthrough.step.encode": "アドレス、チェーンID、valueがethereum: URLにエンコードされ、QRコードまたはハイパーリンクとして表示できます。",
+  "sim.paymentRequestWalkthrough.step.encode.mobile": "URLをエンコード",
+  "sim.paymentRequestWalkthrough.step.scan": "支払人がリンクをスキャンまたは開くと、ウォレットがURLを解析し、事前入力済みで編集可能なトランザクションを確認のために提示します。",
+  "sim.paymentRequestWalkthrough.step.scan.mobile": "スキャンして確認",
+  "sim.paymentRequestWalkthrough.step.send": "支払人が確認すると、ウォレットはトランザクションに署名してブロードキャストし、要求されたvalueをターゲットアドレスに送信します。",
+  "sim.paymentRequestWalkthrough.step.send.mobile": "署名して送信"
+}

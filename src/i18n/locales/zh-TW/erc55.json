@@ -1,0 +1,32 @@
+{
+  "short": "混合大小寫檢查碼位址編碼",
+  "introduction": "ERC-55 為 Ethereum 位址定義了一種向後相容的檢查碼，它將錯誤偵測位元編碼到十六進位數字的字母大小寫中。該方案由 Vitalik Buterin 與 Alex Van de Sande 於 2016 年 1 月提出。位址會先轉換為 40 個字元的小寫十六進位形式，並作為 ASCII 字串以 Keccak-256 進行雜湊；當雜湊中對應的半位元組（nibble）為 8 或更大時，該十六進位字母會轉為大寫，否則保持小寫。十進位數字保持不變，因此位址在長度不變的情況下增加了約 15 個檢查位元。",
+  "designPurpose": "ERC-55 的設計目的是在不改變長度、也不破壞現有工具的前提下，偵測輸入錯誤的 Ethereum 位址。單純的十六進位位址沒有任何冗餘，因此只要更動一個字元，就會產生另一個看似有效的位址，資金可能因此遺失。ERC-55 並非附加一個檢查碼，而是重複利用 a-f 字母的大小寫作為逐字元的檢查。由於大多數解析器都接受大小寫混合的十六進位，帶檢查碼的位址在較舊的軟體中也能運作，而支援此功能的用戶端則會拒絕任何大小寫與雜湊不符的位址。",
+  "commonUsage": "幾乎在每個向人顯示 Ethereum 位址的地方，都可以看到混合大小寫檢查碼：錢包、區塊瀏覽器，以及 web3.js 和 ethers.js 等函式庫，都以這種形式呈現並驗證位址。由於這種編碼是位址的純函式，因此不需要任何鏈上合約或儲存；軟體會在顯示位址時套用它，並在大小寫未通過檢查時發出警告或予以拒絕。規範中的全大寫、全小寫與一般測試向量，常用於驗證各種實作。",
+
+  "node.user": "位址來源",
+  "node.encoder": "檢查碼編碼器",
+  "node.storageHash": "Keccak-256 雜湊",
+  "node.storageResult": "帶檢查碼的位址",
+  "node.verifier": "檢查碼驗證器",
+  "node.consumer": "驗證錢包",
+
+  "edge.submitAddress": "提交小寫位址",
+  "edge.hashAddress": "雜湊小寫十六進位",
+  "edge.applyCasing": "套用字母大小寫",
+  "edge.readHash": "讀取雜湊位元",
+  "edge.checkChecksum": "檢查大小寫",
+  "edge.deliverAddress": "交付已驗證位址",
+
+  "sim.checksumWalkthrough.name": "檢查碼編碼演練",
+  "sim.checksumWalkthrough.desc": "跟隨一個小寫位址，觀察編碼器如何對其進行雜湊、套用 ERC-55 的字母大小寫，以及用戶端如何驗證結果。",
+  "sim.checksumWalkthrough.param.address": "小寫位址",
+  "sim.checksumWalkthrough.step.submit": "錢包或應用程式向檢查碼編碼器提交一個普通的小寫十六進位位址。",
+  "sim.checksumWalkthrough.step.submit.mobile": "提交位址",
+  "sim.checksumWalkthrough.step.hash": "編碼器將 40 個字元的十六進位位址視為 ASCII，並計算其 Keccak-256 雜湊，為大小寫提供所需的位元。",
+  "sim.checksumWalkthrough.step.hash.mobile": "雜湊小寫十六進位",
+  "sim.checksumWalkthrough.step.case": "當每個十六進位字母對應的雜湊半位元組（nibble）為 8 或更大時，該字母轉為大寫，否則保持小寫，從而產生混合大小寫位址。",
+  "sim.checksumWalkthrough.step.case.mobile": "套用字母大小寫",
+  "sim.checksumWalkthrough.step.verify": "驗證用戶端根據雜湊重新推導大小寫並進行比較，只有當每個字母都相符時才接受該位址。",
+  "sim.checksumWalkthrough.step.verify.mobile": "驗證檢查碼"
+}

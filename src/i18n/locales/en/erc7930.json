@@ -1,0 +1,32 @@
+{
+  "short": "Chain-Specific Interoperable Address Format",
+  "introduction": "ERC-7930 defines a compact binary format that encodes a target address together with the chain it belongs to, producing one canonical Interoperable Address. It was proposed by Teddy, Joxes, Nick Johnson, and others in February 2025. The format is a versioned, length-prefixed envelope carrying a version, a chain type and reference, and the address; the companion CAIP-350 standard defines how each namespace serializes them. Note: ERC-7930 is in Review status; the interface may still change before it is finalized.",
+  "designPurpose": "ERC-7930 was designed to end the ad hoc ways protocols combine an address with its chain. The Ethereum address format, ERC-55, carries no chain information, so each cross-chain protocol invented its own fields and conventions, fragmenting tooling and adding risk. By binding chain identification and the raw address into a single canonical binary payload, compact enough for on-chain use and extensible beyond EVM chains through CAIP-350 profiles, the standard gives interoperability systems one shared format.",
+  "commonUsage": "Interoperable Addresses target smart contracts that must reference an account on another chain, such as cross-chain message passing and intent systems. A zero-length address turns the payload into a Chain Identifier that names a chain alone, while a zero-length chain reference denotes an address on any compatible chain. Because the binary form is not meant for display, ERC-7828 layers a human-readable Interoperable Name on top, and implementers that show the raw value render it as a lowercase hexadecimal string.",
+
+  "node.user": "Address Source",
+  "node.caip350": "CAIP-350 Profile",
+  "node.encoder": "Interoperable Address Encoder",
+  "node.storageEnvelope": "Envelope Fields",
+  "node.storageResult": "Interoperable Address",
+  "node.consumer": "Cross-Chain Protocol",
+
+  "edge.submitTarget": "Submit address and chain",
+  "edge.provideRules": "Provide serialization rules",
+  "edge.assembleFields": "Assemble fields",
+  "edge.concatenate": "Concatenate to payload",
+  "edge.deliverAddress": "Deliver interoperable address",
+
+  "sim.encodeAddressWalkthrough.name": "Encoding an Interoperable Address",
+  "sim.encodeAddressWalkthrough.desc": "Follow a target address and chain as the encoder serializes each field per CAIP-350 and concatenates them into one binary payload.",
+  "sim.encodeAddressWalkthrough.param.address": "Target address",
+  "sim.encodeAddressWalkthrough.param.chain": "Target chain",
+  "sim.encodeAddressWalkthrough.step.submit": "An application submits a target address and the chain it belongs to for encoding into an Interoperable Address.",
+  "sim.encodeAddressWalkthrough.step.submit.mobile": "Submit address and chain",
+  "sim.encodeAddressWalkthrough.step.serialize": "The encoder reads the CAIP-350 profile for the chain's namespace and fills in the version, chain type, and the length-prefixed chain reference and address fields.",
+  "sim.encodeAddressWalkthrough.step.serialize.mobile": "Serialize fields",
+  "sim.encodeAddressWalkthrough.step.concatenate": "The six fields are concatenated into a single length-prefixed binary payload, here the 27-byte encoding of the Ethereum mainnet address.",
+  "sim.encodeAddressWalkthrough.step.concatenate.mobile": "Concatenate payload",
+  "sim.encodeAddressWalkthrough.step.deliver": "The resulting Interoperable Address is handed to a cross-chain protocol, which can store or transmit it as one unambiguous reference.",
+  "sim.encodeAddressWalkthrough.step.deliver.mobile": "Deliver to protocol"
+}

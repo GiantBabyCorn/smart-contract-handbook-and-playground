@@ -1,0 +1,32 @@
+{
+  "short": "ERC-1155 공급량 확장",
+  "introduction": "ERC-5615는 ERC-1155 멀티 토큰 컨트랙트를 위한 공급량 보고 확장을 정의합니다. 2023년 5월 Gavin John이 제안했습니다. 이 확장은 두 개의 view 함수를 추가합니다. totalSupply는 주어진 id에 대해 유통 중인 토큰의 수를 반환하고, exists는 id가 존재하는지, 이전에 존재했는지, 또는 존재할 수 있는지를 보고합니다. 이는 OpenZeppelin의 ERC1155Supply로 이미 제공된 패턴을 표준화하여, 인덱서와 지갑이 오프체인 데이터에 의존하지 않고 id별 공급량을 예측 가능한 방식으로 읽을 수 있게 합니다.",
+  "designPurpose": "ERC-5615는 기본 표준이 생략한 id별 공급량을 노출하는 공통된 방법을 ERC-1155에 제공하기 위해 설계되었습니다. 그 이전에는 각 컨트랙트가 자체 공급량 조회 함수를 만들거나 아예 제공하지 않았기 때문에, 인덱서와 마켓플레이스는 토큰 id가 몇 단위 발행되었는지, 또는 id가 언젠가 존재할지를 확실하게 알 수 없었습니다. 널리 사용되는 OpenZeppelin 구현과 동일한 의미로 totalSupply와 exists를 형식화함으로써, ERC-5615는 모든 소비자가 하나의 예측 가능한 인터페이스를 통해 공급량을 조회할 수 있게 합니다.",
+  "commonUsage": "이 확장은 토큰 id별 잔여 또는 총공급량을 표시하는 ERC-1155 컬렉션과 마켓플레이스, 에디션 수를 제한하는 발행 인터페이스, 유통량을 추적하는 인덱서에서 사용됩니다. OpenZeppelin의 ERC1155Supply를 그대로 따르기 때문에 일반적으로 단독으로 배포되기보다는 기존 ERC-1155 컨트랙트에 혼합됩니다. exists 함수는 현재 공급량이 0인 id와 결코 발행될 수 없는 id를 구분하는 데 사용됩니다.",
+
+  "fn.exists.desc": "주어진 토큰 id가 존재하는지, 이전에 존재했는지, 또는 존재할 수 있는지를 반환합니다. 소비자는 이를 사용하여 현재 공급량이 0인 id와 결코 발행될 수 없는 id를 구분합니다.",
+  "fn.exists.params.id": "존재 여부를 확인할 토큰 id.",
+  "fn.exists.returns.exists": "토큰 id가 존재하거나, 이전에 존재했거나, 존재할 수 있으면 true, 그렇지 않으면 false.",
+
+  "fn.totalSupply.desc": "주어진 id에 대해 유통 중인 토큰의 수를 반환합니다. 토큰 id가 존재하지 않으면 0을 반환합니다.",
+  "fn.totalSupply.params.id": "총공급량을 가져올 토큰 id.",
+  "fn.totalSupply.returns.totalSupply": "주어진 토큰 id의 총공급량, 존재하지 않으면 0.",
+
+  "node.user": "공급량 리더",
+  "node.contract": "ERC-1155 공급량 토큰",
+  "node.storageSupply": "공급량 스토리지",
+
+  "edge.callTotalSupply": "totalSupply() 호출",
+  "edge.callExists": "exists() 호출",
+  "edge.readSupply": "공급량 매핑 읽기",
+
+  "sim.totalSupplyWalkthrough.name": "토큰 공급량 조회",
+  "sim.totalSupplyWalkthrough.desc": "totalSupply 호출을 리더에서 컨트랙트의 공급량 스토리지까지 따라간 다음, exists를 확인하여 0이라는 결과를 해석합니다.",
+  "sim.totalSupplyWalkthrough.param.id": "토큰 id",
+  "sim.totalSupplyWalkthrough.step.call": "지갑이나 인덱서 같은 리더가 ERC-1155 컨트랙트에서 totalSupply(id)를 호출하여 토큰 id의 유통량을 가져옵니다.",
+  "sim.totalSupplyWalkthrough.step.call.mobile": "totalSupply() 호출",
+  "sim.totalSupplyWalkthrough.step.read": "컨트랙트는 해당 id의 공급량 매핑을 읽고 저장된 수량을 반환하며, 해당 id의 토큰이 발행된 적이 없으면 0을 반환합니다.",
+  "sim.totalSupplyWalkthrough.step.read.mobile": "공급량 매핑 읽기",
+  "sim.totalSupplyWalkthrough.step.exists": "0이라는 결과를 해석하기 위해 리더는 exists(id)를 호출하며, 이는 해당 id에 아직 공급량이 없는지 아니면 결코 발행될 수 없는지를 보고합니다.",
+  "sim.totalSupplyWalkthrough.step.exists.mobile": "exists() 확인"
+}

@@ -1,0 +1,28 @@
+{
+  "short": "tokenURI 상호 운용성 확장",
+  "introduction": "ERC-1046은 ERC-20에 ERC-721 방식의 tokenURI 함수를 추가하고 ERC-20, ERC-721, ERC-1155의 토큰 URI 관례를 정렬하여 지갑이 세 가지를 모두 동일한 방식으로 읽을 수 있게 하는 메타데이터 확장을 정의합니다. 이 표준은 Tommy Nicholas, Matt Russo, John Zettler, Matt Condon, Gavin John이 2018년 4월에 제안했습니다. 준수하는 ERC-20 토큰은 interop 필드가 토큰 유형을 표시하는 JSON 문서로 해석되는 URI를 반환하며, 이를 통해 애플리케이션은 표준별 코드 없이 토큰을 감지하고 표시할 수 있습니다.",
+  "designPurpose": "ERC-1046은 ERC-721이 tokenURI를 통해 노출하는 메타데이터를, 그동안 온체인에 name, symbol, decimals만 담고 있던 대체 가능 ERC-20 토큰에 제공하도록 설계되었습니다. 그 이전에는 애플리케이션이 토큰의 이미지나 설명을 가져올 통일된 방법도, 대체 가능 토큰을 NFT나 멀티 토큰 컨트랙트와 저렴하게 구분할 방법도 없었습니다. 표준 전반에서 tokenURI라는 이름을 재사용하고 해석된 JSON에 interop 객체를 추가함으로써, 지갑은 하나의 문서에서 토큰의 유형과 표시 데이터를 읽을 수 있습니다.",
+  "commonUsage": "ERC-1046은 지갑, 블록 익스플로러, 그리고 이미 NFT에 표시하는 것과 동일한 이미지와 설명으로 ERC-20 토큰을 렌더링하는 자산 목록 인터페이스를 대상으로 합니다. 준수를 위해서는 ERC-20의 tokenURI 함수가 필수이며, ERC-721과 ERC-1155 측은 기존 메타데이터 JSON에 interop 필드를 추가하여 하나의 리졸버가 세 가지 유형을 모두 처리할 수 있게 합니다. gas를 절약하기 위해 이 표준은 온체인의 name, symbol, decimals를 생략하고 해당 필드를 대신 메타데이터 문서에 두도록 권장합니다.",
+
+  "fn.tokenURI.desc": "ERC-721 방식의 tokenURI 패턴에 따라 ERC-20 토큰의 JSON 메타데이터 문서로 해석되는 URI를 반환합니다. 문서의 interop 필드가 이를 ERC-1046 메타데이터로 표시하므로 지갑은 해당 주소를 ERC-20 토큰으로 취급합니다.",
+  "fn.tokenURI.returns.uri": "토큰의 오프체인 JSON 메타데이터 문서를 가리키는 URI입니다.",
+
+  "node.user": "지갑",
+  "node.contract": "토큰 컨트랙트",
+  "node.storageUri": "URI 스토리지",
+  "node.metadata": "메타데이터 문서",
+
+  "edge.callTokenURI": "tokenURI() 호출",
+  "edge.readUri": "저장된 URI 읽기",
+  "edge.fetchMetadata": "메타데이터 JSON 가져오기",
+
+  "sim.tokenUriWalkthrough.name": "토큰 URI 해석",
+  "sim.tokenUriWalkthrough.desc": "지갑이 ERC-20 토큰의 메타데이터를 읽는 과정을 따라갑니다: tokenURI()를 호출하고, URI를 해석하고, interop 플래그를 읽습니다.",
+  "sim.tokenUriWalkthrough.param.token": "토큰 주소",
+  "sim.tokenUriWalkthrough.step.call": "지갑이 ERC-20 토큰 컨트랙트에서 tokenURI()를 호출하여 메타데이터 URI를 가져옵니다.",
+  "sim.tokenUriWalkthrough.step.call.mobile": "tokenURI() 호출",
+  "sim.tokenUriWalkthrough.step.resolve": "컨트랙트가 저장된 URI를 읽고 https://example.com/token.json 과 같은 링크를 지갑에 반환합니다.",
+  "sim.tokenUriWalkthrough.step.resolve.mobile": "메타데이터 URI 반환",
+  "sim.tokenUriWalkthrough.step.fetch": "지갑이 URI의 JSON을 가져와 interop.erc1046을 읽고 해당 주소가 ERC-20 토큰임을 확인합니다.",
+  "sim.tokenUriWalkthrough.step.fetch.mobile": "interop 플래그 읽기"
+}

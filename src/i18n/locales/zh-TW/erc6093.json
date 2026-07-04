@@ -1,0 +1,32 @@
+{
+  "short": "常用代幣的自訂錯誤",
+  "introduction": "ERC-6093 為三種常用的代幣標準（ERC-20、ERC-721 和 ERC-1155）定義了一套標準的 Solidity 自訂錯誤。它由 Ernesto García、Francisco Giordano 和 Hadrien Croubois 於 2022 年 12 月提出。由於這些標準在 Solidity v0.8.4 加入自訂錯誤之前便已定案，它們本身並不包含任何錯誤；ERC-6093 填補了這項空白，其錯誤名稱由網域前綴、錯誤前綴（如 Invalid 或 Insufficient）以及出錯的主體組成。",
+  "designPurpose": "ERC-6093 旨在取代過去錢包為解釋代幣交易失敗原因而解析的自由格式回滾字串。回滾字串在各實作之間並不一致，不攜帶機器可讀的參數，還會增加部署位元組碼。透過標準化遵循固定「網域-錯誤前綴-主體」語法並攜帶類型化參數（如地址和金額）的自訂錯誤，ERC-6093 讓客戶端能夠一致地解碼失敗及其原因，同時保留自訂錯誤在 gas 與體積上的節省。",
+  "commonUsage": "這些錯誤面向任何在無效轉帳或授權時回滾的 ERC-20、ERC-721 或 ERC-1155 實作，也面向解碼這些回滾的錢包、區塊瀏覽器和測試工具。OpenZeppelin 的代幣合約採用了 ERC-6093 錯誤集，因此前端可以將失敗的呼叫映射到精確的原因，例如餘額不足或接收方無效。該 EIP 僅定義錯誤簽章，並不規定實作必須在何時回滾。",
+
+  "node.user": "代幣呼叫者",
+  "node.token": "代幣合約",
+  "node.storageState": "代幣狀態",
+  "node.storageError": "回滾資料",
+  "node.decoder": "錯誤解碼器",
+  "node.wallet": "錢包介面",
+
+  "edge.callToken": "呼叫 transfer()",
+  "edge.checkState": "檢查餘額",
+  "edge.revertError": "以自訂錯誤回滾",
+  "edge.decodeError": "解碼選擇器與參數",
+  "edge.showMessage": "顯示結構化訊息",
+
+  "sim.errorDecodingWalkthrough.name": "自訂錯誤解碼演練",
+  "sim.errorDecodingWalkthrough.desc": "展示一筆失敗的轉帳：代幣合約如何以 ERC-6093 自訂錯誤回滾，錢包又如何將其解碼為結構化訊息。",
+  "sim.errorDecodingWalkthrough.param.sender": "發送方",
+  "sim.errorDecodingWalkthrough.param.amount": "轉帳金額",
+  "sim.errorDecodingWalkthrough.step.call": "呼叫者發起一筆代幣轉帳，其金額大於發送方的餘額。",
+  "sim.errorDecodingWalkthrough.step.call.mobile": "呼叫 transfer()",
+  "sim.errorDecodingWalkthrough.step.check": "代幣合約從狀態中讀取發送方的餘額，發現其低於此次轉帳所需的金額。",
+  "sim.errorDecodingWalkthrough.step.check.mobile": "檢查餘額",
+  "sim.errorDecodingWalkthrough.step.revert": "合約不再回傳回滾字串，而是以 ERC20InsufficientBalance(sender, balance, needed) 回滾，並將參數編碼進回滾資料中。",
+  "sim.errorDecodingWalkthrough.step.revert.mobile": "以錯誤回滾",
+  "sim.errorDecodingWalkthrough.step.decode": "錢包解碼自訂錯誤的選擇器及其參數，向使用者顯示一條解釋失敗原因的結構化訊息。",
+  "sim.errorDecodingWalkthrough.step.decode.mobile": "解碼並顯示"
+}

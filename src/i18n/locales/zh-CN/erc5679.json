@@ -1,0 +1,55 @@
+{
+  "short": "代币铸造与销毁扩展",
+  "introduction": "ERC-5679 为同质化、非同质化和多代币资产的铸造与销毁定义了一致的接口，扩展了 EIP-20、EIP-721 和 EIP-1155 标准。它由 Zainan Victor Zhou 于 2022 年 9 月提出。该标准为每种代币类型指定了专用的 mint 和 burn 函数，包括会检查接收方合约的 safe-mint 变体以及面向 EIP-1155 的批量操作，并要求在铸造时从零地址发出既有的 Transfer 事件，使供应变化保持可观察。",
+  "designPurpose": "ERC-5679 旨在标准化代币的创建与销毁方式，而 EIP-20、EIP-721 和 EIP-1155 对此并未作出规定。在此之前，各实现要么复用转账方法，要么自行发明临时的 mint 和 burn 函数签名，导致工具无法依赖统一的接口，也容易出现访问控制方面的错误。通过为每种代币类型定义带有各自 EIP-165 标识符的独立 mint 和 burn 函数，该标准将改变供应的操作与转账隔离开来，并使这种支持可在链上被检测到。",
+  "commonUsage": "铸造与销毁接口被稳定币发行方用于根据储备扩大或收缩供应，被跨链桥用于铸造锁定资产的封装表示并在赎回时销毁它们，也被 NFT 和游戏平台用于发行或回收代币。由于 ERC-5679 为每种代币类型定义一个接口，合约会将其与匹配的 EIP-20、EIP-721 或 EIP-1155 基础实现配对，将新函数置于访问控制角色的管控之下，并暴露 EIP-165 标识符，以便调用方在铸造前确认其是否支持。",
+
+  "fn.mint.desc": "作为 EIP-20 扩展的一部分，创建 _amount 个新的同质化代币并将其分配给 _to。总供应量增加，并发出一个 Transfer 事件，如同这些代币来自零地址一样。",
+  "fn.mint.params._to": "接收新铸造代币的地址。",
+  "fn.mint.params._amount": "要创建的代币数量。",
+  "fn.mint.params._data": "随 mint 调用传递的附加数据，未指定格式。",
+
+  "fn.burn.desc": "作为 EIP-20 扩展的一部分，销毁 _from 持有的 _amount 个同质化代币。总供应量减少，并发出一个 Transfer 事件，如同这些代币被发送到零地址一样。",
+  "fn.burn.params._from": "代币被销毁的地址。",
+  "fn.burn.params._amount": "要销毁的代币数量。",
+  "fn.burn.params._data": "随 burn 调用传递的附加数据，未指定格式。",
+
+  "fn.safeMint.desc": "将由 _id 标识的 EIP-721 代币铸造给 _to，并应用与 safeTransferFrom 相同的接收方检查，从而确保该代币绝不会被发送到无法接收它的合约。",
+  "fn.safeMint.params._to": "接收新铸造代币的地址。",
+  "fn.safeMint.params._id": "要铸造的 EIP-721 代币的标识符。",
+  "fn.safeMint.params._data": "转发给接收方 onERC721Received 回调的附加数据。",
+
+  "fn.safeMintBatch.desc": "一次性铸造多个 EIP-1155 余额，为 ids 中相应的 id 创建 amounts 中的每个数量，并通过安全转账的接收方检查将它们分配给接收方。",
+  "fn.safeMintBatch.params.to": "接收所铸造余额的地址。",
+  "fn.safeMintBatch.params.ids": "要铸造的代币标识符列表。",
+  "fn.safeMintBatch.params.amounts": "为每个相应标识符铸造的数量。",
+  "fn.safeMintBatch.params.data": "转发给接收方批量接收回调的附加数据。",
+
+  "fn.burnBatch.desc": "一次性销毁多个 EIP-1155 余额，从 _from 中移除 ids 中相应 id 所对应的 amounts 中的每个数量，并相应减少总供应量。",
+  "fn.burnBatch.params._from": "余额被销毁的地址。",
+  "fn.burnBatch.params.ids": "要销毁的代币标识符列表。",
+  "fn.burnBatch.params.amounts": "为每个相应标识符销毁的数量。",
+  "fn.burnBatch.params._data": "随 burn 调用传递的附加数据，未指定格式。",
+
+  "node.user": "代币发行方",
+  "node.contract": "ERC-5679 代币",
+  "node.storageSupply": "供应量与余额",
+  "node.recipient": "接收方",
+
+  "edge.callMint": "调用 mint()",
+  "edge.callBurn": "调用 burn()",
+  "edge.updateSupply": "更新供应量与余额",
+  "edge.mintTokens": "交付铸造的代币",
+  "edge.emitTransfer": "发出 Transfer 事件",
+
+  "sim.mintWalkthrough.name": "铸造代币演练",
+  "sim.mintWalkthrough.desc": "跟随一次 mint 调用，从发行方到供应量更新，再到从零地址发出的 Transfer 事件。",
+  "sim.mintWalkthrough.param.to": "接收方",
+  "sim.mintWalkthrough.param.amount": "数量",
+  "sim.mintWalkthrough.step.call": "发行方在代币合约上调用 mint(_to, _amount, _data)，为接收方创建新代币。",
+  "sim.mintWalkthrough.step.call.mobile": "调用 mint()",
+  "sim.mintWalkthrough.step.execute": "合约增加总供应量，并将新铸造的数量记入接收方的余额。",
+  "sim.mintWalkthrough.step.execute.mobile": "更新供应量",
+  "sim.mintWalkthrough.step.transfer": "合约发出从零地址到接收方的 Transfer 事件，将该数量标记为新发行，以便索引器可以追踪它。",
+  "sim.mintWalkthrough.step.transfer.mobile": "发出 Transfer 事件"
+}

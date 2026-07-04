@@ -1,0 +1,29 @@
+{
+  "short": "参数化存储键",
+  "introduction": "ERC-8119 为 EVM 键值存储中使用的参数化字符串键定义了标准格式，用于让一种元数据类型表示多个实例。它由 Prem Makeig 于 2025 年 1 月提出。它规定了两种编码方式：用于单个参数的斜杠或冒号形式，写作 key-label/key-parameter；以及用于多个有序参数的方括号形式，写作 key-label[parameter-1][parameter-2]。注意：ERC-8119 是一份 Draft（草案）；规范仍在积极开发中，可能会有重大变动。",
+  "designPurpose": "ERC-8119 的设计目标是消除合约存储同一元数据类型的多个实例时出现的不一致。在此之前，每种实现都各自发明连接标签与参数的约定，因此 registration-1 和 registration1 这样的键无法在不同工具之间解析或共享。通过固定两种明确的编码，并从标签中保留斜杠、冒号和左方括号字符，ERC-8119 为解析器提供了一条确定性规则，用于将键拆分为标签和参数。",
+  "commonUsage": "该格式面向将元数据保存在 mapping(string => bytes) 或类似存储中的合约，例如名称注册表、档案记录和按实例的配置。斜杠和冒号形式适合 registration/1 或 website/http://website.com 这类较长的文本值，而方括号形式适合 resource[chain][1][token][42] 这类多参数键。由于它是一种命名约定而非接口，应用程序只需一致地格式化和解析键即可采用它，无需更改链上代码。",
+
+  "node.app": "应用程序",
+  "node.formatter": "键格式化器",
+  "node.storageMetadata": "元数据存储",
+  "node.parser": "键解析器",
+
+  "edge.buildSlash": "构建斜杠/冒号键",
+  "edge.buildBracket": "构建方括号键",
+  "edge.writeKey": "写入元数据",
+  "edge.parseKey": "解析键",
+
+  "sim.buildKeyWalkthrough.name": "构建参数化键",
+  "sim.buildKeyWalkthrough.desc": "跟随一个斜杠形式的键，从应用程序经过元数据存储，到达将其重新拆分为标签和参数的解析器。",
+  "sim.buildKeyWalkthrough.param.keyLabel": "键标签",
+  "sim.buildKeyWalkthrough.param.keyParameter": "键参数",
+  "sim.buildKeyWalkthrough.step.build": "应用程序用斜杠连接 key-label 和参数，形成参数化键 registration/1。",
+  "sim.buildKeyWalkthrough.step.build.mobile": "构建键",
+  "sim.buildKeyWalkthrough.step.format": "格式化器检查标签中不含空格、斜杠、冒号或左方括号，从而生成符合标准的键。",
+  "sim.buildKeyWalkthrough.step.format.mobile": "校验键格式",
+  "sim.buildKeyWalkthrough.step.store": "合约将该值写入 mapping(string => bytes) 元数据存储中键 registration/1 之下。",
+  "sim.buildKeyWalkthrough.step.store.mobile": "写入元数据",
+  "sim.buildKeyWalkthrough.step.parse": "解析器读取该键，在第一个斜杠或冒号处将其拆分，恢复出标签 registration 和参数 1。",
+  "sim.buildKeyWalkthrough.step.parse.mobile": "拆回键"
+}

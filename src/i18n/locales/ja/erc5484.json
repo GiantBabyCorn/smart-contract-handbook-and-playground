@@ -1,0 +1,41 @@
+{
+  "short": "双方合意のソウルバウンドトークン規格",
+  "introduction": "ERC-5484 は、ERC-721 を拡張して双方合意のソウルバウンドトークン（SBT）を作成するためのインターフェースを定義します。これは、バーン権限が発行前に両当事者によって合意される、転送不可能な NFT です。2022 年 8 月に Buzz Cai によって提案されました。発行前に、発行者と受領者はバーン権限（IssuerOnly、OwnerOnly、Both、Neither のいずれか）について合意し、これは以降変更できません。コントラクトは ERC-721 の Transfer イベントとともに Issued イベントを発行し、SBT を通常の NFT と区別する burnAuth クエリを公開します。",
+  "designPurpose": "ERC-5484 は、ウォレット、エクスプローラー、各種サービスがソウルバウンドトークンを一貫して扱えるよう、共通のインターフェースを与えるために設計されました。初期のソウルバウンド実装は ERC-721 を拡張していましたが、すべての転送で単に revert するだけで、転送不可能性を検出したり、誰がトークンをバーンできるかを知る標準的な手段がありませんでした。ERC-5484 は発行時にトークンごとのバーン権限を固定し、事前に受領者の同意を必要とし、burnAuth getter と Issued イベントを追加することで、第三者が ERC-165 検出を通じてそれらを識別できるようにします。",
+  "commonUsage": "双方合意のソウルバウンドトークンは、資格情報、メンバーシップ、認定、信用記録——トークンが自由に取引されるのではなく単一のアドレスに紐づいたままであるべきケース——を想定しています。バーン権限はユースケースごとに選択します。IssuerOnly は取り消し可能なローン記録に、OwnerOnly は保有者が破棄できるメンバーシップに、Both は資格情報に、Neither は永続的な信用履歴に適しています。SBT は ERC-721 トークンのままであるため、既存の NFT ツールは、転送の前にインターフェースを確認しつつそれらを表示できます。",
+
+  "fn.burnAuth.desc": "トークンのバーン権限を返し、どの当事者がそれをバーンできるか（IssuerOnly、OwnerOnly、Both、Neither）を示します。未割り当ての token ID に対するクエリは revert します。",
+  "fn.burnAuth.params.tokenId": "クエリするトークンの識別子。",
+  "fn.burnAuth.returns.burnAuth": "発行時にトークンに対して固定された不変のバーン権限。",
+
+  "fn.Issued.desc": "ソウルバウンドトークンが発行されたときに、ERC-721 の Transfer イベントに加えて発行され、第三者が SBT の発行を通常の NFT の転送と区別できるようにします。",
+  "fn.Issued.params.from": "トークンの発行者。",
+  "fn.Issued.params.to": "トークンの受領者。",
+  "fn.Issued.params.tokenId": "発行されたトークンの識別子。",
+  "fn.Issued.params.burnAuth": "このトークンについて合意されたバーン権限。発行時に固定されます。",
+
+  "node.issuer": "発行者",
+  "node.contract": "ソウルバウンドトークンコントラクト",
+  "node.storageBurnAuth": "バーン権限ストレージ",
+  "node.receiver": "受領者",
+
+  "edge.issue": "ソウルバウンドトークンを発行",
+  "edge.storeBurnAuth": "バーン権限を保存",
+  "edge.mintToken": "受領者にトークンをミント",
+  "edge.emitIssued": "Issued イベントを発行",
+  "edge.queryBurnAuth": "burnAuth() を呼び出し",
+
+  "sim.issueTokenWalkthrough.name": "ソウルバウンドトークンを発行",
+  "sim.issueTokenWalkthrough.desc": "発行者から、ストレージと Issued イベントを経て burnAuth クエリに至るまで、双方合意のソウルバウンドトークンの発行を追います。",
+  "sim.issueTokenWalkthrough.param.to": "受領者アドレス",
+  "sim.issueTokenWalkthrough.param.tokenId": "トークンID",
+  "sim.issueTokenWalkthrough.param.burnAuth": "バーン権限",
+  "sim.issueTokenWalkthrough.step.issue": "発行者は、選択されたバーン権限にすでに同意している受領者に、ソウルバウンドトークンを発行します。",
+  "sim.issueTokenWalkthrough.step.issue.mobile": "トークンを発行",
+  "sim.issueTokenWalkthrough.step.store": "コントラクトはトークンの不変のバーン権限を記録し、所有権を受領者に割り当てます。",
+  "sim.issueTokenWalkthrough.step.store.mobile": "バーン権限を保存",
+  "sim.issueTokenWalkthrough.step.event": "コントラクトは、SBT の発行を示すために、ERC-721 の Transfer イベントとともに Issued(from, to, tokenId, burnAuth) を発行します。",
+  "sim.issueTokenWalkthrough.step.event.mobile": "Issued イベントを発行",
+  "sim.issueTokenWalkthrough.step.query": "第三者は、行動を起こす前に burnAuth(tokenId) を呼び出して、どの当事者がトークンをバーンすることを許可されているかを読み取ります。",
+  "sim.issueTokenWalkthrough.step.query.mobile": "burnAuth() をクエリ"
+}

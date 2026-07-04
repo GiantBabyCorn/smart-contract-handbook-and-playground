@@ -1,0 +1,81 @@
+{
+  "short": "지급 가능 토큰 표준",
+  "introduction": "ERC-2021은 지갑 소유자가 지불 지시 문자열을 통해 자신의 잔액에서 지급을 요청할 수 있도록 하는 ERC-20 토큰 표준의 확장을 정의합니다. 이 표준은 Fernando Paris, Julio Faura, Daniel Lehrner가 2019년 5월에 제안했습니다. 주문은 해당 금액을 ERC-1996 홀드에 두며, 오프체인 지불이 정산되면 운영자가 이를 실행하여 토큰을 소각합니다. 참고: ERC-2021은 Stagnant(정체) 상태로, 6개월 이상 활동이 없었고 최종 확정되지 않을 수 있으나 역사적 또는 기술적으로 의미가 있습니다.",
+  "designPurpose": "ERC-2021은 토큰 라이프사이클의 지급 단계를 온체인으로 가져오기 위해 설계되었습니다. 이전에는 토큰 지급이 토큰을 소각하기 전에 목적지를 설정하기 위한 별도의 중앙화된 트랜잭션을 필요로 했기 때문입니다. 지갑 소유자가 원장을 통해 주문을 제출하도록 함으로써, 이 표준은 각 지급의 상태를 온체인에 기록하며, 라우팅 세부 정보는 지시 문자열에 담겨 이동하고 구현자는 이를 오프체인에 두거나 암호화하도록 권장됩니다. 해당 금액은 ERC-1996 홀드에 머물러 운영자가 정산하기 전까지는 사용할 수 없습니다.",
+  "commonUsage": "지급 가능 토큰은 토큰을 오프체인 자금으로 상환하는 과정이 감사 가능해야 하는 규제 및 기관 환경을 대상으로 합니다. 계정 보유자가 지급을 주문하면, 발행자 또는 그 대리인은 기반이 되는 홀드를 실행하고 토큰을 소각하여 이를 이행하거나 거부합니다. 이 인터페이스는 운영자 인가도 정의하여 승인된 주문자가 지갑 소유자를 대신해 요청을 제출할 수 있게 하며, 각 요청의 금액·지시·현재 상태 코드를 노출하는 retrievePayoutData 조회도 정의합니다.",
+
+  "fn.orderPayout.desc": "호출자 자신의 지갑에 대한 지급 요청을 생성하여 요청된 금액을 홀드에 두고 운영자 워크플로를 시작합니다. operationId가 이미 사용된 경우 되돌립니다(revert).",
+  "fn.orderPayout.params.operationId": "지급 요청을 식별하는 고유 ID.",
+  "fn.orderPayout.params.value": "지급될 토큰의 수량.",
+  "fn.orderPayout.params.instructions": "운영자가 자금을 라우팅하는 데 사용하는 지불 지시를 담은 문자열.",
+  "fn.orderPayout.returns.success": "지급 요청이 성공적으로 생성되면 True.",
+
+  "fn.orderPayoutFrom.desc": "다른 지갑 소유자를 대신하여 지급 요청을 생성합니다. 해당 소유자는 사전에 호출자를 지급 운영자로 인가해 두어야 합니다. operationId가 이미 사용된 경우 되돌립니다(revert).",
+  "fn.orderPayoutFrom.params.operationId": "지급 요청을 식별하는 고유 ID.",
+  "fn.orderPayoutFrom.params.walletToBePaidOut": "그를 대신하여 지급이 주문되고 그의 토큰이 지급되는 지갑 소유자.",
+  "fn.orderPayoutFrom.params.value": "지급될 토큰의 수량.",
+  "fn.orderPayoutFrom.params.instructions": "운영자가 자금을 라우팅하는 데 사용하는 지불 지시를 담은 문자열.",
+  "fn.orderPayoutFrom.returns.success": "지급 요청이 성공적으로 생성되면 True.",
+
+  "fn.cancelPayout.desc": "아직 Ordered 상태인 지급 요청을 취소하고 홀드를 해제합니다. 지갑 소유자 또는 주문자만 취소할 수 있으며, 운영자가 요청을 InProcess로 표시하기 전에만 가능합니다.",
+  "fn.cancelPayout.params.operationId": "취소할 지급 요청의 고유 ID.",
+  "fn.cancelPayout.returns.success": "지급 요청이 성공적으로 취소되면 True.",
+
+  "fn.processPayout.desc": "지급 요청을 InProcess로 표시합니다. 처리 중이 되면 주문자는 더 이상 요청을 취소할 수 없습니다.",
+  "fn.processPayout.params.operationId": "처리 중으로 표시할 지급 요청의 고유 ID.",
+  "fn.processPayout.returns.success": "지급 요청이 성공적으로 처리 중으로 설정되면 True.",
+
+  "fn.putFundsInSuspenseInPayout.desc": "기반이 되는 홀드를 실행하고 토큰을 미결제 지갑(suspense wallet)으로 옮겨 지급을 FundsInSuspense 상태로 만듭니다. 요청이 InProcess인 동안에만 수행할 수 있습니다.",
+  "fn.putFundsInSuspenseInPayout.params.operationId": "미결제 상태로 둘 지급 요청의 고유 ID.",
+  "fn.putFundsInSuspenseInPayout.returns.success": "자금이 성공적으로 미결제 상태로 설정되면 True.",
+
+  "fn.executePayout.desc": "홀드된 토큰을 소각하고 지급 요청을 Executed로 표시하여, 해당 오프체인 지불이 완료되면 이를 완료합니다.",
+  "fn.executePayout.params.operationId": "실행할 지급 요청의 고유 ID.",
+  "fn.executePayout.returns.success": "지급이 성공적으로 실행되면 True.",
+
+  "fn.rejectPayout.desc": "지급 요청을 거부하고 홀드를 지갑 소유자에게 다시 해제하며 사유를 기록합니다. 요청이 InProcess로 표시되기 전이나 후에 호출할 수 있습니다.",
+  "fn.rejectPayout.params.operationId": "거부할 지급 요청의 고유 ID.",
+  "fn.rejectPayout.params.reason": "지급이 거부된 사유. ERC-1066 상태 코드를 사용할 수 있습니다.",
+  "fn.rejectPayout.returns.success": "지급이 성공적으로 거부되면 True.",
+
+  "fn.retrievePayoutData.desc": "지급 요청에 대해 저장된 데이터를 반환합니다. 여기에는 출금 대상 지갑, 금액, 지시, 현재 상태가 포함됩니다. 운영자, 지갑 소유자 또는 주문자만 읽을 수 있습니다.",
+  "fn.retrievePayoutData.params.operationId": "조회할 지급 요청의 고유 ID.",
+  "fn.retrievePayoutData.returns.walletToDebit": "잔액이 지급되는 지갑.",
+  "fn.retrievePayoutData.returns.value": "지급될 토큰의 수량.",
+  "fn.retrievePayoutData.returns.instructions": "요청과 함께 제공된 지불 지시 문자열.",
+  "fn.retrievePayoutData.returns.status": "지급 요청의 현재 상태 코드.",
+
+  "fn.PayoutOrdered.desc": "지갑 소유자 또는 주문자가 지급 요청을 생성할 때 발생하며, 해당 주문자, 지갑, 금액, 지시를 기록합니다.",
+  "fn.PayoutOrdered.params.orderer": "지급을 주문한 주소.",
+  "fn.PayoutOrdered.params.operationId": "지급 요청을 식별하는 고유 ID.",
+  "fn.PayoutOrdered.params.walletToDebit": "지급이 요청된 지갑.",
+  "fn.PayoutOrdered.params.value": "지급될 금액.",
+  "fn.PayoutOrdered.params.instructions": "요청과 함께 제공된 지불 지시 문자열.",
+
+  "fn.PayoutExecuted.desc": "운영자가 지급 요청을 실행할 때 발생하며, 오프체인 지불이 정산된 후 홀드된 토큰을 소각합니다.",
+  "fn.PayoutExecuted.params.orderer": "지급을 주문한 주소.",
+  "fn.PayoutExecuted.params.operationId": "지급 요청을 식별하는 고유 ID.",
+
+  "node.user": "지갑 소유자",
+  "node.operator": "토큰 운영자",
+  "node.contract": "ERC-2021 토큰",
+  "node.storagePayouts": "지급 및 홀드 잔액",
+
+  "edge.callOrderPayout": "orderPayout() 호출",
+  "edge.callExecutePayout": "executePayout() 호출",
+  "edge.updatePayouts": "지급 기록 및 자금 홀드",
+  "edge.emitPayoutExecuted": "PayoutExecuted 이벤트 발생",
+
+  "sim.orderPayoutWalkthrough.name": "지급 주문 및 실행 워크스루",
+  "sim.orderPayoutWalkthrough.desc": "지급을 지갑 소유자의 주문에서 ERC-1996 홀드를 거쳐 운영자가 이를 실행하고 토큰을 소각하기까지 따라갑니다.",
+  "sim.orderPayoutWalkthrough.param.value": "지급 금액(wei 단위)",
+  "sim.orderPayoutWalkthrough.param.instructions": "지불 지시",
+  "sim.orderPayoutWalkthrough.step.order": "지갑 소유자가 orderPayout(operationId, value, instructions)을 호출하여 자신의 잔액에서 지급을 요청합니다.",
+  "sim.orderPayoutWalkthrough.step.order.mobile": "orderPayout() 호출",
+  "sim.orderPayoutWalkthrough.step.hold": "컨트랙트는 요청을 Ordered 상태로 기록하고 금액을 ERC-1996 홀드에 두어 더 이상 사용할 수 없게 만듭니다.",
+  "sim.orderPayoutWalkthrough.step.hold.mobile": "자금 홀드",
+  "sim.orderPayoutWalkthrough.step.execute": "토큰 운영자가 요청을 처리하고 홀드를 실행하며 홀드된 토큰을 소각하여 지급을 Executed 상태로 옮깁니다.",
+  "sim.orderPayoutWalkthrough.step.execute.mobile": "운영자가 지급 실행",
+  "sim.orderPayoutWalkthrough.step.event": "컨트랙트는 PayoutExecuted를 발생시켜 인덱서가 해당 지급이 정산되었음을 기록할 수 있게 합니다.",
+  "sim.orderPayoutWalkthrough.step.event.mobile": "PayoutExecuted 이벤트 발생"
+}

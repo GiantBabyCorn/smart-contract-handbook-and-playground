@@ -1,0 +1,57 @@
+{
+  "short": "智能合約可執行提案介面",
+  "introduction": "ERC-5247 為智能合約可執行提案定義了一套介面：將一批鏈上呼叫記錄下來，以便日後執行。該標準由 Zainan Victor Zhou 於 2022 年 7 月提出。一個提案透過 targets、values、gas 上限與 calldata 的並列陣列進行打包，因此可以承載任意數量的呼叫。createProposal 記錄這批呼叫並回傳提案 id；executeProposal 則分派每一個已儲存的呼叫。注意：ERC-5247 處於 Review 狀態，介面在最終定案前可能仍會變更。",
+  "designPurpose": "ERC-5247 的設計目標是將待執行的程式碼與執行這一動作本身分離開來。在此之前，各個 DAO 與委託系統都以各自訂製的格式編碼提案內容，因此工具無法跨實作組合或檢視提案。ERC-5247 以 targets、values、gas 上限與 calldata 的並列陣列為基礎，將單一的 createProposal 與 executeProposal 介面標準化，從而讓提案先被組合，再由任意機制通過，最後作為單一的鏈上動作執行。",
+  "commonUsage": "可執行提案契合 DAO 治理場景：提議者記錄一份提案，成員透過 ERC-1202 等獨立的投票介面對其投票，一旦形成共識，通過的這批呼叫便會執行。同樣的先建立、後執行模式也適用於委託與受託安排，或適用於交易對手方可選擇接受並執行的附條件要約。由於該介面將提案儲存與執行解耦，它既可以作為獨立的轉發器部署，也可以混入既有的治理合約中。",
+
+  "fn.createProposal.desc": "根據目標地址、ether 數額、gas 上限與 calldata 的並列陣列記錄一份新的可執行提案，並回傳其註冊所用的 id。會發出 ProposalCreated 事件。",
+  "fn.createProposal.params.proposalId": "呼叫方為提案建議的識別碼；實作可以採用它，也可以指派自己的 id。",
+  "fn.createProposal.params.targets": "提案中每個呼叫將發往的合約地址。",
+  "fn.createProposal.params.values": "隨每個對應呼叫傳送的 ether 數額，以 wei 計。",
+  "fn.createProposal.params.gasLimits": "施加於每個對應呼叫的 gas 上限。",
+  "fn.createProposal.params.calldatas": "每個對應呼叫的 ABI 編碼 calldata。",
+  "fn.createProposal.params.extraParams": "由實作自行定義的額外參數。",
+  "fn.createProposal.returns.registeredProposalId": "提案實際註冊所用的識別碼。",
+
+  "fn.executeProposal.desc": "執行一份先前記錄的提案，按順序分派其儲存的每一個呼叫。會發出 ProposalExecuted 事件。",
+  "fn.executeProposal.params.proposalId": "要執行的提案的識別碼。",
+  "fn.executeProposal.params.extraParams": "由實作自行定義的額外參數。",
+
+  "fn.ProposalCreated.desc": "在建立新提案時發出，攜帶提案的完整內容，以便鏈下服務對其建立索引。",
+  "fn.ProposalCreated.params.proposer": "建立該提案的地址。",
+  "fn.ProposalCreated.params.proposalId": "所建立提案的識別碼。",
+  "fn.ProposalCreated.params.targets": "提案各呼叫的目標地址。",
+  "fn.ProposalCreated.params.values": "提案各呼叫的 ether 數額。",
+  "fn.ProposalCreated.params.gasLimits": "提案各呼叫的 gas 上限。",
+  "fn.ProposalCreated.params.calldatas": "提案各呼叫的 calldata。",
+  "fn.ProposalCreated.params.extraParams": "由實作自行定義的額外參數。",
+
+  "fn.ProposalExecuted.desc": "在提案被執行時發出。",
+  "fn.ProposalExecuted.params.executor": "執行該提案的地址。",
+  "fn.ProposalExecuted.params.proposalId": "所執行提案的識別碼。",
+  "fn.ProposalExecuted.params.extraParams": "由實作自行定義的額外參數。",
+
+  "node.user": "提議者",
+  "node.contract": "ERC-5247 註冊表",
+  "node.storageProposals": "提案儲存",
+
+  "edge.callCreateProposal": "呼叫 createProposal()",
+  "edge.callExecuteProposal": "呼叫 executeProposal()",
+  "edge.storeProposal": "儲存提案",
+  "edge.emitProposalCreated": "發出 ProposalCreated 事件",
+  "edge.emitProposalExecuted": "發出 ProposalExecuted 事件",
+
+  "sim.createProposalWalkthrough.name": "建立並執行提案",
+  "sim.createProposalWalkthrough.desc": "跟隨一份可執行提案，從建立，經過儲存與 ProposalCreated 事件，直到鏈上執行。",
+  "sim.createProposalWalkthrough.param.proposalId": "提案 id",
+  "sim.createProposalWalkthrough.param.target": "目標地址",
+  "sim.createProposalWalkthrough.param.value": "Ether 數額（以 wei 計）",
+  "sim.createProposalWalkthrough.step.call": "提議者呼叫 createProposal，傳入描述待執行呼叫的 targets、values、gas 上限與 calldata 並列陣列。",
+  "sim.createProposalWalkthrough.step.call.mobile": "呼叫 createProposal()",
+  "sim.createProposalWalkthrough.step.store": "註冊表合約將提案內容儲存在一個已註冊的提案 id 之下，供日後執行。",
+  "sim.createProposalWalkthrough.step.store.mobile": "儲存提案",
+  "sim.createProposalWalkthrough.step.created": "合約發出 ProposalCreated，攜帶完整的提案內容，以便投票與索引服務取得。",
+  "sim.createProposalWalkthrough.step.created.mobile": "發出 ProposalCreated",
+  "sim.createProposalWalkthrough.step.execute": "一旦通過，執行者便呼叫 executeProposal，註冊表分派每一個已儲存的呼叫，並發出 ProposalExecuted 事件。",
+  "sim.createProposalWalkthrough.step.execute.mobile": "執行提案"
+}

@@ -1,0 +1,32 @@
+{
+  "short": "Formato de URL para Solicitudes de Transacción",
+  "introduction": "ERC-681 define un formato de URL que codifica solicitudes de transacción de Ethereum, especialmente solicitudes de pago en ether y tokens ERC-20, para que puedan incrustarse en códigos QR, hipervínculos, correos electrónicos o mensajes de chat. Fue propuesto por Daniel A. Nagy en agosto de 2017. Una solicitud utiliza el esquema ethereum: seguido de una dirección de destino, un ID de cadena opcional, un nombre de función opcional y parámetros de consulta como value, gas y argumentos con tipos ABI. Al abrir la URL se inicia la billetera del usuario con una transacción prellenada para confirmar.",
+  "designPurpose": "ERC-681 fue diseñado para llevar a Ethereum la comodidad de las URL de pago al estilo de Bitcoin. Antes de él no existía una forma estándar de entregar a una billetera una transacción totalmente parametrizada, por lo que los remitentes copiaban direcciones y montos a mano, lo que propiciaba errores y phishing. Al estandarizar una URL ethereum: con una dirección de destino, un ID de cadena opcional, un nombre de función y parámetros tipados, ERC-681 permite que cualquier canal entregue una solicitud que una billetera pueda analizar y presentar para su confirmación, dejando a la vez cada monto editable por el usuario.",
+  "commonUsage": "Las URL de solicitud de pago son utilizadas por billeteras, sistemas de punto de venta y páginas de donación que muestran un enlace ethereum: o un código QR para una dirección y un monto específicos. La forma de token nativo solicita ether mediante un parámetro value, mientras que la forma de token apunta a la función transfer de un contrato ERC-20 con argumentos address y uint256. Los nombres ENS resueltos a través de ERC-137 pueden sustituir a las direcciones hexadecimales, aunque los clientes dan prioridad a las direcciones 0x sin procesar para reducir el riesgo de phishing.",
+
+  "node.payee": "Solicitante de Pago",
+  "node.urlBuilder": "Codificador de URL",
+  "node.paymentUrl": "URL de Pago de Ethereum",
+  "node.wallet": "Billetera del Pagador",
+  "node.payer": "Pagador",
+  "node.transaction": "Transacción Firmada",
+
+  "edge.buildRequest": "Construir solicitud de pago",
+  "edge.encodeUrl": "Codificar URL ethereum:",
+  "edge.scanUrl": "Escanear o abrir enlace",
+  "edge.confirm": "Confirmar y firmar",
+  "edge.buildTx": "Construir transacción",
+
+  "sim.paymentRequestWalkthrough.name": "Recorrido de Solicitud de Pago",
+  "sim.paymentRequestWalkthrough.desc": "Sigue una solicitud de pago desde una URL ethereum:, pasando por la billetera del pagador, hasta una transacción firmada.",
+  "sim.paymentRequestWalkthrough.param.targetAddress": "Dirección del beneficiario",
+  "sim.paymentRequestWalkthrough.param.value": "Monto en wei",
+  "sim.paymentRequestWalkthrough.step.build": "El solicitante de pago elige una dirección de beneficiario y un monto para solicitar el pago.",
+  "sim.paymentRequestWalkthrough.step.build.mobile": "Construir solicitud",
+  "sim.paymentRequestWalkthrough.step.encode": "La dirección, el ID de cadena y el value se codifican en una URL ethereum: que puede mostrarse como código QR o hipervínculo.",
+  "sim.paymentRequestWalkthrough.step.encode.mobile": "Codificar URL",
+  "sim.paymentRequestWalkthrough.step.scan": "El pagador escanea o abre el enlace; la billetera analiza la URL y presenta una transacción prellenada y editable para su confirmación.",
+  "sim.paymentRequestWalkthrough.step.scan.mobile": "Escanear y confirmar",
+  "sim.paymentRequestWalkthrough.step.send": "Después de que el pagador confirma, la billetera firma y transmite una transacción que envía el value solicitado a la dirección de destino.",
+  "sim.paymentRequestWalkthrough.step.send.mobile": "Firmar y enviar"
+}

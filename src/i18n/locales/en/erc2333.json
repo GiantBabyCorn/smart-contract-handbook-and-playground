@@ -1,0 +1,26 @@
+{
+  "short": "Hierarchical BLS12-381 Key Generation",
+  "introduction": "ERC-2333 defines a method for deriving a hierarchical tree of BLS12-381 private keys from a single entropy seed. It was proposed by Carl Beekhuizen in September 2019. A master key sits at the root; each child key is computed from its parent's key and a 32-bit index, so many keys descend from one ancestor. Derivation routes entropy through intermediate Lamport keys hashed with SHA256, which double as a post-quantum backup. Note: ERC-2333 is in Review status; the interface may still change before it is finalized.",
+  "designPurpose": "ERC-2333 was designed because BIP32, Ethereum's usual scheme for secp256k1 keys, is unsafe for BLS12-381: more than 54% of the keys it produces would exceed the curve's subgroup order and be invalid. To avoid this, the standard hashes each parent key into the valid private-key range with HKDF_mod_r, the KeyGen function from the IETF BLS signature draft. Standardizing derivation early also lets tools interoperate, and it uses only hardened keys, better suited to signing than UTXO-style non-hardened keys.",
+  "commonUsage": "The scheme is intended for generating and managing BLS12-381 keys, most notably the validator keys used on Ethereum's Beacon Chain, where one mnemonic seed can back up a whole family of keys. The specification recommends deriving that seed with the BIP-39 method, so wallets and key-generation tools that follow it can recover the same keys across different programs. Because each key needs only a parent key and a child index, groups of keys can be provisioned for separate purposes from a single ancestor.",
+
+  "node.user": "Seed Owner",
+  "node.scheme": "Key Derivation Scheme",
+  "node.storageTree": "Key Tree",
+
+  "edge.provideSeed": "Provide seed",
+  "edge.storeMaster": "Store master key",
+  "edge.deriveChild": "Derive child key",
+  "edge.populateTree": "Populate key tree",
+
+  "sim.deriveKeysWalkthrough.name": "Key Derivation Walkthrough",
+  "sim.deriveKeysWalkthrough.desc": "Follow a seed as the scheme derives the master key and then a child key in the tree.",
+  "sim.deriveKeysWalkthrough.param.seed": "Entropy seed",
+  "sim.deriveKeysWalkthrough.param.index": "Child index",
+  "sim.deriveKeysWalkthrough.step.seed": "The seed owner provides an entropy seed to derive_master_SK, the entry point of the derivation scheme.",
+  "sim.deriveKeysWalkthrough.step.seed.mobile": "Provide seed",
+  "sim.deriveKeysWalkthrough.step.master": "The scheme hashes the seed into the BLS private-key range and stores the result as the master key at the root of the tree.",
+  "sim.deriveKeysWalkthrough.step.master.mobile": "Derive master key",
+  "sim.deriveKeysWalkthrough.step.child": "Using the master key as the parent and a 32-bit index, derive_child_SK computes a child key that populates the tree.",
+  "sim.deriveKeysWalkthrough.step.child.mobile": "Derive child key"
+}

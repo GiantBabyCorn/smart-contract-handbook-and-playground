@@ -1,0 +1,43 @@
+{
+  "short": "ERC 检测与发现",
+  "introduction": "ERC-5269 定义了一个接口，用于检测某个智能合约支持哪些 ERC，它通过 ERC 编号来标识每个标准，而不是通过哈希后的函数选择器。该标准由 Zainan Victor Zhou 于 2022 年 7 月提出。其核心方法 supportERC 接收一个调用者、一个 ERC 编号和一个子行为标识符，并返回一个 bytes32 状态值，例如 keccak256(\"FINAL\")。合约还可以发出 OnSupportERC 事件来公示其支持情况。注意：ERC-5269 处于 Review 状态，其接口在最终定稿前仍可能变动。",
+  "designPurpose": "ERC-5269 旨在解决 ERC-165 的局限性。ERC-165 对方法签名进行哈希，因此它无法描述那些不定义任何方法的标准，例如数据格式或签名方案，也无法根据查询者的不同给出不同的回答。ERC-5269 则改为按 ERC 编号来查询支持情况，这种方式对人类可读，也更便于配合 ENS 等具名合约使用；它还增加了一个 caller 参数，使合约能够针对不同的调用者报告不同的支持情况，例如透明代理的管理员。",
+  "commonUsage": "由于 ERC-5269 与广泛使用的 ERC-165 相互竞争，它面向的是那些希望以人类可读形式公示自身所实现 ERC 的合约。合约会在构造或升级时发出 OnSupportERC(address(0), 5269, 0, status) 来声明其合规性，调用者则可以查询 supportERC，以了解某个标准对某一地址是否可用。规范以一个 ERC-721 合约为例说明了这一模式，该合约同时声明支持其 Metadata 和 Enumerable 扩展。",
+
+  "fn.supportERC.desc": "返回一个 bytes32 状态值，表明该合约是否支持由 majorERCIdentifier 指定的 ERC 以及 minorERCIdentifier 中的子行为。对于 Final 状态的 ERC 返回 keccak256(\"FINAL\")；返回零则表示不支持。",
+  "fn.supportERC.params.caller": "被检查其对所查询 ERC 访问权限的地址；支持情况可能因调用者而异。",
+  "fn.supportERC.params.majorERCIdentifier": "所查询的 ERC 编号，应在 (0, 2^32-1] 范围内。",
+  "fn.supportERC.params.minorERCIdentifier": "用于标识子行为的 bytes32 标识符；值为 0 时指代该 ERC 的主行为。",
+  "fn.supportERC.params.extraData": "预留的额外 calldata，用于 ERC-5750 风格的未来扩展。",
+  "fn.supportERC.returns.ercStatus": "一个 bytes32 状态值：Final 状态的 ERC 为 keccak256(\"FINAL\")，否则为 keccak256(\"DRAFT\") 或其他有文档记载的值，不支持时为 0。",
+
+  "fn.OnSupportERC.desc": "可选择性地发出（通常在构造或升级时），用于声明该合约支持某个 ERC 或子行为。当发出时 caller 为 address(0)，该声明适用于所有调用者。",
+  "fn.OnSupportERC.params.caller": "该声明所适用的调用者；address(0) 表示所有调用者。",
+  "fn.OnSupportERC.params.majorERCIdentifier": "该合约所声明支持的 ERC 编号。",
+  "fn.OnSupportERC.params.minorERCIdentifier": "子行为标识符；值为 0 表示整个 ERC。",
+  "fn.OnSupportERC.params.ercStatus": "为该 ERC 声明的状态值，例如 keccak256(\"FINAL\")。",
+  "fn.OnSupportERC.params.extraData": "预留的额外数据，用于未来扩展。",
+
+  "node.user": "查询调用者",
+  "node.contract": "ERC-5269 合约",
+  "node.storageSupport": "已声明支持表",
+
+  "edge.callSupportERC": "调用 supportERC()",
+  "edge.readSupport": "查找 ERC 状态",
+  "edge.returnStatus": "返回 ercStatus",
+  "edge.emitOnSupport": "发出 OnSupportERC 事件",
+
+  "sim.supportQueryWalkthrough.name": "支持情况查询演练",
+  "sim.supportQueryWalkthrough.desc": "使用 supportERC() 向合约查询它是否支持某个给定的 ERC 编号，然后了解该合约如何公示其支持情况。",
+  "sim.supportQueryWalkthrough.param.caller": "要检查的调用者地址",
+  "sim.supportQueryWalkthrough.param.majorERCIdentifier": "要查询的 ERC 编号",
+  "sim.supportQueryWalkthrough.param.minorERCIdentifier": "子行为标识符",
+  "sim.supportQueryWalkthrough.step.call": "调用者在合约上调用 supportERC(caller, majorERCIdentifier, minorERCIdentifier, extraData)，以询问某个 ERC 是否受支持。",
+  "sim.supportQueryWalkthrough.step.call.mobile": "调用 supportERC()",
+  "sim.supportQueryWalkthrough.step.lookup": "该 view 函数检查合约对所请求的 ERC 编号及子行为的已声明支持情况，且不修改任何状态。",
+  "sim.supportQueryWalkthrough.step.lookup.mobile": "查找 ERC 状态",
+  "sim.supportQueryWalkthrough.step.return": "合约返回 bytes32 状态值，例如此处的 keccak256(\"DRAFTv1\")；若值为零则表示该 ERC 不受支持。",
+  "sim.supportQueryWalkthrough.step.return.mobile": "返回 ercStatus",
+  "sim.supportQueryWalkthrough.step.declare": "另外，合约会在构造或升级时发出 OnSupportERC，以便索引器能够发现它所支持的 ERC。",
+  "sim.supportQueryWalkthrough.step.declare.mobile": "发出 OnSupportERC 事件"
+}

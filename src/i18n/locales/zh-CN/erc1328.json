@@ -1,0 +1,32 @@
+{
+  "short": "WalletConnect URI 格式",
+  "introduction": "ERC-1328 定义了一种 URI 格式，用于编码在应用与钱包之间建立连接所需的数据。它由 ligi 和 Pedro Gomes 于 2018 年 8 月提出。一个请求使用 wc scheme，其后是一个主题字符串、一个以 @ 分隔的版本号，以及一个参数查询字符串：v1 URI 携带一个 bridge URL 和一个对称密钥，而 v2 URI 携带一个 symKey 和一个 relay-protocol。由于其载荷是一个紧凑的 URI 而非 JSON，因此可以显示为 QR 码或链接，并被钱包高效地解析。",
+  "designPurpose": "ERC-1328 旨在替换 WalletConnect 协议 alpha 版本所使用的 JSON 载荷，后者从 QR 码解析的效率低下。通过改为将连接数据编码为 URI，该标准为钱包提供了一个紧凑、无歧义的字符串，QR 码扫描器和深层链接处理程序可以直接读取它，并且它让 Android 的 intent 系统能够将链接路由到钱包。一个必需的版本段使参数集可以在不同协议版本之间变化，同时保持向后兼容。",
+  "commonUsage": "该格式被 WalletConnect 协议用于将移动钱包与应用配对：dApp 将 URI 渲染为 QR 码，钱包扫描或打开它以派生共享的会话参数。版本 1 的 URI 提供一个 bridge URL 和加密密钥，而版本 2 的 URI 为配对主题提供一个中继协议和一个对称密钥，外加一个可选的过期时间戳。生态系统中的钱包 SDK、dApp 连接器库和 QR 码组件都会解析该 URI，以引导建立一个加密会话。",
+
+  "node.dapp": "请求方应用",
+  "node.uriBuilder": "URI 编码器",
+  "node.connectionUri": "WalletConnect URI",
+  "node.wallet": "钱包",
+  "node.walletUser": "钱包用户",
+  "node.pairing": "配对会话",
+
+  "edge.buildRequest": "构建连接请求",
+  "edge.encodeUri": "编码 wc: URI",
+  "edge.scanUri": "扫描或打开链接",
+  "edge.approve": "授权配对",
+  "edge.establish": "派生共享会话",
+
+  "sim.connectionUriWalkthrough.name": "连接 URI 演练",
+  "sim.connectionUriWalkthrough.desc": "跟随一个 WalletConnect URI，从 dApp 经过 QR 码扫描到建立配对会话的全过程。",
+  "sim.connectionUriWalkthrough.param.version": "协议版本",
+  "sim.connectionUriWalkthrough.param.expiryTimestamp": "配对过期时间（unix 时间）",
+  "sim.connectionUriWalkthrough.step.build": "应用创建一个连接请求，并选择要使用的 WalletConnect 协议版本。",
+  "sim.connectionUriWalkthrough.step.build.mobile": "构建请求",
+  "sim.connectionUriWalkthrough.step.encode": "主题、版本和参数被编码成一个 wc: URI，可以显示为 QR 码或链接。",
+  "sim.connectionUriWalkthrough.step.encode.mobile": "编码 wc: URI",
+  "sim.connectionUriWalkthrough.step.scan": "钱包用户扫描或打开该 URI，钱包在授权配对之前会解析主题、版本和连接参数。",
+  "sim.connectionUriWalkthrough.step.scan.mobile": "扫描并授权",
+  "sim.connectionUriWalkthrough.step.pair": "钱包从该 URI 派生出共享加密密钥和中继设置，从而与应用建立配对会话。",
+  "sim.connectionUriWalkthrough.step.pair.mobile": "建立配对"
+}

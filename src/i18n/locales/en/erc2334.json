@@ -1,0 +1,31 @@
+{
+  "short": "BLS12-381 Deterministic Account Hierarchy",
+  "introduction": "ERC-2334 defines a deterministic account hierarchy for the BLS12-381 keys derived by ERC-2333. It was proposed by Carl Beekhuizen in September 2019. Keys are addressed by a path of the form m / purpose / coin_type / account / use, where purpose is fixed to 12381 and coin_type separates keys by chain. Validators use coin_type 3600, deriving a withdrawal key at m/12381/3600/i/0 and a signing key at m/12381/3600/i/0/0. Note: ERC-2334 is in Review status; the interface may still change before it is finalized.",
+  "designPurpose": "ERC-2334 was designed to give BLS12-381 keys a single, predictable derivation path after BIP44 proved unsuitable. BIP44 is UTXO-centric and assumes secp256k1 keys derived through BIP32, whereas ERC-2333 uses only hardened keys and a different KDF. ERC-2334 reuses the BIP43 and BIP44 fields purpose, coin_type, and account but drops the UTXO-specific levels behind earlier competing Ethereum path formats. Its coin_type 3600, the square of secp256k1's coin_type 60, keeps the two key types cleanly separated.",
+  "commonUsage": "The hierarchy is used by Ethereum staking tools that turn a single mnemonic into validator keys: deposit and key-generation software derives each validator's withdrawal and signing keys along m/12381/3600/i/0 and m/12381/3600/i/0/0. Because the signing key is the 0th child of the withdrawal key, securely storing the withdrawal key as a cold key is enough to recover the hot signing key later. Custodial and secret-shared setups may omit some keys and derive them by other means, as the specification allows.",
+
+  "node.user": "Key Generator",
+  "node.deriver": "ERC-2333 KDF",
+  "node.storagePath": "Derivation Path",
+  "node.storageWithdrawal": "Withdrawal Key",
+  "node.storageSigning": "Signing Key",
+  "node.validator": "Beacon Chain Validator",
+
+  "edge.provideSeed": "Provide seed",
+  "edge.buildPath": "Build path",
+  "edge.deriveWithdrawal": "Derive withdrawal key",
+  "edge.deriveSigning": "Derive signing key",
+  "edge.loadSigning": "Load signing key",
+
+  "sim.deriveKeysWalkthrough.name": "Validator Key Derivation Walkthrough",
+  "sim.deriveKeysWalkthrough.desc": "Follow a mnemonic seed as the ERC-2334 path is built and a validator's withdrawal and signing keys are derived.",
+  "sim.deriveKeysWalkthrough.param.accountIndex": "Validator index (i)",
+  "sim.deriveKeysWalkthrough.step.seed": "The operator provides a mnemonic seed and a validator index to the ERC-2333 key-derivation function.",
+  "sim.deriveKeysWalkthrough.step.seed.mobile": "Provide seed",
+  "sim.deriveKeysWalkthrough.step.path": "The path m / 12381 / 3600 / account / use is assembled, fixing purpose to 12381 and coin_type to 3600 for the Beacon Chain.",
+  "sim.deriveKeysWalkthrough.step.path.mobile": "Build path",
+  "sim.deriveKeysWalkthrough.step.derive": "The withdrawal key is derived at m/12381/3600/i/0, and the signing key is derived as its 0th child at m/12381/3600/i/0/0.",
+  "sim.deriveKeysWalkthrough.step.derive.mobile": "Derive keys",
+  "sim.deriveKeysWalkthrough.step.load": "The signing key is loaded into the validator client as a hot key, while the withdrawal key stays in cold storage.",
+  "sim.deriveKeysWalkthrough.step.load.mobile": "Load signing key"
+}

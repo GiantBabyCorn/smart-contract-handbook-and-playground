@@ -1,0 +1,32 @@
+{
+  "short": "智能合約套件清單格式（EthPM v3）",
+  "introduction": "ERC-2678 定義了一種用於套件清單的 JSON 資料格式，該清單描述一個智能合約套件：一個或多個合約，連同其原始碼、編譯器設定以及在各網路上的已部署實例。它由 g. nicholas d'andrea、Piper Merriam 及多位共同作者於 2020 年 5 月提出，是 EthPM 格式的第 3 版。清單是按字母順序排序、經過壓縮的 JSON 物件，透過 IPFS 等內容定址儲存進行分發，並發布到鏈上 EthPM 註冊表。",
+  "designPurpose": "EthPM v3 的設計目標是為以太坊生態系統提供一種單一的、與工具無關的格式，用於共享和重複使用已編譯的合約。在此之前，各專案以互不相容的臨時格式來描述其原始碼和部署，因此依賴項無法在不同工具間可靠地安裝或驗證。第 3 版使其結構與 Solidity 編譯器的元資料輸出保持一致，將編譯器定義收集到一個頂層陣列中，並為保持一致性將鍵名從 snake_case 改為 camelCase。",
+  "commonUsage": "套件清單由套件管理工具在專案的發布流程中以程式化方式產生，而非手動撰寫。套件管理器讀取這些清單，用於安裝依賴項、建置發布版本，並對照原始碼合約驗證部署。套件的範圍涵蓋：供繼承使用的基礎合約、可重複使用合約（如標準的 ERC-20 代幣），以及已部署實例的集合。清單儲存在 IPFS 等內容定址系統上，並由 EthPM 註冊表引用。",
+
+  "node.author": "套件作者",
+  "node.packageManager": "EthPM 套件管理器",
+  "node.manifest": "套件清單",
+  "node.ipfs": "內容定址儲存",
+  "node.registry": "EthPM 註冊表",
+  "node.consumer": "使用方開發者",
+
+  "edge.assemble": "組裝套件",
+  "edge.serialize": "序列化清單",
+  "edge.publish": "發布到 IPFS",
+  "edge.register": "註冊發布版本",
+  "edge.resolve": "解析並安裝",
+
+  "sim.publishPackageWalkthrough.name": "發布套件演練",
+  "sim.publishPackageWalkthrough.desc": "跟隨一個 EthPM v3 套件，從作者組裝、經過 IPFS 儲存，到使用方安裝該發布版本的完整流程。",
+  "sim.publishPackageWalkthrough.param.packageName": "套件名稱",
+  "sim.publishPackageWalkthrough.param.version": "套件版本",
+  "sim.publishPackageWalkthrough.step.assemble": "套件作者執行套件管理器，從專案的合約、原始碼和部署組裝出一個新的發布版本。",
+  "sim.publishPackageWalkthrough.step.assemble.mobile": "組裝套件",
+  "sim.publishPackageWalkthrough.step.serialize": "該工具將收集到的資料序列化為一份套件清單，將 manifest 欄位設為 ethpm/3，並寫入 name、version、sources、contractTypes、compilers 和 deployments 欄位。",
+  "sim.publishPackageWalkthrough.step.serialize.mobile": "序列化清單欄位",
+  "sim.publishPackageWalkthrough.step.publish": "該清單經按字母順序排序、壓縮後儲存到 IPFS，其內容定址 URI 作為一個發布版本註冊到鏈上 EthPM 註冊表。",
+  "sim.publishPackageWalkthrough.step.publish.mobile": "發布到 IPFS 與註冊表",
+  "sim.publishPackageWalkthrough.step.consume": "使用方開發者從註冊表解析該發布版本並安裝該套件，利用清單取得原始碼並驗證已部署實例。",
+  "sim.publishPackageWalkthrough.step.consume.mobile": "解析並安裝套件"
+}

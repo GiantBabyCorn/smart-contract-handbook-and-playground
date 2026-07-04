@@ -1,0 +1,32 @@
+{
+  "short": "Perfil de Resolver de Registros de Texto de ENS",
+  "introduction": "ERC-634 define un perfil de resolver para el Servicio de Nombres de Ethereum (ENS) que permite a un nombre almacenar registros de texto arbitrarios de clave/valor, como un correo electrónico, una URL, un avatar o un identificador social. Fue propuesto por Richard Moore en mayo de 2017. El perfil añade una función view, text(node, key), que devuelve la cadena UTF-8 almacenada para un nodehash y una clave dados, o una cadena vacía cuando no hay ninguna definida. Nota: ERC-634 está en estado Stagnant (estancado): ha permanecido inactivo durante más de 6 meses y puede que nunca se finalice, pero conserva relevancia histórica o técnica.",
+  "designPurpose": "ERC-634 se diseñó para adjuntar metadatos legibles por humanos a los nombres de ENS sin definir un nuevo tipo de registro para cada campo. En lugar de fijar decenas de campos específicos, toma prestado el modelo de los registros TXT de DNS: una única consulta text(node, key) sobre claves de formato libre y valores UTF-8. Esto permite que las aplicaciones introduzcan sus propias claves mediante claves de servicio de DNS inverso como com.github, sin editar el estándar ni arriesgarse a colisiones, mientras que claves globales comunes como avatar, email y url siguen siendo interoperables entre clientes.",
+  "commonUsage": "Los registros de texto respaldan el perfil que las billeteras, los exploradores y las dapps compatibles con ENS muestran para un nombre: el avatar que aparece junto a una dirección, un sitio web enlazado, un correo electrónico e identificadores sociales como com.twitter o com.github. Los clientes los leen mediante la llamada text(node, key) al resolver del nombre, tratando una cadena vacía como una clave sin definir. Como las claves son abiertas, los servicios registran sus propias claves de DNS inverso en lugar de coordinar cambios en el estándar.",
+
+  "fn.text.desc": "Devuelve los datos de texto UTF-8 almacenados para una clave dada bajo el nombre de ENS identificado por su nodehash. Devuelve la cadena vacía cuando la clave no tiene ningún valor definido.",
+  "fn.text.params.node": "El nodehash de ENS que identifica el nombre a consultar.",
+  "fn.text.params.key": "La clave del registro de texto a buscar, como email, url o com.twitter.",
+  "fn.text.returns.text": "El valor de texto almacenado para la clave, o una cadena vacía si no hay ninguno definido.",
+
+  "node.user": "Lector del registro",
+  "node.contract": "Resolver de texto de ENS",
+  "node.storageTexts": "Almacenamiento de registros de texto",
+  "node.result": "Texto devuelto",
+
+  "edge.query": "Llamar a text()",
+  "edge.readTexts": "Leer registros de texto",
+  "edge.returnText": "Devolver el valor de texto",
+  "edge.response": "Entregar el valor de texto",
+
+  "sim.textRecordQuery.name": "Consulta de registro de texto",
+  "sim.textRecordQuery.desc": "Sigue una consulta text(node, key) desde el cliente, a través del almacenamiento del resolver, hasta el valor de cadena devuelto.",
+  "sim.textRecordQuery.param.node": "Nombre de ENS",
+  "sim.textRecordQuery.param.key": "Clave de registro",
+  "sim.textRecordQuery.step.call": "El cliente llama a text(node, key) en el resolver, pasando el nodehash de ENS y una clave de registro como email.",
+  "sim.textRecordQuery.step.call.mobile": "Llamar a text()",
+  "sim.textRecordQuery.step.lookup": "El resolver busca el valor almacenado para ese nodehash y clave en su almacenamiento de registros de texto.",
+  "sim.textRecordQuery.step.lookup.mobile": "Leer registros de texto",
+  "sim.textRecordQuery.step.return": "El resolver devuelve la cadena UTF-8 almacenada al cliente, o una cadena vacía si la clave nunca se definió.",
+  "sim.textRecordQuery.step.return.mobile": "Devolver el valor de texto"
+}

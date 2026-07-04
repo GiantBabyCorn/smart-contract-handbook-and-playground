@@ -1,0 +1,32 @@
+{
+  "short": "Web3 URL 到 EVM 调用消息的转换",
+  "introduction": "ERC-4804 定义了一种将 HTTP 风格的 web3:// URL 转换为 EVM 调用消息的标准方式，让客户端可以通过人类可读的 URL 读取链上内容，而无需构造原始 calldata。它由 Qi Zhou、Chao Pi 和 Sam Wilson 于 2022 年 2 月提出。该 URL 编码了合约名称或地址、可选的链 ID、一个方法以及参数；解析器解析这些字段，将诸如 .eth 之类的名称服务后缀解析为地址，并构建一个只读视图调用，其返回的数据将作为网页内容展示。",
+  "designPurpose": "ERC-4804 旨在移除通常横亘在用户与链上数据之间的 Web2 代理。在此之前，读取合约内容意味着要信任某个 dApp 网站、节点提供商或区块浏览器来将请求转换为 EVM 调用，而这些都不在用户的掌控之中。通过固定一套 URL 语法和一种解析模式约定，ERC-4804 让任何客户端都能将 web3:// URL 直接转换为视图调用，从而无需可信中介即可获取链上 HTML、SVG 及其他资源。",
+  "commonUsage": "该方案用于提供完全上链的网站和媒体，其中一个地址或 ENS 名称加上一个路径会映射到返回 HTML、SVG 或 JSON 的合约方法。理解 web3:// 的浏览器和网关会解析该名称，选择自动或手动解析模式，并像普通网页一样展示结果。它天然地与 ERC-5219 配合，后者将许多 web3:// 资源实现的请求-响应合约接口正式化。",
+
+  "node.browser": "Web3 客户端",
+  "node.resolver": "Web3 URL 解析器",
+  "node.url": "已解析的 Web3 URL",
+  "node.nameService": "名称服务（ENS）",
+  "node.callMessage": "EVM 调用消息",
+  "node.target": "目标合约",
+
+  "edge.submitUrl": "提交 web3:// URL",
+  "edge.parseUrl": "解析 URL 语法",
+  "edge.resolveName": "解析合约名称",
+  "edge.buildMessage": "构建 EVM 消息",
+  "edge.callTarget": "发送视图调用",
+  "edge.returnContent": "返回内容",
+
+  "sim.resolveUrlWalkthrough.name": "解析一个 Web3 URL",
+  "sim.resolveUrlWalkthrough.desc": "展示解析器如何解析一个 web3:// URL、将名称解析为地址、构建 EVM 调用消息，并返回渲染后的内容。",
+  "sim.resolveUrlWalkthrough.param.url": "Web3 URL",
+  "sim.resolveUrlWalkthrough.step.submit": "客户端向理解该方案的解析器提交一个 web3:// URL。",
+  "sim.resolveUrlWalkthrough.step.submit.mobile": "提交 web3:// URL",
+  "sim.resolveUrlWalkthrough.step.parse": "解析器将 URL 解析为合约名称、方法和参数，然后通过名称服务将该名称解析为地址。",
+  "sim.resolveUrlWalkthrough.step.parse.mobile": "解析 URL 与名称",
+  "sim.resolveUrlWalkthrough.step.build": "解析器组装一条 EVM 调用消息，将 To 设为解析出的地址，将 Calldata 设为经 ABI 编码的方法调用。",
+  "sim.resolveUrlWalkthrough.step.build.mobile": "构建调用消息",
+  "sim.resolveUrlWalkthrough.step.call": "该只读视图调用在目标合约上执行，其返回的字节被渲染回客户端作为网页内容。",
+  "sim.resolveUrlWalkthrough.step.call.mobile": "调用并渲染"
+}

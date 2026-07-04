@@ -1,0 +1,57 @@
+{
+  "short": "스마트 컨트랙트 실행 가능 제안 인터페이스",
+  "introduction": "ERC-5247은 스마트 컨트랙트 실행 가능 제안을 위한 인터페이스를 정의합니다. 이는 기록해 두었다가 나중에 실행할 수 있는 온체인 호출의 묶음입니다. 이 표준은 2022년 7월 Zainan Victor Zhou가 제안했습니다. 제안은 targets, values, gas 한도, calldata의 병렬 배열로 패키징되므로 임의의 개수의 호출을 담을 수 있습니다. createProposal은 이 묶음을 기록하고 제안 id를 반환하며, executeProposal은 저장된 모든 호출을 디스패치합니다. 참고: ERC-5247은 Review 상태이며, 최종 확정되기 전에 인터페이스가 변경될 수 있습니다.",
+  "designPurpose": "ERC-5247은 실행될 코드를 실행하는 행위 자체와 분리하도록 설계되었습니다. 그 이전에는 DAO와 위임 시스템이 각자 고유한 형식으로 제안 내용을 인코딩했기 때문에, 도구가 여러 구현에 걸쳐 제안을 구성하거나 검사할 수 없었습니다. ERC-5247은 targets, values, gas 한도, calldata의 병렬 배열을 기반으로 하는 단일한 createProposal 및 executeProposal 인터페이스를 표준화함으로써, 제안이 먼저 구성되고, 임의의 메커니즘으로 승인된 다음, 단일한 온체인 액션으로 실행될 수 있게 합니다.",
+  "commonUsage": "실행 가능 제안은 DAO 거버넌스에 적합합니다. 제안자가 제안을 기록하고, 구성원은 ERC-1202와 같은 별도의 투표 인터페이스를 통해 이에 투표하며, 합의가 형성되면 승인된 묶음이 실행됩니다. 이처럼 먼저 생성한 뒤 실행하는 패턴은 위임 및 수탁 약정, 또는 상대방이 수락하고 실행할지 선택할 수 있는 조건부 제의에도 적합합니다. 이 인터페이스는 제안 저장과 실행을 분리하므로, 독립형 포워더로 배포할 수도 있고 기존 거버넌스 컨트랙트에 통합할 수도 있습니다.",
+
+  "fn.createProposal.desc": "타깃 주소, ether 값, gas 한도, calldata의 병렬 배열로부터 새로운 실행 가능 제안을 기록하고, 등록된 id를 반환합니다. ProposalCreated 이벤트를 발생시킵니다.",
+  "fn.createProposal.params.proposalId": "제안에 대해 호출자가 제안하는 식별자로, 구현은 이를 그대로 사용하거나 자체 id를 할당할 수 있습니다.",
+  "fn.createProposal.params.targets": "제안 내 각 호출이 전송될 컨트랙트 주소.",
+  "fn.createProposal.params.values": "대응하는 각 호출과 함께 전송할 ether의 양(wei 단위).",
+  "fn.createProposal.params.gasLimits": "대응하는 각 호출에 적용할 gas 한도.",
+  "fn.createProposal.params.calldatas": "대응하는 각 호출의 ABI 인코딩된 calldata.",
+  "fn.createProposal.params.extraParams": "구현이 정의하는 추가 매개변수.",
+  "fn.createProposal.returns.registeredProposalId": "제안이 실제로 등록된 식별자.",
+
+  "fn.executeProposal.desc": "이전에 기록된 제안을 실행하여, 저장된 각 호출을 순서대로 디스패치합니다. ProposalExecuted 이벤트를 발생시킵니다.",
+  "fn.executeProposal.params.proposalId": "실행할 제안의 식별자.",
+  "fn.executeProposal.params.extraParams": "구현이 정의하는 추가 매개변수.",
+
+  "fn.ProposalCreated.desc": "새로운 제안이 생성될 때 발생하며, 오프체인 서비스가 인덱싱할 수 있도록 제안의 전체 내용을 담습니다.",
+  "fn.ProposalCreated.params.proposer": "제안을 생성한 주소.",
+  "fn.ProposalCreated.params.proposalId": "생성된 제안의 식별자.",
+  "fn.ProposalCreated.params.targets": "제안 호출의 타깃 주소.",
+  "fn.ProposalCreated.params.values": "제안 호출의 ether 값.",
+  "fn.ProposalCreated.params.gasLimits": "제안 호출의 gas 한도.",
+  "fn.ProposalCreated.params.calldatas": "제안 호출의 calldata.",
+  "fn.ProposalCreated.params.extraParams": "구현이 정의하는 추가 매개변수.",
+
+  "fn.ProposalExecuted.desc": "제안이 실행될 때 발생합니다.",
+  "fn.ProposalExecuted.params.executor": "제안을 실행한 주소.",
+  "fn.ProposalExecuted.params.proposalId": "실행된 제안의 식별자.",
+  "fn.ProposalExecuted.params.extraParams": "구현이 정의하는 추가 매개변수.",
+
+  "node.user": "제안자",
+  "node.contract": "ERC-5247 레지스트리",
+  "node.storageProposals": "제안 스토리지",
+
+  "edge.callCreateProposal": "createProposal() 호출",
+  "edge.callExecuteProposal": "executeProposal() 호출",
+  "edge.storeProposal": "제안 저장",
+  "edge.emitProposalCreated": "ProposalCreated 이벤트 발생",
+  "edge.emitProposalExecuted": "ProposalExecuted 이벤트 발생",
+
+  "sim.createProposalWalkthrough.name": "제안 생성 및 실행",
+  "sim.createProposalWalkthrough.desc": "실행 가능 제안을 생성부터 스토리지와 ProposalCreated 이벤트를 거쳐 온체인 실행까지 따라갑니다.",
+  "sim.createProposalWalkthrough.param.proposalId": "제안 id",
+  "sim.createProposalWalkthrough.param.target": "타깃 주소",
+  "sim.createProposalWalkthrough.param.value": "ether 값(wei 단위)",
+  "sim.createProposalWalkthrough.step.call": "제안자는 실행할 호출을 기술하는 targets, values, gas 한도, calldata의 병렬 배열과 함께 createProposal을 호출합니다.",
+  "sim.createProposalWalkthrough.step.call.mobile": "createProposal() 호출",
+  "sim.createProposalWalkthrough.step.store": "레지스트리 컨트랙트는 나중에 실행하기 위해 등록된 제안 id 아래에 제안 내용을 저장합니다.",
+  "sim.createProposalWalkthrough.step.store.mobile": "제안 저장",
+  "sim.createProposalWalkthrough.step.created": "컨트랙트는 투표 및 인덱싱 서비스가 가져갈 수 있도록 전체 제안 내용과 함께 ProposalCreated를 발생시킵니다.",
+  "sim.createProposalWalkthrough.step.created.mobile": "ProposalCreated 발생",
+  "sim.createProposalWalkthrough.step.execute": "승인되면 실행자가 executeProposal을 호출하고, 레지스트리가 저장된 각 호출을 디스패치하며, ProposalExecuted 이벤트가 발생합니다.",
+  "sim.createProposalWalkthrough.step.execute.mobile": "제안 실행"
+}

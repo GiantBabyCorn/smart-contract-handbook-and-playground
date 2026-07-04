@@ -1,0 +1,44 @@
+{
+  "short": "ENS 向けマルチチェーンアドレス解決",
+  "introduction": "ERC-2304 は、ENS リゾルバに、Ethereum 以外のブロックチェーンのアドレスを解決するオーバーロードされた addr 関数を追加する規格で、SLIP-0044 のコインタイプインデックスをキーとします。この提案は 2019 年 9 月に Nick Johnson によって提案されました。また AddressChanged イベントと推奨される setAddr セッターを定義し、各アドレスをそのネイティブなバイナリ形式で 1 つの ENS 名の下に保存します。注意：ERC-2304 は Stagnant（停滞）状態です。6 か月以上活動がなく、最終化されない可能性がありますが、歴史的または技術的に重要な意味を持ち続けています。",
+  "designPurpose": "ERC-2304 は、単一の ENS 名が Ethereum だけでなく多くのブロックチェーンのアドレスを解決できるようにするために設計されました。マルチコインウォレットが ENS を採用するにつれて、作成者は Ethereum 以外のアドレスを保存し検索するためのクライアント横断的な方法を必要としましたが、元の単一アドレスの addr(bytes32) リゾルバではこれを表現できませんでした。ERC-2304 はこれに対し、SLIP-0044 インデックスから取られる coinType パラメータで addr をオーバーロードし、AddressChanged イベントを必須とすることで応え、各チェーンのアドレスが 1 つの名前の下に存在し、インデクサーが同期を保てるようにします。",
+  "commonUsage": "マルチチェーンアドレス解決は、ENS リゾルバコントラクトと、それらを読み取るマルチコインウォレットによって使用されます。そのため alice.eth のような名前は、Ethereum アドレスに加えて Bitcoin、Litecoin、Binance Chain のアドレスを返すことができます。ウォレットは選択したチェーンの SLIP-0044 インデックスを用いて addr(node, coinType) をクエリし、リゾルバのフロントエンドは setAddr を呼び出してレコードを設定します。この addr オーバーロードは ERC-165 のインターフェースID 0xf1cb7e06 を持つため、クライアントは依存する前にサポートを検出できます。",
+
+  "fn.addr.desc": "coinType で識別されるブロックチェーン上の ENS node について保存されたアドレスを、そのチェーンのネイティブなバイナリ形式で返します。指定された node とコインタイプにアドレスが設定されていない場合は、長さ 0 の値が返されます。",
+  "fn.addr.params.node": "クエリする ENS 名の namehash。",
+  "fn.addr.params.coinType": "対象のブロックチェーンを識別する SLIP-0044 コインタイプインデックス。",
+  "fn.addr.returns.address": "ネイティブなバイナリエンコーディングのアドレス。設定されていない場合は空の値。",
+
+  "fn.setAddr.desc": "指定された ENS node とコインタイプに保存されたアドレスを追加または置換し、その後 AddressChanged イベントを発行します。これは、異なるインターフェースが必要とされない限りリゾルバが実装する推奨セッターです。",
+  "fn.setAddr.params.node": "更新する ENS 名の namehash。",
+  "fn.setAddr.params.coinType": "対象のブロックチェーンを識別する SLIP-0044 コインタイプインデックス。",
+  "fn.setAddr.params.addr": "チェーンのネイティブなバイナリエンコーディングでの新しいアドレス。",
+
+  "fn.AddressChanged.desc": "ENS node とコインタイプに保存されたアドレスが変更されるたびに発行され、リゾルバやオフチェーンのインデクサーが更新を追跡できるようにします。",
+  "fn.AddressChanged.params.node": "アドレスが変更された ENS node。",
+  "fn.AddressChanged.params.coinType": "変更されたアドレスの SLIP-0044 コインタイプインデックス。",
+  "fn.AddressChanged.params.newAddress": "ネイティブなバイナリエンコーディングでの新しいアドレス。",
+
+  "node.user": "ENS 名の所有者",
+  "node.contract": "ENS リゾルバ",
+  "node.storageAddresses": "アドレスレコード",
+  "node.wallet": "マルチコインウォレット",
+
+  "edge.callSetAddr": "setAddr() を呼び出す",
+  "edge.updateAddresses": "アドレスレコードを更新",
+  "edge.emitAddressChanged": "AddressChanged イベントを発行",
+  "edge.callAddr": "addr() を呼び出す",
+  "edge.returnAddress": "保存されたアドレスを返す",
+
+  "sim.setAddrWalkthrough.name": "マルチチェーンアドレスの設定",
+  "sim.setAddrWalkthrough.desc": "ENS 名の所有者からストレージを経て AddressChanged イベントに至る setAddr 呼び出しをたどります。",
+  "sim.setAddrWalkthrough.param.node": "ENS 名",
+  "sim.setAddrWalkthrough.param.coinType": "コインタイプ",
+  "sim.setAddrWalkthrough.param.addr": "アドレス",
+  "sim.setAddrWalkthrough.step.call": "ENS 名の所有者は、選択したブロックチェーンのアドレスを保存するために、リゾルバ上で setAddr(node, coinType, addr) を呼び出します。",
+  "sim.setAddrWalkthrough.step.call.mobile": "setAddr() を呼び出す",
+  "sim.setAddrWalkthrough.step.execute": "リゾルバは、node とコインタイプの下の _addresses マッピングにアドレスを書き込み、以前の値を置き換えます。",
+  "sim.setAddrWalkthrough.step.execute.mobile": "アドレスを保存",
+  "sim.setAddrWalkthrough.step.event": "リゾルバは AddressChanged(node, coinType, newAddress) を発行し、ウォレットやインデクサーがキャッシュされたレコードを更新できるようにします。",
+  "sim.setAddrWalkthrough.step.event.mobile": "AddressChanged を発行"
+}

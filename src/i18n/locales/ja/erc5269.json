@@ -1,0 +1,43 @@
+{
+  "short": "ERC の検出と発見",
+  "introduction": "ERC-5269 は、スマートコントラクトがどの ERC をサポートしているかを検出するためのインターフェースを定義し、各標準をハッシュ化された関数セレクタではなく ERC 番号によって識別します。この規格は 2022 年 7 月に Zainan Victor Zhou によって提案されました。中核となるメソッド supportERC は、呼び出し元、ERC 番号、サブ動作の識別子を受け取り、keccak256(\"FINAL\") のような bytes32 のステータスを返します。コントラクトは、サポートを告知するために OnSupportERC イベントを発行することもできます。注意：ERC-5269 は Review ステータスであり、最終化される前にインターフェースが変更される可能性があります。",
+  "designPurpose": "ERC-5269 は、ERC-165 の制約に対処するために設計されました。ERC-165 はメソッドシグネチャをハッシュ化するため、データ形式や署名スキームのようにメソッドを定義しない標準を記述できず、また誰が問い合わせているかに応じて異なる回答を返すこともできません。ERC-5269 は代わりに ERC 番号によってサポートを問い合わせます。これは人間が読める形式であり、ENS のような名前付きコントラクトで使いやすく、さらに caller パラメータを追加することで、透過的なプロキシの管理者のように、コントラクトが呼び出し元ごとに異なるサポート状況を報告できるようにします。",
+  "commonUsage": "ERC-5269 は広く使われている ERC-165 と競合するため、実装している ERC を人間が読める形式で告知したいコントラクト向けに意図されています。コントラクトは、コンプライアンスを宣言するために構築時またはアップグレード時に OnSupportERC(address(0), 5269, 0, status) を発行し、呼び出し元は supportERC を照会することで、特定の標準があるアドレスに対して利用可能かどうかを知ることができます。仕様では、Metadata および Enumerable 拡張のサポートも宣言する ERC-721 コントラクトを用いてこのパターンを示しています。",
+
+  "fn.supportERC.desc": "majorERCIdentifier で指定された ERC と minorERCIdentifier のサブ動作を、コントラクトがサポートしているかどうかを示す bytes32 のステータスを返します。Final の ERC には keccak256(\"FINAL\") を返し、ゼロを返す場合はサポートしていないことを意味します。",
+  "fn.supportERC.params.caller": "照会対象の ERC へのアクセスが確認されるアドレスです。サポート状況は呼び出し元によって異なる場合があります。",
+  "fn.supportERC.params.majorERCIdentifier": "照会される ERC 番号で、(0, 2^32-1] の範囲内である必要があります。",
+  "fn.supportERC.params.minorERCIdentifier": "サブ動作を表す bytes32 の識別子です。値が 0 の場合は、その ERC の主要な動作を指します。",
+  "fn.supportERC.params.extraData": "ERC-5750 スタイルの将来の拡張のために予約された追加の calldata です。",
+  "fn.supportERC.returns.ercStatus": "bytes32 のステータス：Final の ERC には keccak256(\"FINAL\")、それ以外には keccak256(\"DRAFT\") または他の文書化された値、サポートされていない場合は 0 です。",
+
+  "fn.OnSupportERC.desc": "任意で、通常は構築時またはアップグレード時に発行され、コントラクトが特定の ERC またはサブ動作をサポートすることを宣言します。caller が address(0) での発行は、すべての呼び出し元に適用されます。",
+  "fn.OnSupportERC.params.caller": "宣言が適用される呼び出し元です。address(0) はすべての呼び出し元を意味します。",
+  "fn.OnSupportERC.params.majorERCIdentifier": "コントラクトがサポートを宣言している ERC 番号です。",
+  "fn.OnSupportERC.params.minorERCIdentifier": "サブ動作の識別子です。値が 0 の場合は ERC 全体を意味します。",
+  "fn.OnSupportERC.params.ercStatus": "その ERC に対して宣言されるステータス値で、keccak256(\"FINAL\") などです。",
+  "fn.OnSupportERC.params.extraData": "将来の拡張のために予約された追加データです。",
+
+  "node.user": "照会する呼び出し元",
+  "node.contract": "ERC-5269 コントラクト",
+  "node.storageSupport": "宣言されたサポートテーブル",
+
+  "edge.callSupportERC": "supportERC() を呼び出す",
+  "edge.readSupport": "ERC ステータスを参照する",
+  "edge.returnStatus": "ercStatus を返す",
+  "edge.emitOnSupport": "OnSupportERC イベントを発行する",
+
+  "sim.supportQueryWalkthrough.name": "サポート照会ウォークスルー",
+  "sim.supportQueryWalkthrough.desc": "supportERC() を使ってコントラクトに特定の ERC 番号をサポートしているかどうかを照会し、コントラクトがどのようにサポートを告知するかを確認します。",
+  "sim.supportQueryWalkthrough.param.caller": "確認する呼び出し元アドレス",
+  "sim.supportQueryWalkthrough.param.majorERCIdentifier": "照会する ERC 番号",
+  "sim.supportQueryWalkthrough.param.minorERCIdentifier": "サブ動作の識別子",
+  "sim.supportQueryWalkthrough.step.call": "呼び出し元は、ERC がサポートされているかどうかを問い合わせるために、コントラクトの supportERC(caller, majorERCIdentifier, minorERCIdentifier, extraData) を呼び出します。",
+  "sim.supportQueryWalkthrough.step.call.mobile": "supportERC() を呼び出す",
+  "sim.supportQueryWalkthrough.step.lookup": "この view 関数は、要求された ERC 番号とサブ動作に対するコントラクトの宣言されたサポートを、状態を変更することなく確認します。",
+  "sim.supportQueryWalkthrough.step.lookup.mobile": "ERC ステータスを参照",
+  "sim.supportQueryWalkthrough.step.return": "コントラクトは bytes32 のステータス（ここでは keccak256(\"DRAFTv1\") など）を返します。ゼロ値の場合は、その ERC がサポートされていないことを意味します。",
+  "sim.supportQueryWalkthrough.step.return.mobile": "ercStatus を返す",
+  "sim.supportQueryWalkthrough.step.declare": "別途、コントラクトは構築時またはアップグレード時に OnSupportERC を発行し、インデクサがサポートする ERC を発見できるようにします。",
+  "sim.supportQueryWalkthrough.step.declare.mobile": "OnSupportERC イベントを発行"
+}

@@ -1,0 +1,52 @@
+{
+  "short": "Bit-Based Permission and Role System",
+  "introduction": "ERC-6617 defines a bit-based permission and role system in which each permission is a single bit of a uint256, encoding up to 256 permissions that combine into roles. It was proposed by Chiro and Victor Dusart in February 2023. Each permission must be a power of two so it occupies one bit, and the interface exposes functions to grant, revoke, and check permissions with bitwise operations, emitting an event on each change. Note: ERC-6617 is in Review status; the interface may still change before it is finalized.",
+  "designPurpose": "ERC-6617 was designed to make on-chain access control more granular and gas-efficient than single-owner or string-based role schemes. Under ERC-173 a contract has one owner, and role systems keyed on bytes32 identifiers need a storage read per check. By packing every permission into one bit of a uint256, ERC-6617 tests access with a single bitwise AND and merges permissions into roles with bitwise OR, avoiding extra storage loads. Ordering bits by significance also lets permissions be ranked as integers.",
+  "commonUsage": "Bit-based permissions suit contracts that need distinct access levels, such as multi-role protocol administration, minting and pausing rights on a token, or module permissions in a smart-contract account. Because roles are plain uint256 values, they can be passed between contracts and compared without storage lookups. ERC-6617 also defines an optional IEIP6617Meta extension that attaches a name and description to each permission for explorers and dashboards to display.",
+
+  "fn.hasPermission.desc": "Returns true when the user's stored permission bitmask is a superset of the required permission, meaning every bit set in _requiredPermission is also set for the user. The check is a view operation using a bitwise AND.",
+  "fn.hasPermission.params._user": "Address of the user whose permission is checked.",
+  "fn.hasPermission.params._requiredPermission": "The permission, or combination of permission bits, that the user must hold.",
+  "fn.hasPermission.returns.result": "True if the user's permission is a superset of the required permission, otherwise false.",
+
+  "fn.grantPermission.desc": "Adds the given permission bit to the user's bitmask with a bitwise OR and emits a PermissionGranted event. The permission to add must be a power of two so it sets exactly one bit.",
+  "fn.grantPermission.params._user": "Address of the user to whom the permission is added.",
+  "fn.grantPermission.params._permissionToAdd": "The permission bit to add; it must be a power of two.",
+  "fn.grantPermission.returns.success": "True when the permission has been granted.",
+
+  "fn.revokePermission.desc": "Removes the given permission bit from the user's bitmask and emits a PermissionRevoked event, leaving the user's other permissions intact.",
+  "fn.revokePermission.params._user": "Address of the user from whom the permission is revoked.",
+  "fn.revokePermission.params._permissionToRevoke": "The permission bit to remove.",
+  "fn.revokePermission.returns.success": "True when the permission has been revoked.",
+
+  "fn.PermissionGranted.desc": "Emitted when a permission is granted to a user, recording the grantor, the permission, and the receiving user.",
+  "fn.PermissionGranted.params._grantor": "Address that granted the permission.",
+  "fn.PermissionGranted.params._permission": "The permission that was granted.",
+  "fn.PermissionGranted.params._user": "Address of the user who received the permission.",
+
+  "fn.PermissionRevoked.desc": "Emitted when a permission is revoked from a user, recording the revoker, the permission, and the affected user.",
+  "fn.PermissionRevoked.params._revoker": "Address that revoked the permission.",
+  "fn.PermissionRevoked.params._permission": "The permission that was revoked.",
+  "fn.PermissionRevoked.params._user": "Address of the user who lost the permission.",
+
+  "node.user": "Permission Grantor",
+  "node.contract": "ERC-6617 Contract",
+  "node.storagePermissions": "Permission Storage",
+  "node.targetUser": "Target User",
+
+  "edge.callGrant": "Call grantPermission()",
+  "edge.updatePermissions": "Set permission bit",
+  "edge.emitGranted": "Emit PermissionGranted event",
+  "edge.grantToUser": "Grant permission to user",
+
+  "sim.grantPermissionWalkthrough.name": "Grant Permission Walkthrough",
+  "sim.grantPermissionWalkthrough.desc": "Follow a grantPermission call from the grantor through the permission bitmask to the PermissionGranted event.",
+  "sim.grantPermissionWalkthrough.param.targetUser": "User receiving the permission",
+  "sim.grantPermissionWalkthrough.param.permission": "Permission bit (a power of two)",
+  "sim.grantPermissionWalkthrough.step.call": "The grantor calls grantPermission(_user, _permissionToAdd) with a permission that is a power of two, targeting the user who should receive the access bit.",
+  "sim.grantPermissionWalkthrough.step.call.mobile": "Call grantPermission()",
+  "sim.grantPermissionWalkthrough.step.execute": "The contract ORs the new permission bit into the user's stored uint256 bitmask, so any bits already granted are preserved.",
+  "sim.grantPermissionWalkthrough.step.execute.mobile": "Set permission bit",
+  "sim.grantPermissionWalkthrough.step.event": "The contract emits PermissionGranted with the grantor, permission, and user, and the target user now holds the added permission.",
+  "sim.grantPermissionWalkthrough.step.event.mobile": "Emit PermissionGranted"
+}

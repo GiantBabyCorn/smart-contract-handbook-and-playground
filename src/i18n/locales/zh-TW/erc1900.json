@@ -1,0 +1,64 @@
+{
+  "short": "面向 EVM 的去中心化型別系統",
+  "introduction": "ERC-1900 定義了 dType，一個鏈上註冊表與通用介面，用於在以太坊上從 Solidity 結構體宣告可重複使用的資料型別。該提案由 Loredana Cirstea 與 Christian Tzurcanu 於 2019 年 3 月提出。每個型別都以其 ABI 元資料形式儲存，並以一個識別碼為鍵，該識別碼由型別名稱的 keccak256 計算得出，讓工具與合約共享一致的型別定義。注意：ERC-1900 處於 Stagnant 狀態——它已有 6 個月以上未活動，可能永遠不會最終定案，但在歷史或技術上仍具重要意義。",
+  "designPurpose": "dType 旨在為以太坊提供一套共享的資料型別詞彙，而不是讓每個專案各自孤立地重複定義相同的結構體。如果沒有一個通用註冊表，鏈上資料就無法在各協議之間順暢流轉，而區塊瀏覽器等鏈下工具也無法解碼任意結構。透過將每個型別的 ABI 元資料以一個確定性識別碼記錄在鏈上，dType 讓合約可以引用既有的定義，也讓工具能夠快取並搜尋整個集合。",
+  "commonUsage": "dType 面向需要機器可讀型別定義的基礎設施：解碼交易副作用的區塊瀏覽器、為具型別的合約提供自動補全的編輯器外掛，以及基於共享資料模型進行互通的協議。該提案將 dType 定位為後續擴充的基礎層——一個帶有資料儲存的型別系統（ERC-2158），以及針對每個型別的 pure 函式庫。由於它從未達到 Final 狀態，ERC-1900 只停留在參考實作層面，而未獲得生產環境採用。",
+
+  "fn.insert.desc": "透過將型別的 dType 元資料結構體存入註冊表來註冊一個新型別。回傳該識別碼（由型別名稱的 keccak256 計算得出），並觸發一個 LogNew 事件。",
+  "fn.insert.params.data": "描述該型別的 dType 元資料結構體：包括其 typeChoice、合約地址、Swarm 來源雜湊、名稱與子型別。",
+  "fn.insert.returns.identifier": "該型別的主要識別碼，即其名稱的 keccak256。",
+
+  "fn.remove.desc": "刪除具有給定識別碼的型別記錄，並釋放其儲存槽。規範指出該函式是可選的，為保證不可變性可以將其省略。",
+  "fn.remove.params.identifier": "要刪除的型別的識別碼。",
+  "fn.remove.returns.index": "被刪除記錄先前所佔的陣列索引。",
+
+  "fn.count.desc": "回傳目前已註冊的型別數量。",
+  "fn.count.returns.counter": "已註冊型別的總數。",
+
+  "fn.getTypeIdentifier.desc": "在不存取儲存的情況下計算某個型別名稱的識別碼，即打包後名稱的 keccak256。呼叫方用它來推導用於其他查詢的鍵。",
+  "fn.getTypeIdentifier.params.name": "型別名稱，即在 Solidity 中書寫的形式。",
+  "fn.getTypeIdentifier.returns.identifier": "由名稱推導得出的識別碼。",
+
+  "fn.getByIdentifier.desc": "回傳儲存在給定識別碼下的完整 dType 元資料結構體。",
+  "fn.getByIdentifier.params.identifier": "要取得的型別的識別碼。",
+  "fn.getByIdentifier.returns.dtype": "已儲存的 dType 元資料結構體。",
+
+  "fn.get.desc": "回傳按名稱查詢的型別的 dType 元資料結構體，並在內部解析其識別碼。",
+  "fn.get.params.name": "要查詢的型別名稱。",
+  "fn.get.returns.dtype": "已儲存的 dType 元資料結構體。",
+
+  "fn.isRegistered.desc": "回報註冊表中是否存在具有給定識別碼的型別。",
+  "fn.isRegistered.params.identifier": "要檢查的識別碼。",
+  "fn.isRegistered.returns.registered": "如果存在具有該識別碼的已註冊型別，則為 true。",
+
+  "fn.LogNew.desc": "當有新型別被插入註冊表時觸發。",
+  "fn.LogNew.params.identifier": "新註冊型別的識別碼。",
+  "fn.LogNew.params.index": "該型別在註冊表識別碼陣列中的索引。",
+
+  "fn.LogUpdate.desc": "當既有的型別記錄被更新時觸發。",
+  "fn.LogUpdate.params.identifier": "被更新型別的識別碼。",
+  "fn.LogUpdate.params.index": "該型別在註冊表識別碼陣列中的索引。",
+
+  "fn.LogRemove.desc": "當型別記錄從註冊表中被移除時觸發。",
+  "fn.LogRemove.params.identifier": "被移除型別的識別碼。",
+  "fn.LogRemove.params.index": "被移除型別先前在識別碼陣列中所佔的索引。",
+
+  "node.user": "型別作者",
+  "node.contract": "dType 註冊表",
+  "node.storageTypes": "型別儲存",
+
+  "edge.callInsert": "調用 insert()",
+  "edge.updateTypes": "儲存型別記錄",
+  "edge.emitLogNew": "觸發 LogNew 事件",
+
+  "sim.insertWalkthrough.name": "註冊型別演練",
+  "sim.insertWalkthrough.desc": "跟隨一次 insert 呼叫，從作者出發，經過註冊表儲存，直到 LogNew 事件。",
+  "sim.insertWalkthrough.param.name": "型別名稱",
+  "sim.insertWalkthrough.param.typeChoice": "型別選擇",
+  "sim.insertWalkthrough.step.call": "作者呼叫 insert(data)，傳入一個描述待註冊型別的 dType 結構體。",
+  "sim.insertWalkthrough.step.call.mobile": "調用 insert()",
+  "sim.insertWalkthrough.step.execute": "註冊表推導出 identifier = keccak256(name)，將記錄寫入 typeStruct 映射，並將其附加到 typeIndex 陣列中。",
+  "sim.insertWalkthrough.step.execute.mobile": "儲存型別記錄",
+  "sim.insertWalkthrough.step.event": "註冊表觸發 LogNew(identifier, index)，以便鏈下索引器能夠追蹤這個新型別。",
+  "sim.insertWalkthrough.step.event.mobile": "觸發 LogNew 事件"
+}

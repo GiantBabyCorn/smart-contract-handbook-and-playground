@@ -1,0 +1,32 @@
+{
+  "short": "Errores personalizados para tokens de uso común",
+  "introduction": "ERC-6093 define un conjunto estándar de errores personalizados de Solidity para los tres estándares de token de uso común: ERC-20, ERC-721 y ERC-1155. Fue propuesto por Ernesto García, Francisco Giordano y Hadrien Croubois en diciembre de 2022. Como esos estándares se finalizaron antes de que Solidity añadiera los errores personalizados en la v0.8.4, no incluyen errores propios; ERC-6093 llena ese vacío con nombres formados por un prefijo de dominio, un prefijo de error como Invalid o Insufficient y el sujeto que falla.",
+  "designPurpose": "ERC-6093 se diseñó para reemplazar las cadenas de reversión de formato libre que las billeteras analizaban históricamente para explicar por qué fallaba una transacción de token. Las cadenas de reversión son inconsistentes entre implementaciones, no llevan argumentos legibles por máquina y añaden bytecode de despliegue. Al estandarizar errores personalizados que siguen una gramática fija de Dominio-PrefijoDeError-Sujeto y llevan argumentos tipados como direcciones y montos, ERC-6093 permite que los clientes decodifiquen un fallo y su causa de forma consistente, conservando el ahorro de gas y de tamaño de los errores personalizados.",
+  "commonUsage": "Los errores están destinados a cualquier implementación de ERC-20, ERC-721 o ERC-1155 que revierta ante transferencias o aprobaciones no válidas, y a las billeteras, exploradores y herramientas de prueba que decodifican esas reversiones. Los contratos de token de OpenZeppelin adoptan el conjunto de errores de ERC-6093, de modo que los front-ends pueden asignar una llamada fallida a una causa precisa, como un saldo insuficiente o un receptor no válido. El EIP solo define las firmas de error y no exige cuándo debe revertir una implementación.",
+
+  "node.user": "Invocador del token",
+  "node.token": "Contrato del token",
+  "node.storageState": "Estado del token",
+  "node.storageError": "Datos de reversión",
+  "node.decoder": "Decodificador de errores",
+  "node.wallet": "Interfaz de billetera",
+
+  "edge.callToken": "Llamar a transfer()",
+  "edge.checkState": "Comprobar saldo",
+  "edge.revertError": "Revertir con error personalizado",
+  "edge.decodeError": "Decodificar selector y argumentos",
+  "edge.showMessage": "Mostrar mensaje estructurado",
+
+  "sim.errorDecodingWalkthrough.name": "Recorrido de decodificación de un error personalizado",
+  "sim.errorDecodingWalkthrough.desc": "Muestra una transferencia fallida en la que el contrato del token revierte con un error personalizado de ERC-6093 y una billetera la decodifica en un mensaje estructurado.",
+  "sim.errorDecodingWalkthrough.param.sender": "Remitente",
+  "sim.errorDecodingWalkthrough.param.amount": "Monto de la transferencia",
+  "sim.errorDecodingWalkthrough.step.call": "El invocador ejecuta una transferencia de tokens cuyo monto supera el saldo del remitente.",
+  "sim.errorDecodingWalkthrough.step.call.mobile": "Llamar a transfer()",
+  "sim.errorDecodingWalkthrough.step.check": "El contrato del token lee el saldo del remitente desde el estado y detecta que es inferior al monto necesario para la transferencia.",
+  "sim.errorDecodingWalkthrough.step.check.mobile": "Comprobar saldo",
+  "sim.errorDecodingWalkthrough.step.revert": "En lugar de una cadena de reversión, el contrato revierte con ERC20InsufficientBalance(sender, balance, needed), codificando los argumentos en los datos de reversión.",
+  "sim.errorDecodingWalkthrough.step.revert.mobile": "Revertir con error",
+  "sim.errorDecodingWalkthrough.step.decode": "La billetera decodifica el selector del error personalizado y sus argumentos, y muestra al usuario un mensaje estructurado que explica el fallo.",
+  "sim.errorDecodingWalkthrough.step.decode.mobile": "Decodificar y mostrar"
+}

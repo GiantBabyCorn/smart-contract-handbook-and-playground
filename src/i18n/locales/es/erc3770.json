@@ -1,0 +1,33 @@
+{
+  "short": "Formato de dirección específica de cadena legible por humanos",
+  "introduction": "ERC-3770 define un formato de texto para una dirección EVM con un prefijo legible por humanos que nombra su cadena, escrito como un nombre corto, dos puntos y luego la dirección. Fue propuesto por Lukas Schor, Richard Meissner, Pedro Gomes y ligi en agosto de 2021. El nombre corto proviene del registro ethereum-lists/chains y la dirección debe ser una dirección hexadecimal con checksum ERC-55, de modo que una cadena de texto como eth:0x… nombra tanto la cuenta como la red. Nota: ERC-3770 es un Draft (borrador); la especificación aún está en desarrollo activo y puede cambiar sustancialmente.",
+  "designPurpose": "ERC-3770 se diseñó para eliminar la ambigüedad que surge cuando una misma dirección se reutiliza en varias cadenas EVM, donde puede ser una cuenta de propiedad externa en una red y un contrato no desplegado en otra. Una dirección hexadecimal simple no aporta ninguna señal sobre su cadena, por lo que los usuarios podrían enviar fondos a una billetera de contrato en una red donde nunca se desplegó y perderlos. Los ID de cadena de EIP-155 nombran las redes para los desarrolladores, pero no estaban pensados para mostrarse a las personas, por lo que ERC-3770 antepone a la dirección un nombre de cadena corto y legible por humanos.",
+  "commonUsage": "Las direcciones específicas de cadena están pensadas para interfaces que abarcan varias redes EVM, como billeteras multicadena, libretas de direcciones y front-ends de dApp que permiten al usuario pegar una sola cadena de texto y que el software elija la red correcta. Como el prefijo se corresponde con una entrada del registro ethereum-lists/chains, las herramientas resuelven un nombre corto como eth o gno a una cadena concreta antes de enviar. El formato es una convención de visualización e intercambio, no un mecanismo on-chain, por lo que no necesita ningún contrato ni almacenamiento y se ejecuta en el software cliente.",
+
+  "node.user": "Aplicación emisora",
+  "node.formatter": "Formateador de direcciones",
+  "node.storageRegistry": "Lista de nombres cortos de cadena",
+  "node.storageAddress": "Dirección específica de cadena",
+  "node.resolver": "Resolver de direcciones",
+  "node.wallet": "Billetera receptora",
+
+  "edge.submitAddress": "Enviar dirección y cadena",
+  "edge.lookupShortName": "Buscar nombre corto",
+  "edge.buildPrefix": "Construir dirección con prefijo",
+  "edge.readShortName": "Leer nombre corto",
+  "edge.parsePrefix": "Analizar prefijo",
+  "edge.routeToChain": "Enrutar a la cadena",
+
+  "sim.formatAddressWalkthrough.name": "Recorrido por direcciones específicas de cadena",
+  "sim.formatAddressWalkthrough.desc": "Sigue una dirección y una cadena mientras el formateador construye un prefijo específico de cadena y un resolver la enruta a la red correcta.",
+  "sim.formatAddressWalkthrough.param.shortName": "Nombre corto de cadena",
+  "sim.formatAddressWalkthrough.param.address": "Dirección con checksum",
+  "sim.formatAddressWalkthrough.step.submit": "Una aplicación emisora envía una dirección con checksum ERC-55 junto con la cadena de destino al formateador.",
+  "sim.formatAddressWalkthrough.step.submit.mobile": "Enviar dirección",
+  "sim.formatAddressWalkthrough.step.lookup": "El formateador busca el nombre corto de la cadena en el registro ethereum-lists/chains, por ejemplo eth para Ethereum Mainnet.",
+  "sim.formatAddressWalkthrough.step.lookup.mobile": "Buscar nombre corto",
+  "sim.formatAddressWalkthrough.step.build": "El formateador une el nombre corto, dos puntos y la dirección en una sola cadena de texto específica de cadena, como eth:0x….",
+  "sim.formatAddressWalkthrough.step.build.mobile": "Construir prefijo",
+  "sim.formatAddressWalkthrough.step.resolve": "Un resolver vuelve a leer el nombre corto, analiza el prefijo y enruta la transacción a la billetera de la red identificada.",
+  "sim.formatAddressWalkthrough.step.resolve.mobile": "Enrutar a la cadena"
+}

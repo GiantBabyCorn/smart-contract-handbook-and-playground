@@ -1,0 +1,32 @@
+{
+  "short": "Smart Contract Package Manifest Format (EthPM v3)",
+  "introduction": "ERC-2678 defines a JSON data format for a package manifest describing a smart contract package: one or more contracts together with their source code, compiler settings, and deployed instances across networks. It was proposed by g. nicholas d'andrea, Piper Merriam, and several co-authors in May 2020 as version 3 of the EthPM format. Manifests are alphabetically sorted, minified JSON objects distributed over content-addressable storage such as IPFS and published to on-chain EthPM registries.",
+  "designPurpose": "EthPM v3 was designed to give the Ethereum ecosystem a single, tool-agnostic format for sharing and reusing compiled contracts. Before it, projects described their sources and deployments in incompatible ad-hoc layouts, so dependencies could not be reliably installed or verified across tools. Version 3 aligns the schema with the Solidity compiler's metadata output, collects compiler definitions into one top-level array, and renames keys from snake_case to camelCase for consistency.",
+  "commonUsage": "Package manifests are generated programmatically by package management tools during a project's release process rather than by hand. Package managers consume them to install dependencies, build releases, and verify deployments against their source contracts. Packages range from base contracts meant for inheritance to reusable contracts such as a standard ERC-20 token and bundles of deployed instances. Manifests are stored on content-addressable systems like IPFS and referenced by EthPM registries.",
+
+  "node.author": "Package Author",
+  "node.packageManager": "EthPM Package Manager",
+  "node.manifest": "Package Manifest",
+  "node.ipfs": "Content-Addressable Storage",
+  "node.registry": "EthPM Registry",
+  "node.consumer": "Consuming Developer",
+
+  "edge.assemble": "Assemble package",
+  "edge.serialize": "Serialize manifest",
+  "edge.publish": "Publish to IPFS",
+  "edge.register": "Register release",
+  "edge.resolve": "Resolve & install",
+
+  "sim.publishPackageWalkthrough.name": "Publish Package Walkthrough",
+  "sim.publishPackageWalkthrough.desc": "Follow an EthPM v3 package from an author assembling it, through IPFS storage, to a consumer installing the release.",
+  "sim.publishPackageWalkthrough.param.packageName": "Package name",
+  "sim.publishPackageWalkthrough.param.version": "Package version",
+  "sim.publishPackageWalkthrough.step.assemble": "The package author runs a package manager to assemble a new release from the project's contracts, sources, and deployments.",
+  "sim.publishPackageWalkthrough.step.assemble.mobile": "Assemble the package",
+  "sim.publishPackageWalkthrough.step.serialize": "The tool serializes the collected data into a package manifest, setting the manifest field to ethpm/3 and writing the name, version, sources, contractTypes, compilers, and deployments fields.",
+  "sim.publishPackageWalkthrough.step.serialize.mobile": "Serialize manifest fields",
+  "sim.publishPackageWalkthrough.step.publish": "The manifest is alphabetically sorted, minified, and stored on IPFS, and its content-addressed URI is registered as a release on an on-chain EthPM registry.",
+  "sim.publishPackageWalkthrough.step.publish.mobile": "Publish to IPFS & registry",
+  "sim.publishPackageWalkthrough.step.consume": "A consuming developer resolves the release from the registry and installs the package, using the manifest to fetch sources and verify deployed instances.",
+  "sim.publishPackageWalkthrough.step.consume.mobile": "Resolve & install package"
+}

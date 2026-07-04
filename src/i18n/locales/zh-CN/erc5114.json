@@ -1,0 +1,51 @@
+{
+  "short": "绑定到 NFT 的灵魂绑定徽章",
+  "introduction": "ERC-5114 定义了一种灵魂绑定徽章：一种在铸造时绑定到另一个非同质化代币（NFT）、此后永远无法转移的代币。它由 Micah Zoltu 于 2022 年 5 月提出。每个徽章附着在由 [address, tokenId] 对标识的 NFT 上，通过一次 Mint 事件记录，其绑定关系可用 ownerOf 读回，该函数返回的是该 NFT 而非钱包地址。注意：ERC-5114 处于 Last Call 阶段，即成为 Final（最终定稿）之前的最后审查窗口。",
+  "designPurpose": "ERC-5114 旨在将声誉和成就徽章锚定到某个角色身份，而非可以将其出售的钱包。普通 NFT 可以自由流转，因此以普通代币形式构建的徽章可能被交易出去，使成就与赢得它的身份相分离。通过在铸造时将每个徽章绑定到一个 NFT 并禁止此后的转移，该标准保证了绑定到同一 NFT 的各徽章之间的不可分离性与不可合并性。内容寻址的元数据还能阻止铸造者审查（屏蔽）某个徽章。",
+  "commonUsage": "灵魂绑定徽章适用于链上声誉、凭证、成就以及会员标记等应跟随角色身份、而非像普通 NFT 那样交易的场景。由于徽章绑定到由 [address, tokenId] 对标识的 NFT，任何能以这种方式寻址的资产——ERC-721 或 ERC-1155 代币——都可以充当灵魂。该标准对元数据格式不作限定，仅定义了不可变性与内容寻址性，因此应用需自行提供其数据结构（schema），并使用 metadataFormat 来表明这些 URI 的解析方式。",
+
+  "fn.ownerOf.desc": "以 [address, tokenId] 对的形式返回徽章所绑定的 NFT。若徽章尚未铸造则回滚（revert），且始终返回该徽章原始 Mint 事件所携带的相同值。",
+  "fn.ownerOf.params.badgeId": "要解析的徽章的标识符。",
+  "fn.ownerOf.returns.nftAddress": "徽章所绑定 NFT 的合约地址。",
+  "fn.ownerOf.returns.nftTokenId": "徽章所绑定 NFT 的 token ID。",
+
+  "fn.collectionUri.desc": "返回一个描述徽章集合的不可变、内容寻址 URI。其元数据会与每个徽章的 badgeUri 输出合并，其中 badgeUri 的数据具有优先级。",
+  "fn.collectionUri.returns.collectionUri": "该集合元数据的不可变、内容寻址 URI。",
+
+  "fn.badgeUri.desc": "返回一个描述单个徽章实例的抗审查、内容寻址 URI。其数据优先于 collectionUri 返回的集合级元数据。",
+  "fn.badgeUri.params.badgeId": "要描述的徽章的标识符。",
+  "fn.badgeUri.returns.badgeUri": "该徽章元数据的不可变、内容寻址 URI。",
+
+  "fn.metadataFormat.desc": "返回一个字符串，用于标识 collectionUri 和 badgeUri 处数据的格式或版本（例如 'EIP-ABCD' 或 'soulbound-schema-version-4'），使调用方无需先检查内容即可解析。",
+  "fn.metadataFormat.returns.format": "标明该 URI 元数据格式或版本的字符串。",
+
+  "fn.Mint.desc": "在徽章铸造时发出一次，记录该徽章及其所绑定的 NFT。同一 badgeId 不得触发两次。",
+  "fn.Mint.params.badgeId": "新铸造徽章的标识符。",
+  "fn.Mint.params.nftAddress": "徽章所绑定 NFT 的合约地址。",
+  "fn.Mint.params.nftTokenId": "徽章所绑定 NFT 的 token ID。",
+
+  "node.minter": "徽章铸造者",
+  "node.contract": "灵魂绑定徽章合约",
+  "node.storageBinding": "徽章绑定存储",
+  "node.soul": "被绑定的 NFT（灵魂）",
+
+  "edge.mint": "铸造徽章",
+  "edge.storeBinding": "存储徽章绑定",
+  "edge.bindSoul": "将徽章绑定到 NFT",
+  "edge.emitMint": "发出 Mint 事件",
+  "edge.queryOwner": "调用 ownerOf()",
+
+  "sim.mintBadgeWalkthrough.name": "铸造灵魂绑定徽章",
+  "sim.mintBadgeWalkthrough.desc": "跟随一个徽章，从铸造到其不可变的 NFT 绑定与 Mint 事件，直至 ownerOf 查询。",
+  "sim.mintBadgeWalkthrough.param.badgeId": "徽章 ID",
+  "sim.mintBadgeWalkthrough.param.nftAddress": "NFT 地址",
+  "sim.mintBadgeWalkthrough.param.nftTokenId": "NFT token ID",
+  "sim.mintBadgeWalkthrough.step.mint": "铸造者铸造一个新徽章并将其永久绑定到目标 NFT；此绑定此后永远无法更改。",
+  "sim.mintBadgeWalkthrough.step.mint.mobile": "铸造徽章",
+  "sim.mintBadgeWalkthrough.step.bind": "合约将徽章到 NFT 的绑定记录到存储中，将徽章附着到其灵魂 NFT 上。",
+  "sim.mintBadgeWalkthrough.step.bind.mobile": "存储绑定",
+  "sim.mintBadgeWalkthrough.step.event": "合约恰好一次地发出 Mint(badgeId, nftAddress, nftTokenId)，以便索引器记录该绑定。",
+  "sim.mintBadgeWalkthrough.step.event.mobile": "发出 Mint 事件",
+  "sim.mintBadgeWalkthrough.step.query": "调用方调用 ownerOf(badgeId)，它返回徽章所绑定 NFT 的 [address, tokenId]。",
+  "sim.mintBadgeWalkthrough.step.query.mobile": "查询 ownerOf()"
+}

@@ -1,0 +1,52 @@
+{
+  "short": "基于位的权限与角色系统",
+  "introduction": "ERC-6617 定义了一套基于位的权限与角色系统，其中每个权限对应 uint256 的一个二进制位，最多可编码 256 个权限并组合成角色。该标准由 Chiro 与 Victor Dusart 于 2023 年 2 月提出。每个权限必须是 2 的幂，以便只占用一个位；该接口提供授予、撤销和检查权限的函数，均以位运算实现，并在每次变更时发出事件。注意：ERC-6617 处于 Review 状态，接口在最终定稿前仍可能变动。",
+  "designPurpose": "ERC-6617 的设计目标是让链上访问控制比单一所有者或基于字符串的角色方案更细粒度、更节省 gas。在 ERC-173 下，合约只有一个所有者，而以 bytes32 标识符为键的角色系统每次检查都需要一次存储读取。通过将每个权限打包进 uint256 的一个位，ERC-6617 只需一次按位 AND 运算即可测试访问权限，并用按位 OR 运算将多个权限合并为角色，从而避免额外的存储加载。按位的高低顺序排列还能让权限以整数形式进行排序。",
+  "commonUsage": "基于位的权限适用于需要区分访问级别的合约，例如多角色协议管理、代币的铸造与暂停权限，或智能合约账户中的模块权限。由于角色只是普通的 uint256 值，它们可以在合约之间传递并进行比较，而无需存储查询。ERC-6617 还定义了一个可选的 IEIP6617Meta 扩展，为每个权限附加名称和描述，供区块浏览器和仪表盘展示。",
+
+  "fn.hasPermission.desc": "当用户存储的权限位掩码是所需权限的超集时返回 true，即 _requiredPermission 中置位的每一个位在该用户处也都置位。该检查是使用按位 AND 的 view 操作。",
+  "fn.hasPermission.params._user": "被检查权限的用户地址。",
+  "fn.hasPermission.params._requiredPermission": "用户必须持有的权限，或权限位的组合。",
+  "fn.hasPermission.returns.result": "若用户的权限是所需权限的超集则为 true，否则为 false。",
+
+  "fn.grantPermission.desc": "通过按位 OR 将给定的权限位添加到用户的位掩码中，并发出 PermissionGranted 事件。要添加的权限必须是 2 的幂，以便恰好置位一个位。",
+  "fn.grantPermission.params._user": "被添加权限的用户地址。",
+  "fn.grantPermission.params._permissionToAdd": "要添加的权限位；必须是 2 的幂。",
+  "fn.grantPermission.returns.success": "当权限已被授予时为 true。",
+
+  "fn.revokePermission.desc": "从用户的位掩码中移除给定的权限位，并发出 PermissionRevoked 事件，同时保持用户的其他权限不变。",
+  "fn.revokePermission.params._user": "被撤销权限的用户地址。",
+  "fn.revokePermission.params._permissionToRevoke": "要移除的权限位。",
+  "fn.revokePermission.returns.success": "当权限已被撤销时为 true。",
+
+  "fn.PermissionGranted.desc": "当权限被授予某个用户时发出，记录授予者、权限以及接收该权限的用户。",
+  "fn.PermissionGranted.params._grantor": "授予该权限的地址。",
+  "fn.PermissionGranted.params._permission": "被授予的权限。",
+  "fn.PermissionGranted.params._user": "接收该权限的用户地址。",
+
+  "fn.PermissionRevoked.desc": "当权限从某个用户被撤销时发出，记录撤销者、权限以及受影响的用户。",
+  "fn.PermissionRevoked.params._revoker": "撤销该权限的地址。",
+  "fn.PermissionRevoked.params._permission": "被撤销的权限。",
+  "fn.PermissionRevoked.params._user": "失去该权限的用户地址。",
+
+  "node.user": "权限授予者",
+  "node.contract": "ERC-6617 合约",
+  "node.storagePermissions": "权限存储",
+  "node.targetUser": "目标用户",
+
+  "edge.callGrant": "调用 grantPermission()",
+  "edge.updatePermissions": "设置权限位",
+  "edge.emitGranted": "发出 PermissionGranted 事件",
+  "edge.grantToUser": "向用户授予权限",
+
+  "sim.grantPermissionWalkthrough.name": "授予权限演练",
+  "sim.grantPermissionWalkthrough.desc": "跟踪一次 grantPermission 调用，从授予者经过权限位掩码，直到 PermissionGranted 事件。",
+  "sim.grantPermissionWalkthrough.param.targetUser": "接收权限的用户",
+  "sim.grantPermissionWalkthrough.param.permission": "权限位（2 的幂）",
+  "sim.grantPermissionWalkthrough.step.call": "授予者以一个为 2 的幂的权限调用 grantPermission(_user, _permissionToAdd)，目标是应当接收该访问位的用户。",
+  "sim.grantPermissionWalkthrough.step.call.mobile": "调用 grantPermission()",
+  "sim.grantPermissionWalkthrough.step.execute": "合约通过 OR 运算将新的权限位并入用户存储的 uint256 位掩码中，因此已授予的位都会被保留。",
+  "sim.grantPermissionWalkthrough.step.execute.mobile": "设置权限位",
+  "sim.grantPermissionWalkthrough.step.event": "合约发出携带授予者、权限和用户的 PermissionGranted 事件，此时目标用户已持有新增的权限。",
+  "sim.grantPermissionWalkthrough.step.event.mobile": "发出 PermissionGranted"
+}

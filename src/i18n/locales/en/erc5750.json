@@ -1,0 +1,27 @@
+{
+  "short": "General Extensibility for Method Behaviors",
+  "introduction": "ERC-5750 defines a convention for making contract methods extensible by designating their last parameter, a dynamically-sized bytes field, as an open slot for behavior extensions. It was proposed by Zainan Victor Zhou in October 2022. Instead of adding a new method for every future need, a compliant method accepts a trailing bytes argument carrying arbitrary payloads such as signatures, nonces, or commitments. When that field is empty, the method must behave identically to its overloaded sibling without it.",
+  "designPurpose": "ERC-5750 was designed to let method interfaces evolve without breaking existing callers. Before it, extending a function meant either inventing a new method, with all the naming and signature questions that raises, or repurposing existing parameters at the risk of ambiguity. By reserving one trailing bytes parameter for unstructured extension data, the standard gives every method a forward-compatible escape hatch that can encode any future scheme while leaving empty-data behavior identical to the plain method.",
+  "commonUsage": "Several established standards already contain compliant methods: the safeTransferFrom functions of ERC-721 and ERC-1155 and the burn and send functions of ERC-777 all place a trailing bytes data parameter last. Newer designs adopt the convention to attach signatures, to carry salts, nonces, or commitments for commit-reveal schemes, or to forward data to receiver callbacks. It also flags methods whose trailing bytes is already load-bearing, such as diamondCut in ERC-2535, which need an overload to comply.",
+
+  "node.user": "Caller",
+  "node.contract": "Compliant Contract",
+  "node.storageData": "Extension Payload",
+  "node.extension": "Extension Behavior",
+
+  "edge.callMethod": "Call methodName1() with data",
+  "edge.readData": "Read data parameter",
+  "edge.invokeExtension": "Invoke extension behavior",
+  "edge.forwardData": "Forward payload",
+
+  "sim.extensionCallWalkthrough.name": "Method Extension Walkthrough",
+  "sim.extensionCallWalkthrough.desc": "Follow a compliant method call whose trailing bytes payload triggers an extension behavior.",
+  "sim.extensionCallWalkthrough.param.param1": "Method parameter",
+  "sim.extensionCallWalkthrough.param.data": "Extension payload",
+  "sim.extensionCallWalkthrough.step.call": "The caller invokes methodName1 on the compliant contract, appending an extension payload as the trailing bytes data parameter.",
+  "sim.extensionCallWalkthrough.step.call.mobile": "Call with data",
+  "sim.extensionCallWalkthrough.step.execute": "The contract runs its core behavior and reads the trailing data parameter; when that field is empty the call matches the plain sibling method.",
+  "sim.extensionCallWalkthrough.step.execute.mobile": "Read data parameter",
+  "sim.extensionCallWalkthrough.step.extension": "The contract decodes the payload and invokes the extension behavior, such as verifying a signature or recording a commitment.",
+  "sim.extensionCallWalkthrough.step.extension.mobile": "Invoke extension"
+}

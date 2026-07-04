@@ -1,0 +1,80 @@
+{
+  "short": "可注资代币标准",
+  "introduction": "ERC-2019 扩展了 ERC-20 代币标准，使钱包所有者能够通过链上订单请求将新代币铸造到自己的钱包中。它由 Fernando Paris、Julio Faura 和 Daniel Lehrner 于 2019 年 5 月提出。所有者或经授权的下单方调用 orderFund，传入 operationId、金额和指令；运营方结算链下付款，然后执行或拒绝该请求。注意：ERC-2019 处于 Stagnant（停滞）状态——它已停止活动 6 个月以上，可能永远不会被最终确定，但仍具有历史或技术上的重要意义。",
+  "designPurpose": "ERC-2019 旨在将代币生命周期中的注资环节搬到链上。在此之前，针对法币或银行付款铸造代币依赖于链下的中心化请求，在账本上留不下可验证的痕迹。ERC-2019 将该请求标准化为一次 orderFund 调用，携带唯一的 operationId 和自由格式的指令，使运营方能够将其与私下的付款关联起来，并在链上更新其状态，从而使已下单、已执行或已拒绝的结果可以通过事件追溯。",
+  "commonUsage": "可注资代币面向受监管或由银行发行的代币系统，在这些系统中铸造必须与真实的法币存款或电汇挂钩。在这类部署中，代币合约的所有者或代理人充当运营方，负责认可或拒绝请求，而钱包所有者可以授权下单方代表自己提交 orderFundFrom。由于它仅扩展 ERC-20，该接口是添加到现有代币之上的，指令字段指向一个私有的付款渠道，而不是将原始银行信息嵌入链上。",
+
+  "fn.authorizeFundOperator.desc": "授权某个地址代表调用者的钱包提交注资订单，从而为该下单方启用 orderFundFrom。成功时返回 true。",
+  "fn.authorizeFundOperator.params.orderer": "被授权为调用者钱包下达注资订单的地址。",
+  "fn.authorizeFundOperator.returns.success": "如果授权已被记录，则为 true。",
+
+  "fn.orderFund.desc": "为调用者自己的钱包创建一个注资请求，以唯一的 operationId 标识，并携带运营方将据以执行的金额和付款指令。如果该 operationId 之前已被使用，则回滚。",
+  "fn.orderFund.params.operationId": "用于在整个生命周期中追踪该注资请求的唯一标识符。",
+  "fn.orderFund.params.value": "要注资到钱包中的代币数量。",
+  "fn.orderFund.params.instructions": "一个付款指令字符串，运营方用它来筹措并结算资金。",
+  "fn.orderFund.returns.success": "如果注资请求已创建，则为 true。",
+
+  "fn.orderFundFrom.desc": "代表另一位钱包所有者创建注资请求，可由事先获得授权的下单方调用。如果该 operationId 之前已被使用，则回滚。",
+  "fn.orderFundFrom.params.operationId": "该注资请求的唯一标识符。",
+  "fn.orderFundFrom.params.walletToFund": "该请求为其创建并注资的钱包所有者。",
+  "fn.orderFundFrom.params.value": "要注资到钱包中的代币数量。",
+  "fn.orderFundFrom.params.instructions": "一个付款指令字符串，运营方用它来结算资金。",
+  "fn.orderFundFrom.returns.success": "如果注资请求已创建，则为 true。",
+
+  "fn.cancelFund.desc": "取消一个待处理的注资请求。只有钱包所有者或最初的下单方可以取消，且只能在运营方将其转入处理之前取消。",
+  "fn.cancelFund.params.operationId": "要取消的注资请求的标识符。",
+  "fn.cancelFund.returns.success": "如果请求已被取消，则为 true。",
+
+  "fn.processFund.desc": "将注资请求标记为处理中。一旦进入处理中，该请求便不能再被取消，表明运营方已开始结算付款。",
+  "fn.processFund.params.operationId": "正在处理的注资请求的标识符。",
+  "fn.processFund.returns.success": "如果请求已被标记为处理中，则为 true。",
+
+  "fn.executeFund.desc": "发行所请求的代币并将注资请求标记为已执行。在收到相应付款后由运营方调用。",
+  "fn.executeFund.params.operationId": "要执行的注资请求的标识符。",
+  "fn.executeFund.returns.success": "如果请求已被执行且代币已铸造，则为 true。",
+
+  "fn.rejectFund.desc": "以人类可读的原因拒绝一个注资请求，在不铸造代币的情况下结束其生命周期。原因可以使用 EIP-1066 状态码。",
+  "fn.rejectFund.params.operationId": "要拒绝的注资请求的标识符。",
+  "fn.rejectFund.params.reason": "请求被拒绝的原因；可以使用 EIP-1066 状态码。",
+  "fn.rejectFund.returns.success": "如果请求已被拒绝，则为 true。",
+
+  "fn.FundOrdered.desc": "当钱包所有者或获得授权的下单方创建注资请求时发出。",
+  "fn.FundOrdered.params.orderer": "下达该注资请求的地址。",
+  "fn.FundOrdered.params.operationId": "该注资请求的唯一标识符。",
+  "fn.FundOrdered.params.walletToFund": "将接收所注资代币的钱包。",
+  "fn.FundOrdered.params.value": "所请求的代币数量。",
+  "fn.FundOrdered.params.instructions": "附加在该请求上的付款指令字符串。",
+
+  "fn.FundInProcess.desc": "当运营方开始处理注资请求时发出，此后该请求便不能再被取消。",
+  "fn.FundInProcess.params.orderer": "下达该注资请求的地址。",
+  "fn.FundInProcess.params.operationId": "该注资请求的唯一标识符。",
+
+  "fn.FundExecuted.desc": "当运营方执行注资请求并铸造所请求的代币时发出。",
+  "fn.FundExecuted.params.orderer": "下达该注资请求的地址。",
+  "fn.FundExecuted.params.operationId": "该注资请求的唯一标识符。",
+
+  "node.user": "钱包所有者",
+  "node.contract": "可注资代币",
+  "node.storageFunds": "注资请求",
+  "node.operator": "代币运营方",
+
+  "edge.callOrderFund": "调用 orderFund()",
+  "edge.recordRequest": "记录注资请求",
+  "edge.emitFundOrdered": "发出 FundOrdered 事件",
+  "edge.callExecuteFund": "调用 executeFund()",
+  "edge.emitFundExecuted": "发出 FundExecuted 事件",
+
+  "sim.fundRequestWalkthrough.name": "注资请求生命周期",
+  "sim.fundRequestWalkthrough.desc": "跟随一个注资请求，从钱包所有者的下单，经由运营方的执行，直到 FundExecuted 事件。",
+  "sim.fundRequestWalkthrough.param.operationId": "操作 ID",
+  "sim.fundRequestWalkthrough.param.value": "注资金额",
+  "sim.fundRequestWalkthrough.param.instructions": "付款指令",
+  "sim.fundRequestWalkthrough.step.order": "钱包所有者调用 orderFund，传入唯一的 operationId、金额和付款指令。",
+  "sim.fundRequestWalkthrough.step.order.mobile": "调用 orderFund()",
+  "sim.fundRequestWalkthrough.step.record": "合约在存储中将该请求记录为 Ordered（已下单），并发出 FundOrdered，以便运营方接手。",
+  "sim.fundRequestWalkthrough.step.record.mobile": "记录请求",
+  "sim.fundRequestWalkthrough.step.execute": "在结算链下付款后，运营方调用 executeFund，将该请求推进到 Executed（已执行）。",
+  "sim.fundRequestWalkthrough.step.execute.mobile": "运营方执行",
+  "sim.fundRequestWalkthrough.step.event": "合约铸造所请求的代币并发出 FundExecuted，从而完成注资生命周期。",
+  "sim.fundRequestWalkthrough.step.event.mobile": "发出 FundExecuted"
+}

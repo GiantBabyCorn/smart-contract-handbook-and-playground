@@ -1,0 +1,31 @@
+{
+  "short": "Formato Conocido para Acciones Requeridas",
+  "introduction": "ERC-5568 define un formato legible por máquina que permite a un contrato inteligente indicar a una billetera que el usuario debe realizar una acción, como aprobar un token, antes de que una transacción tenga éxito. Fue propuesto por Gavin John en agosto de 2022. Un contrato expone una función view conocida llamada walletSignal24 que devuelve un instruction_id y un instruction_data, o revierte con un error WalletSignal24, y la billetera simula la llamada y la resuelve. Nota: ERC-5568 está en estado Review; la interfaz aún puede cambiar antes de que se finalice.",
+  "designPurpose": "ERC-5568 fue diseñado para sacar la lógica de señalización de acciones del código front-end codificado de forma rígida y llevarla al propio contrato. Antes de él, el front-end de una dApp tenía que saber que una llamada fallaría sin, por ejemplo, una aprobación previa del token, y codificar ese flujo de recuperación a mano para cada contrato. ERC-5568 permite que el contrato declare la acción necesaria mediante una única función conocida y un error de reversión reservado, de modo que cualquier billetera pueda detectarla y resolverla de forma genérica, transportando un instruction id más hasta 64 kB de parámetros arbitrarios.",
+  "commonUsage": "El formato está dirigido a las billeteras y a los contratos con los que interactúan: un exchange puede pedir a la billetera que apruebe un token antes de una operación, solicitar una petición HTTP fuera de la cadena o pedir al usuario que rote sus claves de forma periódica. Como un instruction id tiene su espacio de nombres asignado según el número ERC que lo define, otros estándares pueden añadir nuevos tipos de instrucción que cualquier billetera compatible con ERC-5568 entienda. Al ser una propuesta en fase de Review, resulta de interés principalmente para los desarrolladores de billeteras y los autores de estándares.",
+
+  "fn.walletSignal24.desc": "Una función view conocida que una billetera simula antes de difundir una transacción. Devuelve un instruction_id distinto de cero junto con instruction_data cuando el usuario debe actuar, o un instruction_id igual a 0 cuando no se necesita ninguna acción.",
+  "fn.walletSignal24.params.selector": "Un selector que identifica la operación que la billetera pretende realizar.",
+  "fn.walletSignal24.params.function_data": "Calldata arbitrario que describe la operación prevista, lo que permite al contrato decidir qué instrucción devolver.",
+  "fn.walletSignal24.returns.instruction_id": "El identificador de instrucción, igual al número ERC de la acción requerida, o 0 cuando no se necesita ninguna acción.",
+  "fn.walletSignal24.returns.instruction_data": "Hasta 64 kB de parámetros de instrucción, cuya estructura la define el ERC que posee el instruction_id.",
+
+  "node.user": "Billetera",
+  "node.contract": "Contrato Señalizador",
+  "node.handler": "Usuario",
+
+  "edge.callWalletSignal24": "Simular walletSignal24()",
+  "edge.emitWalletSignal24": "Devolver señal WalletSignal24",
+  "edge.resolveAction": "Solicitar acción requerida",
+
+  "sim.walletSignalWalkthrough.name": "Recorrido de la Señal de Billetera",
+  "sim.walletSignalWalkthrough.desc": "Sigue cómo un contrato señala una acción requerida a una billetera mediante walletSignal24 y el error WalletSignal24.",
+  "sim.walletSignalWalkthrough.param.selector": "Acción solicitada",
+  "sim.walletSignalWalkthrough.param.instructionId": "ID de instrucción",
+  "sim.walletSignalWalkthrough.step.call": "La billetera simula walletSignal24 en el contrato antes de difundir la transacción del usuario.",
+  "sim.walletSignalWalkthrough.step.call.mobile": "Simular walletSignal24()",
+  "sim.walletSignalWalkthrough.step.execute": "El contrato determina que se requiere una acción y devuelve un instruction_id distinto de cero, o revierte con el error WalletSignal24 que transporta los mismos datos.",
+  "sim.walletSignalWalkthrough.step.execute.mobile": "Devolver señal",
+  "sim.walletSignalWalkthrough.step.signal": "La billetera analiza la instrucción, solicita al usuario que complete la acción requerida y luego reevalúa la transacción original.",
+  "sim.walletSignalWalkthrough.step.signal.mobile": "Solicitar acción del usuario"
+}

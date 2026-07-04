@@ -1,0 +1,33 @@
+{
+  "short": "Human-Readable Chain-Specific Address Format",
+  "introduction": "ERC-3770 defines a text format for an EVM address with a human-readable prefix that names its chain, written as a short name, a colon, then the address. It was proposed by Lukas Schor, Richard Meissner, Pedro Gomes, and ligi in August 2021. The short name comes from the ethereum-lists/chains registry and the address must be an ERC-55 checksummed hex address, so a string like eth:0x… names account and network. Note: ERC-3770 is a Draft; the specification is still under active development and may change substantially.",
+  "designPurpose": "ERC-3770 was designed to remove the ambiguity when one address is reused across EVM chains, where it can be an externally owned account on one network and an undeployed contract on another. A bare hex address carries no signal about its chain, so users could send funds to a contract wallet on a network where it was never deployed and lose them. EIP-155 chain IDs name networks for developers but were not meant to be shown to people, so ERC-3770 prefixes the address with a short, human-readable chain name.",
+  "commonUsage": "Chain-specific addresses are intended for interfaces that span several EVM networks, such as multichain wallets, address books, and dApp front-ends that let a user paste one string and have software pick the right network. Because the prefix maps to an entry in the ethereum-lists/chains registry, tools resolve a short name like eth or gno to a specific chain before sending. The format is a display and interchange convention, not an on-chain mechanism, so it needs no contract or storage and runs in client software.",
+
+  "node.user": "Sending Application",
+  "node.formatter": "Address Formatter",
+  "node.storageRegistry": "Chain Short Name List",
+  "node.storageAddress": "Chain-Specific Address",
+  "node.resolver": "Address Resolver",
+  "node.wallet": "Receiving Wallet",
+
+  "edge.submitAddress": "Submit address and chain",
+  "edge.lookupShortName": "Look up short name",
+  "edge.buildPrefix": "Build prefixed address",
+  "edge.readShortName": "Read short name",
+  "edge.parsePrefix": "Parse prefix",
+  "edge.routeToChain": "Route to chain",
+
+  "sim.formatAddressWalkthrough.name": "Chain-Specific Address Walkthrough",
+  "sim.formatAddressWalkthrough.desc": "Follow an address and chain as the formatter builds a chain-specific prefix and a resolver routes it to the right network.",
+  "sim.formatAddressWalkthrough.param.shortName": "Chain short name",
+  "sim.formatAddressWalkthrough.param.address": "Checksummed address",
+  "sim.formatAddressWalkthrough.step.submit": "A sending application submits an ERC-55 checksummed address together with the target chain to the formatter.",
+  "sim.formatAddressWalkthrough.step.submit.mobile": "Submit address",
+  "sim.formatAddressWalkthrough.step.lookup": "The formatter looks up the chain's short name in the ethereum-lists/chains registry, for example eth for Ethereum Mainnet.",
+  "sim.formatAddressWalkthrough.step.lookup.mobile": "Look up short name",
+  "sim.formatAddressWalkthrough.step.build": "The formatter joins the short name, a colon, and the address into a single chain-specific string such as eth:0x….",
+  "sim.formatAddressWalkthrough.step.build.mobile": "Build prefix",
+  "sim.formatAddressWalkthrough.step.resolve": "A resolver reads the short name back, parses the prefix, and routes the transaction to the wallet on the identified network.",
+  "sim.formatAddressWalkthrough.step.resolve.mobile": "Route to chain"
+}

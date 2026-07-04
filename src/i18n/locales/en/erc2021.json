@@ -1,0 +1,81 @@
+{
+  "short": "Payoutable Token Standard",
+  "introduction": "ERC-2021 defines an extension to the ERC-20 token standard that lets a wallet owner request a payout from their balance through a payment instruction string. It was proposed by Fernando Paris, Julio Faura, and Daniel Lehrner in May 2019. The order places the amount on an ERC-1996 hold, which the operator later executes, burning the tokens once the off-chain payment settles. Note: ERC-2021 is Stagnant — it has been inactive for 6+ months and may never be finalized, but remains historically or technically significant.",
+  "designPurpose": "ERC-2021 was designed to bring the payout step of a token's lifecycle on-chain, since token payouts previously required a separate centralized transaction to set the destination before burning the tokens. By letting the wallet owner submit the order through the ledger, the standard records each payout status on-chain, while the routing details travel in an instruction string that implementers are advised to keep off-chain or encrypted. The amount rests on an ERC-1996 hold, unspendable until the operator settles it.",
+  "commonUsage": "Payoutable tokens target regulated and institutional settings where redeeming tokens for off-chain money must be auditable: an account holder orders a payout, and the issuer or its agent either honors it by executing the underlying hold and burning the tokens, or rejects it. The interface also defines operator authorization, letting an approved orderer submit requests on a wallet owner's behalf, and a retrievePayoutData query that exposes each request's amount, instructions, and current status code.",
+
+  "fn.orderPayout.desc": "Creates a payout request for the caller's own wallet, placing the requested value on hold and starting the operator workflow. Reverts if the operationId has already been used.",
+  "fn.orderPayout.params.operationId": "The unique ID that identifies the payout request.",
+  "fn.orderPayout.params.value": "The amount of tokens to be paid out.",
+  "fn.orderPayout.params.instructions": "A string carrying the payment instructions the operator uses to route the funds.",
+  "fn.orderPayout.returns.success": "True when the payout request was created successfully.",
+
+  "fn.orderPayoutFrom.desc": "Creates a payout request on behalf of another wallet owner, who must have authorized the caller as a payout operator beforehand. Reverts if the operationId has already been used.",
+  "fn.orderPayoutFrom.params.operationId": "The unique ID that identifies the payout request.",
+  "fn.orderPayoutFrom.params.walletToBePaidOut": "The wallet owner on whose behalf the payout is ordered and whose tokens are paid out.",
+  "fn.orderPayoutFrom.params.value": "The amount of tokens to be paid out.",
+  "fn.orderPayoutFrom.params.instructions": "A string carrying the payment instructions the operator uses to route the funds.",
+  "fn.orderPayoutFrom.returns.success": "True when the payout request was created successfully.",
+
+  "fn.cancelPayout.desc": "Cancels a payout request that is still in the Ordered state and releases the hold. Only the wallet owner or the orderer may cancel, and only before the operator marks the request InProcess.",
+  "fn.cancelPayout.params.operationId": "The unique ID of the payout request to cancel.",
+  "fn.cancelPayout.returns.success": "True when the payout request was cancelled successfully.",
+
+  "fn.processPayout.desc": "Marks a payout request as InProcess. Once in process, the request can no longer be cancelled by the orderer.",
+  "fn.processPayout.params.operationId": "The unique ID of the payout request to mark as in process.",
+  "fn.processPayout.returns.success": "True when the payout request was set to in process successfully.",
+
+  "fn.putFundsInSuspenseInPayout.desc": "Executes the underlying hold and moves the tokens to a suspense wallet, placing the payout into the FundsInSuspense state. Can only be done while the request is InProcess.",
+  "fn.putFundsInSuspenseInPayout.params.operationId": "The unique ID of the payout request to put in suspense.",
+  "fn.putFundsInSuspenseInPayout.returns.success": "True when the funds were put in suspense successfully.",
+
+  "fn.executePayout.desc": "Burns the held tokens and marks the payout request as Executed, completing it once the corresponding off-chain payment has been made.",
+  "fn.executePayout.params.operationId": "The unique ID of the payout request to execute.",
+  "fn.executePayout.returns.success": "True when the payout was executed successfully.",
+
+  "fn.rejectPayout.desc": "Rejects a payout request, releasing the hold back to the wallet owner and recording a reason. Can be called before or after the request is marked InProcess.",
+  "fn.rejectPayout.params.operationId": "The unique ID of the payout request to reject.",
+  "fn.rejectPayout.params.reason": "The reason the payout was rejected; ERC-1066 status codes can be used.",
+  "fn.rejectPayout.returns.success": "True when the payout was rejected successfully.",
+
+  "fn.retrievePayoutData.desc": "Returns the stored data for a payout request, including the debited wallet, amount, instructions, and current status. Only the operator, wallet owner, or orderer may read it.",
+  "fn.retrievePayoutData.params.operationId": "The unique ID of the payout request to look up.",
+  "fn.retrievePayoutData.returns.walletToDebit": "The wallet whose balance is paid out.",
+  "fn.retrievePayoutData.returns.value": "The amount of tokens to be paid out.",
+  "fn.retrievePayoutData.returns.instructions": "The payment instruction string supplied with the request.",
+  "fn.retrievePayoutData.returns.status": "The current status code of the payout request.",
+
+  "fn.PayoutOrdered.desc": "Emitted when a wallet owner or orderer creates a payout request, recording its orderer, wallet, amount, and instructions.",
+  "fn.PayoutOrdered.params.orderer": "The address that ordered the payout.",
+  "fn.PayoutOrdered.params.operationId": "The unique ID that identifies the payout request.",
+  "fn.PayoutOrdered.params.walletToDebit": "The wallet that is requested to be paid out.",
+  "fn.PayoutOrdered.params.value": "The amount to be paid out.",
+  "fn.PayoutOrdered.params.instructions": "The payment instruction string supplied with the request.",
+
+  "fn.PayoutExecuted.desc": "Emitted when the operator executes a payout request, burning the held tokens after the off-chain payment settles.",
+  "fn.PayoutExecuted.params.orderer": "The address that ordered the payout.",
+  "fn.PayoutExecuted.params.operationId": "The unique ID that identifies the payout request.",
+
+  "node.user": "Wallet Owner",
+  "node.operator": "Token Operator",
+  "node.contract": "ERC-2021 Token",
+  "node.storagePayouts": "Payouts & Held Balances",
+
+  "edge.callOrderPayout": "Call orderPayout()",
+  "edge.callExecutePayout": "Call executePayout()",
+  "edge.updatePayouts": "Record payout & hold funds",
+  "edge.emitPayoutExecuted": "Emit PayoutExecuted event",
+
+  "sim.orderPayoutWalkthrough.name": "Order and Execute Payout Walkthrough",
+  "sim.orderPayoutWalkthrough.desc": "Follow a payout from a wallet owner's order, through the ERC-1996 hold, to the operator executing it and burning the tokens.",
+  "sim.orderPayoutWalkthrough.param.value": "Payout amount (in wei)",
+  "sim.orderPayoutWalkthrough.param.instructions": "Payment instructions",
+  "sim.orderPayoutWalkthrough.step.order": "The wallet owner calls orderPayout(operationId, value, instructions) to request a payout from their balance.",
+  "sim.orderPayoutWalkthrough.step.order.mobile": "Call orderPayout()",
+  "sim.orderPayoutWalkthrough.step.hold": "The contract records the request in the Ordered state and places the value on an ERC-1996 hold, so it can no longer be spent.",
+  "sim.orderPayoutWalkthrough.step.hold.mobile": "Hold the funds",
+  "sim.orderPayoutWalkthrough.step.execute": "The token operator processes the request, executes the hold, and burns the held tokens, moving the payout to the Executed state.",
+  "sim.orderPayoutWalkthrough.step.execute.mobile": "Operator executes payout",
+  "sim.orderPayoutWalkthrough.step.event": "The contract emits PayoutExecuted so indexers can record that the payout has settled.",
+  "sim.orderPayoutWalkthrough.step.event.mobile": "Emit PayoutExecuted event"
+}

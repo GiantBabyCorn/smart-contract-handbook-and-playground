@@ -1,0 +1,31 @@
+{
+  "short": "contractURI によるコントラクトレベルのメタデータ",
+  "introduction": "ERC-7572 は、コントラクトの名前、説明、画像などのコントラクトレベルのメタデータに解決される URI を返す contractURI() 関数を標準化し、dapp やインデクサーがアプリケーションごとの設定なしにそれを表示できるようにします。この規格は 2023年12月に Devin Finzer、Alex Atallah、Ryan Ghods によって提案されました。このインターフェースは、インデクサーがいつメタデータを再取得すべきかを知るための ContractURIUpdated イベントも定義します。注意：ERC-7572 はドラフト（Draft）であり、仕様は現在も活発に開発が進められており、大幅に変更される可能性があります。",
+  "designPurpose": "ERC-7572 は、dapp が共通の参照なしに何年も使ってきた慣習を形式化するために設計されました。コントラクトは一般に、トークンごと、または場当たり的な関数を通じてのみ名前やシンボルを公開していたため、各マーケットプレイスやエクスプローラーはコントラクトの表示情報を個別に設定していました。JSON ドキュメントを返す単一の contractURI() 呼び出しを標準化し、それを ContractURIUpdated イベントと組み合わせることで、この規格は単一のメタデータソースがすべてのインターフェースを駆動できるようにし、変更時にインデクサーの同期を保ちます。",
+  "commonUsage": "contractURI() は主に、コレクションレベルの名前、説明、画像を必要とする NFT コレクションやその他のトークンコントラクトで使用され、マーケットプレイスやエクスプローラーはそれをコントラクトのプロフィールやバナーとして表示します。返される文字列は、オフチェーンリソースを指すことも、オンチェーンの data:application/json JSON 文字列を埋め込むこともできます。そのスキーマは name、symbol、description、image、banner_image、featured_image、external_link、collaborators を含むフィールドを定義しており、そのうち必須なのは name のみです。",
+
+  "fn.contractURI.desc": "コントラクトの名前、説明、画像などのコントラクトレベルのメタデータの JSON ドキュメントに解決される URI を返します。この URI はオフチェーンリソースを参照することも、オンチェーンの data:application/json JSON 文字列を埋め込むこともできます。",
+  "fn.contractURI.returns.uri": "コントラクトのメタデータ JSON ドキュメントを指す URI。",
+
+  "fn.ContractURIUpdated.desc": "コントラクトレベルのメタデータが変更されたときに発行され、オフチェーンのインデクサーに contractURI() が返すドキュメントの再取得を促します。",
+
+  "node.user": "Dapp",
+  "node.contract": "コントラクト",
+  "node.storageUri": "URI ストレージ",
+  "node.indexer": "オフチェーンインデクサー",
+
+  "edge.callContractURI": "contractURI() を呼び出す",
+  "edge.readUri": "保存された URI を読み取る",
+  "edge.emitUpdated": "ContractURIUpdated イベントを発行する",
+  "edge.notifyIndexer": "インデクサーに通知する",
+
+  "sim.readMetadataWalkthrough.name": "コントラクトメタデータの解決",
+  "sim.readMetadataWalkthrough.desc": "dapp が contractURI() を通じてコントラクトのメタデータを読み取り、その後、ContractURIUpdated を発行してインデクサーに通知する更新までを追います。",
+  "sim.readMetadataWalkthrough.param.contract": "コントラクトアドレス",
+  "sim.readMetadataWalkthrough.step.call": "dapp はコントラクトの contractURI() を呼び出し、そのコントラクトレベルのメタデータの URI を取得します。",
+  "sim.readMetadataWalkthrough.step.call.mobile": "contractURI() を呼び出す",
+  "sim.readMetadataWalkthrough.step.read": "コントラクトは保存された URI を読み取り、メタデータ JSON ドキュメントに解決される ipfs:// アドレスなどのリンクを返します。",
+  "sim.readMetadataWalkthrough.step.read.mobile": "メタデータ URI を返す",
+  "sim.readMetadataWalkthrough.step.update": "所有者がメタデータを更新すると、コントラクトは ContractURIUpdated を発行し、オフチェーンのインデクサーにドキュメントの再取得を促します。",
+  "sim.readMetadataWalkthrough.step.update.mobile": "更新イベントを発行する"
+}

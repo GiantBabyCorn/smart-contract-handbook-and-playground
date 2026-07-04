@@ -1,0 +1,31 @@
+{
+  "short": "Contract-Level Metadata via contractURI",
+  "introduction": "ERC-7572 standardizes a contractURI() function that returns a URI resolving to contract-level metadata, such as a contract's name, description, and image, so dapps and indexers can display it without per-application configuration. It was proposed by Devin Finzer, Alex Atallah, and Ryan Ghods in December 2023. The interface also defines a ContractURIUpdated event so indexers know when to refetch the metadata. Note: ERC-7572 is a Draft; the specification is still under active development and may change substantially.",
+  "designPurpose": "ERC-7572 was designed to formalize a convention that dapps had used for years without a shared reference. Contracts commonly exposed a name or symbol only per-token or through ad-hoc functions, so each marketplace and explorer configured a contract's display information separately. By standardizing a single contractURI() call that returns a JSON document, and pairing it with a ContractURIUpdated event, the standard lets one metadata source drive every interface and keeps indexers synchronized when it changes.",
+  "commonUsage": "contractURI() is used mainly by NFT collections and other token contracts that need a collection-level name, description, and imagery, which marketplaces and explorers render as a profile and banner for the contract. The returned string may point to an offchain resource or embed an onchain data:application/json JSON string. Its schema defines fields including name, symbol, description, image, banner_image, featured_image, external_link, and collaborators, of which only name is required.",
+
+  "fn.contractURI.desc": "Returns a URI that resolves to a JSON document of contract-level metadata, such as the contract's name, description, and image. The URI may reference an offchain resource or embed an onchain data:application/json JSON string.",
+  "fn.contractURI.returns.uri": "The URI pointing to the contract's metadata JSON document.",
+
+  "fn.ContractURIUpdated.desc": "Emitted when the contract-level metadata changes, signaling offchain indexers to refetch the document returned by contractURI().",
+
+  "node.user": "Dapp",
+  "node.contract": "Contract",
+  "node.storageUri": "URI Storage",
+  "node.indexer": "Offchain Indexer",
+
+  "edge.callContractURI": "Call contractURI()",
+  "edge.readUri": "Read stored URI",
+  "edge.emitUpdated": "Emit ContractURIUpdated event",
+  "edge.notifyIndexer": "Notify indexers",
+
+  "sim.readMetadataWalkthrough.name": "Contract Metadata Resolution",
+  "sim.readMetadataWalkthrough.desc": "Follow a dapp reading a contract's metadata through contractURI(), then an update that emits ContractURIUpdated to notify indexers.",
+  "sim.readMetadataWalkthrough.param.contract": "Contract address",
+  "sim.readMetadataWalkthrough.step.call": "A dapp calls contractURI() on the contract to obtain the URI of its contract-level metadata.",
+  "sim.readMetadataWalkthrough.step.call.mobile": "Call contractURI()",
+  "sim.readMetadataWalkthrough.step.read": "The contract reads its stored URI and returns a link, such as an ipfs:// address, that resolves to the metadata JSON document.",
+  "sim.readMetadataWalkthrough.step.read.mobile": "Return metadata URI",
+  "sim.readMetadataWalkthrough.step.update": "When the owner updates the metadata, the contract emits ContractURIUpdated, prompting offchain indexers to refetch the document.",
+  "sim.readMetadataWalkthrough.step.update.mobile": "Emit update event"
+}

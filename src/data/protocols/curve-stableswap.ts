@@ -92,6 +92,25 @@ export const entry: ProtocolEntry = {
     },
   ],
 
+  // ─── Schema v2 content sections ───
+  composes: [
+    { slug: 'erc20', role: 'curve-stableswap.compose.erc20.role' },
+    { slug: 'erc2612', role: 'curve-stableswap.compose.erc2612.role' },
+  ],
+
+  references: [
+    {
+      label: 'Curve docs — StableSwap LP tokens overview',
+      url: 'https://docs.curve.finance/stableswap-exchange/stableswap/lp_tokens/overview/',
+      kind: 'spec',
+    },
+    {
+      label: 'CurveStableSwapNG.vy (ERC-20 pool token with permit)',
+      url: 'https://github.com/curvefi/stableswap-ng/blob/main/contracts/main/CurveStableSwapNG.vy',
+      kind: 'impl',
+    },
+  ],
+
   // ─── ERCFlow ───
   flowNodes: [
     {

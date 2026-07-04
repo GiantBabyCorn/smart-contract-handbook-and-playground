@@ -125,6 +125,31 @@ export const entry: ProtocolEntry = {
     },
   ],
 
+  // ─── Schema v2 content sections ───
+  composes: [
+    { slug: 'erc20', role: 'uniswap-v2.compose.erc20.role' },
+    { slug: 'erc2612', role: 'uniswap-v2.compose.erc2612.role' },
+    { erc: 712, role: 'uniswap-v2.compose.erc712.role' },
+  ],
+
+  references: [
+    {
+      label: 'Uniswap V2 docs — Pools (core concepts)',
+      url: 'https://docs.uniswap.org/contracts/v2/concepts/core-concepts/pools',
+      kind: 'spec',
+    },
+    {
+      label: 'Uniswap V2 docs — Supporting meta transactions (permit)',
+      url: 'https://docs.uniswap.org/contracts/v2/guides/smart-contract-integration/supporting-meta-transactions',
+      kind: 'spec',
+    },
+    {
+      label: 'UniswapV2ERC20.sol (LP token with permit)',
+      url: 'https://github.com/Uniswap/v2-core/blob/master/contracts/UniswapV2ERC20.sol',
+      kind: 'impl',
+    },
+  ],
+
   // ─── ERCFlow ───
   flowNodes: [
     {

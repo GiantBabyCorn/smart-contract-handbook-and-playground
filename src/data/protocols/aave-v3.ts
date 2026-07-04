@@ -121,6 +121,25 @@ export const entry: ProtocolEntry = {
     },
   ],
 
+  // ─── Schema v2 content sections ───
+  composes: [
+    { slug: 'erc20', role: 'aave-v3.compose.erc20.role' },
+    { slug: 'erc2612', role: 'aave-v3.compose.erc2612.role' },
+  ],
+
+  references: [
+    {
+      label: 'Aave V3 docs — Tokenization (aTokens & debt tokens)',
+      url: 'https://aave.com/docs/aave-v3/smart-contracts/tokenization',
+      kind: 'spec',
+    },
+    {
+      label: 'AToken.sol (EIP-2612 permit)',
+      url: 'https://github.com/aave/aave-v3-core/blob/master/contracts/protocol/tokenization/AToken.sol',
+      kind: 'impl',
+    },
+  ],
+
   // ─── ERCFlow ───
   flowNodes: [
     {

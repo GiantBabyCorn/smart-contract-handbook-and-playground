@@ -1,0 +1,48 @@
+{
+  "short": "Extensión de Asignación de ERC-1155",
+  "introduction": "ERC-5216 define una extensión del estándar ERC-1155 que permite a un poseedor aprobar a un operador para que transfiera una cantidad limitada de un ID de token específico en lugar de toda su colección. Fue propuesto por Iván Mañús y Juan Carlos Cantó en julio de 2022. Tomando prestado el patrón approve y allowance de ERC-20, añade una llamada approve que registra un límite de gasto por ID y un getter allowance para la cantidad restante. Nota: ERC-5216 está en Last Call, la última ventana de revisión antes de convertirse en Final.",
+  "designPurpose": "ERC-5216 se diseñó para eliminar la confianza de todo o nada que exige el único mecanismo de aprobación de ERC-1155, setApprovalForAll, que autoriza a un operador a mover todos los tokens que posee un poseedor. Un error o un mercado malicioso que tenga ese permiso puede vaciar un saldo entero. Al reutilizar las llamadas approve y allowance al estilo de ERC-20, la extensión permite a los poseedores autorizar una cantidad exacta por ID de token, limitar su exposición y revocar aprobaciones no utilizadas, de modo que un operador nunca puede transferir más de lo que se otorgó explícitamente.",
+  "commonUsage": "Las aprobaciones granulares de ERC-1155 están dirigidas a los mercados de NFT y semifungibles, donde los vendedores publican IDs de token específicos y quieren autorizar solo la cantidad que se vende, no todo su inventario. Un contrato lo implementa emparejando las funciones approve y allowance con una base ERC-1155, restando la cantidad movida dentro de safeTransferFrom y devolviendo true desde supportsInterface para el ID de interfaz 0x1be07d74. Los juegos y las plataformas de activos fraccionados que acuñan muchos IDs usan el mismo patrón para acotar los permisos.",
+
+  "fn.approve.desc": "Otorga a un operador permiso para transferir los tokens del llamador de un ID dado hasta amount, sobrescribiendo cualquier asignación previa para ese operador e ID. El operador no puede ser el llamador, y se emite un evento Approval.",
+  "fn.approve.params.operator": "La dirección que se autoriza a transferir los tokens del llamador.",
+  "fn.approve.params.id": "El ID de token ERC-1155 al que se aplica la asignación.",
+  "fn.approve.params.amount": "El número máximo de tokens de ese ID que el operador puede transferir.",
+
+  "fn.allowance.desc": "Devuelve el número de tokens del ID dado que el operador está actualmente aprobado para transferir en nombre de la cuenta.",
+  "fn.allowance.params.account": "El poseedor de tokens cuya aprobación se consulta.",
+  "fn.allowance.params.operator": "El operador cuya asignación restante se consulta.",
+  "fn.allowance.params.id": "El ID de token ERC-1155 para el que se consulta la asignación.",
+  "fn.allowance.returns.amount": "La cantidad restante de ese ID que el operador puede transferir para la cuenta.",
+
+  "fn.Approval.desc": "Se emite cuando una cuenta otorga o revoca el permiso de un operador para transferir un ID específico, registrando la cantidad aprobada.",
+  "fn.Approval.params.account": "El poseedor de tokens que otorgó o revocó la aprobación (indexed).",
+  "fn.Approval.params.operator": "El operador cuya asignación cambió (indexed).",
+  "fn.Approval.params.id": "El ID de token al que se aplica la aprobación.",
+  "fn.Approval.params.amount": "La nueva cantidad aprobada para ese operador e ID.",
+
+  "node.user": "Poseedor de Tokens",
+  "node.contract": "Token ERC-5216",
+  "node.storageAllowances": "Mapping de Asignaciones",
+  "node.operator": "Operador Aprobado",
+
+  "edge.callApprove": "Llamar a approve()",
+  "edge.updateAllowance": "Actualizar asignación",
+  "edge.emitApproval": "Emitir evento Approval",
+  "edge.grantAllowance": "Otorgar asignación limitada",
+  "edge.spendAllowance": "Gastar vía safeTransferFrom",
+
+  "sim.approveWalkthrough.name": "Recorrido de Aprobación Limitada",
+  "sim.approveWalkthrough.desc": "Sigue una llamada approve que otorga a un operador una asignación limitada para un ID de token, y luego observa cómo safeTransferFrom la gasta.",
+  "sim.approveWalkthrough.param.operator": "Operador",
+  "sim.approveWalkthrough.param.id": "ID de token",
+  "sim.approveWalkthrough.param.amount": "Cantidad",
+  "sim.approveWalkthrough.step.call": "El poseedor llama a approve(operator, id, amount) para autorizar al operador un número limitado de tokens de ese ID.",
+  "sim.approveWalkthrough.step.call.mobile": "Llamar a approve()",
+  "sim.approveWalkthrough.step.execute": "El contrato registra la cantidad en el mapping de asignaciones bajo el poseedor, el operador y el ID, reemplazando cualquier aprobación previa.",
+  "sim.approveWalkthrough.step.execute.mobile": "Actualizar asignación",
+  "sim.approveWalkthrough.step.event": "El contrato emite Approval y el operador ahora tiene una asignación limitada en lugar de derechos de transferencia generales.",
+  "sim.approveWalkthrough.step.event.mobile": "Emitir evento Approval",
+  "sim.approveWalkthrough.step.spend": "Cuando el operador llama a safeTransferFrom, el contrato resta la cantidad movida de la asignación registrada para ese ID.",
+  "sim.approveWalkthrough.step.spend.mobile": "Gastar asignación"
+}

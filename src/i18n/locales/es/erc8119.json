@@ -1,0 +1,29 @@
+{
+  "short": "Claves de almacenamiento parametrizadas",
+  "introduction": "ERC-8119 define formatos estándar para claves de cadena parametrizadas usadas en el almacenamiento clave-valor de la EVM, donde un tipo de metadatos debe representar múltiples instancias. Fue propuesto por Prem Makeig en enero de 2025. Especifica dos codificaciones: una forma con barra o dos puntos para un único parámetro, escrita como key-label/key-parameter, y una forma con corchetes para múltiples parámetros ordenados, escrita como key-label[parameter-1][parameter-2]. Nota: ERC-8119 es un Draft; la especificación aún está en desarrollo activo y puede cambiar de forma sustancial.",
+  "designPurpose": "ERC-8119 se diseñó para eliminar la inconsistencia que surge cuando un contrato almacena varias instancias de un mismo tipo de metadatos. Antes de él, cada implementación inventaba su propia convención para unir la etiqueta y el parámetro, de modo que claves como registration-1 y registration1 no podían analizarse ni compartirse entre herramientas. Al fijar dos codificaciones explícitas y reservar los caracteres de barra, dos puntos y corchete izquierdo de la etiqueta, ERC-8119 ofrece a los analizadores una única regla determinista para dividir una clave en su etiqueta y sus parámetros.",
+  "commonUsage": "El formato está dirigido a contratos que mantienen los metadatos en un mapping(string => bytes) o un almacén similar, como registros de nombres, registros de perfil y configuración por instancia. La forma con barra y dos puntos es adecuada para valores de texto largos como registration/1 o website/http://website.com, mientras que la forma con corchetes es adecuada para claves de múltiples parámetros como resource[chain][1][token][42]. Como es una convención de nomenclatura y no una interfaz, las aplicaciones la adoptan formateando y analizando las claves de forma coherente, sin cambios en el código on-chain.",
+
+  "node.app": "Aplicación",
+  "node.formatter": "Formateador de claves",
+  "node.storageMetadata": "Almacenamiento de metadatos",
+  "node.parser": "Analizador de claves",
+
+  "edge.buildSlash": "Construir clave con barra/dos puntos",
+  "edge.buildBracket": "Construir clave con corchetes",
+  "edge.writeKey": "Escribir metadatos",
+  "edge.parseKey": "Analizar clave",
+
+  "sim.buildKeyWalkthrough.name": "Construir clave parametrizada",
+  "sim.buildKeyWalkthrough.desc": "El recorrido sigue una clave con forma de barra desde la aplicación, a través del almacenamiento de metadatos, hasta un analizador que la vuelve a dividir en una etiqueta y un parámetro.",
+  "sim.buildKeyWalkthrough.param.keyLabel": "Etiqueta de la clave",
+  "sim.buildKeyWalkthrough.param.keyParameter": "Parámetro de la clave",
+  "sim.buildKeyWalkthrough.step.build": "La aplicación une la key-label y el parámetro con una barra para formar la clave parametrizada registration/1.",
+  "sim.buildKeyWalkthrough.step.build.mobile": "Construir clave",
+  "sim.buildKeyWalkthrough.step.format": "El formateador verifica que la etiqueta no contenga espacios, barra, dos puntos ni corchete izquierdo, produciendo una clave conforme al estándar.",
+  "sim.buildKeyWalkthrough.step.format.mobile": "Validar formato de clave",
+  "sim.buildKeyWalkthrough.step.store": "El contrato escribe el valor bajo la clave registration/1 en el almacén de metadatos mapping(string => bytes).",
+  "sim.buildKeyWalkthrough.step.store.mobile": "Escribir metadatos",
+  "sim.buildKeyWalkthrough.step.parse": "Un analizador lee la clave, la divide en la primera barra o dos puntos, y recupera la etiqueta registration y el parámetro 1.",
+  "sim.buildKeyWalkthrough.step.parse.mobile": "Volver a analizar clave"
+}

@@ -1,0 +1,64 @@
+{
+  "short": "面向 EVM 的去中心化类型系统",
+  "introduction": "ERC-1900 定义了 dType，一个链上注册表和通用接口，用于在以太坊上从 Solidity 结构体声明可复用的数据类型。该提案由 Loredana Cirstea 与 Christian Tzurcanu 于 2019 年 3 月提出。每个类型都以其 ABI 元数据形式存储，并以一个标识符为键，该标识符由类型名称的 keccak256 计算得出，从而让工具与合约共享一致的类型定义。注意：ERC-1900 处于 Stagnant 状态——它已有 6 个月以上未活动，可能永远不会最终定稿，但在历史或技术上仍具重要意义。",
+  "designPurpose": "dType 旨在为以太坊提供一套共享的数据类型词汇，而不是让每个项目各自孤立地重复定义相同的结构体。如果没有一个通用注册表，链上数据就无法在各协议之间顺畅流转，而区块浏览器等链下工具也无法解码任意结构。通过将每个类型的 ABI 元数据以一个确定性标识符记录在链上，dType 让合约可以引用已有的定义，也让工具能够缓存并搜索整个集合。",
+  "commonUsage": "dType 面向需要机器可读类型定义的基础设施：解码交易副作用的区块浏览器、为有类型的合约提供自动补全的编辑器插件，以及基于共享数据模型进行互操作的协议。该提案将 dType 定位为后续扩展的基础层——一个带有数据存储的类型系统（ERC-2158），以及针对每个类型的 pure 函数库。由于它从未达到 Final 状态，ERC-1900 只停留在参考实现层面，而未获得生产环境采用。",
+
+  "fn.insert.desc": "通过将类型的 dType 元数据结构体存入注册表来注册一个新类型。返回该标识符（由类型名称的 keccak256 计算得出），并触发一个 LogNew 事件。",
+  "fn.insert.params.data": "描述该类型的 dType 元数据结构体：包括其 typeChoice、合约地址、Swarm 源哈希、名称和子类型。",
+  "fn.insert.returns.identifier": "该类型的主标识符，即其名称的 keccak256。",
+
+  "fn.remove.desc": "删除具有给定标识符的类型记录，并释放其存储槽。规范指出该函数是可选的，为保证不可变性可以将其省略。",
+  "fn.remove.params.identifier": "要删除的类型的标识符。",
+  "fn.remove.returns.index": "被删除记录先前所占的数组索引。",
+
+  "fn.count.desc": "返回当前已注册的类型数量。",
+  "fn.count.returns.counter": "已注册类型的总数。",
+
+  "fn.getTypeIdentifier.desc": "在不访问存储的情况下计算某个类型名称的标识符，即打包后名称的 keccak256。调用方用它来推导用于其他查询的键。",
+  "fn.getTypeIdentifier.params.name": "类型名称，即在 Solidity 中书写的形式。",
+  "fn.getTypeIdentifier.returns.identifier": "由名称推导得出的标识符。",
+
+  "fn.getByIdentifier.desc": "返回存储在给定标识符下的完整 dType 元数据结构体。",
+  "fn.getByIdentifier.params.identifier": "要获取的类型的标识符。",
+  "fn.getByIdentifier.returns.dtype": "已存储的 dType 元数据结构体。",
+
+  "fn.get.desc": "返回按名称查询的类型的 dType 元数据结构体，并在内部解析其标识符。",
+  "fn.get.params.name": "要查询的类型名称。",
+  "fn.get.returns.dtype": "已存储的 dType 元数据结构体。",
+
+  "fn.isRegistered.desc": "报告注册表中是否存在具有给定标识符的类型。",
+  "fn.isRegistered.params.identifier": "要检查的标识符。",
+  "fn.isRegistered.returns.registered": "如果存在具有该标识符的已注册类型，则为 true。",
+
+  "fn.LogNew.desc": "当有新类型被插入注册表时触发。",
+  "fn.LogNew.params.identifier": "新注册类型的标识符。",
+  "fn.LogNew.params.index": "该类型在注册表标识符数组中的索引。",
+
+  "fn.LogUpdate.desc": "当已有的类型记录被更新时触发。",
+  "fn.LogUpdate.params.identifier": "被更新类型的标识符。",
+  "fn.LogUpdate.params.index": "该类型在注册表标识符数组中的索引。",
+
+  "fn.LogRemove.desc": "当类型记录从注册表中被移除时触发。",
+  "fn.LogRemove.params.identifier": "被移除类型的标识符。",
+  "fn.LogRemove.params.index": "被移除类型先前在标识符数组中所占的索引。",
+
+  "node.user": "类型作者",
+  "node.contract": "dType 注册表",
+  "node.storageTypes": "类型存储",
+
+  "edge.callInsert": "调用 insert()",
+  "edge.updateTypes": "存储类型记录",
+  "edge.emitLogNew": "触发 LogNew 事件",
+
+  "sim.insertWalkthrough.name": "注册类型演练",
+  "sim.insertWalkthrough.desc": "跟随一次 insert 调用，从作者出发，经过注册表存储，直到 LogNew 事件。",
+  "sim.insertWalkthrough.param.name": "类型名称",
+  "sim.insertWalkthrough.param.typeChoice": "类型选择",
+  "sim.insertWalkthrough.step.call": "作者调用 insert(data)，传入一个描述待注册类型的 dType 结构体。",
+  "sim.insertWalkthrough.step.call.mobile": "调用 insert()",
+  "sim.insertWalkthrough.step.execute": "注册表推导出 identifier = keccak256(name)，将记录写入 typeStruct 映射，并将其追加到 typeIndex 数组中。",
+  "sim.insertWalkthrough.step.execute.mobile": "存储类型记录",
+  "sim.insertWalkthrough.step.event": "注册表触发 LogNew(identifier, index)，以便链下索引器能够追踪这个新类型。",
+  "sim.insertWalkthrough.step.event.mobile": "触发 LogNew 事件"
+}

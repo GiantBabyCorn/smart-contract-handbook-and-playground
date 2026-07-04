@@ -1,0 +1,80 @@
+{
+  "short": "Estándar de Bono de Almacenamiento Abstracto",
+  "introduction": "ERC-3475 define una interfaz para bonos tokenizados: obligaciones on-chain que almacenan sus condiciones de canje, su suministro y sus metadatos directamente en el almacenamiento del contrato en lugar de externamente. Fue propuesto por Yu Liu, Varun Deshpande y sus coautores en abril de 2021. Cada bono se direcciona mediante un class id para el tipo de bono y un nonce id para su condición de emisión; una tupla Transaction de (classId, nonceId, amount) impulsa las operaciones de emisión, transferencia, canje y quema, que pueden agruparse por lotes en una sola llamada.",
+  "designPurpose": "ERC-3475 fue diseñado para representar obligaciones que los estándares de token existentes no pueden expresar. Un token LP de ERC-20 no tiene estructura, por lo que la lógica compleja de recompensas y de canje debía residir en contratos separados o en bases de datos off-chain, fragmentando la liquidez y elevando los costos de gas. Al dar a cada bono una class y un nonce junto con estructuras on-chain Metadata y Values, el estándar permite que un solo contrato contenga muchos tipos de bonos, cada uno con su propio suministro, progreso de vencimiento y términos de canje, legibles a través de una sola interfaz.",
+  "commonUsage": "El estándar está destinado a protocolos que tokenizan posiciones similares a deuda: bonos de renta fija o de rendimiento, recibos de liquidez canjeables e instrumentos similares cuyos términos evolucionan con el tiempo. Dado que un solo contrato puede contener muchos pools como distintas classes y nonces, resulta adecuado para creadores de mercado automatizados (AMM) que consolidan la liquidez en lugar de desplegar un token LP de ERC-20 separado por cada par. Las billeteras y los mercados secundarios leen los saldos y el progreso de canje a través de las funciones view del estándar para mostrar y negociar bonos.",
+
+  "fn.transferFrom.desc": "Mueve los bonos listados en el array Transaction de un titular a otro. El llamador debe tener la aprobación de operador para las classes de bono correspondientes, otorgada a través de setApprovalFor.",
+  "fn.transferFrom.params.from": "El titular cuyo saldo de bonos disminuye.",
+  "fn.transferFrom.params.to": "El destinatario cuyo saldo de bonos aumenta.",
+  "fn.transferFrom.params.transactions": "Array de tuplas (classId, nonceId, amount) que especifica qué bonos mover.",
+
+  "fn.issue.desc": "Crea los bonos descritos por el array Transaction y los asigna a una dirección. Está pensada para ser llamada por una única entidad privilegiada, normalmente el contrato del banco emisor, una vez que se ha depositado el colateral requerido.",
+  "fn.issue.params.to": "La dirección a la que se emiten los bonos recién creados.",
+  "fn.issue.params.transaction": "Array de tuplas (classId, nonceId, amount) que describe los bonos a crear.",
+
+  "fn.redeem.desc": "Canjea los bonos listados de una dirección después de que se cumplan sus condiciones de vencimiento, retirándolos del suministro activo. Debería restringirse al contrato del banco o del creador de mercado.",
+  "fn.redeem.params.from": "La dirección desde la cual se canjean los bonos.",
+  "fn.redeem.params.transactions": "Array de tuplas (classId, nonceId, amount) que describe los bonos a canjear.",
+
+  "fn.burn.desc": "Anula los bonos listados enviándolos a la dirección cero. Al igual que redeem, está pensada para que solo puedan llamarla el contrato controlador o el del banco.",
+  "fn.burn.params.from": "El titular cuyos bonos se queman.",
+  "fn.burn.params.transactions": "Array de tuplas (classId, nonceId, amount) que describe los bonos a quemar.",
+
+  "fn.approve.desc": "Establece la asignación del gastador exactamente en los bonos del array Transaction, sobrescribiendo cualquier asignación previa para esos pares de class y nonce.",
+  "fn.approve.params.spender": "La dirección autorizada para gastar los bonos del llamador.",
+  "fn.approve.params.transactions": "Array de tuplas (classId, nonceId, amount) que el gastador está aprobado para transferir.",
+
+  "fn.setApprovalFor.desc": "Habilita o deshabilita a un operador para gestionar todos los bonos del llamador, devolviendo el estado de aprobación resultante. Un operador aprobado puede transferir, canjear y quemar en nombre del propietario.",
+  "fn.setApprovalFor.params.operator": "La dirección a la que se otorga o revoca el estatus de operador.",
+  "fn.setApprovalFor.params.approved": "True para aprobar al operador, false para revocar la aprobación.",
+  "fn.setApprovalFor.returns.approved": "El estado de aprobación resultante para el operador.",
+
+  "fn.balanceOf.desc": "Devuelve el número de bonos de la class y el nonce dados que posee una cuenta, incluyendo en el conteo los bonos que ya han sido canjeados.",
+  "fn.balanceOf.params.account": "La dirección cuyo saldo de bonos se consulta.",
+  "fn.balanceOf.params.classId": "El class id que identifica el tipo de bono.",
+  "fn.balanceOf.params.nonceId": "El nonce id que identifica la emisión dentro de la class.",
+  "fn.balanceOf.returns.balance": "El número de bonos de esa class y ese nonce que posee la cuenta.",
+
+  "fn.Issue.desc": "Se emite cuando un operador emite bonos a una dirección. Una emisión de valor cero no debería emitir este evento.",
+  "fn.Issue.params.operator": "El operador, normalmente el banco, que emitió los bonos (indexed).",
+  "fn.Issue.params.to": "La dirección que recibió los bonos emitidos (indexed).",
+  "fn.Issue.params.transactions": "Las tuplas (classId, nonceId, amount) que fueron emitidas.",
+
+  "fn.Redeem.desc": "Se emite cuando un operador canjea bonos de una dirección. Un canje de valor cero no debería emitir este evento.",
+  "fn.Redeem.params.operator": "El operador que canjeó los bonos (indexed).",
+  "fn.Redeem.params.from": "La dirección desde la cual se canjearon los bonos (indexed).",
+  "fn.Redeem.params.transactions": "Las tuplas (classId, nonceId, amount) que fueron canjeadas.",
+
+  "fn.Transfer.desc": "Se emite cuando un operador transfiere bonos entre titulares. Una transferencia desde la dirección cero debe emitir Issue en lugar de este evento.",
+  "fn.Transfer.params.operator": "El operador que llevó a cabo la transferencia (indexed).",
+  "fn.Transfer.params.from": "La dirección desde la cual se enviaron los bonos (indexed).",
+  "fn.Transfer.params.to": "La dirección a la cual se enviaron los bonos (indexed).",
+  "fn.Transfer.params.transactions": "Las tuplas (classId, nonceId, amount) que fueron transferidas.",
+
+  "node.user": "Banco (Emisor)",
+  "node.contract": "Contrato de Bono ERC-3475",
+  "node.storageBonds": "Almacenamiento de Bonos",
+  "node.holder": "Titular del Bono",
+
+  "edge.callIssue": "Llamar issue()",
+  "edge.callRedeem": "Llamar redeem()",
+  "edge.updateBonds": "Actualizar libro de bonos",
+  "edge.bondsIssued": "Acreditar bonos",
+  "edge.emitIssue": "Emitir evento Issue",
+  "edge.emitRedeem": "Emitir evento Redeem",
+
+  "sim.issueBondWalkthrough.name": "Recorrido de Emisión de Bono",
+  "sim.issueBondWalkthrough.desc": "Sigue una llamada issue() desde el banco, a través del almacenamiento de bonos, hasta el evento Issue.",
+  "sim.issueBondWalkthrough.param.to": "Destinatario",
+  "sim.issueBondWalkthrough.param.classId": "Class id",
+  "sim.issueBondWalkthrough.param.amount": "Cantidad",
+  "sim.issueBondWalkthrough.step.call": "El banco llama a issue() con una tupla Transaction que indica la class, el nonce y la cantidad del bono a crear.",
+  "sim.issueBondWalkthrough.step.call.mobile": "Llamar issue()",
+  "sim.issueBondWalkthrough.step.execute": "El contrato escribe los nuevos bonos en el almacenamiento, aumentando el saldo del titular y el suministro activo para esa class y ese nonce.",
+  "sim.issueBondWalkthrough.step.execute.mobile": "Escribir bonos en almacenamiento",
+  "sim.issueBondWalkthrough.step.credit": "Los bonos recién creados se acreditan al destinatario, quien luego puede transferirlos, negociarlos o canjearlos.",
+  "sim.issueBondWalkthrough.step.credit.mobile": "Acreditar al titular",
+  "sim.issueBondWalkthrough.step.event": "El contrato emite el evento Issue para que las billeteras y los indexadores registren los nuevos bonos.",
+  "sim.issueBondWalkthrough.step.event.mobile": "Emitir evento Issue"
+}

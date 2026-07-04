@@ -1,0 +1,51 @@
+{
+  "short": "Soulbound Badge Bound to an NFT",
+  "introduction": "ERC-5114 defines a soulbound badge: a token bound to another non-fungible token (NFT) at mint time that can never be transferred afterward. It was proposed by Micah Zoltu in May 2022. Each badge is attached to an NFT identified by an [address, tokenId] pair, recorded once by a Mint event, and its binding is read back with ownerOf, which returns that NFT rather than a wallet address. Note: ERC-5114 is in Last Call, the final review window before it becomes Final.",
+  "designPurpose": "ERC-5114 was designed to anchor reputation and achievement badges to a persona rather than to a wallet that can sell them. An ordinary NFT moves freely, so a badge built as a normal token could be traded away, detaching an accomplishment from the identity that earned it. By binding each badge to an NFT at mint and forbidding later transfers, the standard guarantees non-separability and non-mergeability across the badges bound to one NFT. Content-addressable metadata also stops the minter from censoring a badge.",
+  "commonUsage": "Soulbound badges suit on-chain reputation, credentials, achievements, and membership markers that should follow a persona rather than trade as ordinary NFTs. Because a badge binds to an NFT identified by an [address, tokenId] pair, any asset addressable that way — an ERC-721 or ERC-1155 token — can act as the soul. The standard leaves the metadata format open, defining only immutability and content-addressability, so applications supply their own schema and use metadataFormat to signal how the URIs are parsed.",
+
+  "fn.ownerOf.desc": "Returns the NFT that the badge is bound to, as an [address, tokenId] pair. It reverts if the badge has not been minted and always returns the same value carried by the badge's original Mint event.",
+  "fn.ownerOf.params.badgeId": "The identifier of the badge to resolve.",
+  "fn.ownerOf.returns.nftAddress": "The contract address of the NFT the badge is bound to.",
+  "fn.ownerOf.returns.nftTokenId": "The token ID of the NFT the badge is bound to.",
+
+  "fn.collectionUri.desc": "Returns an immutable, content-addressable URI describing the badge collection. Its metadata is merged with each badge's badgeUri output, where the badgeUri data takes precedence.",
+  "fn.collectionUri.returns.collectionUri": "The immutable, content-addressable URI for the collection's metadata.",
+
+  "fn.badgeUri.desc": "Returns a censorship-resistant, content-addressable URI describing a single badge instance. Its data takes precedence over the collection-level metadata returned by collectionUri.",
+  "fn.badgeUri.params.badgeId": "The identifier of the badge to describe.",
+  "fn.badgeUri.returns.badgeUri": "The immutable, content-addressable URI for this badge's metadata.",
+
+  "fn.metadataFormat.desc": "Returns a string identifying the format or version of the data at collectionUri and badgeUri (for example 'EIP-ABCD' or 'soulbound-schema-version-4'), so a caller can parse it without inspecting the content first.",
+  "fn.metadataFormat.returns.format": "A string naming the format or version of the URI metadata.",
+
+  "fn.Mint.desc": "Emitted once when a badge is minted, recording the badge and the NFT it is bound to. It must not be fired twice for the same badgeId.",
+  "fn.Mint.params.badgeId": "The identifier of the newly minted badge.",
+  "fn.Mint.params.nftAddress": "The contract address of the NFT the badge is bound to.",
+  "fn.Mint.params.nftTokenId": "The token ID of the NFT the badge is bound to.",
+
+  "node.minter": "Badge Minter",
+  "node.contract": "Soulbound Badge Contract",
+  "node.storageBinding": "Badge Binding Storage",
+  "node.soul": "Bound NFT (Soul)",
+
+  "edge.mint": "Mint badge",
+  "edge.storeBinding": "Store badge binding",
+  "edge.bindSoul": "Bind badge to NFT",
+  "edge.emitMint": "Emit Mint event",
+  "edge.queryOwner": "Call ownerOf()",
+
+  "sim.mintBadgeWalkthrough.name": "Mint Soulbound Badge",
+  "sim.mintBadgeWalkthrough.desc": "Follow a badge from minting through its immutable NFT binding and the Mint event to an ownerOf query.",
+  "sim.mintBadgeWalkthrough.param.badgeId": "Badge ID",
+  "sim.mintBadgeWalkthrough.param.nftAddress": "NFT address",
+  "sim.mintBadgeWalkthrough.param.nftTokenId": "NFT token ID",
+  "sim.mintBadgeWalkthrough.step.mint": "The minter mints a new badge and permanently binds it to the target NFT; this binding can never change afterward.",
+  "sim.mintBadgeWalkthrough.step.mint.mobile": "Mint badge",
+  "sim.mintBadgeWalkthrough.step.bind": "The contract records the badge-to-NFT binding in storage, attaching the badge to its soul NFT.",
+  "sim.mintBadgeWalkthrough.step.bind.mobile": "Store binding",
+  "sim.mintBadgeWalkthrough.step.event": "The contract emits Mint(badgeId, nftAddress, nftTokenId) exactly once so indexers can record the binding.",
+  "sim.mintBadgeWalkthrough.step.event.mobile": "Emit Mint event",
+  "sim.mintBadgeWalkthrough.step.query": "A caller invokes ownerOf(badgeId), which returns the [address, tokenId] of the NFT the badge is bound to.",
+  "sim.mintBadgeWalkthrough.step.query.mobile": "Query ownerOf()"
+}

@@ -1,0 +1,30 @@
+{
+  "short": "BLS12-381 キーストア形式",
+  "introduction": "ERC-2335 は、BLS12-381 秘密鍵（プルーフ・オブ・ステークのバリデータが使用する署名鍵）を暗号化して保存するための JSON キーストアファイル形式を定義します。この規格は 2019年9月に Carl Beekhuizen によって提案されました。キーストアはユーザーのパスワードのもとで秘密を暗号化し、パスワードが入力されるまで鍵を安全に保ちます。また、暗号処理を差し替え可能な 3 つのモジュール、すなわち鍵導出関数、チェックサム、暗号（cipher）として構成します。注意：ERC-2335 は Review ステータスであり、最終確定される前にインターフェースが変更される可能性があります。",
+  "designPurpose": "ERC-2335 は、Keccak256 チェックサムに依存する Web3 Secret Storage キーストアを置き換えるために設計されました。BLS 鍵とその保存はチェーンをまたぐ標準であるため、この形式にはすべてのチェーンに対して中立なチェックサムが必要であり、Keccak は適していませんでした。さらに、モジュールという概念を導入し、鍵導出関数、チェックサム、cipher を 1 つの抽象化のインスタンスとして扱うことで、最小限の労力で差し替えられるようにしています。version フィールドは、既存の Ethereum キーストアとの衝突を避けるために 4 に設定されています。",
+  "commonUsage": "BLS12-381 キーストアは、Ethereum のステーキングソフトウェアがバリデータの署名鍵と引き出し鍵を保存するために使用し、オペレーターは生の秘密を露出させることなく、暗号化された鍵をデバイス間で移動できます。ステーキングツールやデポジットツールはこれらのファイルを生成し、その内容を ERC-2333 の鍵生成と ERC-2334 のパスによって導出し、公開鍵、パス、UUID を記録することで、復号せずにアカウントを参照できるようにします。バリデータクライアントは、オペレーターがパスワードを入力すると、必要に応じて秘密を復号します。",
+
+  "node.user": "キーストア保有者",
+  "node.keystore": "BLS12-381 キーストア",
+  "node.storageFile": "キーストアファイルのフィールド",
+  "node.signer": "署名クライアント",
+
+  "edge.providePassword": "パスワードを提供",
+  "edge.readModules": "暗号モジュールを読み取り",
+  "edge.verifyPassword": "パスワードを検証",
+  "edge.decryptSecret": "秘密を復号",
+  "edge.recoverKey": "秘密鍵を復元",
+
+  "sim.decryptKeystoreWalkthrough.name": "キーストア復号ウォークスルー",
+  "sim.decryptKeystoreWalkthrough.desc": "パスワードが BLS12-381 キーストアをどのように解錠するか、鍵導出からチェックサム検証を経て秘密の復号までを追います。",
+  "sim.decryptKeystoreWalkthrough.param.password": "パスワード",
+  "sim.decryptKeystoreWalkthrough.param.kdf": "鍵導出関数",
+  "sim.decryptKeystoreWalkthrough.step.derive": "保有者がパスワードを提供すると、KDF モジュールがパスワードと保存された kdf パラメータから復号鍵を導出します。",
+  "sim.decryptKeystoreWalkthrough.step.derive.mobile": "復号鍵を導出",
+  "sim.decryptKeystoreWalkthrough.step.verify": "キーストアは、復号鍵の 2 番目の 16 バイトと cipher メッセージを SHA-256 で一緒にハッシュ化し、その結果を保存されたチェックサムメッセージと照合して、パスワードが正しいことを確認します。",
+  "sim.decryptKeystoreWalkthrough.step.verify.mobile": "パスワードを検証",
+  "sim.decryptKeystoreWalkthrough.step.decrypt": "パスワードが検証されると、cipher モジュールが復号鍵を使って保存された cipher メッセージを復号し、秘密を復元します。",
+  "sim.decryptKeystoreWalkthrough.step.decrypt.mobile": "秘密を復号",
+  "sim.decryptKeystoreWalkthrough.step.recover": "復号された BLS12-381 秘密鍵が署名クライアントに渡され、これで署名を生成できるようになります。",
+  "sim.decryptKeystoreWalkthrough.step.recover.mobile": "秘密鍵を復元"
+}

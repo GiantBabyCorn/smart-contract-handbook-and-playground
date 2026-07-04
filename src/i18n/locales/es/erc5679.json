@@ -1,0 +1,55 @@
+{
+  "short": "Extensión de Acuñación y Quema de Tokens",
+  "introduction": "ERC-5679 define interfaces consistentes para acuñar y quemar activos fungibles, no fungibles y multitoken, extendiendo los estándares EIP-20, EIP-721 y EIP-1155. Fue propuesto por Zainan Victor Zhou en septiembre de 2022. El estándar especifica funciones mint y burn dedicadas para cada tipo de token, incluyendo variantes safe-mint que verifican los contratos receptores y operaciones por lotes para EIP-1155, y exige que el evento Transfer existente se emita desde la dirección cero al acuñar, de modo que los cambios de suministro sigan siendo observables.",
+  "designPurpose": "ERC-5679 se diseñó para estandarizar cómo se crean y se destruyen los tokens, algo que EIP-20, EIP-721 y EIP-1155 dejan sin especificar. Antes de él, las implementaciones reutilizaban métodos de transferencia o inventaban firmas de mint y burn improvisadas, por lo que las herramientas no podían depender de una interfaz común y era fácil cometer errores de control de acceso. Al definir funciones mint y burn separadas con sus propios identificadores EIP-165 por cada tipo de token, el estándar aísla las acciones que cambian el suministro de las transferencias y hace que la compatibilidad sea detectable en la cadena.",
+  "commonUsage": "Las interfaces de acuñación y quema las utilizan los emisores de stablecoins que expanden o contraen el suministro según sus reservas, los puentes que acuñan representaciones envueltas de activos bloqueados y las queman al canjearlos, y las plataformas de NFT y de videojuegos que emiten o retiran tokens. Dado que ERC-5679 define una interfaz por cada tipo de token, un contrato la combina con la base EIP-20, EIP-721 o EIP-1155 correspondiente, restringe las nuevas funciones detrás de roles de control de acceso y expone identificadores EIP-165 para que quienes las llaman puedan confirmar la compatibilidad antes de acuñar.",
+
+  "fn.mint.desc": "Crea _amount tokens fungibles nuevos y los asigna a _to como parte de la extensión de EIP-20. El suministro total aumenta y se emite un evento Transfer como si los tokens provinieran de la dirección cero.",
+  "fn.mint.params._to": "La dirección que recibe los tokens recién acuñados.",
+  "fn.mint.params._amount": "La cantidad de tokens a crear.",
+  "fn.mint.params._data": "Datos adicionales sin formato especificado, que se pasan con la llamada a mint.",
+
+  "fn.burn.desc": "Destruye _amount tokens fungibles en poder de _from como parte de la extensión de EIP-20. El suministro total disminuye y se emite un evento Transfer como si los tokens se hubieran enviado a la dirección cero.",
+  "fn.burn.params._from": "La dirección cuyos tokens se destruyen.",
+  "fn.burn.params._amount": "La cantidad de tokens a destruir.",
+  "fn.burn.params._data": "Datos adicionales sin formato especificado, que se pasan con la llamada a burn.",
+
+  "fn.safeMint.desc": "Acuña el token EIP-721 identificado por _id hacia _to, aplicando las mismas verificaciones de receptor que safeTransferFrom para que el token nunca se envíe a un contrato que no pueda recibirlo.",
+  "fn.safeMint.params._to": "La dirección que recibe el token recién acuñado.",
+  "fn.safeMint.params._id": "El identificador del token EIP-721 a acuñar.",
+  "fn.safeMint.params._data": "Datos adicionales que se reenvían al callback onERC721Received del destinatario.",
+
+  "fn.safeMintBatch.desc": "Acuña varios saldos EIP-1155 a la vez, creando cada cantidad de amounts para el id correspondiente de ids y asignándolos al destinatario con las verificaciones de receptor de una transferencia segura.",
+  "fn.safeMintBatch.params.to": "La dirección que recibe los saldos acuñados.",
+  "fn.safeMintBatch.params.ids": "La lista de identificadores de token a acuñar.",
+  "fn.safeMintBatch.params.amounts": "La cantidad a acuñar para cada identificador correspondiente.",
+  "fn.safeMintBatch.params.data": "Datos adicionales que se reenvían al callback de recepción por lotes del destinatario.",
+
+  "fn.burnBatch.desc": "Destruye varios saldos EIP-1155 a la vez, eliminando de _from cada cantidad de amounts para el id correspondiente de ids y disminuyendo el suministro total en consecuencia.",
+  "fn.burnBatch.params._from": "La dirección cuyos saldos se destruyen.",
+  "fn.burnBatch.params.ids": "La lista de identificadores de token a quemar.",
+  "fn.burnBatch.params.amounts": "La cantidad a quemar para cada identificador correspondiente.",
+  "fn.burnBatch.params._data": "Datos adicionales sin formato especificado, que se pasan con la llamada a burn.",
+
+  "node.user": "Emisor de Tokens",
+  "node.contract": "Token ERC-5679",
+  "node.storageSupply": "Suministro y Saldos",
+  "node.recipient": "Destinatario",
+
+  "edge.callMint": "Llamar a mint()",
+  "edge.callBurn": "Llamar a burn()",
+  "edge.updateSupply": "Actualizar suministro y saldos",
+  "edge.mintTokens": "Entregar tokens acuñados",
+  "edge.emitTransfer": "Emitir evento Transfer",
+
+  "sim.mintWalkthrough.name": "Recorrido de Acuñación de Tokens",
+  "sim.mintWalkthrough.desc": "Muestra el recorrido de una llamada de acuñación desde el emisor, pasando por la actualización del suministro, hasta el evento Transfer emitido desde la dirección cero.",
+  "sim.mintWalkthrough.param.to": "Destinatario",
+  "sim.mintWalkthrough.param.amount": "Cantidad",
+  "sim.mintWalkthrough.step.call": "El emisor llama a mint(_to, _amount, _data) en el contrato de token para crear nuevos tokens para el destinatario.",
+  "sim.mintWalkthrough.step.call.mobile": "Llamar a mint()",
+  "sim.mintWalkthrough.step.execute": "El contrato aumenta el suministro total y acredita en el saldo del destinatario la cantidad recién acuñada.",
+  "sim.mintWalkthrough.step.execute.mobile": "Actualizar suministro",
+  "sim.mintWalkthrough.step.transfer": "El contrato emite Transfer desde la dirección cero hacia el destinatario, marcando la cantidad como recién emitida para que los indexadores puedan rastrearla.",
+  "sim.mintWalkthrough.step.transfer.mobile": "Emitir evento Transfer"
+}

@@ -1,0 +1,52 @@
+{
+  "short": "类文件系统的层级化 NFT",
+  "introduction": "ERC-6150 定义了 ERC-721 的一个扩展，将 NFT 组织成类文件系统的层级结构，其中每个代币都是一个节点，拥有一个父节点和任意数量的子节点。它由 Keegan Lee、msfew、Kartin 和 qizhou 于 2022 年 12 月提出。代币 ID 为零表示没有父节点，因此每个真实节点的 ID 都大于零，而根节点报告的父节点为零。该接口新增了用于读取节点父节点与子节点、以及判断其是否为根节点或叶子节点的读取函数，另外还有一个用于标记每个新节点的 Minted 事件。",
+  "designPurpose": "ERC-6150 的设计目标是通过单个合约将树状结构数据带到链上，取代应用程序附加在 ERC-721 之上的临时父节点指针或旁路注册表。层级结构在文件系统以及 eBay、Reddit 等网站的分类树中十分常见，但普通 NFT 无法表达代币之间的关系。通过标准化 Minted 事件以及 parentOf、childrenOf、isRoot 和 isLeaf 查询，该设计将树保留在链上，供任何前端无需许可地遍历。",
+  "commonUsage": "ERC-6150 面向数据天然呈树状的应用：类似 Reddit 的链上论坛、按列表组织的社交动态、链上公司的组织架构图，以及类似 eBay 的电商分类树。由于每个目录或分类本身都是一个 NFT，某个分支的所有权可以被转移或由 DAO 治理。规范定义了可选扩展，用于枚举子节点、销毁叶子节点、为节点重新指定父节点以及逐节点的访问控制，因此实现者只需添加自己所需的功能。",
+
+  "fn.parentOf.desc": "返回给定节点的父代币。根节点返回零，因为代币 ID 零被保留用于表示该代币没有父节点。",
+  "fn.parentOf.params.tokenId": "要查询其父节点的子代币。",
+  "fn.parentOf.returns.parentId": "父代币的 ID，当该节点为根节点时则为零。",
+
+  "fn.childrenOf.desc": "返回直接位于给定节点之下的子代币数组。叶子节点返回空数组。",
+  "fn.childrenOf.params.tokenId": "要列出其直接子节点的父代币。",
+  "fn.childrenOf.returns.childrenIds": "父节点为 tokenId 的那些代币的 ID。",
+
+  "fn.isRoot.desc": "当给定代币为根节点（即没有父节点）时返回 true。根节点是层级结构的顶层条目。",
+  "fn.isRoot.params.tokenId": "要检测的代币。",
+  "fn.isRoot.returns.root": "如果该代币是没有父节点的根节点，则为 true。",
+
+  "fn.isLeaf.desc": "当给定代币为叶子节点（即没有子节点）时返回 true。叶子节点位于层级结构的底层。",
+  "fn.isLeaf.params.tokenId": "要检测的代币。",
+  "fn.isLeaf.returns.leaf": "如果该代币是没有子节点的叶子节点，则为 true。",
+
+  "fn.Minted.desc": "在某个父节点下铸造新代币时发出。parentId 为零表示所铸造的代币是根节点；所铸造的代币 ID 必须大于零。",
+  "fn.Minted.params.minter": "铸造该代币的地址。",
+  "fn.Minted.params.to": "接收所铸造代币的地址。",
+  "fn.Minted.params.parentId": "父代币的 ID，当所铸造的代币为根节点时则为零。",
+  "fn.Minted.params.tokenId": "新铸造代币的 ID，必须大于零。",
+
+  "node.user": "NFT 所有者",
+  "node.contract": "层级化 NFT 合约",
+  "node.storageHierarchy": "层级存储",
+  "node.recipient": "子节点接收者",
+
+  "edge.mintChild": "铸造子节点",
+  "edge.updateHierarchy": "更新层级结构",
+  "edge.emitMinted": "发出 Minted 事件",
+  "edge.assignChild": "分配子节点",
+  "edge.callParentOf": "调用 parentOf()",
+  "edge.callChildrenOf": "调用 childrenOf()",
+
+  "sim.mintChild.name": "铸造子节点",
+  "sim.mintChild.desc": "跟踪在某个父节点下铸造子节点的过程，从所有者的调用，经过层级存储的更新，直到 Minted 事件。",
+  "sim.mintChild.param.parentId": "父代币 ID",
+  "sim.mintChild.param.tokenId": "新的子代币 ID",
+  "sim.mintChild.param.to": "接收者地址",
+  "sim.mintChild.step.call": "所有者在父节点 1 下铸造一个新代币，将接收者地址和新的子代币 ID 传递给层级化 NFT 合约。",
+  "sim.mintChild.step.call.mobile": "铸造子节点",
+  "sim.mintChild.step.execute": "合约将新代币链接到其父节点，写入父节点指针并将该子节点追加到父节点的子节点列表中。",
+  "sim.mintChild.step.execute.mobile": "更新层级结构",
+  "sim.mintChild.step.event": "合约发出 Minted(minter, to, parentId, tokenId) 并将新的子节点分配给接收者。",
+  "sim.mintChild.step.event.mobile": "发出 Minted 事件"
+}

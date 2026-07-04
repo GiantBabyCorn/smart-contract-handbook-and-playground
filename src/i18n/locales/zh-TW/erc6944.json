@@ -1,0 +1,28 @@
+{
+  "short": "適用於 ERC-5219 的 ERC-4804 解析模式",
+  "introduction": "ERC-6944 定義了一個解析模式值，讓 ERC-4804 用戶端能夠透過 ERC-5219 介面解析合約的 web3:// 請求。此提案由 Gavin John 與 Qi Zhou 於 2023 年 4 月提出。合約透過實作 IERC5219Resolver 來表明支援，其 resolveMode() 函式回傳常數 bytes32 值「5219」；ERC-4804 閘道讀取該值後即使用 ERC-5219 的 request() 方法。注意：ERC-6944 目前為 Draft（草案）狀態，規範仍在積極開發中，可能發生重大變更。",
+  "designPurpose": "ERC-6944 的設計目標是讓 ERC-5219 能夠作為 ERC-4804 的 web3:// 方案中的一種解析模式使用。ERC-4804 用戶端需要知道每個合約期望以何種方式解析其請求，但在此提案之前，並沒有針對 ERC-5219 request() 介面的旗標，只有內建的自動模式和手動模式。ERC-6944 以一個 pure 函式 resolveMode() 填補了這個空白，該函式回傳固定的 bytes32 常數「5219」。它避免了對 ERC-165 的依賴，因為用戶端可以直接呼叫 resolveMode() 自行檢查相容性。",
+  "commonUsage": "ERC-6944 由那些透過 ERC-5219 託管鏈上前端、並希望瀏覽器和閘道能透過 web3:// URL 存取它的合約實作。該值由 web3:// 閘道軟體讀取，也由代表使用者解析 ERC-4804 位址的錢包或瀏覽器擴充功能讀取。由於 resolveMode() 是 pure 函式且回傳一個編譯期常數，實作通常會繼承一個將「5219」回傳值硬式編碼的小型抽象合約，不增加任何儲存，且只為宿主合約帶來微不足道的 gas 開銷。",
+
+  "fn.resolveMode.desc": "回傳合約的 ERC-4804 解析模式。這是一個 pure 函式，必須回傳常數 bytes32 值「5219」（不區分大小寫），以表明請求應透過 ERC-5219 的 request() 介面來解析。",
+  "fn.resolveMode.returns.mode": "解析模式識別碼，固定為 bytes32 值「5219」，代表 ERC-5219 解析。",
+
+  "node.user": "Web3 閘道",
+  "node.contract": "ERC-5219 解析器",
+  "node.storageMode": "解析模式值",
+  "node.browser": "使用者瀏覽器",
+
+  "edge.callResolveMode": "呼叫 resolveMode()",
+  "edge.readMode": "讀取解析模式",
+  "edge.serveResponse": "提供 ERC-5219 回應",
+
+  "sim.resolveModeWalkthrough.name": "解析模式演練",
+  "sim.resolveModeWalkthrough.desc": "跟隨一個 ERC-4804 用戶端呼叫 resolveMode()，並了解如何透過 ERC-5219 解析該合約。",
+  "sim.resolveModeWalkthrough.param.target": "解析器合約",
+  "sim.resolveModeWalkthrough.step.call": "web3:// 閘道在目標合約上呼叫 resolveMode()，以了解應如何解析其請求。",
+  "sim.resolveModeWalkthrough.step.call.mobile": "呼叫 resolveMode()",
+  "sim.resolveModeWalkthrough.step.resolve": "合約回傳固定的 bytes32 常數「5219」，表明自身是一個 ERC-5219 解析器。",
+  "sim.resolveModeWalkthrough.step.resolve.mobile": "回傳模式 5219",
+  "sim.resolveModeWalkthrough.step.serve": "看到「5219」模式後，閘道透過 ERC-5219 解析請求，並向瀏覽器提供回應。",
+  "sim.resolveModeWalkthrough.step.serve.mobile": "透過 ERC-5219 提供"
+}

@@ -139,6 +139,31 @@ export const entry: ProtocolEntry = {
     },
   ],
 
+  // ─── Schema v2 content sections ───
+  composes: [
+    { slug: 'erc721', role: 'uniswap-v3.compose.erc721.role' },
+    { slug: 'erc20', role: 'uniswap-v3.compose.erc20.role' },
+    { erc: 712, role: 'uniswap-v3.compose.erc712.role' },
+  ],
+
+  references: [
+    {
+      label: 'Uniswap docs — The Uniswap Protocol (ERC-20 pools)',
+      url: 'https://docs.uniswap.org/concepts/uniswap-protocol',
+      kind: 'spec',
+    },
+    {
+      label: 'Uniswap V3 docs — NonfungiblePositionManager',
+      url: 'https://docs.uniswap.org/contracts/v3/reference/periphery/NonfungiblePositionManager',
+      kind: 'spec',
+    },
+    {
+      label: 'NonfungiblePositionManager.sol (ERC721Permit)',
+      url: 'https://github.com/Uniswap/v3-periphery/blob/main/contracts/NonfungiblePositionManager.sol',
+      kind: 'impl',
+    },
+  ],
+
   // ─── ERCFlow ───
   flowNodes: [
     {

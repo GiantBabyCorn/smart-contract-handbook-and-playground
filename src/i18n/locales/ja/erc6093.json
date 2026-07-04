@@ -1,0 +1,32 @@
+{
+  "short": "よく使われるトークンのためのカスタムエラー",
+  "introduction": "ERC-6093 は、よく使われる3つのトークン規格である ERC-20、ERC-721、ERC-1155 のために、Solidity のカスタムエラーの標準セットを定義します。2022年12月に Ernesto García、Francisco Giordano、Hadrien Croubois によって提案されました。これらの規格は Solidity が v0.8.4 でカスタムエラーを追加する前に確定していたため、独自のエラーを含んでいません。ERC-6093 は、ドメインプレフィックス、Invalid や Insufficient といったエラープレフィックス、そして失敗した対象から構成される名前によって、その空白を埋めます。",
+  "designPurpose": "ERC-6093 は、トークン取引が失敗した理由を説明するためにウォレットが従来解析していた自由形式のリバート文字列を置き換えるために設計されました。リバート文字列は実装ごとに一貫性がなく、機械可読な引数を持たず、デプロイ時のバイトコードを増加させます。ドメイン・エラープレフィックス・対象という固定の文法に従い、アドレスや量といった型付き引数を持つカスタムエラーを標準化することで、ERC-6093 はカスタムエラーの gas とサイズの節約を保ちながら、クライアントが失敗とその原因を一貫してデコードできるようにします。",
+  "commonUsage": "これらのエラーは、無効な転送や承認時にリバートするあらゆる ERC-20、ERC-721、ERC-1155 の実装、およびそれらのリバートをデコードするウォレット、エクスプローラー、テストツールを対象としています。OpenZeppelin のトークンコントラクトは ERC-6093 のエラーセットを採用しているため、フロントエンドは失敗した呼び出しを、残高不足や無効な受信者といった正確な原因に対応付けることができます。この EIP はエラーの定義のみを規定し、実装がいつリバートしなければならないかは義務付けていません。",
+
+  "node.user": "トークン呼び出し元",
+  "node.token": "トークンコントラクト",
+  "node.storageState": "トークンの状態",
+  "node.storageError": "リバートデータ",
+  "node.decoder": "エラーデコーダ",
+  "node.wallet": "ウォレットUI",
+
+  "edge.callToken": "transfer() を呼び出す",
+  "edge.checkState": "残高を確認",
+  "edge.revertError": "カスタムエラーでリバート",
+  "edge.decodeError": "セレクタと引数をデコード",
+  "edge.showMessage": "構造化メッセージを表示",
+
+  "sim.errorDecodingWalkthrough.name": "カスタムエラーのデコード・ウォークスルー",
+  "sim.errorDecodingWalkthrough.desc": "失敗する転送を追い、トークンコントラクトが ERC-6093 のカスタムエラーでリバートし、ウォレットがそれを構造化メッセージにデコードする流れを確認します。",
+  "sim.errorDecodingWalkthrough.param.sender": "送信者",
+  "sim.errorDecodingWalkthrough.param.amount": "転送量",
+  "sim.errorDecodingWalkthrough.step.call": "呼び出し元が、送信者の残高を超える量のトークン転送を実行します。",
+  "sim.errorDecodingWalkthrough.step.call.mobile": "transfer() を呼び出す",
+  "sim.errorDecodingWalkthrough.step.check": "トークンコントラクトが状態から送信者の残高を読み取り、転送に必要な量を下回っていることを検出します。",
+  "sim.errorDecodingWalkthrough.step.check.mobile": "残高を確認",
+  "sim.errorDecodingWalkthrough.step.revert": "コントラクトはリバート文字列の代わりに ERC20InsufficientBalance(sender, balance, needed) でリバートし、引数をリバートデータにエンコードします。",
+  "sim.errorDecodingWalkthrough.step.revert.mobile": "エラーでリバート",
+  "sim.errorDecodingWalkthrough.step.decode": "ウォレットはカスタムエラーのセレクタとその引数をデコードし、失敗の理由を説明する構造化メッセージをユーザーに表示します。",
+  "sim.errorDecodingWalkthrough.step.decode.mobile": "デコードして表示"
+}

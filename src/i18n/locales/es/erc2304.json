@@ -1,0 +1,44 @@
+{
+  "short": "Resolución de direcciones multi-cadena para ENS",
+  "introduction": "ERC-2304 amplía los resolvers de ENS con una función addr sobrecargada que resuelve direcciones para blockchains distintas de Ethereum, indexadas por un índice de tipo de moneda SLIP-0044. Fue propuesto por Nick Johnson en septiembre de 2019. También define un evento AddressChanged y un setter setAddr recomendado, almacenando cada dirección en su formato binario nativo bajo un único nombre de ENS. Nota: ERC-2304 está en estado Stagnant (estancado): ha permanecido inactivo durante más de 6 meses y puede que nunca se finalice, pero conserva relevancia histórica o técnica.",
+  "designPurpose": "ERC-2304 se diseñó para que un único nombre de ENS pudiera resolver direcciones de muchas blockchains y no solo de Ethereum. A medida que las billeteras multi-moneda adoptaron ENS, los autores necesitaban una forma común entre clientes de almacenar y consultar direcciones ajenas a Ethereum, algo que el resolver original de dirección única addr(bytes32) no podía expresar. ERC-2304 responde a esto sobrecargando addr con un parámetro coinType tomado del índice SLIP-0044 y exigiendo un evento AddressChanged, de modo que la dirección de cada cadena reside bajo un mismo nombre y los indexadores permanecen sincronizados.",
+  "commonUsage": "La resolución de direcciones multi-cadena la utilizan los contratos resolver de ENS y las billeteras multi-moneda que los leen, de modo que un nombre como alice.eth puede devolver una dirección de Bitcoin, Litecoin o Binance Chain junto a la de Ethereum. Las billeteras consultan addr(node, coinType) con el índice SLIP-0044 de la cadena seleccionada, mientras que los front-ends del resolver llaman a setAddr para rellenar los registros. Como la sobrecarga de addr lleva el ID de interfaz ERC-165 0xf1cb7e06, los clientes pueden detectar el soporte antes de depender de él.",
+
+  "fn.addr.desc": "Devuelve la dirección almacenada para un node de ENS en la blockchain identificada por coinType, en el formato binario nativo de esa cadena. Se devuelve un valor de longitud cero cuando no hay ninguna dirección definida para el node y el tipo de moneda dados.",
+  "fn.addr.params.node": "El namehash del nombre de ENS que se va a consultar.",
+  "fn.addr.params.coinType": "El índice de tipo de moneda SLIP-0044 que identifica la blockchain de destino.",
+  "fn.addr.returns.address": "La dirección en su codificación binaria nativa, o un valor vacío si no hay ninguna definida.",
+
+  "fn.setAddr.desc": "Añade o reemplaza la dirección almacenada para el node de ENS y el tipo de moneda dados, y luego emite un evento AddressChanged. Es el setter recomendado que implementan los resolvers salvo que sus necesidades exijan una interfaz diferente.",
+  "fn.setAddr.params.node": "El namehash del nombre de ENS que se va a actualizar.",
+  "fn.setAddr.params.coinType": "El índice de tipo de moneda SLIP-0044 que identifica la blockchain de destino.",
+  "fn.setAddr.params.addr": "La nueva dirección en la codificación binaria nativa de la cadena.",
+
+  "fn.AddressChanged.desc": "Se emite en cada cambio de la dirección almacenada para un node de ENS y un tipo de moneda, permitiendo que los resolvers y los indexadores fuera de la cadena hagan seguimiento de las actualizaciones.",
+  "fn.AddressChanged.params.node": "El node de ENS cuya dirección cambió.",
+  "fn.AddressChanged.params.coinType": "El índice de tipo de moneda SLIP-0044 de la dirección modificada.",
+  "fn.AddressChanged.params.newAddress": "La nueva dirección en su codificación binaria nativa.",
+
+  "node.user": "Propietario del nombre de ENS",
+  "node.contract": "Resolver de ENS",
+  "node.storageAddresses": "Registros de direcciones",
+  "node.wallet": "Billetera multi-moneda",
+
+  "edge.callSetAddr": "Llamar a setAddr()",
+  "edge.updateAddresses": "Actualizar registros de direcciones",
+  "edge.emitAddressChanged": "Emitir evento AddressChanged",
+  "edge.callAddr": "Llamar a addr()",
+  "edge.returnAddress": "Devolver la dirección almacenada",
+
+  "sim.setAddrWalkthrough.name": "Definir dirección multi-cadena",
+  "sim.setAddrWalkthrough.desc": "Sigue una llamada a setAddr desde el propietario del nombre de ENS, a través del almacenamiento, hasta el evento AddressChanged.",
+  "sim.setAddrWalkthrough.param.node": "Nombre de ENS",
+  "sim.setAddrWalkthrough.param.coinType": "Tipo de moneda",
+  "sim.setAddrWalkthrough.param.addr": "Dirección",
+  "sim.setAddrWalkthrough.step.call": "El propietario del nombre de ENS llama a setAddr(node, coinType, addr) en el resolver para almacenar una dirección para la blockchain elegida.",
+  "sim.setAddrWalkthrough.step.call.mobile": "Llamar a setAddr()",
+  "sim.setAddrWalkthrough.step.execute": "El resolver escribe la dirección en el mapping _addresses bajo el node y el tipo de moneda, reemplazando cualquier valor anterior.",
+  "sim.setAddrWalkthrough.step.execute.mobile": "Almacenar la dirección",
+  "sim.setAddrWalkthrough.step.event": "El resolver emite AddressChanged(node, coinType, newAddress) para que las billeteras y los indexadores puedan actualizar sus registros en caché.",
+  "sim.setAddrWalkthrough.step.event.mobile": "Emitir AddressChanged"
+}

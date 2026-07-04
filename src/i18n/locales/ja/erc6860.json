@@ -1,0 +1,34 @@
+{
+  "short": "Web3 URL から EVM 呼び出しメッセージへの変換",
+  "introduction": "ERC-6860 は、HTTP スタイルの web3:// URL を EVM 呼び出しメッセージへ変換する方法を規定し、オンチェーンのコンテンツを人間が読める名前で参照できるようにします。この規格は Qi Zhou、Chao Pi、Sam Wilson、Nicolas Deschildre により 2023年9月に提案されました。URL はコントラクト名、チェーンID、パスに解析され、名前はアドレスに解決され、ターゲットコントラクト上の resolveMode() がパスをどのように calldata へ変換するかを決定します。注意：ERC-6860 は Draft（ドラフト）であり、仕様は現在も活発に開発が進められており、大きく変更される可能性があります。",
+  "designPurpose": "ERC-6860 は、オンチェーンの Web コンテンツをオフチェーンのゲートウェイに依存せず参照できるよう、Ethereum に分散型のプレゼンテーション層を与えることを目的として設計されました。それ以前は、Web3 のデータを読み取るには dApp サイトやエクスプローラーなど、ユーザーの管理外にある Web2 プロキシに頼っていました。ERC-4804 を修正・更新するものとして、RFC 3986 に準拠した URL 文法を ABNF で規定し、名前を解決し、resolve mode を検出し、パスを calldata としてエンコードする手順を定めることで、同じ URL が常に同じ EVM 呼び出しに対応するようにします。",
+  "commonUsage": "この変換は Web3 URL ゲートウェイやブラウザ拡張機能によって実装され、ユーザーは web3:// リンクを開いて、コントラクトから直接レンダリングされるオンチェーンの HTML、SVG、JSON を表示できます。manual モードでは生のパスが calldata として渡され、レスポンスは bytes として扱われます。auto モードではメソッド名と型付き引数が標準のコントラクト ABI でエンコードされ、必要に応じて returns 属性によって形が整えられます。名前解決には ENS（ERC-137）と組み合わせ、ERC-5219 に従うようなリソース提供コントラクトと組み合わせて使用します。",
+
+  "fn.resolveMode.desc": "ターゲットコントラクトが公開する読み取り専用のフックで、プロトコルが resolve mode を選択するために使用します。'manual' を表す bytes32 は生パスの calldata を選択し、'auto'、空の値、ゼロ、または revert は ABI エンコードの auto モードを選択します。",
+  "fn.resolveMode.returns.mode": "bytes32 としてのモードセレクタ：'manual' は manual モード、'auto'（空の値、ゼロ、revert も含む）は auto モードを表します。",
+
+  "node.browser": "Web3 クライアント",
+  "node.resolver": "Web3 URL リゾルバー",
+  "node.urlParts": "解析済み URL",
+  "node.target": "ターゲットコントラクト",
+  "node.evmMessage": "EVM 呼び出しメッセージ",
+
+  "edge.requestUrl": "web3:// URL をリクエスト",
+  "edge.parseUrl": "URL を解析",
+  "edge.detectMode": "resolveMode() を呼び出し",
+  "edge.buildMessage": "EVM メッセージを構築",
+  "edge.sendCall": "呼び出しを送信",
+  "edge.returnData": "bytes を返す",
+
+  "sim.urlTranslationWalkthrough.name": "Web3 URL 変換ウォークスルー",
+  "sim.urlTranslationWalkthrough.desc": "web3:// URL を追いながら、リゾルバーがそれを解析し、コントラクトの resolve mode を検出し、EVM 呼び出しに変換する流れを確認します。",
+  "sim.urlTranslationWalkthrough.param.url": "Web3 URL",
+  "sim.urlTranslationWalkthrough.step.request": "Web3 クライアントは Web2 プロキシを経由する代わりに、リゾルバーへ web3:// URL をリクエストします。",
+  "sim.urlTranslationWalkthrough.step.request.mobile": "web3:// URL をリクエスト",
+  "sim.urlTranslationWalkthrough.step.parse": "リゾルバーは URL をコントラクト名、チェーンID、パスに解析し、ENS を通じて名前をアドレスに解決します。",
+  "sim.urlTranslationWalkthrough.step.parse.mobile": "URL の各部分を解析",
+  "sim.urlTranslationWalkthrough.step.detect": "リゾルバーはターゲット上で resolveMode() を呼び出して manual か auto モードを選択します。空の結果や revert は auto モードを意味します。",
+  "sim.urlTranslationWalkthrough.step.detect.mobile": "resolve mode を検出",
+  "sim.urlTranslationWalkthrough.step.call": "リゾルバーはパスを calldata としてエンコードし、読み取り専用の EVM 呼び出しを送信して、デコードした bytes をクライアントに返します。",
+  "sim.urlTranslationWalkthrough.step.call.mobile": "呼び出し送信・データ返却"
+}

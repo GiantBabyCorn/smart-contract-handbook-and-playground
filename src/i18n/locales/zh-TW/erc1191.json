@@ -1,0 +1,35 @@
+{
+  "short": "鏈 ID 混合大小寫校驗和地址編碼",
+  "introduction": "ERC-1191 透過在雜湊計算中選擇性地加入 EIP-155 鏈 ID，擴充了 ERC-55 的混合大小寫地址校驗和。它由 Juliano Rizzo 於 2018 年 3 月提出。當某個鏈 ID 屬於選擇加入此變體的網路時，地址會先加上鏈 ID 與 '0x' 分隔符前綴，再計算 Keccak-256 雜湊，該雜湊隨後驅動 ERC-55 的字母大小寫規則。注意：ERC-1191 處於 Last Call 階段，即成為 Final 之前的最後審查窗口。",
+  "designPurpose": "ERC-1191 旨在防止當某個基於 Ethereum 的網路上的有效地址被用於另一個網路時導致資金損失。ERC-55 能捕捉輸入錯誤，但對所有網路一視同仁，因此為測試網或同類鏈產生的地址在主網上仍能通過校驗和。ERC-1191 為選擇加入的網路將鏈 ID 混入雜湊輸入，因此為某個鏈 ID 產生校驗和的地址在另一個鏈 ID 下會驗證失敗，從而讓錢包能以對現有 ERC-55 程式碼的極小改動來標記跨網路錯誤。",
+  "commonUsage": "ERC-1191 由錢包和函式庫在顯示或驗證地址時於鏈下套用，因此不需要任何鏈上合約或儲存。規範將 RSK Mainnet（鏈 ID 30）和 RSK Testnet（鏈 ID 31）列為選擇加入此變體的網路，其測試向量給出了這些鏈以及 Ethereum 主網的預期大小寫。規範中提到的實作包括 MyCrypto、MyEtherWallet、web3.js 以及 Ledger 和 Trezor 硬體錢包。",
+
+  "node.user": "地址來源",
+  "node.encoder": "校驗和編碼器",
+  "node.storageInput": "鏈前綴輸入",
+  "node.storageHash": "Keccak-256 雜湊",
+  "node.storageResult": "帶校驗和的地址",
+  "node.verifier": "網路驗證器",
+  "node.consumer": "驗證錢包",
+
+  "edge.submitAddress": "提交地址與鏈 ID",
+  "edge.prefixChainId": "加上鏈 ID 前綴",
+  "edge.hashInput": "計算帶前綴輸入的雜湊",
+  "edge.applyCasing": "套用字母大小寫",
+  "edge.readHash": "讀取雜湊位元",
+  "edge.checkCasing": "檢查大小寫",
+  "edge.deliverAddress": "交付驗證後的地址",
+
+  "sim.checksumWalkthrough.name": "鏈 ID 校驗和演練",
+  "sim.checksumWalkthrough.desc": "跟隨一個地址和鏈 ID，觀察編碼器如何加上鏈 ID 前綴、對輸入求雜湊、套用 ERC-1191 大小寫規則，以及網路客戶端如何驗證結果。",
+  "sim.checksumWalkthrough.param.address": "小寫地址",
+  "sim.checksumWalkthrough.param.chainId": "網路鏈 ID",
+  "sim.checksumWalkthrough.step.submit": "錢包提交一個小寫地址，並附帶其所屬網路的鏈 ID。",
+  "sim.checksumWalkthrough.step.submit.mobile": "提交地址與鏈",
+  "sim.checksumWalkthrough.step.prefix": "對於選擇加入的鏈 ID，編碼器在地址前加上鏈 ID 和 '0x' 分隔符前綴，然後計算該字串的 Keccak-256 雜湊。",
+  "sim.checksumWalkthrough.step.prefix.mobile": "加鏈 ID 前綴並雜湊",
+  "sim.checksumWalkthrough.step.case": "當每個十六進位字母對應的雜湊半位元組為 8 或更大時，該字母大寫，否則保持小寫，從而產生一個特定於鏈的混合大小寫地址。",
+  "sim.checksumWalkthrough.step.case.mobile": "套用字母大小寫",
+  "sim.checksumWalkthrough.step.verify": "同一網路上的客戶端從帶鏈前綴的雜湊重新推導大小寫，僅當每個字母都相符時才接受該地址。",
+  "sim.checksumWalkthrough.step.verify.mobile": "驗證校驗和"
+}

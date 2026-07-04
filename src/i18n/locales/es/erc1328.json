@@ -1,0 +1,32 @@
+{
+  "short": "Formato de URI de WalletConnect",
+  "introduction": "ERC-1328 define un formato de URI para codificar los datos necesarios para abrir una conexión entre una aplicación y una billetera. Fue propuesto por ligi y Pedro Gomes en agosto de 2018. Una solicitud usa el esquema wc seguido de una cadena de topic, un número de versión delimitado por @ y una cadena de consulta de parámetros: las URI v1 llevan un bridge URL y una clave simétrica, mientras que las URI v2 llevan un symKey y un relay-protocol. Como la carga útil es una URI compacta en lugar de JSON, puede mostrarse como un código QR o un enlace y las billeteras la analizan de forma eficiente.",
+  "designPurpose": "ERC-1328 se diseñó para reemplazar la carga útil JSON que usaba la versión alfa del protocolo WalletConnect, que se analizaba de forma ineficiente desde un código QR. Al codificar los datos de conexión como una URI, el estándar ofrece a las billeteras una cadena compacta y sin ambigüedades que los escáneres de códigos QR y los manejadores de deep link pueden leer directamente, y permite que el sistema de intents de Android enrute el enlace a una billetera. Un segmento de versión obligatorio permite que el conjunto de parámetros cambie entre versiones del protocolo preservando la retrocompatibilidad.",
+  "commonUsage": "El formato lo usa el protocolo WalletConnect para emparejar billeteras móviles con aplicaciones: una dApp renderiza la URI como un código QR, y una billetera la escanea o la abre para derivar los parámetros de sesión compartidos. Las URI de la versión 1 proporcionan un bridge URL y una clave de cifrado, mientras que las URI de la versión 2 proporcionan un relay protocol y una clave simétrica para el topic de emparejamiento, además de una marca de tiempo de expiración opcional. Los SDK de billeteras, las bibliotecas conectoras de dApp y los componentes de códigos QR de todo el ecosistema analizan esta URI para inicializar una sesión cifrada.",
+
+  "node.dapp": "Aplicación solicitante",
+  "node.uriBuilder": "Codificador de URI",
+  "node.connectionUri": "WalletConnect URI",
+  "node.wallet": "Billetera",
+  "node.walletUser": "Usuario de la billetera",
+  "node.pairing": "Sesión de emparejamiento",
+
+  "edge.buildRequest": "Crear solicitud de conexión",
+  "edge.encodeUri": "Codificar URI wc:",
+  "edge.scanUri": "Escanear o abrir enlace",
+  "edge.approve": "Aprobar emparejamiento",
+  "edge.establish": "Derivar sesión compartida",
+
+  "sim.connectionUriWalkthrough.name": "Recorrido de la URI de conexión",
+  "sim.connectionUriWalkthrough.desc": "Sigue una URI de WalletConnect desde una dApp, pasando por un escaneo de QR, hasta una sesión de emparejamiento establecida.",
+  "sim.connectionUriWalkthrough.param.version": "Versión del protocolo",
+  "sim.connectionUriWalkthrough.param.expiryTimestamp": "Expiración del emparejamiento (tiempo unix)",
+  "sim.connectionUriWalkthrough.step.build": "La aplicación crea una solicitud de conexión y selecciona la versión del protocolo WalletConnect que se utilizará.",
+  "sim.connectionUriWalkthrough.step.build.mobile": "Crear solicitud",
+  "sim.connectionUriWalkthrough.step.encode": "El topic, la versión y los parámetros se codifican en una URI wc: que puede mostrarse como un código QR o un enlace.",
+  "sim.connectionUriWalkthrough.step.encode.mobile": "Codificar URI wc:",
+  "sim.connectionUriWalkthrough.step.scan": "El usuario de la billetera escanea o abre la URI, y la billetera analiza el topic, la versión y los parámetros de conexión antes de aprobar el emparejamiento.",
+  "sim.connectionUriWalkthrough.step.scan.mobile": "Escanear y aprobar",
+  "sim.connectionUriWalkthrough.step.pair": "La billetera deriva la clave de cifrado compartida y la configuración de retransmisión de la URI, estableciendo la sesión de emparejamiento con la aplicación.",
+  "sim.connectionUriWalkthrough.step.pair.mobile": "Establecer emparejamiento"
+}

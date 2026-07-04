@@ -1,0 +1,90 @@
+{
+  "short": "非同期 ERC-4626 トークン化ボールト",
+  "introduction": "ERC-7540 は、ERC-4626 のトークン化ボールト規格を、リクエストと呼ばれる非同期の預け入れおよび償還フローで拡張します。この規格は、Jeroen Offerijns、Alina Sinelnikova、Vikram Arun、Joey Santoro、Farhaan Ali、João Martins によって 2023年10月に提案されました。利用者が requestDeposit または requestRedeem を呼び出すと、資産またはシェアが保留中（Pending）状態に置かれ、ボールトがリクエストを完了すると、その金額はクレーム可能（Claimable）になり、既存の deposit、mint、withdraw、redeem メソッドを通じて受け取られます。",
+  "designPurpose": "ERC-7540 は、決済遅延のあるボールトを ERC-4626 エコシステムに取り込むために設計されました。基本規格は、預け入れと償還が上限までアトミックに完了することを前提としており、これにより実世界資産プロトコル、過少担保またはクロスチェーンの貸付、リキッドステーキングトークン、そして資金の流れが時間をかけて決済される保険モジュールが除外されます。並行するインターフェースを設ける代わりに、requestDeposit と requestRedeem を追加して保留中（Pending）状態に入り、リクエストがクレーム可能（Claimable）になったら ERC-4626 のクレームメソッドを再利用します。",
+  "commonUsage": "非同期ボールトは、ポジションへの参入や退出が即時ではないシステム向けです。すなわち、オフチェーンで決済される実世界資産や過少担保の貸付プロトコル、クロスチェーン貸付ボールト、リキッドステーキングトークン、そして保険モジュールです。保留中のポジションは半代替性しか持たないため、実装はそれらを内部会計として保持したり、他のトークン規格でラップしたりでき、インテグレーターは ERC-165 のインターフェースIDを読み取って、そのボールトが入金・償還のどちらで、あるいは両方で非同期かを判断します。",
+
+  "fn.requestDeposit.desc": "所有者から資産をボールトへ転送して入金リクエストを開始し、その金額を保留中（Pending）状態にしてコントローラーの pendingDepositRequest を増やします。requestId を返し、DepositRequest を発行します。",
+  "fn.requestDeposit.params.assets": "入金リクエストのためにロックする原資産の量。",
+  "fn.requestDeposit.params.controller": "リクエストを制御し、後でシェアをクレームするアカウント。",
+  "fn.requestDeposit.params.owner": "資産が転送されるアカウント。msg.sender または承認されたオペレーターである必要があります。",
+  "fn.requestDeposit.returns.requestId": "リクエストの識別子。コントローラーと組み合わせてその状態を照会するために使用します。",
+
+  "fn.pendingDepositRequest.desc": "コントローラーの入金リクエストのうち、まだ保留中（Pending）でクレーム可能（Claimable）になっていない資産の量を返します。",
+  "fn.pendingDepositRequest.params.requestId": "照会するリクエストの識別子。",
+  "fn.pendingDepositRequest.params.controller": "リクエストを所有するアカウント。",
+  "fn.pendingDepositRequest.returns.assets": "コントローラーについて、まだ保留中（Pending）状態にある資産。",
+
+  "fn.claimableDepositRequest.desc": "コントローラーの入金リクエストのうち、現在クレーム可能（Claimable）で、deposit または mint を通じてシェアに変換できる資産の量を返します。",
+  "fn.claimableDepositRequest.params.requestId": "照会するリクエストの識別子。",
+  "fn.claimableDepositRequest.params.controller": "リクエストを所有するアカウント。",
+  "fn.claimableDepositRequest.returns.assets": "コントローラーについて、クレーム可能（Claimable）状態にある資産。",
+
+  "fn.requestRedeem.desc": "所有者からシェアを引き取って償還リクエストを開始し、その金額を保留中（Pending）状態にしてコントローラーの pendingRedeemRequest を増やします。requestId を返し、RedeemRequest を発行します。",
+  "fn.requestRedeem.params.shares": "償還リクエストのためにロックするボールトのシェアの量。",
+  "fn.requestRedeem.params.controller": "リクエストを制御し、後で資産をクレームするアカウント。",
+  "fn.requestRedeem.params.owner": "シェアが保管から取り出されるアカウント。msg.sender、承認されたオペレーター、または承認されたスペンダーである必要があります。",
+  "fn.requestRedeem.returns.requestId": "リクエストの識別子。コントローラーと組み合わせてその状態を照会するために使用します。",
+
+  "fn.pendingRedeemRequest.desc": "コントローラーの償還リクエストのうち、まだ保留中（Pending）でクレーム可能（Claimable）になっていないシェアの量を返します。",
+  "fn.pendingRedeemRequest.params.requestId": "照会するリクエストの識別子。",
+  "fn.pendingRedeemRequest.params.controller": "リクエストを所有するアカウント。",
+  "fn.pendingRedeemRequest.returns.shares": "コントローラーについて、まだ保留中（Pending）状態にあるシェア。",
+
+  "fn.claimableRedeemRequest.desc": "コントローラーの償還リクエストのうち、現在クレーム可能（Claimable）で、redeem または withdraw を通じて資産に変換できるシェアの量を返します。",
+  "fn.claimableRedeemRequest.params.requestId": "照会するリクエストの識別子。",
+  "fn.claimableRedeemRequest.params.controller": "リクエストを所有するアカウント。",
+  "fn.claimableRedeemRequest.returns.shares": "コントローラーについて、クレーム可能（Claimable）状態にあるシェア。",
+
+  "fn.setOperator.desc": "msg.sender に代わってリクエストを管理できるオペレーターを付与または取り消します。OperatorSet を発行し、true を返します。",
+  "fn.setOperator.params.operator": "オペレーター状態を設定する対象のアカウント。",
+  "fn.setOperator.params.approved": "true でオペレーター権限を付与し、false で取り消します。",
+  "fn.setOperator.returns.success": "呼び出しが成功した場合は常に true。",
+
+  "fn.deposit.desc": "受取人にシェアをミントし、コントローラーの claimableDepositRequest を減らすことで、クレーム可能（Claimable）な入金リクエストをクレームします。このオーバーロードは、ERC-4626 の deposit メソッドに controller 引数を追加します。",
+  "fn.deposit.params.assets": "クレームする、以前にリクエストした資産の量。",
+  "fn.deposit.params.receiver": "ミントされたシェアを受け取るアカウント。",
+  "fn.deposit.params.controller": "クレーム可能（Claimable）なリクエストが引き落とされるアカウント。msg.sender または承認されたオペレーターである必要があります。",
+  "fn.deposit.returns.shares": "受取人にミントされたシェアの量。",
+
+  "fn.DepositRequest.desc": "requestDeposit を通じて入金リクエストが送信されたときに発行され、コントローラー、所有者、requestId、呼び出し元、リクエストされた資産を記録します。",
+  "fn.DepositRequest.params.controller": "新しいリクエストを制御するアカウント。",
+  "fn.DepositRequest.params.owner": "資産がロックされたアカウント。",
+  "fn.DepositRequest.params.requestId": "リクエストに割り当てられた識別子。",
+  "fn.DepositRequest.params.sender": "requestDeposit の呼び出し元。所有者と異なる場合があります。",
+  "fn.DepositRequest.params.assets": "リクエストのためにロックされた資産の量。",
+
+  "fn.RedeemRequest.desc": "requestRedeem を通じて償還リクエストが送信されたときに発行され、コントローラー、所有者、requestId、呼び出し元、リクエストされたシェアを記録します。",
+  "fn.RedeemRequest.params.controller": "新しいリクエストを制御するアカウント。",
+  "fn.RedeemRequest.params.owner": "シェアがロックされたアカウント。",
+  "fn.RedeemRequest.params.requestId": "リクエストに割り当てられた識別子。",
+  "fn.RedeemRequest.params.sender": "requestRedeem の呼び出し元。所有者と異なる場合があります。",
+  "fn.RedeemRequest.params.shares": "リクエストのためにロックされたシェアの量。",
+
+  "fn.OperatorSet.desc": "コントローラーが setOperator を通じてオペレーターの承認状態を設定したときに発行されます。",
+  "fn.OperatorSet.params.controller": "オペレーター権限を付与または取り消すアカウント。",
+  "fn.OperatorSet.params.operator": "オペレーター状態が変化したアカウント。",
+  "fn.OperatorSet.params.approved": "新しいオペレーターの承認状態。",
+
+  "node.user": "ボールト利用者",
+  "node.contract": "非同期 ERC-4626 ボールト",
+  "node.storageRequests": "リクエスト状態",
+
+  "edge.callRequestDeposit": "requestDeposit() を呼び出す",
+  "edge.updateRequests": "リクエスト状態を更新",
+  "edge.emitDepositRequest": "DepositRequest イベントを発行",
+  "edge.callDeposit": "deposit() を呼び出す",
+
+  "sim.requestDepositWalkthrough.name": "預け入れリクエストのウォークスルー",
+  "sim.requestDepositWalkthrough.desc": "requestDeposit から保留中（Pending）およびクレーム可能（Claimable）状態を経て deposit によるクレームまで、非同期の預け入れを追跡します。",
+  "sim.requestDepositWalkthrough.param.assets": "リクエストする資産",
+  "sim.requestDepositWalkthrough.param.controller": "コントローラーのアドレス",
+  "sim.requestDepositWalkthrough.step.request": "利用者が requestDeposit(assets, controller, owner) を呼び出すと、ボールトは資産を受け入れてリクエストを開始します。",
+  "sim.requestDepositWalkthrough.step.request.mobile": "requestDeposit() を呼び出す",
+  "sim.requestDepositWalkthrough.step.pending": "ボールトはコントローラーの pendingDepositRequest を増やし、リクエストを完了するまで資産を保留中（Pending）状態で保持します。",
+  "sim.requestDepositWalkthrough.step.pending.mobile": "保留中リクエストを記録",
+  "sim.requestDepositWalkthrough.step.event": "ボールトは DepositRequest を発行し、インデクサーやコントローラーが requestId によって新しいリクエストを追跡できるようにします。",
+  "sim.requestDepositWalkthrough.step.event.mobile": "DepositRequest イベントを発行",
+  "sim.requestDepositWalkthrough.step.claim": "リクエストがクレーム可能（Claimable）になると、コントローラーは deposit を呼び出してシェアをミントし、claimableDepositRequest を減らします。",
+  "sim.requestDepositWalkthrough.step.claim.mobile": "deposit() でシェアをクレーム"
+}

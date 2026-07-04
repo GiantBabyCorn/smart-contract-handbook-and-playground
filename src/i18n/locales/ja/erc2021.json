@@ -1,0 +1,81 @@
+{
+  "short": "ペイアウト可能トークン規格",
+  "introduction": "ERC-2021 は、ウォレット所有者が支払い指示文字列を通じて自分の残高からペイアウトを要求できるようにする、ERC-20 トークン規格の拡張を定義します。この規格は Fernando Paris、Julio Faura、Daniel Lehrner により 2019年5月に提案されました。発注は対象額を ERC-1996 のホールドに置き、オフチェーン支払いが決済されると、オペレーターがそれを実行してトークンをバーンします。注意：ERC-2021 は Stagnant（停滞）であり、6か月以上活動がなく、最終化されない可能性がありますが、歴史的または技術的に重要な意味を持ち続けています。",
+  "designPurpose": "ERC-2021 は、トークンのライフサイクルにおけるペイアウトの工程をオンチェーンに取り込むために設計されました。従来、トークンのペイアウトはトークンをバーンする前に送金先を設定するための別個の中央集権的なトランザクションを必要としていたためです。ウォレット所有者が台帳を通じて発注できるようにすることで、この規格は各ペイアウトのステータスをオンチェーンに記録します。一方、ルーティングの詳細は指示文字列に載せられ、実装者はこれをオフチェーンまたは暗号化して保持することが推奨されます。対象額は ERC-1996 のホールドに留まり、オペレーターが決済するまで使用できません。",
+  "commonUsage": "ペイアウト可能トークンは、トークンをオフチェーンの資金に換える処理を監査可能にする必要がある、規制産業や機関向けの場面を想定しています。口座保有者がペイアウトを発注し、発行者またはその代理は、基盤となるホールドを実行してトークンをバーンすることで応じるか、あるいは拒否します。このインターフェースはオペレーターの認可も定義しており、承認された発注者がウォレット所有者に代わってリクエストを送信できるようにするほか、各リクエストの金額・指示・現在のステータスコードを公開する retrievePayoutData クエリを定義します。",
+
+  "fn.orderPayout.desc": "呼び出し元自身のウォレットに対してペイアウトリクエストを作成し、要求された額をホールドに置いてオペレーターのワークフローを開始します。operationId がすでに使用されている場合はリバートします。",
+  "fn.orderPayout.params.operationId": "ペイアウトリクエストを識別する一意の ID。",
+  "fn.orderPayout.params.value": "ペイアウトされるトークンの数量。",
+  "fn.orderPayout.params.instructions": "オペレーターが資金をルーティングするために使用する支払い指示を格納した文字列。",
+  "fn.orderPayout.returns.success": "ペイアウトリクエストが正常に作成された場合に True。",
+
+  "fn.orderPayoutFrom.desc": "別のウォレット所有者に代わってペイアウトリクエストを作成します。その所有者は事前に呼び出し元をペイアウトオペレーターとして認可しておく必要があります。operationId がすでに使用されている場合はリバートします。",
+  "fn.orderPayoutFrom.params.operationId": "ペイアウトリクエストを識別する一意の ID。",
+  "fn.orderPayoutFrom.params.walletToBePaidOut": "そのために代わってペイアウトが発注され、そのトークンが払い出されるウォレット所有者。",
+  "fn.orderPayoutFrom.params.value": "ペイアウトされるトークンの数量。",
+  "fn.orderPayoutFrom.params.instructions": "オペレーターが資金をルーティングするために使用する支払い指示を格納した文字列。",
+  "fn.orderPayoutFrom.returns.success": "ペイアウトリクエストが正常に作成された場合に True。",
+
+  "fn.cancelPayout.desc": "まだ Ordered 状態にあるペイアウトリクエストをキャンセルし、ホールドを解放します。キャンセルできるのはウォレット所有者または発注者のみで、かつオペレーターがリクエストを InProcess とマークする前に限られます。",
+  "fn.cancelPayout.params.operationId": "キャンセルするペイアウトリクエストの一意の ID。",
+  "fn.cancelPayout.returns.success": "ペイアウトリクエストが正常にキャンセルされた場合に True。",
+
+  "fn.processPayout.desc": "ペイアウトリクエストを InProcess としてマークします。処理中になると、発注者はそのリクエストをキャンセルできなくなります。",
+  "fn.processPayout.params.operationId": "処理中としてマークするペイアウトリクエストの一意の ID。",
+  "fn.processPayout.returns.success": "ペイアウトリクエストが正常に処理中に設定された場合に True。",
+
+  "fn.putFundsInSuspenseInPayout.desc": "基盤となるホールドを実行してトークンを一時保留ウォレット（suspense wallet）に移し、ペイアウトを FundsInSuspense 状態にします。これはリクエストが InProcess の間のみ実行できます。",
+  "fn.putFundsInSuspenseInPayout.params.operationId": "一時保留にするペイアウトリクエストの一意の ID。",
+  "fn.putFundsInSuspenseInPayout.returns.success": "資金が正常に一時保留された場合に True。",
+
+  "fn.executePayout.desc": "ホールドされているトークンをバーンし、ペイアウトリクエストを Executed としてマークして、対応するオフチェーン支払いが行われた時点で完了させます。",
+  "fn.executePayout.params.operationId": "実行するペイアウトリクエストの一意の ID。",
+  "fn.executePayout.returns.success": "ペイアウトが正常に実行された場合に True。",
+
+  "fn.rejectPayout.desc": "ペイアウトリクエストを拒否し、ホールドをウォレット所有者に解放して理由を記録します。リクエストが InProcess とマークされる前でも後でも呼び出せます。",
+  "fn.rejectPayout.params.operationId": "拒否するペイアウトリクエストの一意の ID。",
+  "fn.rejectPayout.params.reason": "ペイアウトが拒否された理由。ERC-1066 のステータスコードを使用できます。",
+  "fn.rejectPayout.returns.success": "ペイアウトが正常に拒否された場合に True。",
+
+  "fn.retrievePayoutData.desc": "ペイアウトリクエストについて保存されているデータを返します。これには引き落とし対象のウォレット、金額、指示、現在のステータスが含まれます。読み取れるのはオペレーター、ウォレット所有者、または発注者のみです。",
+  "fn.retrievePayoutData.params.operationId": "照会するペイアウトリクエストの一意の ID。",
+  "fn.retrievePayoutData.returns.walletToDebit": "残高が払い出されるウォレット。",
+  "fn.retrievePayoutData.returns.value": "ペイアウトされるトークンの数量。",
+  "fn.retrievePayoutData.returns.instructions": "リクエストとともに提供された支払い指示文字列。",
+  "fn.retrievePayoutData.returns.status": "ペイアウトリクエストの現在のステータスコード。",
+
+  "fn.PayoutOrdered.desc": "ウォレット所有者または発注者がペイアウトリクエストを作成したときに発行され、その発注者、ウォレット、金額、指示を記録します。",
+  "fn.PayoutOrdered.params.orderer": "ペイアウトを発注したアドレス。",
+  "fn.PayoutOrdered.params.operationId": "ペイアウトリクエストを識別する一意の ID。",
+  "fn.PayoutOrdered.params.walletToDebit": "ペイアウトが要求されたウォレット。",
+  "fn.PayoutOrdered.params.value": "ペイアウトされる金額。",
+  "fn.PayoutOrdered.params.instructions": "リクエストとともに提供された支払い指示文字列。",
+
+  "fn.PayoutExecuted.desc": "オペレーターがペイアウトリクエストを実行したときに発行され、オフチェーン支払いが決済された後にホールドされたトークンをバーンします。",
+  "fn.PayoutExecuted.params.orderer": "ペイアウトを発注したアドレス。",
+  "fn.PayoutExecuted.params.operationId": "ペイアウトリクエストを識別する一意の ID。",
+
+  "node.user": "ウォレット所有者",
+  "node.operator": "トークンオペレーター",
+  "node.contract": "ERC-2021 トークン",
+  "node.storagePayouts": "ペイアウトとホールド残高",
+
+  "edge.callOrderPayout": "orderPayout() を呼び出す",
+  "edge.callExecutePayout": "executePayout() を呼び出す",
+  "edge.updatePayouts": "ペイアウトを記録し資金をホールド",
+  "edge.emitPayoutExecuted": "PayoutExecuted イベントを発行",
+
+  "sim.orderPayoutWalkthrough.name": "ペイアウトの発注と実行のウォークスルー",
+  "sim.orderPayoutWalkthrough.desc": "ペイアウトを、ウォレット所有者の発注から ERC-1996 のホールドを経て、オペレーターによる実行とトークンのバーンまで追跡します。",
+  "sim.orderPayoutWalkthrough.param.value": "ペイアウト額（wei 単位）",
+  "sim.orderPayoutWalkthrough.param.instructions": "支払い指示",
+  "sim.orderPayoutWalkthrough.step.order": "ウォレット所有者が orderPayout(operationId, value, instructions) を呼び出し、自分の残高からペイアウトを要求します。",
+  "sim.orderPayoutWalkthrough.step.order.mobile": "orderPayout() を呼び出す",
+  "sim.orderPayoutWalkthrough.step.hold": "コントラクトはリクエストを Ordered 状態で記録し、対象額を ERC-1996 のホールドに置くことで、それ以上使えないようにします。",
+  "sim.orderPayoutWalkthrough.step.hold.mobile": "資金をホールド",
+  "sim.orderPayoutWalkthrough.step.execute": "トークンオペレーターがリクエストを処理し、ホールドを実行して、ホールドされたトークンをバーンし、ペイアウトを Executed 状態に移します。",
+  "sim.orderPayoutWalkthrough.step.execute.mobile": "オペレーターがペイアウトを実行",
+  "sim.orderPayoutWalkthrough.step.event": "コントラクトは PayoutExecuted を発行し、インデクサーがそのペイアウトが決済されたことを記録できるようにします。",
+  "sim.orderPayoutWalkthrough.step.event.mobile": "PayoutExecuted イベントを発行"
+}

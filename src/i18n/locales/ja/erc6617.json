@@ -1,0 +1,52 @@
+{
+  "short": "ビットベースの権限・ロールシステム",
+  "introduction": "ERC-6617 は、各権限を uint256 の 1 ビットとして表し、最大 256 個の権限をエンコードしてロールに組み合わせる、ビットベースの権限・ロールシステムを定義します。この規格は 2023 年 2 月に Chiro と Victor Dusart によって提案されました。各権限は 1 ビットを占めるよう 2 のべき乗でなければならず、インターフェースは権限を付与・取り消し・確認する関数を公開し、いずれもビット演算で実装され、変更のたびにイベントを発行します。注意：ERC-6617 は Review ステータスであり、確定前にインターフェースが変更される可能性があります。",
+  "designPurpose": "ERC-6617 は、単一所有者や文字列ベースのロール方式よりも、オンチェーンのアクセス制御をより細かく、より gas 効率よく行えるよう設計されました。ERC-173 ではコントラクトの所有者は 1 人であり、bytes32 の識別子をキーとするロールシステムは確認のたびにストレージ読み取りが必要です。各権限を uint256 の 1 ビットにまとめることで、ERC-6617 は 1 回のビット AND でアクセスを検証し、ビット OR で権限をロールに統合するため、余分なストレージ読み込みを避けられます。ビットを桁の重みで並べることで、権限を整数として順位付けすることもできます。",
+  "commonUsage": "ビットベースの権限は、マルチロールのプロトコル管理、トークンのミント権限や一時停止権限、スマートコントラクトアカウントのモジュール権限など、異なるアクセスレベルを必要とするコントラクトに適しています。ロールは単なる uint256 値であるため、ストレージ参照なしにコントラクト間で受け渡したり比較したりできます。ERC-6617 は、各権限に名前と説明を付与するオプションの IEIP6617Meta 拡張も定義しており、エクスプローラーやダッシュボードで表示できます。",
+
+  "fn.hasPermission.desc": "ユーザーが保存している権限ビットマスクが必要な権限のスーパーセットである場合、すなわち _requiredPermission で立っているすべてのビットがそのユーザーでも立っている場合に true を返します。この確認はビット AND を用いる view 操作です。",
+  "fn.hasPermission.params._user": "権限を確認する対象ユーザーのアドレス。",
+  "fn.hasPermission.params._requiredPermission": "ユーザーが保持していなければならない権限、または権限ビットの組み合わせ。",
+  "fn.hasPermission.returns.result": "ユーザーの権限が必要な権限のスーパーセットであれば true、そうでなければ false。",
+
+  "fn.grantPermission.desc": "指定した権限ビットをビット OR でユーザーのビットマスクに追加し、PermissionGranted イベントを発行します。追加する権限は、ちょうど 1 ビットが立つよう 2 のべき乗でなければなりません。",
+  "fn.grantPermission.params._user": "権限を追加する対象ユーザーのアドレス。",
+  "fn.grantPermission.params._permissionToAdd": "追加する権限ビット。2 のべき乗でなければなりません。",
+  "fn.grantPermission.returns.success": "権限が付与された場合に true。",
+
+  "fn.revokePermission.desc": "指定した権限ビットをユーザーのビットマスクから取り除き、PermissionRevoked イベントを発行します。ユーザーのその他の権限はそのまま維持されます。",
+  "fn.revokePermission.params._user": "権限を取り消す対象ユーザーのアドレス。",
+  "fn.revokePermission.params._permissionToRevoke": "取り除く権限ビット。",
+  "fn.revokePermission.returns.success": "権限が取り消された場合に true。",
+
+  "fn.PermissionGranted.desc": "権限がユーザーに付与されたときに発行され、付与者・権限・受け取ったユーザーを記録します。",
+  "fn.PermissionGranted.params._grantor": "権限を付与したアドレス。",
+  "fn.PermissionGranted.params._permission": "付与された権限。",
+  "fn.PermissionGranted.params._user": "権限を受け取ったユーザーのアドレス。",
+
+  "fn.PermissionRevoked.desc": "権限がユーザーから取り消されたときに発行され、取り消した者・権限・影響を受けたユーザーを記録します。",
+  "fn.PermissionRevoked.params._revoker": "権限を取り消したアドレス。",
+  "fn.PermissionRevoked.params._permission": "取り消された権限。",
+  "fn.PermissionRevoked.params._user": "権限を失ったユーザーのアドレス。",
+
+  "node.user": "権限付与者",
+  "node.contract": "ERC-6617 コントラクト",
+  "node.storagePermissions": "権限ストレージ",
+  "node.targetUser": "対象ユーザー",
+
+  "edge.callGrant": "grantPermission() を呼び出す",
+  "edge.updatePermissions": "権限ビットを設定",
+  "edge.emitGranted": "PermissionGranted イベントを発行",
+  "edge.grantToUser": "ユーザーに権限を付与",
+
+  "sim.grantPermissionWalkthrough.name": "権限付与のウォークスルー",
+  "sim.grantPermissionWalkthrough.desc": "grantPermission の呼び出しを、付与者から権限ビットマスクを経て PermissionGranted イベントまで追跡します。",
+  "sim.grantPermissionWalkthrough.param.targetUser": "権限を受け取るユーザー",
+  "sim.grantPermissionWalkthrough.param.permission": "権限ビット（2 のべき乗）",
+  "sim.grantPermissionWalkthrough.step.call": "付与者は 2 のべき乗の権限を指定して grantPermission(_user, _permissionToAdd) を呼び出し、アクセスビットを受け取るべきユーザーを対象とします。",
+  "sim.grantPermissionWalkthrough.step.call.mobile": "grantPermission() を呼び出す",
+  "sim.grantPermissionWalkthrough.step.execute": "コントラクトは新しい権限ビットをユーザーが保存している uint256 ビットマスクに OR で組み込むため、すでに付与されているビットは保持されます。",
+  "sim.grantPermissionWalkthrough.step.execute.mobile": "権限ビットを設定",
+  "sim.grantPermissionWalkthrough.step.event": "コントラクトは付与者・権限・ユーザーを含む PermissionGranted を発行し、対象ユーザーは追加された権限を保持するようになります。",
+  "sim.grantPermissionWalkthrough.step.event.mobile": "PermissionGranted を発行"
+}

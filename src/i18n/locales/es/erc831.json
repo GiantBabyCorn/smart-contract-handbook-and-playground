@@ -1,0 +1,32 @@
+{
+  "short": "Formato de URI para Ethereum",
+  "introduction": "ERC-831 define un formato de URI para Ethereum que utiliza el esquema ethereum: o eth: como contenedor para señalar solicitudes a la billetera de un usuario. Fue propuesto por ligi en enero de 2018. Una URI adopta la forma ethereum:[prefix-]payload: un prefijo opcional nombra el caso de uso y la carga útil transporta sus datos. Cuando se omite el prefijo, se asume pay- por compatibilidad con EIP-67. Nota: ERC-831 está en estado Stagnant (estancado): ha permanecido inactivo durante más de 6 meses y puede que nunca se finalice, pero conserva relevancia histórica o técnica.",
+  "designPurpose": "ERC-831 se diseñó para mantener el esquema ethereum: abierto a muchos casos de uso en lugar de vincularlo a uno solo. La necesidad surgió mientras se refinaba EIP-681: se quería un contenedor que no cargara con el peso de ningún caso de uso concreto. En lugar de reservar todo el esquema para el caso de pago que existía en ese momento, ERC-831 divide una URI en un prefijo opcional que nombra el caso de uso y una carga útil cuya estructura cada ERC de caso de uso define por su cuenta, lo que permite añadir nuevos prefijos más adelante sin bloquear el esquema.",
+  "commonUsage": "El formato de URI lo utilizan billeteras, dapps y generadores de códigos QR que pasan solicitudes entre aplicaciones débilmente acopladas a través de hipervínculos, códigos QR, correos electrónicos o mensajes de chat, de modo que un único enlace puede invocar la billetera preferida de un usuario. El caso de pago, transportado por el prefijo pay- y detallado en EIP-681, es el ejemplo que nombra la especificación; otros ERC de casos de uso pueden registrar prefijos adicionales en el mismo esquema. Dado que ERC-831 define únicamente el contenedor, sirve como punto de entrada compartido para las solicitudes de Ethereum.",
+
+  "node.requester": "Autor de la solicitud",
+  "node.uriBuilder": "Codificador de URI",
+  "node.ethereumUri": "URI de Ethereum",
+  "node.wallet": "Analizador de la billetera",
+  "node.useCaseHandler": "Manejador del caso de uso",
+  "node.user": "Usuario de la billetera",
+
+  "edge.composeRequest": "Redactar solicitud",
+  "edge.encodeUri": "Codificar URI ethereum:",
+  "edge.openUri": "Escanear o abrir el enlace",
+  "edge.routePrefix": "Enrutar por prefijo",
+  "edge.presentAction": "Presentar la acción",
+
+  "sim.uriRoutingWalkthrough.name": "Recorrido del enrutamiento de URI",
+  "sim.uriRoutingWalkthrough.desc": "Sigue una solicitud desde una URI ethereum: a través del enrutamiento por prefijo de una billetera hasta el manejador del caso de uso correspondiente.",
+  "sim.uriRoutingWalkthrough.param.prefix": "Prefijo del caso de uso",
+  "sim.uriRoutingWalkthrough.param.target": "Dirección de destino",
+  "sim.uriRoutingWalkthrough.step.compose": "Una dapp o un beneficiario redacta una solicitud, eligiendo el prefijo del caso de uso y los datos de la carga útil que necesita transmitir.",
+  "sim.uriRoutingWalkthrough.step.compose.mobile": "Redactar solicitud",
+  "sim.uriRoutingWalkthrough.step.encode": "La solicitud se codifica en una URI ethereum: como esquema, prefijo opcional y carga útil, lista para incrustarse en un código QR o un enlace.",
+  "sim.uriRoutingWalkthrough.step.encode.mobile": "Codificar URI",
+  "sim.uriRoutingWalkthrough.step.open": "El usuario escanea o abre el enlace; su billetera reconoce el esquema ethereum: y lee el prefijo y la carga útil.",
+  "sim.uriRoutingWalkthrough.step.open.mobile": "Abrir el enlace",
+  "sim.uriRoutingWalkthrough.step.route": "La billetera enruta según el prefijo pay- hacia el manejador de EIP-681, que analiza la carga útil y presenta la acción resultante para que el usuario la confirme.",
+  "sim.uriRoutingWalkthrough.step.route.mobile": "Enrutar por prefijo"
+}

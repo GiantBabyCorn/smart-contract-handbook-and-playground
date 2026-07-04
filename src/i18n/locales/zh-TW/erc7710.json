@@ -1,0 +1,32 @@
+{
+  "short": "智能合約委託介面",
+  "introduction": "ERC-7710 定義了一個用於智能合約委託的最小化介面，讓委託方授權委託管理器（Delegation Manager）代表其行事。該標準由 Ryan McPeck、Dan Finlay、Rob Dawson 和 Derek Chiang 於 2024 年 5 月提出。被委託方呼叫 redeemDelegations，傳入證明其權限的權限上下文，以及 ERC-7579 的模式與 calldata；管理器驗證後驅動委託方執行相應操作。注意：ERC-7710 目前處於 Draft 階段，規範仍在積極開發中，可能發生重大變更。",
+  "designPurpose": "ERC-7710 的設計目標是取代以往的硬編碼權限和客製中介合約——當一個合約需要使用另一個合約的能力時，這些做法會增加複雜度和 gas 成本。它還針對每次互動都需重新簽章的摩擦，讓使用者只需授予一次受策略約束的委託即可。該介面僅規定了 redeemDelegations，並複用 ERC-7579 的執行編碼，因此現有的智能帳戶無需實作新的執行方法即可充當委託方。",
+  "commonUsage": "該標準適用於長期會話和受限權限的場景：避免重複簽章的持久化 dApp 會話、授予 AI 代理或自動化系統的受限權限、攜帶特定能力的可分享邀請連結，以及在既定策略範圍內行事的第三方被委託方。由於它只涵蓋兌現環節，而將委託的建立排除在範圍之外，因此通常與諸如 MetaMask Delegation Framework 之類的框架搭配使用，由該框架處理簽章、約束條件（caveats）和撤銷。",
+
+  "fn.redeemDelegations.desc": "由被委託方呼叫，以兌現一個或多個委託。管理器會驗證每個權限上下文，若通過授權，則透過委託方執行配對的 ERC-7579 模式和 calldata。當各陣列長度不一致時，呼叫會回滾（revert）。",
+  "fn.redeemDelegations.params.permissionContexts": "針對每個委託的資料，用於證明呼叫者代表各委託方行事的權限；其結構由具體的委託管理器定義。",
+  "fn.redeemDelegations.params.modes": "由 ERC-7579 執行模式構成的陣列，每個模式為相匹配的執行編碼其呼叫行為，例如單次呼叫或批次呼叫。",
+  "fn.redeemDelegations.params.executionCallData": "由 ERC-7579 編碼執行構成的陣列，每個元素通常包含代表委託方執行所需的目標地址、value 和 calldata。",
+
+  "node.delegate": "被委託方（兌現者）",
+  "node.contract": "委託管理器",
+  "node.delegator": "委託方",
+  "node.target": "目標合約",
+
+  "edge.callRedeem": "呼叫 redeemDelegations()",
+  "edge.callDelegator": "呼叫委託方",
+  "edge.executeAction": "執行操作",
+
+  "sim.redeemDelegationWalkthrough.name": "兌現委託",
+  "sim.redeemDelegationWalkthrough.desc": "跟隨被委託方透過委託管理器兌現一筆委託，並由委託方在目標合約上執行操作的完整過程。",
+  "sim.redeemDelegationWalkthrough.param.delegator": "委託方帳戶",
+  "sim.redeemDelegationWalkthrough.param.target": "目標合約",
+  "sim.redeemDelegationWalkthrough.param.mode": "執行模式",
+  "sim.redeemDelegationWalkthrough.step.call": "被委託方在委託管理器上呼叫 redeemDelegations，傳入權限上下文、執行模式，以及其想要執行操作的 calldata。",
+  "sim.redeemDelegationWalkthrough.step.call.mobile": "呼叫 redeemDelegations()",
+  "sim.redeemDelegationWalkthrough.step.validate": "管理器驗證每個權限上下文是否證明了有效權限。若所有委託均有效，則呼叫相應的委託方；否則整批呼叫回滾。",
+  "sim.redeemDelegationWalkthrough.step.validate.mobile": "驗證權限",
+  "sim.redeemDelegationWalkthrough.step.execute": "委託方在目標合約上執行 ERC-7579 編碼的操作，完成被委託方獲授權使用的能力。",
+  "sim.redeemDelegationWalkthrough.step.execute.mobile": "在目標合約上執行"
+}

@@ -1,0 +1,30 @@
+{
+  "short": "Namespaced Storage Layout",
+  "introduction": "ERC-7201 defines a convention for laying out contract storage in isolated namespaces instead of the default sequential layout. It was proposed by Francisco Giordano, Hadrien Croubois, Ernesto García, and Eric Lau in June 2023. Each namespace is a Solidity struct annotated with @custom:storage-location and rooted at erc7201(id) = keccak256(keccak256(id) - 1) & ~0xff, a slot chosen so it cannot overlap with Solidity or Vyper's default storage tree, so namespaces can coexist without colliding.",
+  "designPurpose": "ERC-7201 was designed to make the scattered storage locations used by modular and upgradeable contracts predictable and safe. Solidity and Vyper assign storage sequentially from slot 0, so contracts that share storage through delegatecall, or that grow during an upgrade, can shift or collide with existing slots. By standardizing the erc7201 formula and the @custom:storage-location annotation, each namespace gets a disjoint root and a machine-readable declaration that tools can interpret.",
+  "commonUsage": "Namespaced storage is used by upgradeable-contract frameworks and by contracts built around delegatecall. OpenZeppelin's upgradeable libraries adopt the pattern so new state can be added across versions without disturbing existing slots, and the diamond pattern (ERC-2535) gives each facet its own namespace so facets sharing a proxy do not collide. Because the Solidity compiler records the annotation in its AST from version 0.8.20, tools can locate namespaced data that is otherwise invisible.",
+
+  "node.developer": "Contract Developer",
+  "node.struct": "Namespace Struct",
+  "node.storageNamespace": "Namespace Storage",
+  "node.storageDefault": "Default Storage Tree",
+  "node.tooling": "Tools & Explorers",
+
+  "edge.declareNamespace": "Declare namespace",
+  "edge.deriveRoot": "Hash namespace id",
+  "edge.rootAt": "Root at computed slot",
+  "edge.disjointFrom": "Disjoint from default tree",
+  "edge.exposeLayout": "Expose layout",
+
+  "sim.deriveNamespaceWalkthrough.name": "Deriving a Storage Namespace",
+  "sim.deriveNamespaceWalkthrough.desc": "Follow a namespace id from its @custom:storage-location annotation through the erc7201 formula to its isolated storage root.",
+  "sim.deriveNamespaceWalkthrough.param.namespaceId": "Namespace id",
+  "sim.deriveNamespaceWalkthrough.step.declare": "The developer declares a struct annotated with @custom:storage-location erc7201:example.main to mark it as a namespace.",
+  "sim.deriveNamespaceWalkthrough.step.declare.mobile": "Declare namespace",
+  "sim.deriveNamespaceWalkthrough.step.derive": "The erc7201 formula hashes the namespace id twice, computing keccak256(keccak256(id) - 1) & ~0xff as the root slot.",
+  "sim.deriveNamespaceWalkthrough.step.derive.mobile": "Hash id to root slot",
+  "sim.deriveNamespaceWalkthrough.step.root": "The struct's fields are laid out sequentially from the computed root slot, following the same rules as the default layout but rooted away from slot 0.",
+  "sim.deriveNamespaceWalkthrough.step.root.mobile": "Lay out at root",
+  "sim.deriveNamespaceWalkthrough.step.isolate": "The namespace occupies its own storage tree, disjoint from Solidity's default layout, and the annotation lets explorers locate it.",
+  "sim.deriveNamespaceWalkthrough.step.isolate.mobile": "Isolated from default storage"
+}

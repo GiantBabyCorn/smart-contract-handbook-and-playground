@@ -1,0 +1,31 @@
+{
+  "short": "透過 contractURI 提供的合約級元資料",
+  "introduction": "ERC-7572 標準化了一個 contractURI() 函式，該函式會回傳一個 URI，用於解析出合約級元資料，例如合約的名稱、描述與圖像，使得 dapp 與索引器無需針對每個應用程式進行設定即可顯示這些資訊。此標準由 Devin Finzer、Alex Atallah 與 Ryan Ghods 於 2023 年 12 月提出。此介面還定義了一個 ContractURIUpdated 事件，讓索引器知道何時需要重新擷取元資料。注意：ERC-7572 尚處於草案（Draft）階段，規範仍在積極開發中，可能會有重大變動。",
+  "designPurpose": "ERC-7572 的設計目的，是將 dapp 多年來在缺乏統一參考的情況下所使用的一種慣例予以規範化。合約通常只在每個代幣層級或透過臨時函式暴露名稱或符號，因此每個市場與瀏覽器都需要各自設定合約的顯示資訊。透過標準化單一個會回傳 JSON 文件的 contractURI() 呼叫，並將其與 ContractURIUpdated 事件搭配，此標準使得單一的元資料來源即可驅動所有介面，並在元資料變動時讓索引器保持同步。",
+  "commonUsage": "contractURI() 主要由 NFT 收藏集以及其他需要收藏集級名稱、描述與圖像的代幣合約使用，市場與瀏覽器會將其渲染為合約的資料頁與橫幅。回傳的字串可以指向鏈下資源，也可以內嵌一段鏈上的 data:application/json JSON 字串。其 schema 定義的欄位包括 name、symbol、description、image、banner_image、featured_image、external_link 與 collaborators，其中只有 name 為必填。",
+
+  "fn.contractURI.desc": "回傳一個可解析出合約級元資料 JSON 文件的 URI，例如合約的名稱、描述與圖像。此 URI 可以引用鏈下資源，也可以內嵌一段鏈上的 data:application/json JSON 字串。",
+  "fn.contractURI.returns.uri": "指向合約元資料 JSON 文件的 URI。",
+
+  "fn.ContractURIUpdated.desc": "當合約級元資料發生變化時發出，通知鏈下索引器重新擷取 contractURI() 回傳的文件。",
+
+  "node.user": "Dapp",
+  "node.contract": "合約",
+  "node.storageUri": "URI 儲存",
+  "node.indexer": "鏈下索引器",
+
+  "edge.callContractURI": "呼叫 contractURI()",
+  "edge.readUri": "讀取儲存的 URI",
+  "edge.emitUpdated": "發出 ContractURIUpdated 事件",
+  "edge.notifyIndexer": "通知索引器",
+
+  "sim.readMetadataWalkthrough.name": "合約元資料解析",
+  "sim.readMetadataWalkthrough.desc": "跟隨一個 dapp 透過 contractURI() 讀取合約的元資料，接著進行一次更新，該更新會發出 ContractURIUpdated 以通知索引器。",
+  "sim.readMetadataWalkthrough.param.contract": "合約地址",
+  "sim.readMetadataWalkthrough.step.call": "dapp 在合約上呼叫 contractURI()，以取得其合約級元資料的 URI。",
+  "sim.readMetadataWalkthrough.step.call.mobile": "呼叫 contractURI()",
+  "sim.readMetadataWalkthrough.step.read": "合約讀取其儲存的 URI，並回傳一個連結（例如 ipfs:// 地址），該連結可解析出元資料 JSON 文件。",
+  "sim.readMetadataWalkthrough.step.read.mobile": "回傳元資料 URI",
+  "sim.readMetadataWalkthrough.step.update": "當所有者更新元資料時，合約會發出 ContractURIUpdated，促使鏈下索引器重新擷取該文件。",
+  "sim.readMetadataWalkthrough.step.update.mobile": "發出更新事件"
+}

@@ -1,0 +1,36 @@
+{
+  "short": "Contract Clock Interface",
+  "introduction": "ERC-6372 defines a minimal interface that lets a contract report which clock it uses to measure time. It was proposed by Hadrien Croubois and Francisco Giordano in January 2023. The clock() function returns the current timepoint as a non-decreasing uint48, such as block.timestamp or block.number, and CLOCK_MODE() returns a URL-query-formatted string like mode=timestamp or mode=blocknumber for observers to decode. Note: ERC-6372 is in Review status; the interface may still change before it is finalized.",
+  "designPurpose": "ERC-6372 was designed to remove the guesswork around how a contract tracks time. Before it, some contracts measured delays and snapshots with block.timestamp while others used block.number, and an external observer had no reliable way to tell which, forcing risky assumptions when composing timelocks and voting systems. By standardizing clock() and a self-describing CLOCK_MODE() descriptor, ERC-6372 makes a contract's time base discoverable at runtime so tooling and dependent contracts can align on the same unit.",
+  "commonUsage": "The interface targets contracts that enforce delays or store timed history, including timelocks, DAO governors with fixed voting periods, and voting tokens that checkpoint balances by timepoint. Governance frameworks pair CLOCK_MODE() with clock() so that a governor and its voting token agree on whether proposals and snapshots are measured in seconds or in blocks. Because both functions are view-only, indexers and front ends can query the clock mode off-chain without sending a transaction.",
+
+  "fn.clock.desc": "Returns the contract's current timepoint according to its clock mode. The value must be a non-decreasing function of the chain and is commonly block.timestamp (seconds) or block.number.",
+  "fn.clock.returns.timepoint": "The current timepoint as a uint48, interpreted according to the value returned by CLOCK_MODE().",
+
+  "fn.CLOCK_MODE.desc": "Returns a machine-readable description of the clock, formatted as a URL query string decodable with new URLSearchParams(). Values include mode=timestamp for seconds and mode=blocknumber&from=default for block numbers.",
+  "fn.CLOCK_MODE.returns.descriptor": "A URL-query-formatted descriptor such as mode=timestamp or mode=blocknumber&from=<CAIP-2-ID>.",
+
+  "node.user": "Clock Observer",
+  "node.contract": "ERC-6372 Contract",
+  "node.clockSource": "Chain Time Source",
+  "node.clockResult": "Clock Report",
+
+  "edge.callClock": "Call clock()",
+  "edge.callClockMode": "Call CLOCK_MODE()",
+  "edge.readClockSource": "Read chain time",
+  "edge.buildTimepoint": "Package timepoint",
+  "edge.returnTimepoint": "Return clock info",
+
+  "sim.clockDiscovery.name": "Clock Mode Discovery",
+  "sim.clockDiscovery.desc": "Query a contract's clock() and CLOCK_MODE() to read its current timepoint and learn how to interpret it.",
+  "sim.clockDiscovery.param.contractAddress": "Contract to query",
+  "sim.clockDiscovery.param.mode": "Clock mode",
+  "sim.clockDiscovery.step.call": "The observer calls clock() on the target contract to read its current timepoint.",
+  "sim.clockDiscovery.step.call.mobile": "Call clock()",
+  "sim.clockDiscovery.step.read": "The contract reads the chain time source it is configured to use, either block.timestamp or block.number, and returns it as a uint48.",
+  "sim.clockDiscovery.step.read.mobile": "Read chain time",
+  "sim.clockDiscovery.step.mode": "The observer calls CLOCK_MODE() to learn whether the timepoint is measured in seconds or in block numbers.",
+  "sim.clockDiscovery.step.mode.mobile": "Call CLOCK_MODE()",
+  "sim.clockDiscovery.step.return": "The contract returns the packaged timepoint and mode descriptor so the observer can align its delays and snapshots with the same clock.",
+  "sim.clockDiscovery.step.return.mobile": "Return clock info"
+}

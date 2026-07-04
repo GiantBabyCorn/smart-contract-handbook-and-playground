@@ -1,0 +1,33 @@
+{
+  "short": "クロスチェーンストレージルータープロトコル",
+  "introduction": "ERC-7700（通称 CCIP-Store）は、メインネットの gas を支払う代わりに、ストレージへの書き込みを外部プロバイダーへルーティングするための規約を定義します。2024年4月に Avneet Singh、0xc0de4c0ffee、Nick Johnson、Makoto Inoue によって提案されました。コントラクトは StorageRoutedToL1、StorageRoutedToL2、または StorageRoutedToDatabase エラーで revert し、データをどこに書き込むかを示します。これを後から EIP-3668（CCIP-Read）コントラクトが読み戻します。注意：ERC-7700 は Draft（ドラフト）であり、仕様は現在も活発に開発が進められており、大きく変更される可能性があります。",
+  "designPurpose": "ERC-7700 は、クロスチェーンストレージの書き込み側を標準化するために設計されました。EIP-3668（CCIP-Read）はすでにコントラクトが L2 やデータベースからデータを取得することを可能にしていますが、そのデータを書き込み、L1 上で証明する方法は各サービスが独自に考案しなければならず、ウォレットやリゾルバー間で再利用できませんでした。CCIP-Store は、L1・L2・データベースのいずれかのターゲットを指定するルーティング用の revert に加え、データベース向けの決定論的な署名者と承認スキームを提供することでこれに応え、アプリケーションは基盤となるプロバイダーを知らなくてもデータを保存できます。",
+  "commonUsage": "CCIP-Store は、より安価なストレージにオンチェーンに近い記録を保持するサービスを対象としており、最も代表的なのは、ドメイン記録を L2 やデータベースに保持しつつメインネットから解決可能な状態を保つ ENS リゾルバーです。Motivation（動機）セクションでは、ネームスペース管理とデジタルアイデンティティサービスが主要なユースケースとして挙げられています。読み取りにおいて EIP-3668 と組み合わせて機能するため、L1 のストレージコストを支払わずに L1 で検証可能なデータを求めるあらゆるアプリケーションに適しています。Draft であるため、採用はまだ初期段階であり、大部分は著者らの ENS ツールに結び付いています。",
+
+  "node.client": "クライアントアプリケーション",
+  "node.contract": "L1 ルーターコントラクト",
+  "node.router": "ストレージルーター revert",
+  "node.gateway": "オフチェーンゲートウェイ",
+  "node.storage": "外部ストレージ",
+  "node.resolver": "CCIP-Read リゾルバー",
+
+  "edge.submitWrite": "ストレージ書き込みを呼び出す",
+  "edge.revertRoute": "ルーターとともに revert",
+  "edge.returnRoute": "ルーティング先を返す",
+  "edge.postData": "署名データを POST",
+  "edge.storeRecord": "署名済み記録を保存",
+  "edge.fetchData": "CCIP-Read 経由で取得",
+
+  "sim.storeRecordWalkthrough.name": "データベースストレージルーティング",
+  "sim.storeRecordWalkthrough.desc": "クライアントからデータベースルーターを経て CCIP-Read での取得まで、記録の書き込みを追います。",
+  "sim.storeRecordWalkthrough.param.recordKey": "記録キー",
+  "sim.storeRecordWalkthrough.param.recordValue": "記録の値",
+  "sim.storeRecordWalkthrough.step.call": "クライアントは L1 ルーターコントラクト上で、setValue(node, key, value) のようなストレージ書き込み関数を呼び出します。",
+  "sim.storeRecordWalkthrough.step.call.mobile": "ストレージ書き込みを呼び出す",
+  "sim.storeRecordWalkthrough.step.revert": "コントラクトは StorageRoutedToDatabase(gatewayUrl) で revert し、どのゲートウェイが書き込みを処理すべきかをクライアントに伝えます。",
+  "sim.storeRecordWalkthrough.step.revert.mobile": "ルーターとともに revert",
+  "sim.storeRecordWalkthrough.step.post": "クライアントは calldata に署名し、導出されたデータ署名者に対する承認を要求し、署名済みの記録をゲートウェイに POST し、ゲートウェイがそれを保存します。",
+  "sim.storeRecordWalkthrough.step.post.mobile": "署名済み記録を POST",
+  "sim.storeRecordWalkthrough.step.read": "その後、CCIP-Read リゾルバーが EIP-3668 経由で記録を取得し、提供する前に承認とデータ署名を検証します。",
+  "sim.storeRecordWalkthrough.step.read.mobile": "読み取りと検証"
+}

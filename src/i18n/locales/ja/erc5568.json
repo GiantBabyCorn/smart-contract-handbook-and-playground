@@ -1,0 +1,31 @@
+{
+  "short": "必要なアクションのための所定フォーマット",
+  "introduction": "ERC-5568 は、トランザクションが成功する前に、ユーザーが何らかのアクション（トークンの承認など）を実行する必要があることをスマートコントラクトがウォレットに伝えられる、機械可読なフォーマットを定義します。2022年8月に Gavin John によって提案されました。コントラクトは所定の walletSignal24 view 関数を公開し、instruction_id と instruction_data を返すか、WalletSignal24 エラーでリバートします。ウォレットはその呼び出しをシミュレートして解決します。注意：ERC-5568 は Review ステータスにあり、最終化される前にインターフェースが変更される可能性があります。",
+  "designPurpose": "ERC-5568 は、アクションを通知するロジックをハードコードされたフロントエンドのコードからコントラクト自体へと移すために設計されました。それ以前は、dApp のフロントエンドは、たとえば事前のトークン承認がないと呼び出しが失敗することを把握し、その復旧フローをコントラクトごとに手作業で実装する必要がありました。ERC-5568 では、コントラクトが 1 つの所定の関数と予約されたリバートエラーを通じて必要なアクションを宣言できます。これにより、instruction id と最大 64 kB の任意のパラメータを伴いながら、あらゆるウォレットがそれを汎用的に検出・解決できます。",
+  "commonUsage": "このフォーマットは、ウォレットとそれらがやり取りするコントラクトを対象としています。たとえば取引所は、取引の前にトークンを承認するようウォレットに求めたり、オフチェーンの HTTP リクエストを要求したり、定期的に鍵をローテーションするようユーザーに促したりできます。instruction id はそれを定義する ERC 番号で名前空間が区切られるため、他の規格が新しい命令タイプを追加でき、ERC-5568 に対応したあらゆるウォレットがそれらを理解できます。Review 段階の提案であるため、主にウォレット開発者と規格の策定者にとって関心の対象となります。",
+
+  "fn.walletSignal24.desc": "ウォレットがトランザクションをブロードキャストする前にシミュレートする、所定の view 関数です。ユーザーがアクションを取る必要がある場合は非ゼロの instruction_id と instruction_data を返し、アクションが不要な場合は instruction_id として 0 を返します。",
+  "fn.walletSignal24.params.selector": "ウォレットが実行しようとしている操作を識別する selector です。",
+  "fn.walletSignal24.params.function_data": "意図した操作を記述する任意の calldata で、どの命令を返すかをコントラクトが判断できるようにします。",
+  "fn.walletSignal24.returns.instruction_id": "命令識別子で、必要なアクションの ERC 番号に等しく、アクションが不要な場合は 0 になります。",
+  "fn.walletSignal24.returns.instruction_data": "最大 64 kB の命令パラメータで、その構造は instruction_id を所有する ERC によって定義されます。",
+
+  "node.user": "ウォレット",
+  "node.contract": "シグナルコントラクト",
+  "node.handler": "ユーザー",
+
+  "edge.callWalletSignal24": "walletSignal24() をシミュレート",
+  "edge.emitWalletSignal24": "WalletSignal24 シグナルを返す",
+  "edge.resolveAction": "必要なアクションを促す",
+
+  "sim.walletSignalWalkthrough.name": "ウォレットシグナルのウォークスルー",
+  "sim.walletSignalWalkthrough.desc": "コントラクトが walletSignal24 と WalletSignal24 エラーを通じて、必要なアクションをウォレットにどのように通知するかを追います。",
+  "sim.walletSignalWalkthrough.param.selector": "要求されたアクション",
+  "sim.walletSignalWalkthrough.param.instructionId": "命令 ID",
+  "sim.walletSignalWalkthrough.step.call": "ウォレットは、ユーザーのトランザクションをブロードキャストする前に、コントラクト上で walletSignal24 をシミュレートします。",
+  "sim.walletSignalWalkthrough.step.call.mobile": "walletSignal24() をシミュレート",
+  "sim.walletSignalWalkthrough.step.execute": "コントラクトはアクションが必要だと判断し、非ゼロの instruction_id を返すか、同じデータを伴う WalletSignal24 エラーでリバートします。",
+  "sim.walletSignalWalkthrough.step.execute.mobile": "シグナルを返す",
+  "sim.walletSignalWalkthrough.step.signal": "ウォレットは命令を解析し、必要なアクションを完了するようユーザーに促したうえで、元のトランザクションを再評価します。",
+  "sim.walletSignalWalkthrough.step.signal.mobile": "ユーザーアクションを促す"
+}

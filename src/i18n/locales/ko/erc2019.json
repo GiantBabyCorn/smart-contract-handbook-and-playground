@@ -1,0 +1,80 @@
+{
+  "short": "자금 공급 가능 토큰 표준",
+  "introduction": "ERC-2019는 ERC-20 토큰 표준을 확장하여 지갑 소유자가 온체인 주문을 통해 자신의 지갑으로 새로운 토큰을 발행하도록 요청할 수 있게 합니다. 2019년 5월 Fernando Paris, Julio Faura, Daniel Lehrner가 제안했습니다. 소유자 또는 승인된 발주자가 operationId, 금액, 지시를 담아 orderFund를 호출하면, 운영자가 오프체인 결제를 정산한 뒤 이를 실행하거나 거부합니다. 참고: ERC-2019는 Stagnant(정체) 상태입니다 — 6개월 이상 활동이 없어 최종 확정되지 않을 수 있지만, 역사적으로 또는 기술적으로 여전히 중요한 의미가 있습니다.",
+  "designPurpose": "ERC-2019는 토큰 수명 주기에서 자금 공급 단계를 온체인으로 가져오기 위해 설계되었습니다. 그 이전에는 법정화폐나 은행 결제에 대해 토큰을 발행하는 일이, 원장에 검증 가능한 흔적을 남기지 않는 오프체인의 중앙화된 요청에 의존했습니다. ERC-2019는 그 요청을 고유한 operationId와 자유 형식의 지시를 담은 orderFund 호출로 표준화하여, 운영자가 이를 비공개 결제와 연관 짓고 그 상태를 온체인에서 갱신할 수 있게 합니다. 이를 통해 주문됨, 실행됨, 거부됨이라는 결과를 이벤트로 추적할 수 있습니다.",
+  "commonUsage": "자금 공급 가능 토큰은 규제 대상이거나 은행이 발행하는 토큰 시스템을 위한 것으로, 여기서는 발행이 실제 법정화폐 예치나 전신 송금과 연결되어야 합니다. 이러한 배포에서는 토큰 컨트랙트 소유자나 대리인이 운영자로서 요청을 승인하거나 거부하며, 지갑 소유자는 발주자에게 자신을 대신해 orderFundFrom을 제출할 권한을 부여할 수 있습니다. ERC-20을 확장하기만 하므로 이 인터페이스는 기존 토큰에 추가되며, 지시 필드는 원시 은행 정보를 온체인에 포함하는 대신 비공개 결제 채널을 가리킵니다.",
+
+  "fn.authorizeFundOperator.desc": "호출자의 지갑을 대신하여 자금 공급 주문을 제출할 수 있도록 특정 주소에 권한을 부여하며, 해당 발주자가 orderFundFrom을 사용할 수 있게 합니다. 성공 시 true를 반환합니다.",
+  "fn.authorizeFundOperator.params.orderer": "호출자의 지갑을 위해 자금 공급을 주문할 권한을 부여받는 주소.",
+  "fn.authorizeFundOperator.returns.success": "권한 부여가 기록되면 true.",
+
+  "fn.orderFund.desc": "호출자 자신의 지갑에 대한 자금 공급 요청을 생성하며, 고유한 operationId로 식별되고 운영자가 처리할 금액과 결제 지시를 담습니다. operationId가 이전에 사용된 적이 있으면 되돌립니다.",
+  "fn.orderFund.params.operationId": "자금 공급 요청을 수명 주기 전반에 걸쳐 추적하는 데 사용되는 고유 식별자.",
+  "fn.orderFund.params.value": "지갑에 공급될 토큰의 수량.",
+  "fn.orderFund.params.instructions": "운영자가 자금을 조달하고 정산하는 데 사용하는 결제 지시 문자열.",
+  "fn.orderFund.returns.success": "자금 공급 요청이 생성되면 true.",
+
+  "fn.orderFundFrom.desc": "다른 지갑 소유자를 대신하여 자금 공급 요청을 생성하며, 사전에 권한을 부여받은 발주자가 호출할 수 있습니다. operationId가 이전에 사용된 적이 있으면 되돌립니다.",
+  "fn.orderFundFrom.params.operationId": "자금 공급 요청의 고유 식별자.",
+  "fn.orderFundFrom.params.walletToFund": "요청이 대신 생성되고 자금이 공급되는 지갑 소유자.",
+  "fn.orderFundFrom.params.value": "지갑에 공급될 토큰의 수량.",
+  "fn.orderFundFrom.params.instructions": "운영자가 자금을 정산하는 데 사용하는 결제 지시 문자열.",
+  "fn.orderFundFrom.returns.success": "자금 공급 요청이 생성되면 true.",
+
+  "fn.cancelFund.desc": "대기 중인 자금 공급 요청을 취소합니다. 지갑 소유자 또는 원래 발주자만 취소할 수 있으며, 운영자가 처리 단계로 옮기기 전에만 가능합니다.",
+  "fn.cancelFund.params.operationId": "취소할 자금 공급 요청의 식별자.",
+  "fn.cancelFund.returns.success": "요청이 취소되면 true.",
+
+  "fn.processFund.desc": "자금 공급 요청을 처리 중으로 표시합니다. 처리 중이 되면 해당 요청은 더 이상 취소할 수 없으며, 운영자가 결제 정산을 시작했음을 나타냅니다.",
+  "fn.processFund.params.operationId": "처리 중인 자금 공급 요청의 식별자.",
+  "fn.processFund.returns.success": "요청이 처리 중으로 표시되면 true.",
+
+  "fn.executeFund.desc": "요청된 토큰을 발행하고 자금 공급 요청을 실행됨으로 표시합니다. 해당 결제가 수신되면 운영자가 호출합니다.",
+  "fn.executeFund.params.operationId": "실행할 자금 공급 요청의 식별자.",
+  "fn.executeFund.returns.success": "요청이 실행되고 토큰이 발행되면 true.",
+
+  "fn.rejectFund.desc": "사람이 읽을 수 있는 사유와 함께 자금 공급 요청을 거부하여, 토큰을 발행하지 않고 그 수명 주기를 종료합니다. 사유에는 EIP-1066 상태 코드를 사용할 수 있습니다.",
+  "fn.rejectFund.params.operationId": "거부할 자금 공급 요청의 식별자.",
+  "fn.rejectFund.params.reason": "요청이 거부된 사유. EIP-1066 코드를 사용할 수 있습니다.",
+  "fn.rejectFund.returns.success": "요청이 거부되면 true.",
+
+  "fn.FundOrdered.desc": "지갑 소유자 또는 승인된 발주자가 자금 공급 요청을 생성할 때 발생합니다.",
+  "fn.FundOrdered.params.orderer": "자금 공급 요청을 넣은 주소.",
+  "fn.FundOrdered.params.operationId": "자금 공급 요청의 고유 식별자.",
+  "fn.FundOrdered.params.walletToFund": "공급된 토큰을 받을 지갑.",
+  "fn.FundOrdered.params.value": "요청된 토큰의 수량.",
+  "fn.FundOrdered.params.instructions": "요청에 첨부된 결제 지시 문자열.",
+
+  "fn.FundInProcess.desc": "운영자가 자금 공급 요청 처리를 시작할 때 발생하며, 이후에는 취소할 수 없습니다.",
+  "fn.FundInProcess.params.orderer": "자금 공급 요청을 넣은 주소.",
+  "fn.FundInProcess.params.operationId": "자금 공급 요청의 고유 식별자.",
+
+  "fn.FundExecuted.desc": "운영자가 자금 공급 요청을 실행하고 요청된 토큰을 발행할 때 발생합니다.",
+  "fn.FundExecuted.params.orderer": "자금 공급 요청을 넣은 주소.",
+  "fn.FundExecuted.params.operationId": "자금 공급 요청의 고유 식별자.",
+
+  "node.user": "지갑 소유자",
+  "node.contract": "자금 공급 가능 토큰",
+  "node.storageFunds": "자금 공급 요청",
+  "node.operator": "토큰 운영자",
+
+  "edge.callOrderFund": "orderFund() 호출",
+  "edge.recordRequest": "자금 공급 요청 기록",
+  "edge.emitFundOrdered": "FundOrdered 이벤트 발생",
+  "edge.callExecuteFund": "executeFund() 호출",
+  "edge.emitFundExecuted": "FundExecuted 이벤트 발생",
+
+  "sim.fundRequestWalkthrough.name": "자금 공급 요청 수명 주기",
+  "sim.fundRequestWalkthrough.desc": "지갑 소유자의 주문부터 운영자의 실행, 그리고 FundExecuted 이벤트까지 자금 공급 요청을 따라갑니다.",
+  "sim.fundRequestWalkthrough.param.operationId": "오퍼레이션 ID",
+  "sim.fundRequestWalkthrough.param.value": "자금 공급 금액",
+  "sim.fundRequestWalkthrough.param.instructions": "결제 지시",
+  "sim.fundRequestWalkthrough.step.order": "지갑 소유자가 고유한 operationId, 금액, 결제 지시를 담아 orderFund를 호출합니다.",
+  "sim.fundRequestWalkthrough.step.order.mobile": "orderFund() 호출",
+  "sim.fundRequestWalkthrough.step.record": "컨트랙트는 요청을 Ordered(주문됨) 상태로 스토리지에 기록하고 FundOrdered를 발생시켜 운영자가 받아 처리할 수 있게 합니다.",
+  "sim.fundRequestWalkthrough.step.record.mobile": "요청 기록",
+  "sim.fundRequestWalkthrough.step.execute": "오프체인 결제를 정산한 후, 운영자는 executeFund를 호출하여 요청을 Executed(실행됨)로 진행합니다.",
+  "sim.fundRequestWalkthrough.step.execute.mobile": "운영자 실행",
+  "sim.fundRequestWalkthrough.step.event": "컨트랙트는 요청된 토큰을 발행하고 FundExecuted를 발생시켜 자금 공급 수명 주기를 완료합니다.",
+  "sim.fundRequestWalkthrough.step.event.mobile": "FundExecuted 발생"
+}

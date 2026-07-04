@@ -1,0 +1,31 @@
+{
+  "short": "BLS12-381 確定性帳戶層級",
+  "introduction": "ERC-2334 為 ERC-2333 衍生出的 BLS12-381 金鑰定義了一套確定性帳戶層級。該標準由 Carl Beekhuizen 於 2019 年 9 月提出。金鑰透過形如 m / purpose / coin_type / account / use 的路徑來定址，其中 purpose 固定為 12381，coin_type 則按鏈區分金鑰。驗證者使用 coin_type 3600，在 m/12381/3600/i/0 處衍生提領金鑰，在 m/12381/3600/i/0/0 處衍生簽章金鑰。注意：ERC-2334 目前處於 Review 狀態，其介面在最終定稿前仍可能發生變化。",
+  "designPurpose": "在 BIP44 被證明不適用之後，ERC-2334 旨在為 BLS12-381 金鑰提供一條統一且可預測的衍生路徑。BIP44 以 UTXO 為中心，並假定 secp256k1 金鑰經由 BIP32 衍生，而 ERC-2333 只使用硬化金鑰和另一種 KDF。ERC-2334 沿用了 BIP43 與 BIP44 的 purpose、coin_type 和 account 欄位，但捨棄了早期幾種相互競爭的以太坊路徑格式所保留的 UTXO 專屬層級。它的 coin_type 3600 是 secp256k1 的 coin_type 60 的平方，可讓這兩種金鑰類型清晰分離。",
+  "commonUsage": "這套層級被以太坊質押工具用來將單一助記詞轉換為驗證者金鑰：存款與金鑰生成軟體沿 m/12381/3600/i/0 和 m/12381/3600/i/0/0 衍生出每個驗證者的提領金鑰和簽章金鑰。由於簽章金鑰是提領金鑰的第 0 個子金鑰，只要將提領金鑰作為冷金鑰安全保存，日後便足以恢復出熱態的簽章金鑰。正如規範所允許的，託管式和秘密共享式的設定可以省略部分金鑰並透過其他方式衍生。",
+
+  "node.user": "金鑰生成器",
+  "node.deriver": "ERC-2333 KDF",
+  "node.storagePath": "衍生路徑",
+  "node.storageWithdrawal": "提領金鑰",
+  "node.storageSigning": "簽章金鑰",
+  "node.validator": "Beacon Chain 驗證者",
+
+  "edge.provideSeed": "提供種子",
+  "edge.buildPath": "建構路徑",
+  "edge.deriveWithdrawal": "衍生提領金鑰",
+  "edge.deriveSigning": "衍生簽章金鑰",
+  "edge.loadSigning": "載入簽章金鑰",
+
+  "sim.deriveKeysWalkthrough.name": "驗證者金鑰衍生演練",
+  "sim.deriveKeysWalkthrough.desc": "跟隨一個助記詞種子，觀察 ERC-2334 路徑如何建構，以及驗證者的提領金鑰和簽章金鑰如何衍生。",
+  "sim.deriveKeysWalkthrough.param.accountIndex": "驗證者索引（i）",
+  "sim.deriveKeysWalkthrough.step.seed": "操作者向 ERC-2333 金鑰衍生函式提供一個助記詞種子和一個驗證者索引。",
+  "sim.deriveKeysWalkthrough.step.seed.mobile": "提供種子",
+  "sim.deriveKeysWalkthrough.step.path": "組裝出路徑 m / 12381 / 3600 / account / use，為 Beacon Chain 將 purpose 固定為 12381、coin_type 固定為 3600。",
+  "sim.deriveKeysWalkthrough.step.path.mobile": "建構路徑",
+  "sim.deriveKeysWalkthrough.step.derive": "在 m/12381/3600/i/0 處衍生出提領金鑰，簽章金鑰則作為其第 0 個子金鑰在 m/12381/3600/i/0/0 處衍生。",
+  "sim.deriveKeysWalkthrough.step.derive.mobile": "衍生金鑰",
+  "sim.deriveKeysWalkthrough.step.load": "簽章金鑰作為熱金鑰被載入驗證者用戶端，而提領金鑰則留在冷儲存中。",
+  "sim.deriveKeysWalkthrough.step.load.mobile": "載入簽章金鑰"
+}

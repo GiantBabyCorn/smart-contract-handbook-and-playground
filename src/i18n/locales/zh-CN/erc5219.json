@@ -1,0 +1,35 @@
+{
+  "short": "合约资源请求",
+  "introduction": "ERC-5219 定义了一个只读的合约接口 IDecentralizedApp，让客户端可以向智能合约请求资源并收到类似 HTTP 的响应。它由 Gavin John 于 2022 年 7 月提出。调用方以拆分为多个片段的资源路径和一组查询参数调用 request()，合约则返回一个 HTTP 状态码、一个响应体和响应头。由于 request() 是 view 函数，它无需交易，因此前端可以直接由链上代码提供。",
+  "designPurpose": "ERC-5219 旨在移除大多数去中心化应用在用户界面上仍然依赖的中心化 Web 服务器。当前端托管在普通网站上时，它可能被审查、下架或被悄然篡改，而且其他合约无法读取它。通过规定一个返回状态码、响应体和响应头的 view 函数，ERC-5219 让接口得以存在于链上，从而可以被无需信任地获取，与合约本身一样持久，并能被其他智能合约读取。",
+  "commonUsage": "ERC-5219 被那些在应用逻辑之外发布完全链上前端的项目使用，也被将普通 Web 请求转换为 request() 调用的网关软件使用，以便浏览器能够加载结果。为了降低 gas 成本，实现者通常返回指向 IPFS 上内容的 message/external-body 响应，而不是将大型资源存储在链上。该接口与接口检测天然契合，让客户端能够发现哪些合约支持该协议。",
+
+  "fn.request.desc": "发送一个类似 HTTP GET 的资源请求，并返回一个 HTTP 风格的响应。资源路径以片段数组的形式传入，查询字符串以键/值对的形式传入；该函数是 view，因此绝不改变状态。",
+  "fn.request.params.resource": "拆分为多个片段的请求资源路径，因此 \"/asdf/1234\" 会变成 [\"asdf\", \"1234\"]。",
+  "fn.request.params.params": "以键/值对形式表示的查询参数，因此 \"?foo=bar\" 会变成 [{ key: \"foo\", value: \"bar\" }]。",
+  "fn.request.returns.statusCode": "响应的 HTTP 状态码，例如成功时为 200，或资源未找到时为 404。",
+  "fn.request.returns.body": "响应的响应体，例如一个 HTML 文档或 JSON 载荷。",
+  "fn.request.returns.headers": "以键/值对形式表示的响应头列表，例如 Content-Type。",
+
+  "node.user": "客户端／浏览器",
+  "node.contract": "DApp 合约",
+  "node.resources": "资源存储",
+  "node.response": "HTTP 响应",
+
+  "edge.callRequest": "调用 request()",
+  "edge.readResources": "读取资源",
+  "edge.buildResponse": "构建响应",
+  "edge.returnResponse": "返回响应",
+
+  "sim.requestWalkthrough.name": "资源请求演练",
+  "sim.requestWalkthrough.desc": "跟随一次 request() 调用，从客户端经过合约，直到它返回的类似 HTTP 的响应。",
+  "sim.requestWalkthrough.param.resource": "资源路径",
+  "sim.requestWalkthrough.step.call": "客户端在 DApp 合约上调用 request()，传入资源路径和查询参数。",
+  "sim.requestWalkthrough.step.call.mobile": "调用 request()",
+  "sim.requestWalkthrough.step.resolve": "合约解析该路径，并从其资源存储中读取匹配的内容。",
+  "sim.requestWalkthrough.step.resolve.mobile": "读取资源",
+  "sim.requestWalkthrough.step.build": "合约组装一个包含状态码、响应体和响应头的类似 HTTP 的响应。",
+  "sim.requestWalkthrough.step.build.mobile": "构建响应",
+  "sim.requestWalkthrough.step.return": "响应被返回给客户端，客户端像渲染普通网页一样渲染它。",
+  "sim.requestWalkthrough.step.return.mobile": "返回响应"
+}

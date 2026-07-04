@@ -1,0 +1,30 @@
+{
+  "short": "BLS12-381 金鑰庫格式",
+  "introduction": "ERC-2335 定義了一種 JSON 金鑰庫檔案格式，用於加密並儲存 BLS12-381 私鑰，也就是權益證明驗證者所使用的簽章金鑰。此標準由 Carl Beekhuizen 於 2019 年 9 月提出。金鑰庫會在使用者密碼的保護下加密該秘密，使金鑰在提供密碼之前始終保持安全，並將密碼學部分組織為三個可替換的模組：金鑰派生函式、校驗和以及加密演算法（cipher）。請注意：ERC-2335 目前處於 Review 狀態，其介面在最終定案前仍可能變動。",
+  "designPurpose": "ERC-2335 的設計目標是取代依賴 Keccak256 校驗和的 Web3 Secret Storage 金鑰庫。由於 BLS 金鑰及其儲存屬於跨鏈標準，此格式需要一種對所有鏈保持中立的校驗和，因此 Keccak 並不適用。它還引入了模組的概念，將金鑰派生函式、校驗和與 cipher 視為同一抽象的不同實例，因而能以最小的代價加以替換。version 欄位被設為 4，以避免與現有的 Ethereum 金鑰庫產生衝突。",
+  "commonUsage": "Ethereum 質押軟體使用 BLS12-381 金鑰庫來儲存驗證者的簽章金鑰與提領金鑰，讓營運者能在不同裝置之間移動加密後的金鑰，而無需暴露原始秘密。質押與存款工具會產生這些檔案，透過 ERC-2333 金鑰生成與 ERC-2334 路徑派生其內容，並記錄公鑰、路徑與一個 UUID，如此便能在不解密的情況下引用某個帳戶。當營運者提供密碼後，驗證者用戶端便會按需解密該秘密。",
+
+  "node.user": "金鑰庫持有者",
+  "node.keystore": "BLS12-381 金鑰庫",
+  "node.storageFile": "金鑰庫檔案欄位",
+  "node.signer": "簽章用戶端",
+
+  "edge.providePassword": "提供密碼",
+  "edge.readModules": "讀取密碼學模組",
+  "edge.verifyPassword": "驗證密碼",
+  "edge.decryptSecret": "解密秘密",
+  "edge.recoverKey": "還原私鑰",
+
+  "sim.decryptKeystoreWalkthrough.name": "金鑰庫解密演練",
+  "sim.decryptKeystoreWalkthrough.desc": "了解密碼如何解鎖 BLS12-381 金鑰庫——從金鑰派生，經過校驗和驗證，到最終的秘密解密。",
+  "sim.decryptKeystoreWalkthrough.param.password": "密碼",
+  "sim.decryptKeystoreWalkthrough.param.kdf": "金鑰派生函式",
+  "sim.decryptKeystoreWalkthrough.step.derive": "持有者提供密碼，KDF 模組根據密碼與儲存的 kdf 參數派生出解密金鑰。",
+  "sim.decryptKeystoreWalkthrough.step.derive.mobile": "派生解密金鑰",
+  "sim.decryptKeystoreWalkthrough.step.verify": "金鑰庫使用 SHA-256 對解密金鑰的第二段 16 位元組與密文（cipher message）一起進行雜湊，並將結果與儲存的校驗和訊息比對，以確認密碼是否正確。",
+  "sim.decryptKeystoreWalkthrough.step.verify.mobile": "驗證密碼",
+  "sim.decryptKeystoreWalkthrough.step.decrypt": "密碼驗證通過後，cipher 模組使用解密金鑰解密儲存的密文，從而還原出秘密。",
+  "sim.decryptKeystoreWalkthrough.step.decrypt.mobile": "解密秘密",
+  "sim.decryptKeystoreWalkthrough.step.recover": "解密後的 BLS12-381 私鑰會交給簽章用戶端，用戶端此時便可產生簽章。",
+  "sim.decryptKeystoreWalkthrough.step.recover.mobile": "還原私鑰"
+}

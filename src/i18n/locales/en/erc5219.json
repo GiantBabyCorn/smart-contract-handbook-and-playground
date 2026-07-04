@@ -1,0 +1,35 @@
+{
+  "short": "Contract Resource Requests",
+  "introduction": "ERC-5219 defines a read-only contract interface, IDecentralizedApp, that lets clients request resources from a smart contract and receive HTTP-like responses. It was proposed by Gavin John in July 2022. A caller invokes request() with a resource path split into segments and a list of query parameters, and the contract returns an HTTP status code, a response body, and response headers. Because request() is a view function, it needs no transaction, so a front-end can be served directly from on-chain code.",
+  "designPurpose": "ERC-5219 was designed to remove the centralized web server that most decentralized apps still depend on for their user interface. When a front-end is hosted on an ordinary website it can be censored, taken down, or silently altered, and other contracts cannot read it. By specifying a single view function that returns a status code, body, and headers, ERC-5219 lets an interface live on-chain, so it can be fetched trustlessly, is as permanent as the contract itself, and can be read by other smart contracts.",
+  "commonUsage": "ERC-5219 is used by projects that publish a fully on-chain front-end alongside their application logic, and by gateway software that translates ordinary web requests into request() calls so a browser can load the result. To keep gas costs low, implementers often return a message/external-body response that points at content on IPFS instead of storing large assets on-chain. The interface pairs naturally with interface detection, letting clients discover which contracts speak the protocol.",
+
+  "fn.request.desc": "Sends an HTTP GET-like request for a resource and returns an HTTP-style response. The resource path is passed as an array of segments and the query string as key/value pairs; the function is view, so it never changes state.",
+  "fn.request.params.resource": "The requested resource path split into segments, so that \"/asdf/1234\" becomes [\"asdf\", \"1234\"].",
+  "fn.request.params.params": "The query parameters as key/value pairs, so that \"?foo=bar\" becomes [{ key: \"foo\", value: \"bar\" }].",
+  "fn.request.returns.statusCode": "The HTTP status code of the response, such as 200 for success or 404 when the resource is not found.",
+  "fn.request.returns.body": "The body of the response, for example an HTML document or JSON payload.",
+  "fn.request.returns.headers": "A list of response headers as key/value pairs, such as Content-Type.",
+
+  "node.user": "Client / Browser",
+  "node.contract": "DApp Contract",
+  "node.resources": "Resource Store",
+  "node.response": "HTTP Response",
+
+  "edge.callRequest": "Call request()",
+  "edge.readResources": "Read resource",
+  "edge.buildResponse": "Build response",
+  "edge.returnResponse": "Return response",
+
+  "sim.requestWalkthrough.name": "Resource Request Walkthrough",
+  "sim.requestWalkthrough.desc": "Follow a request() call from the client through the contract to the HTTP-like response it returns.",
+  "sim.requestWalkthrough.param.resource": "Resource path",
+  "sim.requestWalkthrough.step.call": "The client calls request() on the DApp contract, passing the resource path and query parameters.",
+  "sim.requestWalkthrough.step.call.mobile": "Call request()",
+  "sim.requestWalkthrough.step.resolve": "The contract resolves the path and reads the matching content from its resource store.",
+  "sim.requestWalkthrough.step.resolve.mobile": "Read resource",
+  "sim.requestWalkthrough.step.build": "The contract assembles an HTTP-like response with a status code, body, and headers.",
+  "sim.requestWalkthrough.step.build.mobile": "Build response",
+  "sim.requestWalkthrough.step.return": "The response is returned to the client, which renders it just like a normal web page.",
+  "sim.requestWalkthrough.step.return.mobile": "Return response"
+}

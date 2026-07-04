@@ -1,0 +1,32 @@
+{
+  "short": "Smart Contract Delegation Interface",
+  "introduction": "ERC-7710 defines a minimal interface for smart contract delegation, letting a delegator authorize a Delegation Manager to act on its behalf. It was proposed by Ryan McPeck, Dan Finlay, Rob Dawson, and Derek Chiang in May 2024. A delegate calls redeemDelegations with a permission context proving its authority plus ERC-7579 modes and calldata; the manager verifies it and drives the delegator to run the action. Note: ERC-7710 is a Draft; the specification is still under active development and may change substantially.",
+  "designPurpose": "ERC-7710 was designed to replace the hardcoded permissions and bespoke intermediary contracts previously needed for one contract to use another's capabilities, which raised complexity and gas costs. It also targets the friction of re-signing for every interaction by letting a user grant a single, policy-constrained delegation. The interface specifies only redeemDelegations and borrows ERC-7579 execution encoding, so an existing smart account can act as a delegator without implementing a new execution method.",
+  "commonUsage": "The standard is intended for long-lived sessions and bounded permissions: persistent dApp sessions that avoid repeated signing, scoped authority granted to AI agents or automated systems, shareable invite links carrying specific capabilities, and third-party delegates acting within defined policy limits. Because it covers only redemption and leaves delegation creation out of scope, it is typically paired with a framework such as the MetaMask Delegation Framework that handles signing, caveats, and revocation.",
+
+  "fn.redeemDelegations.desc": "Called by a delegate to redeem one or more delegations. The manager validates each permission context and, if authorized, executes the paired ERC-7579 mode and calldata via the delegator. Reverts when the arrays differ in length.",
+  "fn.redeemDelegations.params.permissionContexts": "Per-delegation data proving the caller's authority to act for each delegator; its structure is defined by the specific Delegation Manager.",
+  "fn.redeemDelegations.params.modes": "Array of ERC-7579 execution modes, each encoding the call behavior such as a single call or a batch call for the matching execution.",
+  "fn.redeemDelegations.params.executionCallData": "Array of ERC-7579 encoded executions, each typically carrying a target, value, and calldata to run on behalf of the delegator.",
+
+  "node.delegate": "Delegate (Redeemer)",
+  "node.contract": "Delegation Manager",
+  "node.delegator": "Delegator",
+  "node.target": "Target Contract",
+
+  "edge.callRedeem": "Call redeemDelegations()",
+  "edge.callDelegator": "Call delegator",
+  "edge.executeAction": "Execute action",
+
+  "sim.redeemDelegationWalkthrough.name": "Redeem a Delegation",
+  "sim.redeemDelegationWalkthrough.desc": "Follow a delegate as it redeems a delegation through the Delegation Manager and the delegator executes the action on a target contract.",
+  "sim.redeemDelegationWalkthrough.param.delegator": "Delegator account",
+  "sim.redeemDelegationWalkthrough.param.target": "Target contract",
+  "sim.redeemDelegationWalkthrough.param.mode": "Execution mode",
+  "sim.redeemDelegationWalkthrough.step.call": "The delegate calls redeemDelegations on the Delegation Manager, passing the permission contexts, execution modes, and calldata for the actions it wants to run.",
+  "sim.redeemDelegationWalkthrough.step.call.mobile": "Call redeemDelegations()",
+  "sim.redeemDelegationWalkthrough.step.validate": "The manager verifies that each permission context proves valid authority. If every delegation is valid, it calls the corresponding delegator; otherwise the batch reverts.",
+  "sim.redeemDelegationWalkthrough.step.validate.mobile": "Verify authority",
+  "sim.redeemDelegationWalkthrough.step.execute": "The delegator runs the ERC-7579 encoded action on the target contract, completing the capability the delegate was authorized to use.",
+  "sim.redeemDelegationWalkthrough.step.execute.mobile": "Execute on target"
+}

@@ -1,0 +1,68 @@
+{
+  "short": "EVM 向け dType ストレージ拡張",
+  "introduction": "ERC-2157 は、ERC-1900 に由来する分散型の型システムである dType 向けにオプションのストレージ拡張を定義し、型インスタンスを格納するコントラクトの ABI を標準化します。2019年6月に Loredana Cirstea と Christian Tzurcanu によって提案されました。各ストレージコントラクトは共通の CRUD インターフェースを公開し、すべてのレコードを確定的な識別子またはインデックスでアドレス指定できるようにします。注意：ERC-2157 は Stagnant（停滞）状態であり、6か月以上活動がなく最終化されない可能性がありますが、歴史的または技術的に重要な意義を保っています。",
+  "designPurpose": "ERC-2157 は、公開データに対する確定的なアドレス指定可能性を Ethereum にもたらすために設計されました。ERC-1900 は型定義を標準化しましたが、データの取得はオフチェーンのブロックチェーン分析やブロックエクスプローラーのような中央集権的なキャッシュに委ねていたため、オンチェーンのコントラクトは別のプロジェクトのインスタンスを確実に見つけることができませんでした。共通のストレージ ABI と、各型をそのライブラリおよびストレージに結び付ける TypeRootContract を定めることで、ERC-2157 は任意のコントラクトやツールが既知の経路をたどってレコードに到達し、dType レジストリからその ABI を再構築できるようにします。",
+  "commonUsage": "この拡張は、共有された公開データの上に構築されるアプリケーションを対象としています。すなわち、既知のストレージコントラクトから商品レコードを直接読み取る分散型マーケットプレイス、Ethereum のシャード間やチェーンをまたいで型インスタンスを同期するデータブリッジ、そしてレジストリからコントラクトの ABI を推論するツールです。この提案は、アクセス制御と可変性の制御を将来の拡張に委ねています。ERC-2157 は Final 状態に到達しなかったため、本番環境での採用ではなくリファレンス実装の作業にとどまりました。",
+
+  "fn.insert.desc": "新しい型インスタンスを格納し、レコードマッピングに書き込んでインデックス配列に追加します。型ライブラリの getIdentifier 関数によって計算された主識別子を返し、LogNew イベントを発行します。",
+  "fn.insert.params.data": "格納する型インスタンス。コントラクトの型ライブラリによって型付けされます。",
+  "fn.insert.returns.identifier": "レコードの主識別子。getIdentifier によってその値から導出されます。",
+
+  "fn.insertBytes.desc": "ABI エンコードされたバイト列として提供される新しい型インスタンスを格納します。レコードを書き込む前に型ライブラリでデコードします。",
+  "fn.insertBytes.params.data": "格納する ABI エンコードされた型インスタンス。",
+  "fn.insertBytes.returns.identifier": "格納されたレコードの主識別子。",
+
+  "fn.remove.desc": "指定された識別子を持つレコードを削除してそのストレージスロットを解放し、そのレコードが占めていたインデックスを返します。",
+  "fn.remove.params.identifier": "削除するレコードの主識別子。",
+  "fn.remove.returns.index": "削除されたレコードがインデックス配列で占めていたインデックス。",
+
+  "fn.update.desc": "指定された識別子で格納されているレコードを新しい型インスタンスの値で上書きし、更新されたレコードの識別子を返します。",
+  "fn.update.params.identifier": "更新するレコードの主識別子。",
+  "fn.update.params.data": "格納する新しい型インスタンスの値。",
+  "fn.update.returns.identifier": "更新されたレコードの識別子。",
+
+  "fn.isStored.desc": "指定された識別子を持つレコードがストレージコントラクトに存在するかどうかを報告します。",
+  "fn.isStored.params.identifier": "確認する主識別子。",
+  "fn.isStored.returns.stored": "その識別子を持つレコードが存在する場合は true。",
+
+  "fn.getByHash.desc": "指定された主識別子で格納されている型インスタンスを返します。",
+  "fn.getByHash.params.identifier": "取得するレコードの主識別子。",
+  "fn.getByHash.returns.data": "格納されている型インスタンス。",
+
+  "fn.getByIndex.desc": "インデックス配列の指定された位置に格納されている型インスタンスを返し、レコードを列挙できるようにします。",
+  "fn.getByIndex.params.index": "インデックス配列内のレコードの位置。",
+  "fn.getByIndex.returns.data": "格納されている型インスタンス。",
+
+  "fn.count.desc": "コントラクトに現在格納されているレコードの数を返します。",
+  "fn.count.returns.counter": "格納されているレコードの総数。",
+
+  "fn.LogNew.desc": "新しい型インスタンスがストレージコントラクトに挿入されたときに発行されます。",
+  "fn.LogNew.params.identifier": "挿入されたレコードの主識別子。",
+  "fn.LogNew.params.index": "インデックス配列内のレコードのインデックス。",
+
+  "fn.LogUpdate.desc": "既存のレコードが更新されたときに発行されます。",
+  "fn.LogUpdate.params.identifier": "更新されたレコードの主識別子。",
+  "fn.LogUpdate.params.index": "インデックス配列内のレコードのインデックス。",
+
+  "fn.LogRemove.desc": "レコードがストレージコントラクトから削除されたときに発行されます。",
+  "fn.LogRemove.params.identifier": "削除されたレコードの主識別子。",
+  "fn.LogRemove.params.index": "削除されたレコードがインデックス配列で占めていたインデックス。",
+
+  "node.user": "データ発行者",
+  "node.contract": "型ストレージコントラクト",
+  "node.storageRecords": "レコードストレージ",
+
+  "edge.callInsert": "insert() を呼び出す",
+  "edge.updateRecords": "型インスタンスを格納",
+  "edge.emitLogNew": "LogNew イベントを発行",
+
+  "sim.insertWalkthrough.name": "型インスタンスの格納ウォークスルー",
+  "sim.insertWalkthrough.desc": "発行者からの insert 呼び出しを、レコードストレージを経て LogNew イベントまでたどります。",
+  "sim.insertWalkthrough.param.record": "型インスタンス",
+  "sim.insertWalkthrough.step.call": "発行者は、ストレージコントラクトに追加する型インスタンスを指定して insert(data) を呼び出します。",
+  "sim.insertWalkthrough.step.call.mobile": "insert() を呼び出す",
+  "sim.insertWalkthrough.step.execute": "コントラクトは型ライブラリの getIdentifier 関数で識別子を導出し、レコードを typeStruct マッピングに書き込み、その識別子を typeIndex 配列に追加します。",
+  "sim.insertWalkthrough.step.execute.mobile": "レコードを格納",
+  "sim.insertWalkthrough.step.event": "コントラクトは LogNew(identifier, index) を発行し、オフチェーンのインデクサーが新しいレコードを追跡できるようにします。",
+  "sim.insertWalkthrough.step.event.mobile": "LogNew イベントを発行"
+}

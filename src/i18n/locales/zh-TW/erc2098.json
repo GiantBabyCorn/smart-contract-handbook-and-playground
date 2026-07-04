@@ -1,0 +1,29 @@
+{
+  "short": "精簡簽章表示",
+  "introduction": "ERC-2098 定義了以太坊 secp256k1 簽章的一種精簡的 64 位元組表示，以 r 與 yParityAndS 這兩個 32 位元組的字組取代傳統的 65 位元組 (r, s, v) 三元組。它由 Richard Moore 與 Nick Johnson 於 2019 年 3 月提出。此編碼依賴於正規簽章中 s 值的最高位元為零這一事實，因此將 yParity 位元儲存在這個閒置的高位元中，得到 yParityAndS = (yParity << 255) | s。解碼時則反向操作，還原出 r、s 與 yParity 供 ecrecover 使用。",
+  "designPurpose": "ERC-2098 的設計目的是縮減浪費空間與 gas 的簽章負載。一個正規簽章需要 65 位元組，但一旦填補到 256 位元的 EVM 字組，就會佔用 96 位元組，其中注入了 31 個零位元組，而 RLP 編碼的交易平均要為 yParity 多花 1.5 位元組。透過將 yParity 位元打包進 s 恆為零的高位元，此標準將完整簽章裝入兩個對齊的 32 位元組的字組中，在不遺失任何資訊的前提下縮減了 calldata 大小以及傳遞簽章的 gas 成本。",
+  "commonUsage": "凡是簽章以 calldata 形式傳輸且空間受限的場景，都會用到精簡簽章：元交易中繼器、多重簽章錢包以及 permit 式授權。ethers.js 函式庫將打包後的形式作為內部拆分簽章屬性公開，還原工具在呼叫 ecrecover 之前會同時接受 (r, yParityAndS) 佈局與經典的 (r, s, v) 形式。由於這種表示只是一種純粹的編碼，它可以與任何已經依賴 ECDSA 簽章的方案組合使用。",
+
+  "node.signer": "簽署者",
+  "node.encoder": "精簡編碼器",
+  "node.compactSig": "精簡簽章",
+  "node.verifier": "鏈上驗證者",
+  "node.recovered": "還原出的簽署者",
+
+  "edge.sign": "簽署摘要",
+  "edge.pack": "打包成 64 位元組",
+  "edge.submit": "提交精簡簽章",
+  "edge.recover": "還原簽署者",
+
+  "sim.compactEncoding.name": "精簡簽章編碼",
+  "sim.compactEncoding.desc": "追蹤一個簽章從正規的 (r, s, v) 形式，經過精簡打包，直到鏈上還原的完整過程。",
+  "sim.compactEncoding.param.yParity": "yParity 位元",
+  "sim.compactEncoding.step.sign": "簽署者生成一個正規的 secp256k1 簽章，包含 r、s 與 yParity 三個分量。",
+  "sim.compactEncoding.step.sign.mobile": "簽署摘要",
+  "sim.compactEncoding.step.pack": "編碼器將 yParity 存入 s 的最高位元，生成 r 與 yParityAndS 這兩個 32 位元組的字組。",
+  "sim.compactEncoding.step.pack.mobile": "打包成 64 位元組",
+  "sim.compactEncoding.step.submit": "64 位元組的精簡簽章以 (r, yParityAndS) 對的形式提交至鏈上。",
+  "sim.compactEncoding.step.submit.mobile": "提交簽章",
+  "sim.compactEncoding.step.recover": "驗證者從 yParityAndS 中解出 yParity 與 s，接著呼叫 ecrecover 還原簽署者地址。",
+  "sim.compactEncoding.step.recover.mobile": "還原簽署者"
+}

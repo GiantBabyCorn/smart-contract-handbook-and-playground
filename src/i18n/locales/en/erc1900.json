@@ -1,0 +1,64 @@
+{
+  "short": "Decentralized Type System for the EVM",
+  "introduction": "ERC-1900 defines dType, an on-chain registry and common interface for declaring reusable data types on Ethereum from Solidity structs. It was proposed by Loredana Cirstea and Christian Tzurcanu in March 2019. Each type is stored with ABI metadata keyed by an identifier computed as keccak256 of its name, letting tools and contracts share consistent type definitions. Note: ERC-1900 is Stagnant — it has been inactive for 6+ months and may never be finalized, but remains historically or technically significant.",
+  "designPurpose": "dType was designed to give Ethereum a shared vocabulary of data types instead of leaving every project to redefine the same structs in isolation. Without a common registry, on-chain data cannot flow smoothly between protocols and off-chain tools such as block explorers cannot decode arbitrary structures. By recording each type's ABI metadata on-chain under a deterministic identifier, dType lets contracts reference existing definitions and lets tools cache and search the collection.",
+  "commonUsage": "dType targets infrastructure that needs machine-readable type definitions: block explorers that decode transaction side effects, editor plugins that autocomplete typed contracts, and protocols that interoperate over a shared data model. The proposal frames dType as the base layer for later extensions — a type system with data storage (ERC-2158) and libraries of pure functions over each type. Because it never reached Final status, ERC-1900 saw only reference-implementation work rather than production adoption.",
+
+  "fn.insert.desc": "Registers a new type by storing its dType metadata struct in the registry. Returns the identifier, computed as keccak256 of the type name, and emits a LogNew event.",
+  "fn.insert.params.data": "The dType metadata struct describing the type: its typeChoice, contract address, Swarm source hash, name, and subtypes.",
+  "fn.insert.returns.identifier": "The type's primary identifier, keccak256 of its name.",
+
+  "fn.remove.desc": "Deletes the type record with the given identifier and frees its storage slot. The specification notes this function is optional and may be omitted to guarantee immutability.",
+  "fn.remove.params.identifier": "The identifier of the type to remove.",
+  "fn.remove.returns.index": "The array index the removed record occupied.",
+
+  "fn.count.desc": "Returns the number of types currently registered.",
+  "fn.count.returns.counter": "The total count of registered types.",
+
+  "fn.getTypeIdentifier.desc": "Computes the identifier for a type name without touching storage, as keccak256 of the packed name. Callers use it to derive the key for other lookups.",
+  "fn.getTypeIdentifier.params.name": "The type name, as written in Solidity.",
+  "fn.getTypeIdentifier.returns.identifier": "The identifier derived from the name.",
+
+  "fn.getByIdentifier.desc": "Returns the full dType metadata struct stored under the given identifier.",
+  "fn.getByIdentifier.params.identifier": "The identifier of the type to fetch.",
+  "fn.getByIdentifier.returns.dtype": "The stored dType metadata struct.",
+
+  "fn.get.desc": "Returns the dType metadata struct for a type looked up by its name, resolving the identifier internally.",
+  "fn.get.params.name": "The type name to look up.",
+  "fn.get.returns.dtype": "The stored dType metadata struct.",
+
+  "fn.isRegistered.desc": "Reports whether a type with the given identifier exists in the registry.",
+  "fn.isRegistered.params.identifier": "The identifier to check.",
+  "fn.isRegistered.returns.registered": "True if a type with the identifier is registered.",
+
+  "fn.LogNew.desc": "Emitted when a new type is inserted into the registry.",
+  "fn.LogNew.params.identifier": "The identifier of the newly registered type.",
+  "fn.LogNew.params.index": "The index of the type in the registry's identifier array.",
+
+  "fn.LogUpdate.desc": "Emitted when an existing type record is updated.",
+  "fn.LogUpdate.params.identifier": "The identifier of the updated type.",
+  "fn.LogUpdate.params.index": "The index of the type in the registry's identifier array.",
+
+  "fn.LogRemove.desc": "Emitted when a type record is removed from the registry.",
+  "fn.LogRemove.params.identifier": "The identifier of the removed type.",
+  "fn.LogRemove.params.index": "The index the removed type occupied in the identifier array.",
+
+  "node.user": "Type Author",
+  "node.contract": "dType Registry",
+  "node.storageTypes": "Type Storage",
+
+  "edge.callInsert": "Call insert()",
+  "edge.updateTypes": "Store type record",
+  "edge.emitLogNew": "Emit LogNew event",
+
+  "sim.insertWalkthrough.name": "Register a Type Walkthrough",
+  "sim.insertWalkthrough.desc": "Follow an insert call from the author through registry storage to the LogNew event.",
+  "sim.insertWalkthrough.param.name": "Type name",
+  "sim.insertWalkthrough.param.typeChoice": "Type choice",
+  "sim.insertWalkthrough.step.call": "The author calls insert(data) with a dType struct describing the type to register.",
+  "sim.insertWalkthrough.step.call.mobile": "Call insert()",
+  "sim.insertWalkthrough.step.execute": "The registry derives identifier = keccak256(name), writes the record into the typeStruct mapping, and appends it to the typeIndex array.",
+  "sim.insertWalkthrough.step.execute.mobile": "Store type record",
+  "sim.insertWalkthrough.step.event": "The registry emits LogNew(identifier, index) so off-chain indexers can track the new type.",
+  "sim.insertWalkthrough.step.event.mobile": "Emit LogNew event"
+}

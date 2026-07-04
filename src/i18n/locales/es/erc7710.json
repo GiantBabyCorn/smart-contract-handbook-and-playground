@@ -1,0 +1,32 @@
+{
+  "short": "Interfaz de Delegación de Contratos Inteligentes",
+  "introduction": "ERC-7710 define una interfaz mínima para la delegación de contratos inteligentes, que permite a un delegador autorizar a un Administrador de Delegación (Delegation Manager) a actuar en su nombre. Fue propuesto por Ryan McPeck, Dan Finlay, Rob Dawson y Derek Chiang en mayo de 2024. Un delegado llama a redeemDelegations con un contexto de permiso que prueba su autoridad, además de los modos y calldata de ERC-7579; el administrador lo verifica e impulsa al delegador a ejecutar la acción. Nota: ERC-7710 es un Draft; la especificación aún está en desarrollo activo y puede cambiar sustancialmente.",
+  "designPurpose": "ERC-7710 se diseñó para reemplazar los permisos codificados de forma rígida y los contratos intermediarios a medida que antes se necesitaban para que un contrato usara las capacidades de otro, lo que aumentaba la complejidad y los costos de gas. También aborda la fricción de tener que volver a firmar en cada interacción, al permitir que un usuario otorgue una única delegación restringida por políticas. La interfaz especifica únicamente redeemDelegations y toma prestada la codificación de ejecución de ERC-7579, de modo que una cuenta inteligente existente puede actuar como delegador sin implementar un nuevo método de ejecución.",
+  "commonUsage": "El estándar está pensado para sesiones de larga duración y permisos acotados: sesiones persistentes de dApp que evitan firmar repetidamente, autoridad de alcance limitado otorgada a agentes de IA o sistemas automatizados, enlaces de invitación compartibles que portan capacidades específicas, y delegados de terceros que actúan dentro de límites de política definidos. Como solo cubre el canje y deja la creación de la delegación fuera de su alcance, normalmente se combina con un marco como el MetaMask Delegation Framework, que gestiona la firma, los caveats y la revocación.",
+
+  "fn.redeemDelegations.desc": "Lo llama un delegado para canjear una o más delegaciones. El administrador valida cada contexto de permiso y, si está autorizado, ejecuta el modo y el calldata de ERC-7579 emparejados a través del delegador. Revierte cuando los arreglos difieren en longitud.",
+  "fn.redeemDelegations.params.permissionContexts": "Datos por cada delegación que prueban la autoridad del llamador para actuar en nombre de cada delegador; su estructura la define el Administrador de Delegación específico.",
+  "fn.redeemDelegations.params.modes": "Arreglo de modos de ejecución de ERC-7579, cada uno de los cuales codifica el comportamiento de la llamada —como una llamada única o una llamada por lotes— para la ejecución correspondiente.",
+  "fn.redeemDelegations.params.executionCallData": "Arreglo de ejecuciones codificadas de ERC-7579, cada una de las cuales suele llevar un objetivo, un value y calldata para ejecutar en nombre del delegador.",
+
+  "node.delegate": "Delegado (canjeador)",
+  "node.contract": "Administrador de Delegación",
+  "node.delegator": "Delegador",
+  "node.target": "Contrato objetivo",
+
+  "edge.callRedeem": "Llamar a redeemDelegations()",
+  "edge.callDelegator": "Llamar al delegador",
+  "edge.executeAction": "Ejecutar la acción",
+
+  "sim.redeemDelegationWalkthrough.name": "Canjear una delegación",
+  "sim.redeemDelegationWalkthrough.desc": "Sigue a un delegado mientras canjea una delegación a través del Administrador de Delegación y el delegador ejecuta la acción en un contrato objetivo.",
+  "sim.redeemDelegationWalkthrough.param.delegator": "Cuenta del delegador",
+  "sim.redeemDelegationWalkthrough.param.target": "Contrato objetivo",
+  "sim.redeemDelegationWalkthrough.param.mode": "Modo de ejecución",
+  "sim.redeemDelegationWalkthrough.step.call": "El delegado llama a redeemDelegations en el Administrador de Delegación, pasando los contextos de permiso, los modos de ejecución y el calldata de las acciones que quiere ejecutar.",
+  "sim.redeemDelegationWalkthrough.step.call.mobile": "Llamar a redeemDelegations()",
+  "sim.redeemDelegationWalkthrough.step.validate": "El administrador verifica que cada contexto de permiso pruebe una autoridad válida. Si todas las delegaciones son válidas, llama al delegador correspondiente; de lo contrario, el lote se revierte.",
+  "sim.redeemDelegationWalkthrough.step.validate.mobile": "Verificar autoridad",
+  "sim.redeemDelegationWalkthrough.step.execute": "El delegador ejecuta la acción codificada de ERC-7579 en el contrato objetivo, completando la capacidad que el delegado estaba autorizado a usar.",
+  "sim.redeemDelegationWalkthrough.step.execute.mobile": "Ejecutar en el objetivo"
+}

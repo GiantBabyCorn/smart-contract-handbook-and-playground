@@ -1,0 +1,55 @@
+{
+  "short": "Token Minting and Burning Extension",
+  "introduction": "ERC-5679 defines consistent interfaces for minting and burning fungible, non-fungible, and multi-token assets, extending the EIP-20, EIP-721, and EIP-1155 standards. It was proposed by Zainan Victor Zhou in September 2022. The standard specifies dedicated mint and burn functions for each token type, including safe-mint variants that check receiver contracts and batch operations for EIP-1155, and requires the existing Transfer event to be emitted from the zero address when minting so supply changes stay observable.",
+  "designPurpose": "ERC-5679 was designed to standardize how tokens are created and destroyed, which EIP-20, EIP-721, and EIP-1155 leave unspecified. Before it, implementations reused transfer methods or invented ad-hoc mint and burn signatures, so tooling could not rely on a common interface and access-control mistakes were easy to make. By defining separate mint and burn functions with their own EIP-165 identifiers per token type, the standard isolates supply-changing actions from transfers and makes support detectable on-chain.",
+  "commonUsage": "Mint and burn interfaces are used by stablecoin issuers that expand or contract supply against reserves, by bridges that mint wrapped representations of locked assets and burn them on redemption, and by NFT and gaming platforms that issue or retire tokens. Because ERC-5679 defines one interface per token type, a contract pairs it with the matching EIP-20, EIP-721, or EIP-1155 base, gates the new functions behind access-control roles, and exposes EIP-165 identifiers so callers can confirm support before minting.",
+
+  "fn.mint.desc": "Creates _amount new fungible tokens and assigns them to _to as part of the EIP-20 extension. Total supply increases and a Transfer event is emitted as if the tokens came from the zero address.",
+  "fn.mint.params._to": "The address that receives the newly minted tokens.",
+  "fn.mint.params._amount": "The quantity of tokens to create.",
+  "fn.mint.params._data": "Additional data with no specified format, passed with the mint call.",
+
+  "fn.burn.desc": "Destroys _amount fungible tokens held by _from as part of the EIP-20 extension. Total supply decreases and a Transfer event is emitted as if the tokens were sent to the zero address.",
+  "fn.burn.params._from": "The address whose tokens are destroyed.",
+  "fn.burn.params._amount": "The quantity of tokens to destroy.",
+  "fn.burn.params._data": "Additional data with no specified format, passed with the burn call.",
+
+  "fn.safeMint.desc": "Mints the EIP-721 token identified by _id to _to, applying the same receiver checks as safeTransferFrom so the token is never sent to a contract that cannot receive it.",
+  "fn.safeMint.params._to": "The address that receives the newly minted token.",
+  "fn.safeMint.params._id": "The identifier of the EIP-721 token to mint.",
+  "fn.safeMint.params._data": "Additional data forwarded to the recipient's onERC721Received callback.",
+
+  "fn.safeMintBatch.desc": "Mints several EIP-1155 balances at once, creating each amount in amounts for the matching id in ids and assigning them to the recipient with the receiver checks of a safe transfer.",
+  "fn.safeMintBatch.params.to": "The address that receives the minted balances.",
+  "fn.safeMintBatch.params.ids": "The list of token identifiers to mint.",
+  "fn.safeMintBatch.params.amounts": "The amount to mint for each corresponding identifier.",
+  "fn.safeMintBatch.params.data": "Additional data forwarded to the recipient's batch-receive callback.",
+
+  "fn.burnBatch.desc": "Destroys several EIP-1155 balances at once, removing each amount in amounts for the matching id in ids from _from and decreasing total supply accordingly.",
+  "fn.burnBatch.params._from": "The address whose balances are destroyed.",
+  "fn.burnBatch.params.ids": "The list of token identifiers to burn.",
+  "fn.burnBatch.params.amounts": "The amount to burn for each corresponding identifier.",
+  "fn.burnBatch.params._data": "Additional data with no specified format, passed with the burn call.",
+
+  "node.user": "Token Issuer",
+  "node.contract": "ERC-5679 Token",
+  "node.storageSupply": "Supply & Balances",
+  "node.recipient": "Recipient",
+
+  "edge.callMint": "Call mint()",
+  "edge.callBurn": "Call burn()",
+  "edge.updateSupply": "Update supply & balances",
+  "edge.mintTokens": "Deliver minted tokens",
+  "edge.emitTransfer": "Emit Transfer event",
+
+  "sim.mintWalkthrough.name": "Mint Tokens Walkthrough",
+  "sim.mintWalkthrough.desc": "Follow a mint call from the issuer through the supply update to the Transfer event emitted from the zero address.",
+  "sim.mintWalkthrough.param.to": "Recipient",
+  "sim.mintWalkthrough.param.amount": "Amount",
+  "sim.mintWalkthrough.step.call": "The issuer calls mint(_to, _amount, _data) on the token contract to create new tokens for the recipient.",
+  "sim.mintWalkthrough.step.call.mobile": "Call mint()",
+  "sim.mintWalkthrough.step.execute": "The contract increases total supply and credits the recipient's balance with the newly minted amount.",
+  "sim.mintWalkthrough.step.execute.mobile": "Update supply",
+  "sim.mintWalkthrough.step.transfer": "The contract emits Transfer from the zero address to the recipient, marking the amount as newly issued so indexers can track it.",
+  "sim.mintWalkthrough.step.transfer.mobile": "Emit Transfer event"
+}

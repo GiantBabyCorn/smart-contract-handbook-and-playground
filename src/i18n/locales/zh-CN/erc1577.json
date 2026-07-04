@@ -1,0 +1,31 @@
+{
+  "short": "ENS 解析器的 contenthash 字段",
+  "introduction": "ERC-1577 定义了 ENS 解析器的 contenthash 字段，将人类可读的 ENS 名称映射到 IPFS 或 Swarm 等网络上的内容地址。该标准由 Dean Eigenmann 和 Nick Johnson 于 2018 年 11 月提出。其值是一个形如 <protoCode uvarint><value> 的 multicodec：protoCode 标识存储系统，其余字节则是内容地址。注意：ERC-1577 处于 Stagnant（停滞）状态——它已有 6 个月以上未活跃，可能永远不会最终定稿，但仍具有历史或技术上的重要意义。",
+  "designPurpose": "ERC-1577 旨在为 ENS 提供一个定义明确的字段，用于将名称指向链下内容。在此之前，客户端通过临时的 content 和 multihash 字段将名称解析为 IPFS 或 Swarm 哈希，而这些字段并不记录某个值使用了哪个网络或格式，因此客户端无从判断如何获取目标。通过将值设为 multicodec——protoCode 前缀后跟编码后的地址——该标准让一个解析器可以服务于多种协议，而每个客户端通过读取 protoCode 来解析地址。",
+  "commonUsage": "contenthash 字段由将 ENS 名称解析到去中心化网站的钱包和浏览器读取，包括规范中点名的 MetaMask 和 Status 客户端。它支撑着 .eth 网站托管：一个名称解析到 IPFS 或 Swarm 站点，客户端从编码地址获取该站点。编码库对 multicodec 值进行解码和重新编码，使应用无需硬编码单一协议即可跟随目标，而解析器通过 0xbc1c58d1 接口标识符声明支持。",
+
+  "node.user": "域名所有者",
+  "node.encoder": "contenthash 编码器",
+  "node.storageContenthash": "解析器 contenthash",
+  "node.resolver": "ENS 解析器",
+  "node.decoder": "Multicodec 解码器",
+  "node.network": "内容网络",
+
+  "edge.submitAddress": "提交内容地址",
+  "edge.encodeContenthash": "编码 contenthash",
+  "edge.readContenthash": "读取 contenthash",
+  "edge.returnContenthash": "返回 contenthash",
+  "edge.fetchContent": "解码并获取内容",
+
+  "sim.resolveWalkthrough.name": "解析 contenthash 演练",
+  "sim.resolveWalkthrough.desc": "跟随一个 contenthash 值，从编码经过 ENS 解析器，直到解码后的 IPFS 或 Swarm 获取。",
+  "sim.resolveWalkthrough.param.protocol": "存储协议",
+  "sim.resolveWalkthrough.step.submit": "域名所有者提交一个内容地址，以便将其编码进 contenthash 字段。",
+  "sim.resolveWalkthrough.step.submit.mobile": "提交内容地址",
+  "sim.resolveWalkthrough.step.encode": "该地址被打包成一个 multicodec 值——protoCode 前缀后跟编码后的内容地址——并存储在解析器中。",
+  "sim.resolveWalkthrough.step.encode.mobile": "编码并存储",
+  "sim.resolveWalkthrough.step.resolve": "应用查询 ENS 解析器，解析器返回存储的 contenthash 字节以供解码。",
+  "sim.resolveWalkthrough.step.resolve.mobile": "解析 contenthash",
+  "sim.resolveWalkthrough.step.decode": "客户端读取 protoCode（IPFS 为 0xe3）以选择协议，并从该网络获取内容。",
+  "sim.resolveWalkthrough.step.decode.mobile": "解码并获取"
+}

@@ -1,0 +1,32 @@
+{
+  "short": "대소문자 혼합 체크섬 주소 인코딩",
+  "introduction": "ERC-55는 Ethereum 주소를 위한 하위 호환 체크섬을 정의하며, 16진수 숫자의 영문자 대소문자에 오류 검출 비트를 인코딩합니다. 이 방식은 2016년 1월 Vitalik Buterin과 Alex Van de Sande가 제안했습니다. 주소는 먼저 40자 소문자 16진수 형식으로 변환된 뒤 ASCII 문자열로서 Keccak-256으로 해시되며, 각 16진수 영문자는 해시에서 대응하는 니블이 8 이상일 때 대문자로, 그렇지 않으면 소문자로 유지됩니다. 10진수 숫자는 변하지 않으므로 주소는 길이를 유지하면서 약 15개의 검사 비트를 추가합니다.",
+  "designPurpose": "ERC-55는 길이를 바꾸거나 기존 도구를 손상시키지 않으면서 잘못 입력된 Ethereum 주소를 잡아내기 위해 설계되었습니다. 순수 16진수 주소에는 중복성이 없어 문자 하나만 바뀌어도 또 다른 유효해 보이는 주소가 되어 자금을 잃을 수 있습니다. ERC-55는 체크섬을 덧붙이는 대신 a-f 영문자의 대소문자를 문자별 검사로 재사용합니다. 대부분의 파서는 대소문자가 혼합된 16진수를 허용하므로 체크섬이 적용된 주소는 오래된 소프트웨어에서도 작동하며, 이를 지원하는 클라이언트는 대소문자가 해시와 일치하지 않는 주소를 거부합니다.",
+  "commonUsage": "대소문자 혼합 체크섬은 Ethereum 주소가 사람에게 표시되는 거의 모든 곳에 나타납니다. 지갑, 블록 익스플로러, 그리고 web3.js와 ethers.js 같은 라이브러리가 이 형식으로 주소를 렌더링하고 검증합니다. 이 인코딩은 주소의 순수 함수이므로 온체인 컨트랙트나 스토리지가 필요 없으며, 소프트웨어는 주소를 표시할 때 이를 적용하고 대소문자가 검사에 실패하면 경고하거나 거부합니다. 사양의 전체 대문자, 전체 소문자, 일반 테스트 벡터는 구현을 검증하는 데 흔히 사용됩니다.",
+
+  "node.user": "주소 소스",
+  "node.encoder": "체크섬 인코더",
+  "node.storageHash": "Keccak-256 해시",
+  "node.storageResult": "체크섬이 적용된 주소",
+  "node.verifier": "체크섬 검증기",
+  "node.consumer": "검증 지갑",
+
+  "edge.submitAddress": "소문자 주소 제출",
+  "edge.hashAddress": "소문자 16진수 해시",
+  "edge.applyCasing": "영문자 대소문자 적용",
+  "edge.readHash": "해시 비트 읽기",
+  "edge.checkChecksum": "대소문자 확인",
+  "edge.deliverAddress": "검증된 주소 전달",
+
+  "sim.checksumWalkthrough.name": "체크섬 인코딩 둘러보기",
+  "sim.checksumWalkthrough.desc": "소문자 주소를 따라가며 인코더가 이를 해시하고 ERC-55 영문자 대소문자를 적용하며 클라이언트가 결과를 검증하는 과정을 살펴봅니다.",
+  "sim.checksumWalkthrough.param.address": "소문자 주소",
+  "sim.checksumWalkthrough.step.submit": "지갑 또는 애플리케이션이 순수 소문자 16진수 주소를 체크섬 인코더에 제출합니다.",
+  "sim.checksumWalkthrough.step.submit.mobile": "주소 제출",
+  "sim.checksumWalkthrough.step.hash": "인코더는 40자 16진수 주소를 ASCII로 취급하고 Keccak-256 해시를 계산하며, 이 해시가 대소문자 비트를 제공합니다.",
+  "sim.checksumWalkthrough.step.hash.mobile": "소문자 16진수 해시",
+  "sim.checksumWalkthrough.step.case": "각 16진수 영문자는 대응하는 해시 니블이 8 이상일 때 대문자로 바뀌고 그렇지 않으면 소문자로 유지되어 대소문자 혼합 주소를 생성합니다.",
+  "sim.checksumWalkthrough.step.case.mobile": "영문자 대소문자 적용",
+  "sim.checksumWalkthrough.step.verify": "검증 클라이언트는 해시로부터 대소문자를 다시 도출하여 비교하고, 모든 영문자가 일치할 때만 주소를 수락합니다.",
+  "sim.checksumWalkthrough.step.verify.mobile": "체크섬 검증"
+}

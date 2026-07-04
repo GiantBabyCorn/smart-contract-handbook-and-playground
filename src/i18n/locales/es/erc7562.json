@@ -1,0 +1,32 @@
+{
+  "short": "Reglas de Alcance de Validación de Abstracción de Cuenta",
+  "introduction": "ERC-7562 define las reglas de alcance de validación que los bundlers aplican fuera de la cadena antes de admitir UserOperations de abstracción de cuenta en un mempool compartido. Fue propuesto por Yoav Weiss, Dror Tirosh, Alex Forshtat y Shahaf Nacson en septiembre de 2023. Las reglas limitan qué opcodes puede ejecutar un marco de validación y a qué slots de almacenamiento puede acceder, de modo que operaciones no relacionadas no puedan invalidarse entre sí de forma barata. Nota: ERC-7562 es un Draft (borrador); la especificación aún está en desarrollo activo y puede cambiar sustancialmente.",
+  "designPurpose": "ERC-7562 se diseñó para que un mempool de abstracción de cuenta sea tan resistente a la denegación de servicio como el mempool ordinario de EOA. Dado que la validación ejecuta código EVM arbitrario sobre almacenamiento mutable, de lo contrario UserOperations no relacionadas podrían invalidarse entre sí de forma masiva. Las reglas aíslan en un sandbox cada marco de validación: bloquean opcodes de entorno como TIMESTAMP y NUMBER, restringen el acceso al almacenamiento a los slots asociados a la cuenta y exigen que las entidades compartidas globalmente depositen un stake para poder limitar (throttle) a las que se comportan mal.",
+  "commonUsage": "Estas reglas las implementan los bundlers y los constructores de bloques que operan mempools de abstracción de cuenta, principalmente para las UserOperations de ERC-4337 y la abstracción de cuenta nativa de RIP-7560. Un bundler rastrea la fase de validación de cada UserOperation y rechaza cualquiera que viole las reglas de opcode, almacenamiento o reputación antes de propagarla. El modelo de staking también condiciona cómo se escriben los contratos paymaster, factory y aggregator, ya que solo las entidades con stake pueden acceder al almacenamiento más allá de los slots propios de la cuenta.",
+
+  "node.sender": "Emisor de la operación",
+  "node.contract": "Validación del bundler",
+  "node.storageAssociated": "Almacenamiento asociado",
+  "node.storageReputation": "Contadores de reputación",
+  "node.mempool": "Mempool canónico",
+  "node.peer": "Bundlers pares",
+
+  "edge.submitOp": "Enviar UserOperation",
+  "edge.checkStorage": "Verificar alcance de almacenamiento",
+  "edge.updateReputation": "Actualizar reputación",
+  "edge.acceptOp": "Aceptar en el mempool",
+  "edge.propagate": "Propagar a los pares",
+
+  "sim.validateOpWalkthrough.name": "Validar una UserOperation",
+  "sim.validateOpWalkthrough.desc": "Sigue una UserOperation desde su envío, pasando por las reglas de opcode y de alcance de almacenamiento y la verificación de reputación, hasta entrar en el mempool compartido.",
+  "sim.validateOpWalkthrough.param.entity": "Tipo de entidad",
+  "sim.validateOpWalkthrough.param.staked": "La entidad tiene stake",
+  "sim.validateOpWalkthrough.step.submit": "El emisor envía una UserOperation a un bundler, que comienza a rastrear su fase de validación antes de añadirla al mempool.",
+  "sim.validateOpWalkthrough.step.submit.mobile": "Enviar UserOperation",
+  "sim.validateOpWalkthrough.step.trace": "El bundler aplica las reglas de opcode y verifica que el marco de validación solo acceda al almacenamiento propio de la cuenta o a los slots asociados a su dirección.",
+  "sim.validateOpWalkthrough.step.trace.mobile": "Verificar reglas de alcance",
+  "sim.validateOpWalkthrough.step.reputation": "El bundler incrementa el contador opsSeen de la entidad y evalúa su tasa de inclusión para decidir si la entidad está OK, limitada (throttled) o prohibida (banned).",
+  "sim.validateOpWalkthrough.step.reputation.mobile": "Actualizar reputación",
+  "sim.validateOpWalkthrough.step.accept": "Tras superar todas las reglas, la UserOperation se acepta en el mempool canónico y se propaga a los bundlers pares a través de la red P2P.",
+  "sim.validateOpWalkthrough.step.accept.mobile": "Aceptar y propagar"
+}

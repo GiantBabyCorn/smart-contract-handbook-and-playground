@@ -1,0 +1,75 @@
+{
+  "short": "General Data Key/Value Store and Execution",
+  "introduction": "ERC-725 defines two building blocks for smart contract accounts: a key/value data store (ERC725Y) mapping bytes32 keys to arbitrary bytes values, and a generic execution function (ERC725X) for calling, creating, or delegatecalling other contracts. It was proposed by Fabian Vogelsteller and Tyler Yasaka in October 2017. Both parts are owner-controlled via ERC-173 and usable together or separately. Note: ERC-725 is a Draft; the specification is still under active development and may change substantially.",
+  "designPurpose": "ERC-725 was designed to give smart contract accounts a data and execution layout flexible enough to last long-term yet standardized enough for tooling to rely on. Before it, each project invented its own storage variables and execution entry points, so external contracts and off-chain apps could not read or drive them uniformly. Keeping all data under one mapping(bytes32 => bytes) and routing outgoing actions through a single execute function lets protocols reinterpret its data without changing the interface.",
+  "commonUsage": "ERC-725 serves as a foundation for modular smart contract accounts and for upgradable on-chain metadata. Its ERC725Y store is used on its own to attach mutable metadata to NFTs, tokens, and other contracts, while ERC725X provides a generic execute entry point for account-style contracts that act on a user's behalf. The spec notes that the account form is standardized as LSP0-ERC725Account, with LSP2-ERC725JSONSchema defining how keys and values are encoded.",
+
+  "fn.execute.desc": "Executes a single operation from the account: a call, contract creation with CREATE or CREATE2, staticcall, or delegatecall, selected by operationType. May only be called by the current owner and reverts if the operation fails.",
+  "fn.execute.params.operationType": "The operation type to perform: 0 for CALL, 1 for CREATE, 2 for CREATE2, 3 for STATICCALL, or 4 for DELEGATECALL.",
+  "fn.execute.params.target": "The contract or address to call; should be address(0) when creating a contract.",
+  "fn.execute.params.value": "The amount of native token to transfer, in wei.",
+  "fn.execute.params.data": "The call data, or the creation bytecode when deploying a contract.",
+  "fn.execute.returns.returnData": "The data returned by the called function, or the address of the deployed contract.",
+
+  "fn.executeBatch.desc": "Executes a batch of operations in one transaction, taking equal-length arrays of operation types, targets, values, and call data. Only the owner may call it, and it reverts if any operation fails.",
+  "fn.executeBatch.params.operationsType": "The list of operation types to perform for each call.",
+  "fn.executeBatch.params.targets": "The list of addresses to call for each operation.",
+  "fn.executeBatch.params.values": "The list of native token amounts to transfer, in wei.",
+  "fn.executeBatch.params.datas": "The list of call data or contract creation bytecode.",
+  "fn.executeBatch.returns.results": "The array of returned data or deployed contract addresses.",
+
+  "fn.getData.desc": "Returns the bytes value stored under a single data key in the ERC725Y store. Any caller can read it.",
+  "fn.getData.params.dataKey": "The data key whose value to retrieve.",
+  "fn.getData.returns.dataValue": "The bytes value stored for the requested data key.",
+
+  "fn.getDataBatch.desc": "Returns the values stored under multiple data keys in one call, keeping gas costs low for bulk reads.",
+  "fn.getDataBatch.params.dataKeys": "The list of data keys whose values to retrieve.",
+  "fn.getDataBatch.returns.dataValues": "The array of bytes values for the requested data keys.",
+
+  "fn.setData.desc": "Stores a bytes value under a single data key in the ERC725Y store, overwriting any previous value. Only the owner may call it, and it emits DataChanged.",
+  "fn.setData.params.dataKey": "The data key whose value to set.",
+  "fn.setData.params.dataValue": "The bytes value to store.",
+
+  "fn.setDataBatch.desc": "Stores values under multiple data keys in one call, taking equal-length arrays of keys and values. Only the owner may call it, and it emits DataChanged for each key.",
+  "fn.setDataBatch.params.dataKeys": "The list of data keys whose values to set.",
+  "fn.setDataBatch.params.dataValues": "The list of bytes values to store.",
+
+  "fn.Executed.desc": "Emitted when execute performs a CALL, STATICCALL, or DELEGATECALL (operation types 0, 3, and 4).",
+  "fn.Executed.params.operationType": "The operation type that was executed.",
+  "fn.Executed.params.target": "The address that was called.",
+  "fn.Executed.params.value": "The amount of native token sent, in wei.",
+  "fn.Executed.params.data": "The first four bytes of the call data, typically the function selector.",
+
+  "fn.ContractCreated.desc": "Emitted when execute deploys a new contract via CREATE or CREATE2 (operation types 1 and 2).",
+  "fn.ContractCreated.params.operationType": "The operation type used to deploy the contract.",
+  "fn.ContractCreated.params.contractAddress": "The address of the newly deployed contract.",
+  "fn.ContractCreated.params.value": "The amount of native token sent to the new contract, in wei.",
+  "fn.ContractCreated.params.salt": "The bytes32 salt used for a CREATE2 deployment.",
+
+  "fn.DataChanged.desc": "Emitted whenever a data key's value is successfully set in the ERC725Y store.",
+  "fn.DataChanged.params.dataKey": "The data key whose value changed.",
+  "fn.DataChanged.params.dataValue": "The new bytes value stored for the key.",
+
+  "node.user": "Account Owner",
+  "node.contract": "ERC-725 Account",
+  "node.storageData": "Data Store",
+  "node.target": "Target Contract",
+
+  "edge.callExecute": "Call execute()",
+  "edge.callSetData": "Call setData()",
+  "edge.forwardCall": "Forward call",
+  "edge.updateStore": "Update data store",
+  "edge.emitExecuted": "Emit Executed event",
+  "edge.emitDataChanged": "Emit DataChanged event",
+
+  "sim.setDataWalkthrough.name": "Set Data Walkthrough",
+  "sim.setDataWalkthrough.desc": "Follow a setData call from the owner through the ERC725Y data store to the DataChanged event.",
+  "sim.setDataWalkthrough.param.dataKey": "Data key",
+  "sim.setDataWalkthrough.param.dataValue": "Data value",
+  "sim.setDataWalkthrough.step.call": "The owner calls setData(dataKey, dataValue) on the ERC-725 account to store a value.",
+  "sim.setDataWalkthrough.step.call.mobile": "Call setData()",
+  "sim.setDataWalkthrough.step.execute": "The contract checks that the caller is the owner, then writes the value into the bytes32-to-bytes data store, overwriting any previous value for the key.",
+  "sim.setDataWalkthrough.step.execute.mobile": "Write to data store",
+  "sim.setDataWalkthrough.step.event": "The contract emits DataChanged(dataKey, dataValue) so indexers and off-chain apps can track the update.",
+  "sim.setDataWalkthrough.step.event.mobile": "Emit DataChanged event"
+}

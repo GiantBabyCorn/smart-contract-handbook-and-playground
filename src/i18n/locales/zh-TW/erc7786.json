@@ -1,0 +1,54 @@
+{
+  "short": "跨鏈訊息閘道",
+  "introduction": "ERC-7786 定義了一套通用介面與工作流程，使智能合約能夠透過任意採用該標準的橋來傳送與接收任意跨鏈資料。它由 Francisco Giordano、Hadrien Croubois、Ernesto García 等人於 2024 年 10 月提出。源閘道的 sendMessage 會將載荷分發給由 ERC-7930 可互通位址（Interoperable Address）指定的接收方，並發出 MessageSent 事件；目標閘道則透過 receiveMessage 進行投遞。橋的功能特性以 bytes4 為鍵的屬性形式傳遞，而非專有呼叫。",
+  "designPurpose": "ERC-7786 旨在克服各跨鏈訊息協議之間的破碎化問題——每個協議都暴露自己專有的介面與工作流程。這種缺乏可移植性的狀況使得通用的跨鏈合約難以實作，並將應用綁定到某一個可能被暫停或棄用的橋上。透過圍繞 ERC-7930 位址標準化 sendMessage 與 receiveMessage，該 ERC 讓合約只需更新單一儲存的位址即可切換閘道，同時透過共享的核心介面以屬性形式呈現橋特有的選項。",
+  "commonUsage": "該介面面向跨鏈原生合約以及連接它們的閘道：既包括直接實作它的協議，也包括將現有橋包裝在可互換 API 之後的轉接閘道。應用呼叫 sendMessage 將不透明的載荷傳遞給接收方，並實作 receiveMessage 來接受投遞，同時首先檢查呼叫者是否為受信任的閘道。作為獨立 ERC 標準化的屬性（例如最小目標 gas 上限）可以在不使用專有呼叫的情況下請求橋的功能特性。",
+
+  "fn.supportsAttribute.desc": "回傳閘道是否支援由其 4 位元組選擇器鍵標識的屬性。支援可以透過升級來新增，但不應被移除，從而為呼叫者保持向後相容。",
+  "fn.supportsAttribute.params.selector": "4 位元組的屬性鍵，建議採用 Solidity 函式選擇器。",
+  "fn.supportsAttribute.returns.supported": "如果閘道支援給定的屬性鍵，則為 true。",
+
+  "fn.sendMessage.desc": "發起向另一條鏈上的接收方傳送訊息，攜帶載荷、任意呼叫價值以及一組屬性。遇到未知屬性時會以 UnsupportedAttribute 回退，發出 MessageSent，並可能回傳一個非零的傳送識別碼。",
+  "fn.sendMessage.params.recipient": "作為二進位 ERC-7930 可互通位址的目標鏈接收方；對於未指定的目標，可以省略或置零。",
+  "fn.sendMessage.params.payload": "要投遞給接收方的不透明位元組載荷。",
+  "fn.sendMessage.params.attributes": "一組屬性，每個屬性將 4 位元組的鍵與其編碼值串接在一起，用於請求橋特有的功能特性；空列表也是有效的。",
+  "fn.sendMessage.returns.sendId": "用於追蹤訊息的唯一非零傳送識別碼，若閘道不分配則為零。",
+
+  "fn.receiveMessage.desc": "將從另一條鏈傳送的訊息投遞給接收方合約；目標閘道會以識別碼、發送方和載荷呼叫它。接收方必須驗證呼叫者是受信任的閘道，並回傳 receiveMessage 選擇器。",
+  "fn.receiveMessage.params.receiveId": "所投遞訊息對於呼叫閘道的唯一識別碼，或為空。",
+  "fn.receiveMessage.params.sender": "作為二進位 ERC-7930 可互通位址的源鏈發送方。",
+  "fn.receiveMessage.params.payload": "從源鏈投遞而來的不透明位元組載荷。",
+  "fn.receiveMessage.returns.selector": "必須等於 IERC7786Recipient.receiveMessage.selector（0x2432ef26）以確認接受。",
+
+  "fn.MessageSent.desc": "當發送方請求傳送訊息時由源閘道發出，記錄傳送識別碼、發送方與接收方位址、載荷、價值以及屬性。",
+  "fn.MessageSent.params.sendId": "由 sendMessage 回傳的帶索引傳送識別碼，若無則為零。",
+  "fn.MessageSent.params.sender": "作為二進位 ERC-7930 可互通位址的源鏈發送方。",
+  "fn.MessageSent.params.recipient": "作為二進位 ERC-7930 可互通位址的目標鏈接收方。",
+  "fn.MessageSent.params.payload": "要投遞的不透明位元組載荷。",
+  "fn.MessageSent.params.value": "隨訊息一同傳送的原生代幣價值。",
+  "fn.MessageSent.params.attributes": "附加到訊息上的編碼屬性列表。",
+
+  "node.user": "訊息發送方",
+  "node.contract": "源閘道",
+  "node.bridge": "跨鏈協議",
+  "node.recipient": "接收方合約",
+
+  "edge.callSendMessage": "呼叫 sendMessage()",
+  "edge.emitMessageSent": "發出 MessageSent 事件",
+  "edge.relayMessage": "中繼訊息",
+  "edge.deliverMessage": "投遞訊息",
+
+  "sim.sendMessageWalkthrough.name": "跨鏈訊息全流程演示",
+  "sim.sendMessageWalkthrough.desc": "跟隨一條訊息，從發送方經由源閘道與橋抵達接收方的 receiveMessage 呼叫。",
+  "sim.sendMessageWalkthrough.param.recipient": "接收方位址",
+  "sim.sendMessageWalkthrough.param.payload": "訊息載荷",
+  "sim.sendMessageWalkthrough.param.value": "原生代幣價值",
+  "sim.sendMessageWalkthrough.step.call": "發送方以接收方的可互通位址、載荷以及任意屬性，在源閘道上呼叫 sendMessage。",
+  "sim.sendMessageWalkthrough.step.call.mobile": "呼叫 sendMessage()",
+  "sim.sendMessageWalkthrough.step.emit": "閘道驗證屬性、記錄傳送識別碼，並發出描述所請求訊息的 MessageSent 事件。",
+  "sim.sendMessageWalkthrough.step.emit.mobile": "發出 MessageSent 事件",
+  "sim.sendMessageWalkthrough.step.relay": "底層跨鏈協議在源交易最終確定後拾取該訊息，並將其中繼到目標鏈。",
+  "sim.sendMessageWalkthrough.step.relay.mobile": "跨鏈中繼",
+  "sim.sendMessageWalkthrough.step.receive": "目標閘道在接收方上呼叫 receiveMessage，接收方驗證受信任的呼叫者並回傳 0x2432ef26 選擇器以確認投遞。",
+  "sim.sendMessageWalkthrough.step.receive.mobile": "投遞至接收方"
+}

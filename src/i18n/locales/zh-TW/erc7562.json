@@ -1,0 +1,32 @@
+{
+  "short": "帳戶抽象驗證範圍規則",
+  "introduction": "ERC-7562 定義了打包者在將帳戶抽象 UserOperation 納入共享記憶池之前，於鏈下套用的驗證範圍規則。它由 Yoav Weiss、Dror Tirosh、Alex Forshtat 與 Shahaf Nacson 於 2023 年 9 月提出。這些規則限制了一個驗證幀可以執行哪些 opcode、可以存取哪些儲存槽，從而使互不相關的操作無法低成本地使彼此失效。注意：ERC-7562 目前為 Draft（草案），規範仍在積極開發中，可能發生重大變更。",
+  "designPurpose": "ERC-7562 的設計目標，是讓帳戶抽象記憶池具備與普通 EOA 記憶池同等的抗拒絕服務能力。由於驗證會在可變儲存上執行任意 EVM 程式碼，若不加約束，互不相關的 UserOperation 可能會大批量地使彼此失效。這些規則為每個驗證幀建立沙箱：封鎖 TIMESTAMP、NUMBER 等環境類 opcode，將儲存存取限定在與帳戶關聯的儲存槽內，並要求全域共享的實體繳納質押金，以便對行為不端者進行限流。",
+  "commonUsage": "這些規則由營運帳戶抽象記憶池的打包者與區塊建構者實作，主要面向 ERC-4337 UserOperation 與 RIP-7560 原生帳戶抽象。打包者會追蹤每個 UserOperation 的驗證階段，並在傳播之前拒絕任何違反 opcode、儲存或信譽規則的操作。質押模型也影響著 paymaster、factory 與 aggregator 合約的撰寫方式，因為只有已質押的實體才能存取帳戶自身儲存槽以外的儲存。",
+
+  "node.sender": "操作發送方",
+  "node.contract": "打包者驗證",
+  "node.storageAssociated": "關聯儲存",
+  "node.storageReputation": "信譽計數器",
+  "node.mempool": "規範記憶池",
+  "node.peer": "對等打包者",
+
+  "edge.submitOp": "提交 UserOperation",
+  "edge.checkStorage": "檢查儲存範圍",
+  "edge.updateReputation": "更新信譽",
+  "edge.acceptOp": "納入記憶池",
+  "edge.propagate": "傳播給對等節點",
+
+  "sim.validateOpWalkthrough.name": "驗證 UserOperation",
+  "sim.validateOpWalkthrough.desc": "追蹤一個 UserOperation，從提交開始，歷經 opcode 與儲存範圍規則以及信譽檢查，最終進入共享記憶池。",
+  "sim.validateOpWalkthrough.param.entity": "實體類型",
+  "sim.validateOpWalkthrough.param.staked": "實體已質押",
+  "sim.validateOpWalkthrough.step.submit": "發送方向打包者提交一個 UserOperation，打包者在將其加入記憶池之前，開始追蹤其驗證階段。",
+  "sim.validateOpWalkthrough.step.submit.mobile": "提交 UserOperation",
+  "sim.validateOpWalkthrough.step.trace": "打包者執行 opcode 規則，並檢查驗證幀僅存取該帳戶自身的儲存，或與其地址關聯的儲存槽。",
+  "sim.validateOpWalkthrough.step.trace.mobile": "檢查範圍規則",
+  "sim.validateOpWalkthrough.step.reputation": "打包者遞增該實體的 opsSeen 計數器，並評估其納入率，以判定該實體處於正常（OK）、限流（throttled）還是封禁（banned）狀態。",
+  "sim.validateOpWalkthrough.step.reputation.mobile": "更新信譽",
+  "sim.validateOpWalkthrough.step.accept": "通過所有規則後，該 UserOperation 被納入規範記憶池，並透過 P2P 網路傳播給對等打包者。",
+  "sim.validateOpWalkthrough.step.accept.mobile": "納入並傳播"
+}

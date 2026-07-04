@@ -1,0 +1,44 @@
+{
+  "short": "ENS 的多鏈地址解析",
+  "introduction": "ERC-2304 為 ENS 解析器擴展了一個多載的 addr 函式，可解析 Ethereum 以外區塊鏈的地址，並以 SLIP-0044 幣種類型索引作為鍵。該提案由 Nick Johnson 於 2019 年 9 月提出。它還定義了一個 AddressChanged 事件和一個推薦的 setAddr 設定函式，將每個地址以其原生二進位格式儲存在同一個 ENS 名稱之下。注意：ERC-2304 處於 Stagnant 狀態——它已有 6 個月以上未活動，可能永遠不會最終定案，但在歷史或技術上仍具重要意義。",
+  "designPurpose": "ERC-2304 旨在讓單個 ENS 名稱能夠解析多條區塊鏈的地址，而不僅限於 Ethereum。隨著多幣種錢包採用 ENS，作者們需要一種跨客戶端的方式來儲存和查詢非 Ethereum 地址，而最初僅支援單一地址的 addr(bytes32) 解析器無法表達這一點。ERC-2304 透過為 addr 多載一個取自 SLIP-0044 索引的 coinType 參數，並強制要求發出 AddressChanged 事件來解決這一問題，使每條鏈的地址都存放在同一個名稱之下，並讓索引器保持同步。",
+  "commonUsage": "多鏈地址解析被 ENS 解析器合約以及讀取它們的多幣種錢包所使用，因此像 alice.eth 這樣的名稱除了回傳其 Ethereum 地址外，還能回傳 Bitcoin、Litecoin 或 Binance Chain 地址。錢包會使用所選鏈的 SLIP-0044 索引呼叫 addr(node, coinType) 進行查詢，而解析器前端則呼叫 setAddr 來填入記錄。由於該 addr 多載帶有 ERC-165 介面 ID 0xf1cb7e06，客戶端可以在依賴它之前先偵測是否支援。",
+
+  "fn.addr.desc": "回傳某個 ENS node 在由 coinType 識別的區塊鏈上所儲存的地址，採用該鏈的原生二進位格式。當給定的 node 與幣種類型未設定任何地址時，回傳長度為零的值。",
+  "fn.addr.params.node": "要查詢的 ENS 名稱的 namehash。",
+  "fn.addr.params.coinType": "識別目標區塊鏈的 SLIP-0044 幣種類型索引。",
+  "fn.addr.returns.address": "以原生二進位編碼表示的地址；若未設定則為空值。",
+
+  "fn.setAddr.desc": "為給定的 ENS node 與幣種類型新增或替換所儲存的地址，然後發出 AddressChanged 事件。除非需求另有要求採用不同的介面，否則這是解析器應實作的推薦設定函式。",
+  "fn.setAddr.params.node": "要更新的 ENS 名稱的 namehash。",
+  "fn.setAddr.params.coinType": "識別目標區塊鏈的 SLIP-0044 幣種類型索引。",
+  "fn.setAddr.params.addr": "以該鏈原生二進位編碼表示的新地址。",
+
+  "fn.AddressChanged.desc": "每當某個 ENS node 與幣種類型所儲存的地址發生變化時發出，讓解析器和鏈下索引器能夠追蹤更新。",
+  "fn.AddressChanged.params.node": "地址發生變化的 ENS node。",
+  "fn.AddressChanged.params.coinType": "發生變化地址的 SLIP-0044 幣種類型索引。",
+  "fn.AddressChanged.params.newAddress": "以原生二進位編碼表示的新地址。",
+
+  "node.user": "ENS 名稱擁有者",
+  "node.contract": "ENS 解析器",
+  "node.storageAddresses": "地址記錄",
+  "node.wallet": "多幣種錢包",
+
+  "edge.callSetAddr": "呼叫 setAddr()",
+  "edge.updateAddresses": "更新地址記錄",
+  "edge.emitAddressChanged": "發出 AddressChanged 事件",
+  "edge.callAddr": "呼叫 addr()",
+  "edge.returnAddress": "回傳所儲存的地址",
+
+  "sim.setAddrWalkthrough.name": "設定多鏈地址",
+  "sim.setAddrWalkthrough.desc": "跟隨一次 setAddr 呼叫，從 ENS 名稱擁有者經由儲存到 AddressChanged 事件。",
+  "sim.setAddrWalkthrough.param.node": "ENS 名稱",
+  "sim.setAddrWalkthrough.param.coinType": "幣種類型",
+  "sim.setAddrWalkthrough.param.addr": "地址",
+  "sim.setAddrWalkthrough.step.call": "ENS 名稱擁有者在解析器上呼叫 setAddr(node, coinType, addr)，為所選區塊鏈儲存一個地址。",
+  "sim.setAddrWalkthrough.step.call.mobile": "呼叫 setAddr()",
+  "sim.setAddrWalkthrough.step.execute": "解析器將該地址寫入 _addresses 映射中該 node 與幣種類型對應的位置，替換任何先前的值。",
+  "sim.setAddrWalkthrough.step.execute.mobile": "儲存地址",
+  "sim.setAddrWalkthrough.step.event": "解析器發出 AddressChanged(node, coinType, newAddress)，以便錢包和索引器重新整理其快取的記錄。",
+  "sim.setAddrWalkthrough.step.event.mobile": "發出 AddressChanged"
+}

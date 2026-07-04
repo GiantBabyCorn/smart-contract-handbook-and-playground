@@ -1,0 +1,32 @@
+{
+  "short": "ERC-1155 供應量擴充",
+  "introduction": "ERC-5615 為 ERC-1155 多代幣合約定義了一個供應量報告擴充，由 Gavin John 於 2023 年 5 月提出。該擴充新增兩個 view 函式：totalSupply 回傳給定 id 目前流通的代幣數量，exists 回報某個 id 是否存在、曾經存在或可能存在。它將 OpenZeppelin 的 ERC1155Supply 已經實作的模式標準化，讓索引器與錢包無需依賴鏈下資料即可以可預測的方式讀取每個 id 的供應量。",
+  "designPurpose": "ERC-5615 旨在為 ERC-1155 提供一種統一的方式來揭露每個 id 的供應量，而基礎標準並未包含這一點。在此之前，各個合約各自發明自己的供應量讀取函式，或完全不提供，因此索引器與市場無法可靠地判斷某個代幣 id 已鑄造了多少單位，或某個 id 是否會存在。透過以與廣泛使用的 OpenZeppelin 實作相同的語義將 totalSupply 與 exists 規範化，ERC-5615 讓任何消費者都能透過一個可預測的介面查詢供應量。",
+  "commonUsage": "此擴充被下列場景使用：展示每個代幣 id 剩餘或總供應量的 ERC-1155 收藏品與市場、限制版本數量的鑄造介面，以及追蹤流通數量的索引器。由於它與 OpenZeppelin 的 ERC1155Supply 一致，通常會被混入現有的 ERC-1155 合約中，而不是單獨部署。exists 函式用於區分目前供應量為零的 id 與永遠無法鑄造的 id。",
+
+  "fn.exists.desc": "回傳給定的代幣 id 是否存在、曾經存在或可能存在。消費者用它來區分目前供應量為零的 id 與永遠無法鑄造的 id。",
+  "fn.exists.params.id": "要檢查其是否存在的代幣 id。",
+  "fn.exists.returns.exists": "如果代幣 id 存在、曾經存在或可能存在，則為 true；否則為 false。",
+
+  "fn.totalSupply.desc": "回傳給定 id 目前流通的代幣數量。如果代幣 id 不存在，則回傳 0。",
+  "fn.totalSupply.params.id": "要獲取其總供應量的代幣 id。",
+  "fn.totalSupply.returns.totalSupply": "給定代幣 id 的總供應量，如果不存在則為 0。",
+
+  "node.user": "供應量讀取者",
+  "node.contract": "ERC-1155 供應量代幣",
+  "node.storageSupply": "供應量儲存",
+
+  "edge.callTotalSupply": "呼叫 totalSupply()",
+  "edge.callExists": "呼叫 exists()",
+  "edge.readSupply": "讀取供應量映射",
+
+  "sim.totalSupplyWalkthrough.name": "查詢代幣供應量",
+  "sim.totalSupplyWalkthrough.desc": "追蹤一次 totalSupply 呼叫，從讀取者出發，經過合約的供應量儲存，然後呼叫 exists 來解讀為零的結果。",
+  "sim.totalSupplyWalkthrough.param.id": "代幣 id",
+  "sim.totalSupplyWalkthrough.step.call": "錢包或索引器等讀取者在 ERC-1155 合約上呼叫 totalSupply(id)，以獲取某個代幣 id 的流通數量。",
+  "sim.totalSupplyWalkthrough.step.call.mobile": "呼叫 totalSupply()",
+  "sim.totalSupplyWalkthrough.step.read": "合約讀取該 id 的供應量映射並回傳儲存的數量，如果沒有鑄造過該 id 的代幣則回傳 0。",
+  "sim.totalSupplyWalkthrough.step.read.mobile": "讀取供應量映射",
+  "sim.totalSupplyWalkthrough.step.exists": "為了解讀為零的結果，讀取者呼叫 exists(id)，它會回報該 id 是尚無供應量還是永遠無法鑄造。",
+  "sim.totalSupplyWalkthrough.step.exists.mobile": "檢查 exists()"
+}

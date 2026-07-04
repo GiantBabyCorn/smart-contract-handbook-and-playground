@@ -1,0 +1,44 @@
+{
+  "short": "ENS Resolver Profile for DNS Records",
+  "introduction": "ERC-1185 defines a resolver profile for the Ethereum Name Service (ENS) that stores and looks up DNS records. It was proposed by Jim McDonald in June 2018. The profile operates on record sets, each identified by a domain, name, and resource-type tuple that holds zero or more values in DNS wire format. Two functions write records and two view functions read them, letting ENS act as an authoritative store of DNS information. Note: ERC-1185 is in Review status; the interface may still change before it is finalized.",
+  "designPurpose": "ERC-1185 was designed to let ENS serve as a decentralized store of authoritative DNS data, giving a domain's owner full control over its records without conflating ownership with authoritative serving. Traditional DNS keeps every record for a zone in one file, which is simple but, when transposed to ENS, makes small changes costly in gas. To avoid that, the profile stores individual record sets keyed by the domain, name, and resource tuple, so a single record can be updated without rewriting the whole zone.",
+  "commonUsage": "ENS resolver contracts implement this profile to expose DNS data, which wallets, gateways, and DNS-aware software query to resolve names to records such as A or CNAME entries. Domain owners call setDNSRecords to publish records and clearDNSZone to reset a zone in one transaction, while resolvers call hasDNSRecords for wildcard lookups defined in RFC 4592. Because the profile reuses the ERC-137 resolver model and ERC-165 interface detection, it is typically added to an existing resolver rather than deployed alone.",
+
+  "fn.setDNSRecords.desc": "Sets, updates, or clears one or more DNS records for the given ENS node. Records are supplied in DNS wire format, any record provided without a value is cleared, and records in the same record set must be contiguous.",
+  "fn.setDNSRecords.params.node": "The namehash of the fully-qualified ENS domain for which to set the records.",
+  "fn.setDNSRecords.params.data": "One or more DNS records in DNS wire format; a record supplied without a value clears that record.",
+
+  "fn.clearDNSZone.desc": "Removes all DNS records for the domain in a single operation by bumping the zone's version, avoiding the need to clear each record individually with setDNSRecords.",
+  "fn.clearDNSZone.params.node": "The namehash of the fully-qualified ENS domain for which to clear the records.",
+
+  "fn.dnsRecords.desc": "Returns all matching DNS records for the given node, name, and resource in DNS wire format, or nothing if no records are present.",
+  "fn.dnsRecords.params.node": "The namehash of the fully-qualified ENS domain to query.",
+  "fn.dnsRecords.params.name": "The keccak256 hash of the record's name in DNS wire format.",
+  "fn.dnsRecords.params.resource": "The DNS resource record type ID, as defined in RFC 1035 and later RFCs.",
+  "fn.dnsRecords.returns.records": "The matching records in DNS wire format, or empty if none exist.",
+
+  "fn.hasDNSRecords.desc": "Reports whether any records exist for the provided name in the domain. Used by DNS resolvers when handling wildcard resources as defined in RFC 4592.",
+  "fn.hasDNSRecords.params.node": "The namehash of the fully-qualified ENS domain to query.",
+  "fn.hasDNSRecords.params.name": "The keccak256 hash of the record's name in DNS wire format.",
+  "fn.hasDNSRecords.returns.exists": "True if any records exist for the node and name, otherwise false.",
+
+  "node.user": "Domain Owner",
+  "node.contract": "DNS Resolver",
+  "node.storageRecords": "Record Storage",
+
+  "edge.callSetRecords": "Call setDNSRecords()",
+  "edge.queryRecords": "Call dnsRecords()",
+  "edge.updateRecords": "Update records",
+  "edge.emitChanged": "Emit DNSRecordChanged event",
+
+  "sim.setRecordsWalkthrough.name": "Set DNS Records Walkthrough",
+  "sim.setRecordsWalkthrough.desc": "Follow a setDNSRecords call from the domain owner through record storage to the DNSRecordChanged event.",
+  "sim.setRecordsWalkthrough.param.domain": "Domain name",
+  "sim.setRecordsWalkthrough.param.recordType": "Record to set",
+  "sim.setRecordsWalkthrough.step.call": "The domain owner calls setDNSRecords(node, data) on the resolver, passing the namehash of the domain and the records in DNS wire format.",
+  "sim.setRecordsWalkthrough.step.call.mobile": "Call setDNSRecords()",
+  "sim.setRecordsWalkthrough.step.execute": "The resolver parses the wire-format data and writes the record set into the records mapping under the domain's current version.",
+  "sim.setRecordsWalkthrough.step.execute.mobile": "Store the record set",
+  "sim.setRecordsWalkthrough.step.event": "The resolver emits DNSRecordChanged(node, name, resource, record) so off-chain resolvers and indexers can refresh their view.",
+  "sim.setRecordsWalkthrough.step.event.mobile": "Emit DNSRecordChanged"
+}

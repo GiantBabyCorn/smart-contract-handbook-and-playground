@@ -1,0 +1,70 @@
+{
+  "short": "コンテキスト依存マルチアセットトークン",
+  "introduction": "ERC-5773 は、単一の非代替性トークンが複数のアセットを保持し、アクセスされるコンテキストに適したものを公開する、マルチアセット NFT のためのインターフェースを定義します。2022年10月に Bruno Škvorc、Cicada、Steven Pineda、Stevan Bogosavljevic、Jan Turk によって提案されました。各アセットは uint64 の識別子で参照される名前空間付きの token URI であり、優先度順に並べられ、propose-commit パターンで追加されます。新しいアセットはまずペンディング配列に入り、アクティブになる前に所有者が受け入れる必要があります。",
+  "designPurpose": "ERC-5773 は ERC-721 を拡張し、NFT が単一の tokenURI に縛られないように設計されました。それ以前は、アプリごとにトークンに異なる表現を与えたり、複数のストレージネットワークにメタデータをミラーリングしたりするには、唯一の URI を差し替え、その来歴を消してしまう必要がありました。ERC-5773 では代わりに、アセットを uint64 識別子として参照で保存し、所有者が設定した優先度で並べるため、コンシューマーは自身のメディアに適したアセットを選べます。propose-commit フローにより、発行者はアセットを提案または差し替えでき、その一方で所有者が最終的な承認権を保持します。",
+  "commonUsage": "マルチアセットトークンは、1つの NFT が異なるコンシューマーに異なる出力を提供しなければならないケースに適しています。たとえば、リーダーでは PDF に、オーディオブックアプリでは MP3 に解決される電子書籍、エンジンごとのアセットファイルを持つゲームの装飾アイテム、あるいは冗長性のために IPFS や Arweave などのネットワークにミラーリングされたメタデータなどです。この標準は ERC-721 を拡張しているため、実装は既存の ERC-721 ツールを再利用し、ERC-165 による検出に加え、転送とは別にアセットを管理するための、トークンごとおよびオペレーターの承認を追加します。",
+
+  "fn.acceptAsset.desc": "アセットをトークンのペンディング配列からアクティブ配列へ移行します。呼び出し元はトークンを所有しているか、そのアセットを管理する承認を得ている必要があり、index と期待される assetId が一致していなければなりません。AssetAccepted イベントを発行します。",
+  "fn.acceptAsset.params.tokenId": "ペンディングアセットを受け入れる対象のトークンの ID。",
+  "fn.acceptAsset.params.index": "受け入れるペンディング配列内のアセットのインデックス。",
+  "fn.acceptAsset.params.assetId": "そのインデックスで期待されるアセットの ID。競合状態を防ぐために検証されます。",
+
+  "fn.rejectAsset.desc": "トークンのペンディング配列から単一のアセットを、アクティブ化せずに削除します。呼び出し元はトークンを所有しているか、そのアセットを管理する承認を得ている必要があり、index と期待される assetId が一致していなければなりません。AssetRejected イベントを発行します。",
+  "fn.rejectAsset.params.tokenId": "アセットが拒否される対象のトークンの ID。",
+  "fn.rejectAsset.params.index": "拒否するペンディング配列内のアセットのインデックス。",
+  "fn.rejectAsset.params.assetId": "そのインデックスで期待されるアセットの ID。",
+
+  "fn.rejectAllAssets.desc": "1回の呼び出しでトークンのペンディング配列全体をクリアします。操作の直前に到着したアセットを取りこぼさないよう、maxRejections を上限とします。assetId が 0 の AssetRejected イベントを発行します。",
+  "fn.rejectAllAssets.params.tokenId": "ペンディング配列がクリアされるトークンの ID。",
+  "fn.rejectAllAssets.params.maxRejections": "拒否するアセットの最大数。呼び出しの直前に追加されたアセットに対する保護となります。",
+
+  "fn.setPriority.desc": "トークンのアクティブアセットに新しい優先度の並び順を設定します。値が最も小さいものが最も高い優先度を持ち、0 は未初期化を意味します。priorities 配列の長さはアクティブアセットの数と等しくなければなりません。AssetPrioritySet イベントを発行します。",
+  "fn.setPriority.params.tokenId": "優先度を設定する対象のトークンの ID。",
+  "fn.setPriority.params.priorities": "アクティブアセットの優先度の配列。アクティブ配列の順序に対応します。",
+
+  "fn.getActiveAssets.desc": "指定されたトークンのアクティブなアセット ID の配列を返します。アセットのデータは getAssetMetadata で別途取得します。",
+  "fn.getActiveAssets.params.tokenId": "アクティブなアセット ID を照会する対象のトークンの ID。",
+  "fn.getActiveAssets.returns.assetIds": "指定されたトークンのアクティブなアセット ID の配列。",
+
+  "fn.getPendingAssets.desc": "指定されたトークンについて、所有者の受け入れまたは拒否を待っているペンディングアセット ID の配列を返します。",
+  "fn.getPendingAssets.params.tokenId": "ペンディングアセット ID を照会する対象のトークンの ID。",
+  "fn.getPendingAssets.returns.assetIds": "指定されたトークンのペンディングアセット ID の配列。",
+
+  "fn.getAssetMetadata.desc": "トークンの指定されたアクティブアセットのメタデータ URI を返します。この URI はアセットのメディアまたはディスクリプタに解決され、コンテキスト依存の出力を可能にします。",
+  "fn.getAssetMetadata.params.tokenId": "アセットのメタデータを読み取る対象のトークンの ID。",
+  "fn.getAssetMetadata.params.assetId": "アセットの ID。トークンのアクティブアセット配列に含まれている必要があります。",
+  "fn.getAssetMetadata.returns.metadata": "指定されたアセットのメタデータ URI。",
+
+  "fn.AssetAccepted.desc": "ペンディングアセットが受け入れられてトークンのアクティブ配列へ移行されたときに発行され、置き換えるアセットがあればその ID を含みます。",
+  "fn.AssetAccepted.params.tokenId": "新しいアセットが受け入れられたトークンの ID。",
+  "fn.AssetAccepted.params.assetId": "受け入れられたアセットの ID。",
+  "fn.AssetAccepted.params.replacesId": "置き換えられたアセットの ID。存在しない場合は 0。",
+
+  "fn.AssetRejected.desc": "アセットがトークンのペンディング配列から取り除かれたときに発行されます。assetId が 0 の場合は、ペンディング配列全体がクリアされたことを示します。",
+  "fn.AssetRejected.params.tokenId": "アセットが拒否されたトークンの ID。",
+  "fn.AssetRejected.params.assetId": "拒否されたアセットの ID。ペンディング配列全体がクリアされる場合は 0。",
+
+  "fn.AssetPrioritySet.desc": "トークンのアクティブアセットの優先度の並び順が更新されたときに発行されます。",
+  "fn.AssetPrioritySet.params.tokenId": "アセット優先度配列が更新されたトークンの ID。",
+
+  "node.user": "トークン所有者",
+  "node.contract": "マルチアセットトークン",
+  "node.storageAssets": "アセットストレージ",
+
+  "edge.callAcceptAsset": "acceptAsset() を呼び出す",
+  "edge.callRejectAsset": "rejectAsset() を呼び出す",
+  "edge.updateAssets": "アセット配列を更新する",
+  "edge.emitAssetAccepted": "AssetAccepted イベントを発行する",
+
+  "sim.acceptAssetWalkthrough.name": "アセット受け入れウォークスルー",
+  "sim.acceptAssetWalkthrough.desc": "ペンディングアセットがアクティブ配列へ移行され、AssetAccepted イベントが発行されるまで、acceptAsset の呼び出しを追跡します。",
+  "sim.acceptAssetWalkthrough.param.tokenId": "トークン ID",
+  "sim.acceptAssetWalkthrough.param.index": "ペンディングインデックス",
+  "sim.acceptAssetWalkthrough.param.assetId": "アセット ID",
+  "sim.acceptAssetWalkthrough.step.call": "トークン所有者は acceptAsset(tokenId, index, assetId) を呼び出してペンディングアセットを受け入れ、インデックスの変更に備えて期待される assetId を渡します。",
+  "sim.acceptAssetWalkthrough.step.call.mobile": "acceptAsset() を呼び出す",
+  "sim.acceptAssetWalkthrough.step.execute": "コントラクトはアセットをペンディング配列から削除し、トークンのアクティブアセット配列へ追加します。",
+  "sim.acceptAssetWalkthrough.step.execute.mobile": "アクティブへ移行",
+  "sim.acceptAssetWalkthrough.step.event": "コントラクトは AssetAccepted を発行し、インデクサーやマーケットプレイスがトークンのアクティブアセットを更新できるようにします。",
+  "sim.acceptAssetWalkthrough.step.event.mobile": "AssetAccepted を発行"
+}

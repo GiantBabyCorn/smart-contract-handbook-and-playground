@@ -1,0 +1,81 @@
+{
+  "short": "可付款代幣標準",
+  "introduction": "ERC-2021 定義了對 ERC-20 代幣標準的擴充，允許錢包所有者透過一段付款指令字串從其餘額中請求付款。該標準由 Fernando Paris、Julio Faura 與 Daniel Lehrner 於 2019 年 5 月提出。下單會將相應金額置於 ERC-1996 保留（hold）中，隨後由操作員執行，在鏈下付款完成結算後銷毀這些代幣。注意：ERC-2021 處於 Stagnant（停滯）狀態——它已停止活動超過 6 個月，可能永遠不會最終定稿，但在歷史或技術上仍具意義。",
+  "designPurpose": "ERC-2021 旨在將代幣生命週期中的付款環節搬上鏈，因為此前代幣付款需要一筆單獨的中心化交易，先設定目標位址再銷毀代幣。透過讓錢包所有者經由帳本提交下單，該標準將每次付款的狀態記錄在鏈上，而路由細節則包含在一段指令字串中，建議實作方將其保存在鏈下或加以加密。相應金額停留在 ERC-1996 保留中，在操作員完成結算之前不可動用。",
+  "commonUsage": "可付款代幣面向受監管的機構場景，在這些場景中，將代幣兌換為鏈下資金必須可稽核：帳戶持有者發起一筆付款，發行方或其代理要麼透過執行底層保留並銷毀代幣來兌現，要麼予以拒絕。該介面還定義了操作員授權，允許獲批的下單方代表錢包所有者提交請求，以及一個 retrievePayoutData 查詢，用於公開每筆請求的金額、指令與當前狀態碼。",
+
+  "fn.orderPayout.desc": "為呼叫者自己的錢包建立一筆付款請求，將請求的金額置於保留狀態並啟動操作員流程。若 operationId 已被使用，則回滾。",
+  "fn.orderPayout.params.operationId": "識別該付款請求的唯一 ID。",
+  "fn.orderPayout.params.value": "要付款的代幣數量。",
+  "fn.orderPayout.params.instructions": "承載付款指令的字串，操作員據此對資金進行路由。",
+  "fn.orderPayout.returns.success": "當付款請求成功建立時回傳 True。",
+
+  "fn.orderPayoutFrom.desc": "代表另一位錢包所有者建立付款請求，該所有者須事先授權呼叫者作為付款操作員。若 operationId 已被使用，則回滾。",
+  "fn.orderPayoutFrom.params.operationId": "識別該付款請求的唯一 ID。",
+  "fn.orderPayoutFrom.params.walletToBePaidOut": "被代為發起付款、且由其代幣進行付款的錢包所有者。",
+  "fn.orderPayoutFrom.params.value": "要付款的代幣數量。",
+  "fn.orderPayoutFrom.params.instructions": "承載付款指令的字串，操作員據此對資金進行路由。",
+  "fn.orderPayoutFrom.returns.success": "當付款請求成功建立時回傳 True。",
+
+  "fn.cancelPayout.desc": "取消仍處於 Ordered 狀態的付款請求並釋放保留。只有錢包所有者或下單方可以取消，且僅限在操作員將請求標記為 InProcess 之前。",
+  "fn.cancelPayout.params.operationId": "要取消的付款請求的唯一 ID。",
+  "fn.cancelPayout.returns.success": "當付款請求成功取消時回傳 True。",
+
+  "fn.processPayout.desc": "將付款請求標記為 InProcess。一旦進入處理中，下單方便無法再取消該請求。",
+  "fn.processPayout.params.operationId": "要標記為處理中的付款請求的唯一 ID。",
+  "fn.processPayout.returns.success": "當付款請求成功設為處理中時回傳 True。",
+
+  "fn.putFundsInSuspenseInPayout.desc": "執行底層保留並將代幣轉移至暫記錢包，使付款進入 FundsInSuspense 狀態。僅當請求處於 InProcess 時才能執行。",
+  "fn.putFundsInSuspenseInPayout.params.operationId": "要置於暫記狀態的付款請求的唯一 ID。",
+  "fn.putFundsInSuspenseInPayout.returns.success": "當資金成功置於暫記狀態時回傳 True。",
+
+  "fn.executePayout.desc": "銷毀被保留的代幣並將付款請求標記為 Executed，在相應的鏈下付款完成後予以完成。",
+  "fn.executePayout.params.operationId": "要執行的付款請求的唯一 ID。",
+  "fn.executePayout.returns.success": "當付款成功執行時回傳 True。",
+
+  "fn.rejectPayout.desc": "拒絕付款請求，將保留釋放回錢包所有者並記錄原因。可在請求被標記為 InProcess 之前或之後呼叫。",
+  "fn.rejectPayout.params.operationId": "要拒絕的付款請求的唯一 ID。",
+  "fn.rejectPayout.params.reason": "付款被拒絕的原因；可使用 ERC-1066 狀態碼。",
+  "fn.rejectPayout.returns.success": "當付款成功拒絕時回傳 True。",
+
+  "fn.retrievePayoutData.desc": "回傳某筆付款請求的儲存資料，包括被扣款的錢包、金額、指令與當前狀態。只有操作員、錢包所有者或下單方可以讀取。",
+  "fn.retrievePayoutData.params.operationId": "要查詢的付款請求的唯一 ID。",
+  "fn.retrievePayoutData.returns.walletToDebit": "餘額被付出的錢包。",
+  "fn.retrievePayoutData.returns.value": "要付款的代幣數量。",
+  "fn.retrievePayoutData.returns.instructions": "隨請求一併提供的付款指令字串。",
+  "fn.retrievePayoutData.returns.status": "付款請求的當前狀態碼。",
+
+  "fn.PayoutOrdered.desc": "當錢包所有者或下單方建立付款請求時發出，記錄其下單方、錢包、金額與指令。",
+  "fn.PayoutOrdered.params.orderer": "下單該付款的位址。",
+  "fn.PayoutOrdered.params.operationId": "識別該付款請求的唯一 ID。",
+  "fn.PayoutOrdered.params.walletToDebit": "被請求付款的錢包。",
+  "fn.PayoutOrdered.params.value": "要付出的金額。",
+  "fn.PayoutOrdered.params.instructions": "隨請求一併提供的付款指令字串。",
+
+  "fn.PayoutExecuted.desc": "當操作員執行付款請求時發出，在鏈下付款完成結算後銷毀被保留的代幣。",
+  "fn.PayoutExecuted.params.orderer": "下單該付款的位址。",
+  "fn.PayoutExecuted.params.operationId": "識別該付款請求的唯一 ID。",
+
+  "node.user": "錢包所有者",
+  "node.operator": "代幣操作員",
+  "node.contract": "ERC-2021 代幣",
+  "node.storagePayouts": "付款與被保留餘額",
+
+  "edge.callOrderPayout": "呼叫 orderPayout()",
+  "edge.callExecutePayout": "呼叫 executePayout()",
+  "edge.updatePayouts": "記錄付款並保留資金",
+  "edge.emitPayoutExecuted": "發出 PayoutExecuted 事件",
+
+  "sim.orderPayoutWalkthrough.name": "下單並執行付款演練",
+  "sim.orderPayoutWalkthrough.desc": "跟隨一筆付款，從錢包所有者的下單，經過 ERC-1996 保留，到操作員執行付款並銷毀代幣。",
+  "sim.orderPayoutWalkthrough.param.value": "付款金額（以 wei 計）",
+  "sim.orderPayoutWalkthrough.param.instructions": "付款指令",
+  "sim.orderPayoutWalkthrough.step.order": "錢包所有者呼叫 orderPayout(operationId, value, instructions)，從其餘額中請求一筆付款。",
+  "sim.orderPayoutWalkthrough.step.order.mobile": "呼叫 orderPayout()",
+  "sim.orderPayoutWalkthrough.step.hold": "合約以 Ordered 狀態記錄該請求，並將金額置於 ERC-1996 保留中，使其不能再被花費。",
+  "sim.orderPayoutWalkthrough.step.hold.mobile": "保留資金",
+  "sim.orderPayoutWalkthrough.step.execute": "代幣操作員處理該請求，執行保留，並銷毀被保留的代幣，將付款轉入 Executed 狀態。",
+  "sim.orderPayoutWalkthrough.step.execute.mobile": "操作員執行付款",
+  "sim.orderPayoutWalkthrough.step.event": "合約發出 PayoutExecuted，以便索引器記錄該付款已完成結算。",
+  "sim.orderPayoutWalkthrough.step.event.mobile": "發出 PayoutExecuted 事件"
+}

@@ -1,0 +1,30 @@
+{
+  "short": "BLS12-381 Keystore Format",
+  "introduction": "ERC-2335 defines a JSON keystore file format for encrypting and storing BLS12-381 private keys, the signing keys used by proof-of-stake validators. It was proposed by Carl Beekhuizen in September 2019. A keystore encrypts the secret under a user password so the key stays safe until the password is supplied, and it organizes the cryptography into three swappable modules: a key-derivation function, a checksum, and a cipher. Note: ERC-2335 is in Review status; the interface may still change before it is finalized.",
+  "designPurpose": "ERC-2335 was designed to replace the Web3 Secret Storage keystore, which relies on a Keccak256 checksum. Because BLS keys and their storage are inter-chain standards, the format needs a checksum neutral to all chains, so Keccak was unsuitable. It also introduces the notion of modules, which treat the key-derivation function, checksum, and cipher as instances of one abstraction that can be swapped out with minimal effort. The version field is set to 4 to avoid collisions with the existing Ethereum keystore.",
+  "commonUsage": "BLS12-381 keystores are used by Ethereum staking software to store validator signing and withdrawal keys, letting operators move an encrypted key between devices without exposing the raw secret. Staking and deposit tools generate these files, derive their contents through ERC-2333 key generation and ERC-2334 paths, and record the public key, path, and a UUID so an account can be referenced without decrypting it. Validator clients decrypt the secret on demand once the operator supplies the password.",
+
+  "node.user": "Keystore Holder",
+  "node.keystore": "BLS12-381 Keystore",
+  "node.storageFile": "Keystore File Fields",
+  "node.signer": "Signing Client",
+
+  "edge.providePassword": "Provide password",
+  "edge.readModules": "Read crypto modules",
+  "edge.verifyPassword": "Verify password",
+  "edge.decryptSecret": "Decrypt secret",
+  "edge.recoverKey": "Recover private key",
+
+  "sim.decryptKeystoreWalkthrough.name": "Decrypt Keystore Walkthrough",
+  "sim.decryptKeystoreWalkthrough.desc": "Follow how a password unlocks a BLS12-381 keystore, from key derivation through checksum verification to secret decryption.",
+  "sim.decryptKeystoreWalkthrough.param.password": "Password",
+  "sim.decryptKeystoreWalkthrough.param.kdf": "Key-derivation function",
+  "sim.decryptKeystoreWalkthrough.step.derive": "The holder supplies the password, and the KDF module derives the decryption key from the password and the stored kdf params.",
+  "sim.decryptKeystoreWalkthrough.step.derive.mobile": "Derive decryption key",
+  "sim.decryptKeystoreWalkthrough.step.verify": "The keystore hashes the second 16 bytes of the decryption key together with the cipher message using SHA-256 and checks the result against the stored checksum message to confirm the password is correct.",
+  "sim.decryptKeystoreWalkthrough.step.verify.mobile": "Verify password",
+  "sim.decryptKeystoreWalkthrough.step.decrypt": "With the password verified, the cipher module uses the decryption key to decrypt the stored cipher message and recover the secret.",
+  "sim.decryptKeystoreWalkthrough.step.decrypt.mobile": "Decrypt the secret",
+  "sim.decryptKeystoreWalkthrough.step.recover": "The decrypted BLS12-381 private key is handed to the signing client, which can now produce signatures.",
+  "sim.decryptKeystoreWalkthrough.step.recover.mobile": "Recover private key"
+}

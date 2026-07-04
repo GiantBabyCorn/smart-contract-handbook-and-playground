@@ -1,0 +1,75 @@
+{
+  "short": "通用資料鍵值儲存與執行",
+  "introduction": "ERC-725 為智能合約帳戶定義了兩個構件：一個將 bytes32 鍵映射到任意 bytes 值的鍵值資料儲存（ERC725Y），以及一個用於調用、建立其他合約或對其執行 delegatecall 的通用執行函式（ERC725X）。它由 Fabian Vogelsteller 與 Tyler Yasaka 於 2017 年 10 月提出。兩個部分均透過 ERC-173 由所有者控制，可一起使用，也可單獨使用。注意：ERC-725 目前為 Draft（草案）狀態，規範仍在積極開發中，可能發生重大變更。",
+  "designPurpose": "ERC-725 的設計目標是為智能合約帳戶提供一套既足夠靈活以長期沿用、又足夠標準化以供工具依賴的資料與執行佈局。在此之前，每個專案都各自發明自己的儲存變數和執行入口，因此外部合約和鏈下應用無法以統一的方式讀取或驅動它們。將所有資料保存在單個 mapping(bytes32 => bytes) 之下，並將對外操作統一經由單個 execute 函式路由，使協議無需改動介面即可重新解釋其資料。",
+  "commonUsage": "ERC-725 是模組化智能合約帳戶以及可升級鏈上元資料的基礎。它的 ERC725Y 儲存可單獨用於為 NFT、代幣和其他合約附加可變更的元資料，而 ERC725X 則為代表使用者行事的帳戶型合約提供通用的 execute 入口。規範指出，帳戶形態被標準化為 LSP0-ERC725Account，並由 LSP2-ERC725JSONSchema 定義鍵和值的編碼方式。",
+
+  "fn.execute.desc": "從帳戶執行單個操作：CALL 調用、透過 CREATE 或 CREATE2 建立合約、staticcall 或 delegatecall，由 operationType 選擇。只能由當前所有者調用，若操作失敗則回退。",
+  "fn.execute.params.operationType": "要執行的操作類型：0 表示 CALL，1 表示 CREATE，2 表示 CREATE2，3 表示 STATICCALL，4 表示 DELEGATECALL。",
+  "fn.execute.params.target": "要調用的合約或地址；建立合約時應為 address(0)。",
+  "fn.execute.params.value": "要轉移的原生代幣數量，以 wei 計。",
+  "fn.execute.params.data": "調用資料，或部署合約時的建立位元組碼。",
+  "fn.execute.returns.returnData": "被調用函式返回的資料，或所部署合約的地址。",
+
+  "fn.executeBatch.desc": "在一筆交易中執行一批操作，接受長度相等的操作類型、目標、金額和調用資料陣列。只能由所有者調用，若任一操作失敗則回退。",
+  "fn.executeBatch.params.operationsType": "每次調用要執行的操作類型列表。",
+  "fn.executeBatch.params.targets": "每個操作要調用的地址列表。",
+  "fn.executeBatch.params.values": "要轉移的原生代幣數量列表，以 wei 計。",
+  "fn.executeBatch.params.datas": "調用資料或合約建立位元組碼的列表。",
+  "fn.executeBatch.returns.results": "返回資料或所部署合約地址的陣列。",
+
+  "fn.getData.desc": "返回 ERC725Y 儲存中單個資料鍵下儲存的 bytes 值。任何調用者都可讀取。",
+  "fn.getData.params.dataKey": "要檢索其值的資料鍵。",
+  "fn.getData.returns.dataValue": "所請求資料鍵對應儲存的 bytes 值。",
+
+  "fn.getDataBatch.desc": "在一次調用中返回多個資料鍵下儲存的值，使批次讀取的 gas 成本保持較低。",
+  "fn.getDataBatch.params.dataKeys": "要檢索其值的資料鍵列表。",
+  "fn.getDataBatch.returns.dataValues": "所請求資料鍵對應的 bytes 值陣列。",
+
+  "fn.setData.desc": "在 ERC725Y 儲存中將一個 bytes 值儲存到單個資料鍵下，覆蓋任何先前的值。只能由所有者調用，並會觸發 DataChanged 事件。",
+  "fn.setData.params.dataKey": "要設定其值的資料鍵。",
+  "fn.setData.params.dataValue": "要儲存的 bytes 值。",
+
+  "fn.setDataBatch.desc": "在一次調用中將多個值儲存到多個資料鍵下，接受長度相等的鍵陣列和值陣列。只能由所有者調用，並會為每個鍵觸發 DataChanged 事件。",
+  "fn.setDataBatch.params.dataKeys": "要設定其值的資料鍵列表。",
+  "fn.setDataBatch.params.dataValues": "要儲存的 bytes 值列表。",
+
+  "fn.Executed.desc": "當 execute 執行 CALL、STATICCALL 或 DELEGATECALL（操作類型 0、3 和 4）時觸發。",
+  "fn.Executed.params.operationType": "所執行的操作類型。",
+  "fn.Executed.params.target": "被調用的地址。",
+  "fn.Executed.params.value": "發送的原生代幣數量，以 wei 計。",
+  "fn.Executed.params.data": "調用資料的前四個位元組，通常是函式選擇器。",
+
+  "fn.ContractCreated.desc": "當 execute 透過 CREATE 或 CREATE2（操作類型 1 和 2）部署新合約時觸發。",
+  "fn.ContractCreated.params.operationType": "用於部署合約的操作類型。",
+  "fn.ContractCreated.params.contractAddress": "新部署合約的地址。",
+  "fn.ContractCreated.params.value": "發送給新合約的原生代幣數量，以 wei 計。",
+  "fn.ContractCreated.params.salt": "用於 CREATE2 部署的 bytes32 salt。",
+
+  "fn.DataChanged.desc": "每當 ERC725Y 儲存中某個資料鍵的值被成功設定時觸發。",
+  "fn.DataChanged.params.dataKey": "值發生變化的資料鍵。",
+  "fn.DataChanged.params.dataValue": "為該鍵儲存的新 bytes 值。",
+
+  "node.user": "帳戶所有者",
+  "node.contract": "ERC-725 帳戶",
+  "node.storageData": "資料儲存",
+  "node.target": "目標合約",
+
+  "edge.callExecute": "調用 execute()",
+  "edge.callSetData": "調用 setData()",
+  "edge.forwardCall": "轉發調用",
+  "edge.updateStore": "更新資料儲存",
+  "edge.emitExecuted": "觸發 Executed 事件",
+  "edge.emitDataChanged": "觸發 DataChanged 事件",
+
+  "sim.setDataWalkthrough.name": "setData 逐步演示",
+  "sim.setDataWalkthrough.desc": "跟隨一次 setData 調用，從所有者出發，經過 ERC725Y 資料儲存，直到 DataChanged 事件。",
+  "sim.setDataWalkthrough.param.dataKey": "資料鍵",
+  "sim.setDataWalkthrough.param.dataValue": "資料值",
+  "sim.setDataWalkthrough.step.call": "所有者在 ERC-725 帳戶上調用 setData(dataKey, dataValue) 以儲存一個值。",
+  "sim.setDataWalkthrough.step.call.mobile": "調用 setData()",
+  "sim.setDataWalkthrough.step.execute": "合約檢查調用者是否為所有者，然後將該值寫入 bytes32 到 bytes 的資料儲存，覆蓋該鍵先前的任何值。",
+  "sim.setDataWalkthrough.step.execute.mobile": "寫入資料儲存",
+  "sim.setDataWalkthrough.step.event": "合約觸發 DataChanged(dataKey, dataValue)，以便索引器和鏈下應用能夠追蹤此更新。",
+  "sim.setDataWalkthrough.step.event.mobile": "觸發 DataChanged 事件"
+}

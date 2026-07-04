@@ -1,0 +1,33 @@
+{
+  "short": "Cross-Chain Storage Router Protocol",
+  "introduction": "ERC-7700, nicknamed CCIP-Store, defines a convention for routing storage writes to external providers instead of paying mainnet gas. It was proposed by Avneet Singh, 0xc0de4c0ffee, Nick Johnson, and Makoto Inoue in April 2024. A contract reverts with a StorageRoutedToL1, StorageRoutedToL2, or StorageRoutedToDatabase error naming where to write the data, which EIP-3668 (CCIP-Read) contracts later read back. Note: ERC-7700 is a Draft; the specification is still under active development and may change substantially.",
+  "designPurpose": "ERC-7700 was designed to standardize the write half of cross-chain storage. EIP-3668 (CCIP-Read) already lets contracts fetch data from L2s and databases, but each service had to invent its own way to write that data and prove it on L1, so the schemes were not reusable across wallets and resolvers. CCIP-Store answers this with a routing revert that names an L1, L2, or database target, plus a deterministic signer and approval scheme for databases, so applications store data without knowing the underlying provider.",
+  "commonUsage": "CCIP-Store targets services that keep on-chain-like records on cheaper storage, most prominently ENS resolvers that hold domain records on an L2 or database while staying resolvable from mainnet. The Motivation section names namespace management and digital-identity services as the primary use cases. Because it pairs with EIP-3668 for reads, it suits any application that wants L1-verifiable data without paying L1 storage costs. As a Draft, adoption is early and largely tied to the authors' ENS tooling.",
+
+  "node.client": "Client Application",
+  "node.contract": "L1 Router Contract",
+  "node.router": "Storage Router Revert",
+  "node.gateway": "Off-Chain Gateway",
+  "node.storage": "External Storage",
+  "node.resolver": "CCIP-Read Resolver",
+
+  "edge.submitWrite": "Call storage write",
+  "edge.revertRoute": "Revert with router",
+  "edge.returnRoute": "Return route target",
+  "edge.postData": "POST signed data",
+  "edge.storeRecord": "Store signed record",
+  "edge.fetchData": "Fetch via CCIP-Read",
+
+  "sim.storeRecordWalkthrough.name": "Database Storage Routing",
+  "sim.storeRecordWalkthrough.desc": "Follow a record write from the client through a database router to CCIP-Read retrieval.",
+  "sim.storeRecordWalkthrough.param.recordKey": "Record key",
+  "sim.storeRecordWalkthrough.param.recordValue": "Record value",
+  "sim.storeRecordWalkthrough.step.call": "The client calls a storage write function such as setValue(node, key, value) on the L1 router contract.",
+  "sim.storeRecordWalkthrough.step.call.mobile": "Call storage write",
+  "sim.storeRecordWalkthrough.step.revert": "The contract reverts with StorageRoutedToDatabase(gatewayUrl), telling the client which gateway should handle the write.",
+  "sim.storeRecordWalkthrough.step.revert.mobile": "Revert with router",
+  "sim.storeRecordWalkthrough.step.post": "The client signs the calldata, requests an approval for the derived data signer, and POSTs the signed record to the gateway, which stores it.",
+  "sim.storeRecordWalkthrough.step.post.mobile": "Post signed record",
+  "sim.storeRecordWalkthrough.step.read": "A CCIP-Read resolver later fetches the record via EIP-3668 and verifies the approval and data signature before serving it.",
+  "sim.storeRecordWalkthrough.step.read.mobile": "Read and verify"
+}

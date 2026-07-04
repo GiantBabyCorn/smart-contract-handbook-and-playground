@@ -1,0 +1,33 @@
+{
+  "short": "跨链存储路由协议",
+  "introduction": "ERC-7700（别称 CCIP-Store）定义了一套约定，将存储写入路由到外部提供方，而非支付主网 gas。它由 Avneet Singh、0xc0de4c0ffee、Nick Johnson 与 Makoto Inoue 于 2024 年 4 月提出。合约会以一个 StorageRoutedToL1、StorageRoutedToL2 或 StorageRoutedToDatabase 错误进行 revert，指明数据应写往何处，随后由 EIP-3668（CCIP-Read）合约读取回来。注意：ERC-7700 仍处于 Draft（草案）状态，规范仍在积极开发中，可能出现重大变更。",
+  "designPurpose": "ERC-7700 旨在将跨链存储中的写入部分标准化。EIP-3668（CCIP-Read）已经能让合约从 L2 和数据库获取数据，但此前每个服务都必须自行设计一套写入数据并在 L1 上证明的方案，因此这些方案无法在不同钱包和解析器之间复用。CCIP-Store 以一个路由式 revert 来解决这个问题：该 revert 指明 L1、L2 或数据库目标，并为数据库提供了一套确定性的签名者与授权方案，使应用无需了解底层提供方即可存储数据。",
+  "commonUsage": "CCIP-Store 面向那些在更廉价的存储上保存类链上记录的服务，其中最典型的是 ENS 解析器——它们将域名记录保存在 L2 或数据库中，同时仍可从主网解析。规范的 Motivation（动机）章节将命名空间管理与数字身份服务列为主要用例。由于它与 EIP-3668 搭配用于读取，因此适用于任何希望获得 L1 可验证数据、又不想支付 L1 存储成本的应用。作为一份 Draft 草案，其采用尚处早期，且在很大程度上与作者们的 ENS 工具绑定。",
+
+  "node.client": "客户端应用",
+  "node.contract": "L1 路由合约",
+  "node.router": "存储路由 revert",
+  "node.gateway": "链下网关",
+  "node.storage": "外部存储",
+  "node.resolver": "CCIP-Read 解析器",
+
+  "edge.submitWrite": "调用存储写入",
+  "edge.revertRoute": "以路由信息 revert",
+  "edge.returnRoute": "返回路由目标",
+  "edge.postData": "POST 签名数据",
+  "edge.storeRecord": "存储签名记录",
+  "edge.fetchData": "通过 CCIP-Read 获取",
+
+  "sim.storeRecordWalkthrough.name": "数据库存储路由",
+  "sim.storeRecordWalkthrough.desc": "跟随一次记录写入，从客户端经由数据库路由，直到通过 CCIP-Read 读取。",
+  "sim.storeRecordWalkthrough.param.recordKey": "记录键",
+  "sim.storeRecordWalkthrough.param.recordValue": "记录值",
+  "sim.storeRecordWalkthrough.step.call": "客户端在 L1 路由合约上调用存储写入函数，例如 setValue(node, key, value)。",
+  "sim.storeRecordWalkthrough.step.call.mobile": "调用存储写入",
+  "sim.storeRecordWalkthrough.step.revert": "合约以 StorageRoutedToDatabase(gatewayUrl) 进行 revert，告知客户端应由哪个网关处理该写入。",
+  "sim.storeRecordWalkthrough.step.revert.mobile": "以路由 revert",
+  "sim.storeRecordWalkthrough.step.post": "客户端对 calldata 进行签名，为派生出的数据签名者申请一份授权，并将签名后的记录 POST 到网关，由网关将其存储。",
+  "sim.storeRecordWalkthrough.step.post.mobile": "POST 签名记录",
+  "sim.storeRecordWalkthrough.step.read": "随后，CCIP-Read 解析器通过 EIP-3668 获取该记录，并在提供数据之前验证授权和数据签名。",
+  "sim.storeRecordWalkthrough.step.read.mobile": "读取并验证"
+}

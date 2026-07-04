@@ -1,0 +1,80 @@
+{
+  "short": "抽象存储债券标准",
+  "introduction": "ERC-3475 定义了一个用于代币化债券的接口——这类链上债务将其赎回条件、供应量和元数据直接存储在合约存储中，而非存放于外部。该标准由 Yu Liu、Varun Deshpande 及其合著者于 2021 年 4 月提出。每份债券由标识债券类型的 class id 和标识其发行条件的 nonce id 来寻址；由 (classId, nonceId, amount) 组成的 Transaction 元组驱动发行、转移、赎回和销毁操作，这些操作可批量合并到单次调用中。",
+  "designPurpose": "ERC-3475 旨在表示现有代币标准无法表达的债务。ERC-20 LP 代币不携带任何结构，因此复杂的奖励和赎回逻辑必须存放在独立的合约或链下数据库中，从而割裂流动性并抬高 gas 成本。通过为每份债券赋予一个 class 和 nonce，并配以链上的 Metadata 和 Values 结构，该标准让单个合约能够持有多种债券类型，每种类型都拥有各自的供应量、到期进度和赎回条款，且均可通过一个接口读取。",
+  "commonUsage": "该标准适用于将类债务头寸代币化的协议：固定收益或收益型债券、可赎回的流动性凭证，以及条款随时间演变的类似金融工具。由于单个合约能够以不同的 class 和 nonce 持有多个资金池，它适合那些整合流动性、而非为每个交易对部署独立 ERC-20 LP 代币的自动做市商（AMM）。钱包和二级市场通过该标准的 view 函数读取余额和赎回进度，以展示和交易债券。",
+
+  "fn.transferFrom.desc": "将 Transaction 数组中列出的债券从一个持有者转移到另一个持有者。调用者必须持有通过 setApprovalFor 授予的、针对相关债券 class 的操作者授权。",
+  "fn.transferFrom.params.from": "债券余额减少的持有者。",
+  "fn.transferFrom.params.to": "债券余额增加的接收者。",
+  "fn.transferFrom.params.transactions": "由 (classId, nonceId, amount) 元组组成的数组，指定要转移哪些债券。",
+
+  "fn.issue.desc": "创建 Transaction 数组所描述的债券，并将它们分配给某个地址。该函数应由单一特权实体调用，通常是发行方银行合约，且需在存入所需抵押品之后调用。",
+  "fn.issue.params.to": "新创建的债券所发行到的地址。",
+  "fn.issue.params.transaction": "由 (classId, nonceId, amount) 元组组成的数组，描述要创建的债券。",
+
+  "fn.redeem.desc": "在债券的到期条件满足后，从某个地址赎回所列出的债券，并将其从活跃供应量中移除。该函数应仅限银行或做市商合约调用。",
+  "fn.redeem.params.from": "赎回债券的来源地址。",
+  "fn.redeem.params.transactions": "由 (classId, nonceId, amount) 元组组成的数组，描述要赎回的债券。",
+
+  "fn.burn.desc": "通过将所列出的债券发送到零地址来使其失效。与 redeem 类似，该函数应仅可由控制器或银行合约调用。",
+  "fn.burn.params.from": "债券被销毁的持有者。",
+  "fn.burn.params.transactions": "由 (classId, nonceId, amount) 元组组成的数组，描述要销毁的债券。",
+
+  "fn.approve.desc": "将支出者的授权额度精确设置为 Transaction 数组中的债券，覆盖针对这些 class 和 nonce 组合的任何先前授权额度。",
+  "fn.approve.params.spender": "被授权支出调用者债券的地址。",
+  "fn.approve.params.transactions": "由 (classId, nonceId, amount) 元组组成的数组，即支出者被授权转移的债券。",
+
+  "fn.setApprovalFor.desc": "启用或禁用某个操作者管理调用者的所有债券，并返回最终的授权状态。经授权的操作者可代表所有者进行转移、赎回和销毁。",
+  "fn.setApprovalFor.params.operator": "被授予或撤销操作者身份的地址。",
+  "fn.setApprovalFor.params.approved": "true 表示授权该操作者，false 表示撤销授权。",
+  "fn.setApprovalFor.returns.approved": "该操作者最终的授权状态。",
+
+  "fn.balanceOf.desc": "返回某个账户持有的、给定 class 和 nonce 的债券数量，其中包含已被赎回的债券。",
+  "fn.balanceOf.params.account": "被查询债券余额的地址。",
+  "fn.balanceOf.params.classId": "标识债券类型的 class id。",
+  "fn.balanceOf.params.nonceId": "标识该 class 内某次发行的 nonce id。",
+  "fn.balanceOf.returns.balance": "该账户持有的、该 class 和 nonce 的债券数量。",
+
+  "fn.Issue.desc": "当操作者向某个地址发行债券时触发。零值发行不应触发此事件。",
+  "fn.Issue.params.operator": "发行债券的操作者，通常是银行（indexed）。",
+  "fn.Issue.params.to": "接收所发行债券的地址（indexed）。",
+  "fn.Issue.params.transactions": "被发行的 (classId, nonceId, amount) 元组。",
+
+  "fn.Redeem.desc": "当操作者从某个地址赎回债券时触发。零值赎回不应触发此事件。",
+  "fn.Redeem.params.operator": "赎回债券的操作者（indexed）。",
+  "fn.Redeem.params.from": "债券被赎回的来源地址（indexed）。",
+  "fn.Redeem.params.transactions": "被赎回的 (classId, nonceId, amount) 元组。",
+
+  "fn.Transfer.desc": "当操作者在持有者之间转移债券时触发。来自零地址的转移必须触发 Issue 而非此事件。",
+  "fn.Transfer.params.operator": "执行该转移的操作者（indexed）。",
+  "fn.Transfer.params.from": "债券的发送来源地址（indexed）。",
+  "fn.Transfer.params.to": "债券的发送目标地址（indexed）。",
+  "fn.Transfer.params.transactions": "被转移的 (classId, nonceId, amount) 元组。",
+
+  "node.user": "银行（发行方）",
+  "node.contract": "ERC-3475 债券合约",
+  "node.storageBonds": "债券存储",
+  "node.holder": "债券持有者",
+
+  "edge.callIssue": "调用 issue()",
+  "edge.callRedeem": "调用 redeem()",
+  "edge.updateBonds": "更新债券账本",
+  "edge.bondsIssued": "记入债券",
+  "edge.emitIssue": "触发 Issue 事件",
+  "edge.emitRedeem": "触发 Redeem 事件",
+
+  "sim.issueBondWalkthrough.name": "债券发行流程详解",
+  "sim.issueBondWalkthrough.desc": "跟随一次来自银行的 issue() 调用，从债券存储一路走到 Issue 事件。",
+  "sim.issueBondWalkthrough.param.to": "接收方",
+  "sim.issueBondWalkthrough.param.classId": "Class id",
+  "sim.issueBondWalkthrough.param.amount": "数量",
+  "sim.issueBondWalkthrough.step.call": "银行调用 issue()，传入一个 Transaction 元组，指定要创建的债券 class、nonce 和数量。",
+  "sim.issueBondWalkthrough.step.call.mobile": "调用 issue()",
+  "sim.issueBondWalkthrough.step.execute": "合约将新债券写入存储，提升该 class 和 nonce 下持有者的余额以及活跃供应量。",
+  "sim.issueBondWalkthrough.step.execute.mobile": "将债券写入存储",
+  "sim.issueBondWalkthrough.step.credit": "新创建的债券被记入接收方账户，接收方之后可对其进行转移、交易或赎回。",
+  "sim.issueBondWalkthrough.step.credit.mobile": "记入持有者账户",
+  "sim.issueBondWalkthrough.step.event": "合约触发 Issue 事件，以便钱包和索引器记录这些新债券。",
+  "sim.issueBondWalkthrough.step.event.mobile": "触发 Issue 事件"
+}

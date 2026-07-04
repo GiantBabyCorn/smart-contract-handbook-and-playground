@@ -1,0 +1,42 @@
+{
+  "short": "EIP-721 コンシューマブル拡張",
+  "introduction": "ERC-4400はERC-721に対するオプションの拡張を定義し、非代替性トークンに標準化されたコンシューマーロールを追加することで、所有者が所有権を移転せずに別のアドレスへNFTの利用を許可できるようにします。2021年10月にDaniel IvanovとGeorge Spasovによって提案されました。この拡張は、現在のコンシューマーを参照する読み取り関数、それを設定または再確認する書き込み関数、そしてConsumerChangedイベントを追加します。また、すべての転送でコンシューマーを既定のアドレス（ゼロアドレスが推奨されます）にリセットすることを要求します。",
+  "designPurpose": "ERC-4400は、多くのERC-721プロジェクトが独自のカスタム権限で実装してきた利用のためのロールを標準化するために設計されました。それ以前は、メタバース、ゲーム、レンタルプラットフォームがそれぞれ場当たり的なオペレーターやコントリビューターのロールを定義していたため、ウォレットやマーケットプレイスは誰がトークンを利用する権利を持つのかを統一的に判断できませんでした。所有者・オペレーター・承認の権限を決して得てはならない単一のコンシューマーロールを確保することで、ERC-4400は、あるNFTを一方が利用しつつ、別の一方が所有し転送できる状態を実現します。",
+  "commonUsage": "コンシューマーロールは、NFTを利用することと所有することが区別されるアプリケーションを想定しています。たとえば、テナントがシーンをデプロイするメタバースの土地、プレイヤーに貸し出されるゲーム内アセット、イベントパス、そしてステーカーがトークンをステーキングコントラクトに預け入れた後も利用価値を保持するNFTベースのイールドファーミングなどです。この拡張はconsumerOfとchangeConsumer、およびERC-165によるインターフェースID 0x953c8dfaの検出のみを公開するため、通常は単独でデプロイされるのではなく、既存のERC-721コントラクトに組み込まれます。",
+
+  "fn.consumerOf.desc": "指定されたNFTの現在のコンシューマーアドレスを返します。コンシューマーが設定されていない場合はゼロアドレスを返します。token idが有効なNFTでない場合はリバートします。",
+  "fn.consumerOf.params.tokenId": "コンシューマーアドレスを照会する対象のNFT。",
+  "fn.consumerOf.returns.consumer": "そのNFTのコンシューマーアドレス。存在しない場合はゼロアドレス。",
+
+  "fn.changeConsumer.desc": "NFTのコンシューマーアドレスを設定または再確認します。ゼロアドレスを指定するとクリアされます。呼び出し元がNFTの所有者、承認されたオペレーター、または承認されたアドレスのいずれでもない場合はリバートし、ConsumerChangedを発行します。",
+  "fn.changeConsumer.params.consumer": "NFTの新しいコンシューマー。ゼロアドレスはコンシューマーがいないことを示します。",
+  "fn.changeConsumer.params.tokenId": "コンシューマーを変更する対象のNFT。",
+
+  "fn.ConsumerChanged.desc": "所有者がNFTのコンシューマーを変更したときに発行されます。コンシューマーがゼロアドレスの場合はコンシューマーがいないことを示し、Transferもコンシューマーを未設定にリセットします。",
+  "fn.ConsumerChanged.params.owner": "コンシューマーが変更されたNFTの所有者。",
+  "fn.ConsumerChanged.params.consumer": "新しいコンシューマーアドレス。クリアされた場合はゼロアドレス。",
+  "fn.ConsumerChanged.params.tokenId": "コンシューマーが変更されたNFT。",
+
+  "node.user": "NFT所有者",
+  "node.contract": "ERC-4400 NFTコントラクト",
+  "node.storageConsumers": "コンシューマーストレージ",
+  "node.consumer": "コンシューマー",
+
+  "edge.callChangeConsumer": "changeConsumer()を呼び出す",
+  "edge.updateConsumers": "コンシューマーマッピングを更新",
+  "edge.emitConsumerChanged": "ConsumerChangedイベントを発行",
+  "edge.grantConsumer": "利用権限を付与",
+
+  "sim.changeConsumerWalkthrough.name": "NFTコンシューマーを設定",
+  "sim.changeConsumerWalkthrough.desc": "所有者によるchangeConsumer呼び出しを、ストレージを経由して、コンシューマーに利用権限を付与するConsumerChangedイベントまで追います。",
+  "sim.changeConsumerWalkthrough.param.consumer": "コンシューマーアドレス",
+  "sim.changeConsumerWalkthrough.param.tokenId": "Token ID",
+  "sim.changeConsumerWalkthrough.step.call": "NFT所有者がコントラクトのchangeConsumer(consumer, tokenId)を呼び出し、トークンにコンシューマーを割り当てます。",
+  "sim.changeConsumerWalkthrough.step.call.mobile": "changeConsumer()を呼び出す",
+  "sim.changeConsumerWalkthrough.step.execute": "コントラクトは、呼び出し元が所有者、承認されたオペレーター、または承認されたアドレスであることを確認し、新しいコンシューマーをそのトークンの_consumersマッピングに書き込みます。",
+  "sim.changeConsumerWalkthrough.step.execute.mobile": "コンシューマーを保存",
+  "sim.changeConsumerWalkthrough.step.event": "コントラクトはConsumerChanged(owner, consumer, tokenId)を発行し、インデクサーやインターフェースが新しいコンシューマーを追跡できるようにします。",
+  "sim.changeConsumerWalkthrough.step.event.mobile": "ConsumerChangedを発行",
+  "sim.changeConsumerWalkthrough.step.grant": "割り当てられたコンシューマーは、所有者・オペレーター・承認の権限を得ることなく、アプリケーション内でNFTを利用できるようになります。",
+  "sim.changeConsumerWalkthrough.step.grant.mobile": "コンシューマーが利用権限を取得"
+}

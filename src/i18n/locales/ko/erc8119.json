@@ -1,0 +1,29 @@
+{
+  "short": "매개변수화된 스토리지 키",
+  "introduction": "ERC-8119는 EVM 키-값 스토리지에서 사용되는 매개변수화된 문자열 키의 표준 형식을 정의하며, 하나의 메타데이터 유형이 여러 인스턴스를 표현해야 하는 경우에 사용됩니다. 2025년 1월 Prem Makeig가 제안했습니다. 두 가지 인코딩을 규정합니다. 단일 매개변수를 위한 슬래시 또는 콜론 형식으로 key-label/key-parameter로 표기하며, 순서가 있는 여러 매개변수를 위한 대괄호 형식으로 key-label[parameter-1][parameter-2]로 표기합니다. 참고: ERC-8119는 Draft이며, 명세는 여전히 활발히 개발 중이고 크게 변경될 수 있습니다.",
+  "designPurpose": "ERC-8119는 컨트랙트가 하나의 메타데이터 유형의 여러 인스턴스를 저장할 때 발생하는 불일치를 없애기 위해 설계되었습니다. 그 이전에는 각 구현이 레이블과 매개변수를 결합하는 고유한 규약을 만들어 냈기 때문에, registration-1과 registration1 같은 키는 도구 간에 파싱하거나 공유할 수 없었습니다. ERC-8119는 두 가지 명시적인 인코딩을 고정하고 레이블에서 슬래시, 콜론, 왼쪽 대괄호 문자를 예약함으로써, 키를 레이블과 매개변수로 분리하는 하나의 결정론적 규칙을 파서에 제공합니다.",
+  "commonUsage": "이 형식은 메타데이터를 mapping(string => bytes)나 유사한 저장소에 보관하는 컨트랙트(이름 레지스트리, 프로필 레코드, 인스턴스별 구성 등)를 대상으로 합니다. 슬래시와 콜론 형식은 registration/1이나 website/http://website.com과 같은 긴 텍스트 값에 적합하고, 대괄호 형식은 resource[chain][1][token][42]와 같은 다중 매개변수 키에 적합합니다. 이는 인터페이스가 아니라 명명 규약이므로, 애플리케이션은 키를 일관되게 포매팅하고 파싱함으로써 이를 채택하며, 온체인 코드 변경은 필요하지 않습니다.",
+
+  "node.app": "애플리케이션",
+  "node.formatter": "키 포매터",
+  "node.storageMetadata": "메타데이터 스토리지",
+  "node.parser": "키 파서",
+
+  "edge.buildSlash": "슬래시/콜론 키 생성",
+  "edge.buildBracket": "대괄호 키 생성",
+  "edge.writeKey": "메타데이터 쓰기",
+  "edge.parseKey": "키 파싱",
+
+  "sim.buildKeyWalkthrough.name": "매개변수화된 키 생성",
+  "sim.buildKeyWalkthrough.desc": "슬래시 형식의 키를 애플리케이션에서 메타데이터 스토리지를 거쳐, 이를 다시 레이블과 매개변수로 분리하는 파서까지 따라갑니다.",
+  "sim.buildKeyWalkthrough.param.keyLabel": "키 레이블",
+  "sim.buildKeyWalkthrough.param.keyParameter": "키 매개변수",
+  "sim.buildKeyWalkthrough.step.build": "애플리케이션은 key-label과 매개변수를 슬래시로 결합하여 매개변수화된 키 registration/1을 만듭니다.",
+  "sim.buildKeyWalkthrough.step.build.mobile": "키 생성",
+  "sim.buildKeyWalkthrough.step.format": "포매터는 레이블에 공백, 슬래시, 콜론, 왼쪽 대괄호가 없는지 확인하여 표준을 준수하는 키를 생성합니다.",
+  "sim.buildKeyWalkthrough.step.format.mobile": "키 형식 검증",
+  "sim.buildKeyWalkthrough.step.store": "컨트랙트는 mapping(string => bytes) 메타데이터 저장소에서 키 registration/1 아래에 값을 씁니다.",
+  "sim.buildKeyWalkthrough.step.store.mobile": "메타데이터 쓰기",
+  "sim.buildKeyWalkthrough.step.parse": "파서는 키를 읽고 첫 번째 슬래시 또는 콜론에서 분리하여 레이블 registration과 매개변수 1을 복원합니다.",
+  "sim.buildKeyWalkthrough.step.parse.mobile": "키 다시 파싱"
+}

@@ -1,0 +1,31 @@
+{
+  "short": "Metadatos a nivel de contrato mediante contractURI",
+  "introduction": "ERC-7572 estandariza una función contractURI() que devuelve una URI que se resuelve en metadatos a nivel de contrato, como el nombre, la descripción y la imagen de un contrato, de modo que las dapps y los indexadores puedan mostrarlos sin configuración específica por aplicación. Fue propuesto por Devin Finzer, Alex Atallah y Ryan Ghods en diciembre de 2023. La interfaz también define un evento ContractURIUpdated para que los indexadores sepan cuándo volver a obtener los metadatos. Nota: ERC-7572 es un borrador (Draft); la especificación aún está en desarrollo activo y puede cambiar sustancialmente.",
+  "designPurpose": "ERC-7572 se diseñó para formalizar una convención que las dapps habían usado durante años sin una referencia compartida. Los contratos solían exponer un nombre o un símbolo únicamente por token o mediante funciones ad hoc, por lo que cada mercado y explorador configuraba la información de visualización de un contrato por separado. Al estandarizar una única llamada a contractURI() que devuelve un documento JSON, y combinarla con un evento ContractURIUpdated, el estándar permite que una sola fuente de metadatos impulse cada interfaz y mantiene sincronizados a los indexadores cuando cambia.",
+  "commonUsage": "contractURI() lo usan principalmente las colecciones NFT y otros contratos de token que necesitan un nombre, una descripción y una imagen a nivel de colección, que los mercados y exploradores representan como un perfil y un banner del contrato. La cadena devuelta puede apuntar a un recurso fuera de la cadena o incrustar una cadena JSON data:application/json en la cadena. Su esquema define campos que incluyen name, symbol, description, image, banner_image, featured_image, external_link y collaborators, de los cuales solo name es obligatorio.",
+
+  "fn.contractURI.desc": "Devuelve una URI que se resuelve en un documento JSON de metadatos a nivel de contrato, como el nombre, la descripción y la imagen del contrato. La URI puede referenciar un recurso fuera de la cadena o incrustar una cadena JSON data:application/json en la cadena.",
+  "fn.contractURI.returns.uri": "La URI que apunta al documento JSON de metadatos del contrato.",
+
+  "fn.ContractURIUpdated.desc": "Se emite cuando cambian los metadatos a nivel de contrato, indicando a los indexadores fuera de la cadena que vuelvan a obtener el documento devuelto por contractURI().",
+
+  "node.user": "Dapp",
+  "node.contract": "Contrato",
+  "node.storageUri": "Almacenamiento de URI",
+  "node.indexer": "Indexador fuera de la cadena",
+
+  "edge.callContractURI": "Llamar a contractURI()",
+  "edge.readUri": "Leer la URI almacenada",
+  "edge.emitUpdated": "Emitir el evento ContractURIUpdated",
+  "edge.notifyIndexer": "Notificar a los indexadores",
+
+  "sim.readMetadataWalkthrough.name": "Resolución de metadatos del contrato",
+  "sim.readMetadataWalkthrough.desc": "Sigue a una dapp que lee los metadatos de un contrato mediante contractURI(), y luego una actualización que emite ContractURIUpdated para notificar a los indexadores.",
+  "sim.readMetadataWalkthrough.param.contract": "Dirección del contrato",
+  "sim.readMetadataWalkthrough.step.call": "Una dapp llama a contractURI() en el contrato para obtener la URI de sus metadatos a nivel de contrato.",
+  "sim.readMetadataWalkthrough.step.call.mobile": "Llamar a contractURI()",
+  "sim.readMetadataWalkthrough.step.read": "El contrato lee su URI almacenada y devuelve un enlace, como una dirección ipfs://, que se resuelve en el documento JSON de metadatos.",
+  "sim.readMetadataWalkthrough.step.read.mobile": "Devolver la URI de metadatos",
+  "sim.readMetadataWalkthrough.step.update": "Cuando el propietario actualiza los metadatos, el contrato emite ContractURIUpdated, lo que impulsa a los indexadores fuera de la cadena a volver a obtener el documento.",
+  "sim.readMetadataWalkthrough.step.update.mobile": "Emitir evento de actualización"
+}

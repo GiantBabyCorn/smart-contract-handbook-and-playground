@@ -1,0 +1,31 @@
+{
+  "short": "contractURI를 통한 컨트랙트 수준 메타데이터",
+  "introduction": "ERC-7572는 컨트랙트의 이름, 설명, 이미지와 같은 컨트랙트 수준의 메타데이터로 해석되는 URI를 반환하는 contractURI() 함수를 표준화하여, dapp과 인덱서가 애플리케이션별 설정 없이 이를 표시할 수 있도록 합니다. 이 표준은 2023년 12월 Devin Finzer, Alex Atallah, Ryan Ghods가 제안했습니다. 이 인터페이스는 또한 인덱서가 메타데이터를 언제 다시 가져와야 하는지 알 수 있도록 ContractURIUpdated 이벤트를 정의합니다. 참고: ERC-7572는 초안(Draft) 상태이며, 명세는 여전히 활발히 개발 중이고 상당 부분 변경될 수 있습니다.",
+  "designPurpose": "ERC-7572는 dapp들이 공통된 참조 없이 수년간 사용해 온 관행을 공식화하기 위해 설계되었습니다. 컨트랙트는 일반적으로 토큰별로 또는 임시 함수를 통해서만 이름이나 심볼을 노출했기 때문에, 각 마켓플레이스와 익스플로러가 컨트랙트의 표시 정보를 개별적으로 설정했습니다. JSON 문서를 반환하는 단일 contractURI() 호출을 표준화하고 이를 ContractURIUpdated 이벤트와 결합함으로써, 이 표준은 하나의 메타데이터 소스가 모든 인터페이스를 구동하도록 하고, 변경 시 인덱서의 동기화를 유지합니다.",
+  "commonUsage": "contractURI()는 주로 컬렉션 수준의 이름, 설명, 이미지가 필요한 NFT 컬렉션과 기타 토큰 컨트랙트에서 사용되며, 마켓플레이스와 익스플로러는 이를 컨트랙트의 프로필과 배너로 렌더링합니다. 반환되는 문자열은 오프체인 리소스를 가리키거나 온체인 data:application/json JSON 문자열을 포함할 수 있습니다. 그 스키마는 name, symbol, description, image, banner_image, featured_image, external_link, collaborators를 포함한 필드를 정의하며, 이 중 name만 필수입니다.",
+
+  "fn.contractURI.desc": "컨트랙트의 이름, 설명, 이미지와 같은 컨트랙트 수준 메타데이터의 JSON 문서로 해석되는 URI를 반환합니다. 이 URI는 오프체인 리소스를 참조하거나 온체인 data:application/json JSON 문자열을 포함할 수 있습니다.",
+  "fn.contractURI.returns.uri": "컨트랙트의 메타데이터 JSON 문서를 가리키는 URI.",
+
+  "fn.ContractURIUpdated.desc": "컨트랙트 수준 메타데이터가 변경될 때 발생하며, 오프체인 인덱서에 contractURI()가 반환하는 문서를 다시 가져오도록 신호를 보냅니다.",
+
+  "node.user": "Dapp",
+  "node.contract": "컨트랙트",
+  "node.storageUri": "URI 스토리지",
+  "node.indexer": "오프체인 인덱서",
+
+  "edge.callContractURI": "contractURI() 호출",
+  "edge.readUri": "저장된 URI 읽기",
+  "edge.emitUpdated": "ContractURIUpdated 이벤트 발생",
+  "edge.notifyIndexer": "인덱서에 알림",
+
+  "sim.readMetadataWalkthrough.name": "컨트랙트 메타데이터 해석",
+  "sim.readMetadataWalkthrough.desc": "dapp이 contractURI()를 통해 컨트랙트의 메타데이터를 읽고, 이후 ContractURIUpdated를 발생시켜 인덱서에 알리는 업데이트까지 따라갑니다.",
+  "sim.readMetadataWalkthrough.param.contract": "컨트랙트 주소",
+  "sim.readMetadataWalkthrough.step.call": "dapp이 컨트랙트에서 contractURI()를 호출하여 컨트랙트 수준 메타데이터의 URI를 가져옵니다.",
+  "sim.readMetadataWalkthrough.step.call.mobile": "contractURI() 호출",
+  "sim.readMetadataWalkthrough.step.read": "컨트랙트는 저장된 URI를 읽고, 메타데이터 JSON 문서로 해석되는 ipfs:// 주소와 같은 링크를 반환합니다.",
+  "sim.readMetadataWalkthrough.step.read.mobile": "메타데이터 URI 반환",
+  "sim.readMetadataWalkthrough.step.update": "소유자가 메타데이터를 업데이트하면 컨트랙트는 ContractURIUpdated를 발생시켜, 오프체인 인덱서가 문서를 다시 가져오도록 유도합니다.",
+  "sim.readMetadataWalkthrough.step.update.mobile": "업데이트 이벤트 발생"
+}

@@ -101,6 +101,20 @@ export const entry: ProtocolEntry = {
     },
   ],
 
+  // ─── Schema v2 content sections ───
+  composes: [
+    { erc: 6909, role: 'uniswap-v4.compose.erc6909.role' },
+    { slug: 'erc20', role: 'uniswap-v4.compose.erc20.role' },
+  ],
+
+  references: [
+    {
+      label: 'Uniswap V4 docs — ERC-6909 claims',
+      url: 'https://docs.uniswap.org/contracts/v4/concepts/erc6909',
+      kind: 'spec',
+    },
+  ],
+
   // ─── ERCFlow ───
   flowNodes: [
     {

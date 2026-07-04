@@ -1,0 +1,32 @@
+{
+  "short": "スマートコントラクトパッケージマニフェスト形式（EthPM v3）",
+  "introduction": "ERC-2678 は、スマートコントラクトパッケージ（1つ以上のコントラクトと、そのソースコード、コンパイラ設定、複数のネットワークにわたるデプロイ済みインスタンス）を記述するパッケージマニフェスト用の JSON データ形式を定義します。これは、g. nicholas d'andrea、Piper Merriam ほか複数の共著者により、2020年5月に EthPM 形式のバージョン3として提案されました。マニフェストはアルファベット順にソートされ最小化された JSON オブジェクトで、IPFS などのコンテンツアドレス指定ストレージ上で配布され、オンチェーンの EthPM レジストリに公開されます。",
+  "designPurpose": "EthPM v3 は、コンパイル済みコントラクトを共有・再利用するための単一かつツールに依存しない形式を Ethereum エコシステムに提供することを目的として設計されました。それ以前、各プロジェクトはソースやデプロイを互換性のない場当たり的な構成で記述していたため、依存関係をツール間で確実にインストールまたは検証することができませんでした。バージョン3では、スキーマを Solidity コンパイラのメタデータ出力に整合させ、コンパイラ定義を1つのトップレベル配列にまとめ、一貫性のためにキー名を snake_case から camelCase に変更しています。",
+  "commonUsage": "パッケージマニフェストは手作業ではなく、プロジェクトのリリース工程でパッケージ管理ツールによってプログラム的に生成されます。パッケージマネージャーはこれらを読み込んで、依存関係のインストール、リリースのビルド、ソースコントラクトに対するデプロイの検証を行います。パッケージには、継承を目的とした基底コントラクトから、標準的な ERC-20 トークンのような再利用可能なコントラクト、デプロイ済みインスタンスのまとまりまで、さまざまなものがあります。マニフェストは IPFS のようなコンテンツアドレス指定システムに保存され、EthPM レジストリから参照されます。",
+
+  "node.author": "パッケージ作成者",
+  "node.packageManager": "EthPM パッケージマネージャー",
+  "node.manifest": "パッケージマニフェスト",
+  "node.ipfs": "コンテンツアドレス指定ストレージ",
+  "node.registry": "EthPM レジストリ",
+  "node.consumer": "利用側の開発者",
+
+  "edge.assemble": "パッケージを組み立てる",
+  "edge.serialize": "マニフェストをシリアライズ",
+  "edge.publish": "IPFS に公開",
+  "edge.register": "リリースを登録",
+  "edge.resolve": "解決してインストール",
+
+  "sim.publishPackageWalkthrough.name": "パッケージ公開ウォークスルー",
+  "sim.publishPackageWalkthrough.desc": "EthPM v3 パッケージを、作成者による組み立てから IPFS ストレージを経て、利用者がリリースをインストールするまで追跡します。",
+  "sim.publishPackageWalkthrough.param.packageName": "パッケージ名",
+  "sim.publishPackageWalkthrough.param.version": "パッケージバージョン",
+  "sim.publishPackageWalkthrough.step.assemble": "パッケージ作成者はパッケージマネージャーを実行し、プロジェクトのコントラクト、ソース、デプロイから新しいリリースを組み立てます。",
+  "sim.publishPackageWalkthrough.step.assemble.mobile": "パッケージを組み立てる",
+  "sim.publishPackageWalkthrough.step.serialize": "ツールは収集したデータをパッケージマニフェストにシリアライズし、manifest フィールドを ethpm/3 に設定して、name、version、sources、contractTypes、compilers、deployments の各フィールドを書き込みます。",
+  "sim.publishPackageWalkthrough.step.serialize.mobile": "マニフェストフィールドをシリアライズ",
+  "sim.publishPackageWalkthrough.step.publish": "マニフェストはアルファベット順にソートされ、最小化されて IPFS に保存され、そのコンテンツアドレス指定 URI がオンチェーンの EthPM レジストリにリリースとして登録されます。",
+  "sim.publishPackageWalkthrough.step.publish.mobile": "IPFS とレジストリに公開",
+  "sim.publishPackageWalkthrough.step.consume": "利用側の開発者はレジストリからリリースを解決してパッケージをインストールし、マニフェストを使ってソースを取得し、デプロイ済みインスタンスを検証します。",
+  "sim.publishPackageWalkthrough.step.consume.mobile": "パッケージを解決してインストール"
+}

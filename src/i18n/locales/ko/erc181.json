@@ -1,0 +1,42 @@
+{
+  "short": "이더리움 주소의 ENS 역방향 해석",
+  "introduction": "ERC-181은 이더리움 네임 서비스(ENS)에서 역방향 해석을 위한 레지스트라 및 리졸버 인터페이스를 정의하며, 이더리움 주소를 사람이 읽을 수 있는 이름으로 다시 매핑합니다. 이는 2016년 12월 Nick Johnson이 제안했습니다. 역방향 레코드는 예약된 addr.reverse 도메인 아래에 위치하며, 특정 주소의 레코드는 그 주소의 소문자 16진수 형태 뒤에 .addr.reverse를 붙인 위치에 저장됩니다. 해당 도메인을 소유한 레지스트라는 각 계정이 자신의 역방향 노드를 클레임할 수 있게 하고, 리졸버는 노드에 해당하는 ENS 이름을 반환하는 name 메서드를 제공합니다.",
+  "designPurpose": "ERC-181은 원래 이름에서 주소로의 정방향 해석만 지원하던 ENS에 역방향 조회를 추가하기 위해 설계되었습니다. 누구나 자신이 소유하지 않은 주소로 이름을 가리킬 수 있기 때문에, 정방향 레코드만으로는 어떤 주소가 특정 이름을 인정한다는 것을 증명할 수 없습니다. ERC-181은 각 주소의 역방향 노드를 그 16진수 인코딩으로부터 결정론적으로 도출하고, addr.reverse 위에 레지스트라를 두어 계정이 자신의 주소에 해당하는 레코드만 클레임할 수 있도록 합니다. 이를 통해 리졸버는 해당 이름이 그 주소의 소유자에 의해 설정되었음을 신뢰할 수 있습니다.",
+  "commonUsage": "역방향 해석은 지갑, 블록 익스플로러, 대시보드에서 원시 16진수 주소 대신 alice.eth와 같은 짧은 ENS 이름을 표시하는 데 사용됩니다. 또한 claim 함수를 사용하면 컨트랙트가 단일 생성자 호출로 역방향 레코드 설정을 자신의 배포자에게 위임할 수 있어, 배포된 컨트랙트도 읽기 쉬운 이름을 표시할 수 있습니다. 역방향 레코드는 주소의 16진수 인코딩을 키로 사용하므로, 온체인에서 역방향 조회를 수행하는 컨트랙트는 ENS에 질의하기 전에 직접 주소를 16진수로 인코딩해야 합니다.",
+
+  "fn.claim.desc": "호출자의 역방향 레코드 hex(caller) + '.addr.reverse'의 소유권을 지정된 owner 주소로 이전하도록 ENS 레지스트리에 지시하고, 해당 레코드의 namehash를 반환합니다.",
+  "fn.claim.params.owner": "ENS에서 호출자의 역방향 레코드 소유자로 설정할 주소.",
+  "fn.claim.returns.node": "소유권이 이전된 역방향 레코드의 ENS namehash.",
+
+  "fn.claimWithResolver.desc": "호출자의 역방향 레코드에 리졸버를 설정하고 그 소유권을 지정된 owner로 이전하는 작업을 한 번의 호출로 수행한 뒤, 해당 레코드의 namehash를 반환합니다. 리졸버로 0을 전달하면 현재 리졸버는 변경되지 않습니다.",
+  "fn.claimWithResolver.params.owner": "역방향 레코드의 소유자로 설정할 주소.",
+  "fn.claimWithResolver.params.resolver": "레코드에 설정할 리졸버 주소이며, 0을 지정하면 현재 리졸버는 변경되지 않습니다.",
+  "fn.claimWithResolver.returns.node": "역방향 레코드의 ENS namehash.",
+
+  "fn.setName.desc": "호출자의 역방향 레코드를 기본 리졸버로 향하게 하고 지정된 name을 그 안에 기록하여, 단일 트랜잭션으로 역방향 레코드를 생성합니다. 해당 레코드의 namehash를 반환합니다.",
+  "fn.setName.params.name": "호출자의 역방향 레코드로 저장할 ENS 이름.",
+  "fn.setName.returns.node": "역방향 레코드의 ENS namehash.",
+
+  "fn.name.desc": "지정된 node에 대해 기록된 ENS 이름을 반환하는 리졸버 메서드이며, 설정된 것이 없으면 빈 문자열을 반환합니다. 그 ERC-165 인터페이스 ID는 0x691f3431입니다.",
+  "fn.name.params.node": "조회할 역방향 레코드의 namehash.",
+  "fn.name.returns.name": "해당 node에 등록된 ENS 이름이며, 설정되지 않은 경우 빈 문자열입니다.",
+
+  "node.user": "주소 소유자",
+  "node.contract": "역방향 레지스트라",
+  "node.storageReverse": "역방향 레코드",
+
+  "edge.callClaim": "claim() 호출",
+  "edge.callSetName": "setName() 호출",
+  "edge.updateReverse": "역방향 레코드 업데이트",
+
+  "sim.setNameWalkthrough.name": "역방향 이름 설정 둘러보기",
+  "sim.setNameWalkthrough.desc": "역방향 레지스트라가 호출자의 역방향 노드를 클레임하고 그 노드에 ENS 이름을 저장하는 과정을 따라 setName 호출을 살펴봅니다.",
+  "sim.setNameWalkthrough.param.caller": "주소 소유자",
+  "sim.setNameWalkthrough.param.name": "ENS 이름",
+  "sim.setNameWalkthrough.step.call": "한 계정이 역방향 레지스트라에서 setName(name)을 호출하여 단일 트랜잭션으로 자신의 주소에 대한 ENS 이름을 설정합니다.",
+  "sim.setNameWalkthrough.step.call.mobile": "setName() 호출",
+  "sim.setNameWalkthrough.step.claim": "레지스트라는 hex(caller) + '.addr.reverse'로부터 호출자의 역방향 노드를 계산하고, 그 소유권을 클레임한 뒤 기본 리졸버로 향하게 합니다.",
+  "sim.setNameWalkthrough.step.claim.mobile": "역방향 노드 클레임",
+  "sim.setNameWalkthrough.step.store": "기본 리졸버는 제공된 name을 역방향 노드에 대한 name 매핑에 기록하므로, 이제 조회 시 사람이 읽을 수 있는 이름이 반환됩니다.",
+  "sim.setNameWalkthrough.step.store.mobile": "ENS 이름 저장"
+}

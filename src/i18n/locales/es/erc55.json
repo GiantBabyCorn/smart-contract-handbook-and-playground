@@ -1,0 +1,32 @@
+{
+  "short": "Codificación de Direcciones con Suma de Verificación en Mayúsculas y Minúsculas",
+  "introduction": "ERC-55 define una suma de verificación retrocompatible para las direcciones de Ethereum que codifica bits de detección de errores en el uso de mayúsculas y minúsculas de los dígitos hexadecimales. Fue propuesto por Vitalik Buterin y Alex Van de Sande en enero de 2016. La dirección se convierte primero a su forma hexadecimal de 40 caracteres en minúsculas y se le aplica un hash Keccak-256 como cadena ASCII; cada letra hexadecimal se pone en mayúscula cuando el nibble correspondiente del hash es 8 o superior, y en minúscula en caso contrario. Los dígitos decimales permanecen sin cambios, de modo que la dirección conserva su longitud mientras añade unos 15 bits de comprobación.",
+  "designPurpose": "ERC-55 se diseñó para detectar direcciones de Ethereum mal escritas sin cambiar su longitud ni romper las herramientas existentes. Las direcciones hexadecimales simples no tienen redundancia, por lo que un solo carácter alterado produce otra dirección de apariencia válida y pueden perderse fondos. En lugar de añadir una suma de verificación, ERC-55 reutiliza el uso de mayúsculas y minúsculas de las letras a-f como comprobación carácter por carácter. Como la mayoría de los analizadores aceptan hexadecimal con mayúsculas y minúsculas mezcladas, las direcciones con suma de verificación funcionan en software más antiguo, mientras que los clientes que la admiten rechazan cualquier dirección cuyo uso de mayúsculas y minúsculas no coincida con el hash.",
+  "commonUsage": "Las sumas de verificación con mayúsculas y minúsculas mezcladas aparecen en casi todos los lugares donde se muestra una dirección de Ethereum a una persona: las billeteras, los exploradores de bloques y bibliotecas como web3.js y ethers.js representan y validan las direcciones en este formato. Como la codificación es una función pura de la dirección, no necesita ningún contrato ni almacenamiento on-chain; el software la aplica al mostrar una dirección y advierte o la rechaza cuando el uso de mayúsculas y minúsculas no supera la comprobación. Los vectores de prueba en mayúsculas, en minúsculas y normales de la especificación se usan habitualmente para verificar las implementaciones.",
+
+  "node.user": "Fuente de la Dirección",
+  "node.encoder": "Codificador de Suma de Verificación",
+  "node.storageHash": "Hash Keccak-256",
+  "node.storageResult": "Dirección con Suma de Verificación",
+  "node.verifier": "Verificador de Suma de Verificación",
+  "node.consumer": "Billetera Verificadora",
+
+  "edge.submitAddress": "Enviar dirección en minúsculas",
+  "edge.hashAddress": "Hashear el hexadecimal en minúsculas",
+  "edge.applyCasing": "Aplicar mayúsculas y minúsculas",
+  "edge.readHash": "Leer los bits del hash",
+  "edge.checkChecksum": "Comprobar mayúsculas y minúsculas",
+  "edge.deliverAddress": "Entregar la dirección validada",
+
+  "sim.checksumWalkthrough.name": "Recorrido por la Codificación de Suma de Verificación",
+  "sim.checksumWalkthrough.desc": "Se sigue una dirección en minúsculas mientras el codificador la hashea, aplica el uso de mayúsculas y minúsculas de ERC-55 y un cliente verifica el resultado.",
+  "sim.checksumWalkthrough.param.address": "Dirección en minúsculas",
+  "sim.checksumWalkthrough.step.submit": "Una billetera o aplicación envía una dirección hexadecimal simple en minúsculas al codificador de suma de verificación.",
+  "sim.checksumWalkthrough.step.submit.mobile": "Enviar dirección",
+  "sim.checksumWalkthrough.step.hash": "El codificador trata la dirección hexadecimal de 40 caracteres como ASCII y calcula su hash Keccak-256, que proporciona los bits de mayúsculas y minúsculas.",
+  "sim.checksumWalkthrough.step.hash.mobile": "Hashear el hexadecimal en minúsculas",
+  "sim.checksumWalkthrough.step.case": "Cada letra hexadecimal se pone en mayúscula cuando su nibble correspondiente del hash es 8 o superior y se deja en minúscula en caso contrario, produciendo la dirección con mayúsculas y minúsculas mezcladas.",
+  "sim.checksumWalkthrough.step.case.mobile": "Aplicar mayúsculas y minúsculas",
+  "sim.checksumWalkthrough.step.verify": "Un cliente verificador vuelve a derivar el uso de mayúsculas y minúsculas a partir del hash y lo compara, aceptando la dirección solo cuando todas las letras coinciden.",
+  "sim.checksumWalkthrough.step.verify.mobile": "Verificar la suma de verificación"
+}

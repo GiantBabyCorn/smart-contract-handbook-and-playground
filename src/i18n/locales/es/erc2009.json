@@ -1,0 +1,77 @@
+{
+  "short": "Servicio de Cumplimiento para Tokens Regulados",
+  "introduction": "ERC-2009 define una interfaz de Servicio de Cumplimiento que permite a los tokens regulados ejecutar comprobaciones KYC y AML completamente on-chain antes de que se ejecute una transferencia, acuñación o quema. Fue propuesto por Daniel Lehrner en mayo de 2019. Los tokens consultan funciones de comprobación que devuelven un código de estado 0x11 (Allowed, permitido) o 0x10 (Disallowed, no permitido), y luego registran los límites mediante funciones de actualización en la misma transacción. Nota: ERC-2009 está en estado Stagnant (estancado): ha permanecido inactivo durante más de 6 meses y puede que nunca se finalice, pero conserva relevancia histórica o técnica.",
+  "designPurpose": "ERC-2009 fue diseñado para descentralizar las comprobaciones de cumplimiento de los tokens regulados. Antes de él, la verificación KYC y AML solía ejecutarse off-chain, lo que centralizaba las transferencias y obligaba a un segundo paso de confirmación más lento y no atómico. ERC-1462 proponía qué comprobaciones necesita un token, pero no cómo implementarlas. ERC-2009 responde a esto con una interfaz on-chain de funciones de comprobación y actualización, dejando la lógica de las reglas a los implementadores, e indexa el estado por un token id de tipo bytes32, de modo que un token puede actualizar su contrato sin migrar sus datos.",
+  "commonUsage": "El Servicio de Cumplimiento está destinado a los tokens regulados y de valores que deben aplicar límites de transferencia de KYC, AML y específicos de cada jurisdicción directamente en el contrato. Dado que un mismo servicio puede registrar muchos tokens mediante un id bytes32, está diseñado para que un legislador o emisor pueda mantener reglas de cumplimiento compartidas para cada token de una jurisdicción. Al ser una propuesta Stagnant, nunca tuvo una adopción amplia en producción; en la práctica, el cumplimiento on-chain suele gestionarse mediante marcos de tokens con permisos como ERC-3643.",
+
+  "fn.checkTransferAllowed.desc": "Comprueba si el token permite una transferencia del valor indicado de un titular a otro, devolviendo un código de estado; el token debe hacer revert salvo que el código sea 0x11 (Allowed, permitido).",
+  "fn.checkTransferAllowed.params.tokenId": "El ID bytes32 único que identifica al token.",
+  "fn.checkTransferAllowed.params.from": "La dirección del pagador de la que se tomarían los tokens si se ejecutara.",
+  "fn.checkTransferAllowed.params.to": "La dirección del beneficiario a la que se transferirían los tokens si se ejecutara.",
+  "fn.checkTransferAllowed.params.value": "La cantidad que se transferiría.",
+  "fn.checkTransferAllowed.returns.status": "Un código de estado: 0x11 (Allowed, permitido) o 0x10 (Disallowed, no permitido), o un equivalente específico del emisor.",
+
+  "fn.checkMintAllowed.desc": "Comprueba si el token permite acuñar el valor indicado a un beneficiario, devolviendo un código de estado que el token debe tratar como condición previa de la acuñación.",
+  "fn.checkMintAllowed.params.tokenId": "El ID bytes32 único que identifica al token.",
+  "fn.checkMintAllowed.params.to": "La dirección del beneficiario que recibiría los tokens acuñados.",
+  "fn.checkMintAllowed.params.value": "La cantidad que se acuñaría.",
+  "fn.checkMintAllowed.returns.status": "Un código de estado: 0x11 (Allowed, permitido) o 0x10 (Disallowed, no permitido), o un equivalente específico del emisor.",
+
+  "fn.checkBurnAllowed.desc": "Comprueba si el token permite quemar el valor indicado de un titular, devolviendo un código de estado que debe ser 0x11 (Allowed, permitido) para que la quema continúe.",
+  "fn.checkBurnAllowed.params.tokenId": "El ID bytes32 único que identifica al token.",
+  "fn.checkBurnAllowed.params.from": "La dirección del pagador de la que se quemarían los tokens.",
+  "fn.checkBurnAllowed.params.value": "La cantidad que se quemaría.",
+  "fn.checkBurnAllowed.returns.status": "Un código de estado: 0x11 (Allowed, permitido) o 0x10 (Disallowed, no permitido), o un equivalente específico del emisor.",
+
+  "fn.updateTransferAccumulated.desc": "Registra los totales acumulados de una transferencia y debe llamarse en la misma transacción que la transferencia; hace revert si la actualización infringe alguna regla de cumplimiento. La lógica de las reglas queda a cargo del implementador.",
+  "fn.updateTransferAccumulated.params.tokenId": "El ID bytes32 único que identifica al token.",
+  "fn.updateTransferAccumulated.params.from": "La dirección del pagador de la que se toman los tokens.",
+  "fn.updateTransferAccumulated.params.to": "La dirección del beneficiario a la que se transfieren los tokens.",
+  "fn.updateTransferAccumulated.params.value": "La cantidad que se transfiere.",
+
+  "fn.addToken.desc": "Registra un token en el servicio bajo un ID bytes32 para que pueda llamar a las funciones de actualización; hace revert si el ID ya está en uso. Que el registro esté restringido queda a cargo del implementador. Emite TokenAdded.",
+  "fn.addToken.params.tokenId": "El ID bytes32 único que se asignará al token.",
+  "fn.addToken.params.token": "La dirección desde la cual se llamarán las funciones de actualización.",
+
+  "fn.authorizeAccumulatedOperator.desc": "Aprueba a un operador para actualizar los totales acumulados en nombre del token id del llamador. Devuelve true si tiene éxito y emite AuthorizedAccumulatedOperator.",
+  "fn.authorizeAccumulatedOperator.params.operator": "La dirección a aprobar como operador de las actualizaciones acumuladas.",
+  "fn.authorizeAccumulatedOperator.returns.success": "true si el operador fue aprobado.",
+
+  "fn.revokeAccumulatedOperator.desc": "Revoca la aprobación de un operador para actualizar los totales acumulados en nombre del token id del llamador. Devuelve true si tiene éxito y emite RevokedAccumulatedOperator.",
+  "fn.revokeAccumulatedOperator.params.operator": "La dirección a revocar como operador de las actualizaciones acumuladas.",
+  "fn.revokeAccumulatedOperator.returns.success": "true si la aprobación del operador fue revocada.",
+
+  "fn.TokenAdded.desc": "Se emite después de que un token se ha añadido al servicio.",
+  "fn.TokenAdded.params.tokenId": "El ID bytes32 único que identifica al token.",
+  "fn.TokenAdded.params.token": "La dirección desde la cual se llamarán las funciones de actualización.",
+
+  "fn.AuthorizedAccumulatedOperator.desc": "Se emite cuando se aprueba a un operador para actualizar el acumulado en nombre de un token.",
+  "fn.AuthorizedAccumulatedOperator.params.operator": "La dirección aprobada como operador de las actualizaciones acumuladas.",
+  "fn.AuthorizedAccumulatedOperator.params.tokenId": "El token id en cuyo nombre pueden realizarse las actualizaciones acumuladas.",
+
+  "fn.RevokedAccumulatedOperator.desc": "Se emite cuando se revoca a un operador la actualización del acumulado en nombre de un token.",
+  "fn.RevokedAccumulatedOperator.params.operator": "La dirección cuya aprobación de operador fue revocada.",
+  "fn.RevokedAccumulatedOperator.params.tokenId": "El token id en cuyo nombre podían realizarse las actualizaciones acumuladas.",
+
+  "node.user": "Token Regulado",
+  "node.contract": "Servicio de Cumplimiento",
+  "node.storageAccumulated": "Registro y acumulado",
+
+  "edge.callAddToken": "Llamar a addToken()",
+  "edge.callCheck": "Llamar a checkTransferAllowed()",
+  "edge.callUpdate": "Llamar a updateTransferAccumulated()",
+  "edge.writeStorage": "Escribir registro y acumulado",
+  "edge.emitTokenAdded": "Emitir evento TokenAdded",
+
+  "sim.complianceCheckWalkthrough.name": "Recorrido de comprobación de cumplimiento",
+  "sim.complianceCheckWalkthrough.desc": "Sigue a un token regulado mientras se registra en el servicio, comprueba una transferencia y registra el total acumulado.",
+  "sim.complianceCheckWalkthrough.param.from": "Pagador",
+  "sim.complianceCheckWalkthrough.param.to": "Beneficiario",
+  "sim.complianceCheckWalkthrough.param.value": "Cantidad",
+  "sim.complianceCheckWalkthrough.step.register": "El token se registra en el servicio mediante addToken, que almacena su dirección bajo un id bytes32 y emite TokenAdded.",
+  "sim.complianceCheckWalkthrough.step.register.mobile": "Registrar el token",
+  "sim.complianceCheckWalkthrough.step.check": "Antes de la transferencia, el token llama a checkTransferAllowed y el servicio devuelve 0x11 (Allowed, permitido).",
+  "sim.complianceCheckWalkthrough.step.check.mobile": "Comprobar la transferencia",
+  "sim.complianceCheckWalkthrough.step.update": "En la misma transacción, el token llama a updateTransferAccumulated, que actualiza el total acumulado o hace revert si se infringe una regla.",
+  "sim.complianceCheckWalkthrough.step.update.mobile": "Actualizar acumulado"
+}

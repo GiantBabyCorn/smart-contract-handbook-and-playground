@@ -1,0 +1,32 @@
+{
+  "short": "ENS Text Record Resolver Profile",
+  "introduction": "ERC-634 defines a resolver profile for the Ethereum Name Service (ENS) that lets a name store arbitrary key/value text records like an email, URL, avatar, or social handle. It was proposed by Richard Moore in May 2017. The profile adds one view function, text(node, key), returning the UTF-8 string stored for a given nodehash and key, or an empty string when none is set. Note: ERC-634 is Stagnant — it has been inactive for 6+ months and may never be finalized, but remains historically or technically significant.",
+  "designPurpose": "ERC-634 was designed to attach human-readable metadata to ENS names without defining a new record type for every field. Rather than fix dozens of specific fields, it borrows the model of DNS TXT records: a single text(node, key) lookup over free-form keys and UTF-8 values. This lets applications introduce their own keys through reverse-DNS service keys such as com.github without editing the standard or risking collisions, while common global keys like avatar, email, and url stay interoperable across clients.",
+  "commonUsage": "Text records back the profile that ENS-aware wallets, explorers, and dapps render for a name: the avatar shown beside an address, a linked website, an email, and social handles such as com.twitter or com.github. Clients read them through the text(node, key) call on the name's resolver, treating an empty string as an unset key. Because keys are open-ended, services register their own reverse-DNS keys instead of coordinating changes to the standard.",
+
+  "fn.text.desc": "Returns the UTF-8 text data stored for a given key under the ENS name identified by its nodehash. Returns the empty string when the key has no value set.",
+  "fn.text.params.node": "The ENS nodehash identifying the name to query.",
+  "fn.text.params.key": "The text record key to look up, such as email, url, or com.twitter.",
+  "fn.text.returns.text": "The stored text value for the key, or an empty string if none is set.",
+
+  "node.user": "Record Reader",
+  "node.contract": "ENS Text Resolver",
+  "node.storageTexts": "Text Record Storage",
+  "node.result": "Returned Text",
+
+  "edge.query": "Call text()",
+  "edge.readTexts": "Read text records",
+  "edge.returnText": "Return text value",
+  "edge.response": "Deliver text value",
+
+  "sim.textRecordQuery.name": "Text Record Lookup",
+  "sim.textRecordQuery.desc": "Follow a text(node, key) query from the client through resolver storage back to the returned string value.",
+  "sim.textRecordQuery.param.node": "ENS name",
+  "sim.textRecordQuery.param.key": "Record key",
+  "sim.textRecordQuery.step.call": "The client calls text(node, key) on the resolver, passing the ENS nodehash and a record key such as email.",
+  "sim.textRecordQuery.step.call.mobile": "Call text()",
+  "sim.textRecordQuery.step.lookup": "The resolver looks up the stored value for that nodehash and key in its text record storage.",
+  "sim.textRecordQuery.step.lookup.mobile": "Read text records",
+  "sim.textRecordQuery.step.return": "The resolver returns the stored UTF-8 string to the client, or an empty string if the key was never set.",
+  "sim.textRecordQuery.step.return.mobile": "Return text value"
+}

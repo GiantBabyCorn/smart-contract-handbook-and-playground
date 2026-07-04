@@ -1,0 +1,31 @@
+{
+  "short": "BLS12-381 결정론적 계정 계층",
+  "introduction": "ERC-2334는 ERC-2333으로 파생된 BLS12-381 키를 위한 결정론적 계정 계층을 정의합니다. 2019년 9월 Carl Beekhuizen이 제안했습니다. 키는 m / purpose / coin_type / account / use 형식의 경로로 지정되며, purpose는 12381로 고정되고 coin_type은 체인별로 키를 구분합니다. 검증자는 coin_type 3600을 사용하여 m/12381/3600/i/0에서 출금 키를, m/12381/3600/i/0/0에서 서명 키를 파생합니다. 참고: ERC-2334는 Review 상태이며, 확정되기 전까지 인터페이스가 변경될 수 있습니다.",
+  "designPurpose": "ERC-2334는 BIP44가 부적합한 것으로 판명된 후 BLS12-381 키에 단일하고 예측 가능한 파생 경로를 제공하도록 설계되었습니다. BIP44는 UTXO 중심이며 BIP32를 통해 파생된 secp256k1 키를 전제하지만, ERC-2333은 강화된 키만 사용하고 다른 KDF를 채택합니다. ERC-2334는 BIP43과 BIP44의 purpose, coin_type, account 필드를 재사용하지만, 초기의 경쟁하던 이더리움 경로 형식이 유지하던 UTXO 전용 계층은 제거합니다. 그 coin_type 3600은 secp256k1의 coin_type 60의 제곱으로, 두 종류의 키를 깔끔하게 분리된 상태로 유지합니다.",
+  "commonUsage": "이 계층은 단일 니모닉을 검증자 키로 바꾸는 이더리움 스테이킹 도구에서 사용됩니다. 예치 및 키 생성 소프트웨어는 m/12381/3600/i/0과 m/12381/3600/i/0/0을 따라 각 검증자의 출금 키와 서명 키를 파생합니다. 서명 키는 출금 키의 0번째 자식이므로, 출금 키를 콜드 키로 안전하게 보관하는 것만으로 나중에 핫 서명 키를 복구하기에 충분합니다. 명세가 허용하는 대로, 커스터디얼 및 비밀 공유 방식의 설정에서는 일부 키를 생략하고 다른 방법으로 파생할 수 있습니다.",
+
+  "node.user": "키 생성기",
+  "node.deriver": "ERC-2333 KDF",
+  "node.storagePath": "파생 경로",
+  "node.storageWithdrawal": "출금 키",
+  "node.storageSigning": "서명 키",
+  "node.validator": "Beacon Chain 검증자",
+
+  "edge.provideSeed": "시드 제공",
+  "edge.buildPath": "경로 구성",
+  "edge.deriveWithdrawal": "출금 키 파생",
+  "edge.deriveSigning": "서명 키 파생",
+  "edge.loadSigning": "서명 키 로드",
+
+  "sim.deriveKeysWalkthrough.name": "검증자 키 파생 워크스루",
+  "sim.deriveKeysWalkthrough.desc": "ERC-2334 경로가 구성되고 검증자의 출금 키와 서명 키가 파생되는 과정을 니모닉 시드를 따라가며 살펴봅니다.",
+  "sim.deriveKeysWalkthrough.param.accountIndex": "검증자 인덱스(i)",
+  "sim.deriveKeysWalkthrough.step.seed": "운영자가 ERC-2333 키 파생 함수에 니모닉 시드와 검증자 인덱스를 제공합니다.",
+  "sim.deriveKeysWalkthrough.step.seed.mobile": "시드 제공",
+  "sim.deriveKeysWalkthrough.step.path": "경로 m / 12381 / 3600 / account / use가 조립되며, Beacon Chain을 위해 purpose는 12381로, coin_type은 3600으로 고정됩니다.",
+  "sim.deriveKeysWalkthrough.step.path.mobile": "경로 구성",
+  "sim.deriveKeysWalkthrough.step.derive": "출금 키는 m/12381/3600/i/0에서 파생되고, 서명 키는 그 0번째 자식으로 m/12381/3600/i/0/0에서 파생됩니다.",
+  "sim.deriveKeysWalkthrough.step.derive.mobile": "키 파생",
+  "sim.deriveKeysWalkthrough.step.load": "서명 키는 핫 키로 검증자 클라이언트에 로드되고, 출금 키는 콜드 스토리지에 남습니다.",
+  "sim.deriveKeysWalkthrough.step.load.mobile": "서명 키 로드"
+}

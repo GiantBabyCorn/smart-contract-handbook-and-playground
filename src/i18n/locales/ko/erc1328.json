@@ -1,0 +1,32 @@
+{
+  "short": "WalletConnect URI 형식",
+  "introduction": "ERC-1328은 애플리케이션과 지갑 사이의 연결을 여는 데 필요한 데이터를 인코딩하기 위한 URI 형식을 정의합니다. 이는 2018년 8월 ligi와 Pedro Gomes가 제안했습니다. 요청은 wc 스킴에 이어 토픽 문자열, @로 구분된 버전 번호, 그리고 매개변수 쿼리 문자열을 사용합니다. v1 URI는 bridge URL과 대칭 키를 담고, v2 URI는 symKey와 relay-protocol을 담습니다. 페이로드가 JSON이 아니라 간결한 URI이기 때문에 QR 코드나 링크로 표시할 수 있으며 지갑이 효율적으로 구문 분석할 수 있습니다.",
+  "designPurpose": "ERC-1328은 QR 코드에서 비효율적으로 구문 분석되던 WalletConnect 프로토콜 알파 버전의 JSON 페이로드를 대체하기 위해 설계되었습니다. 연결 데이터를 대신 URI로 인코딩함으로써, 이 표준은 QR 코드 스캐너와 딥링크 핸들러가 직접 읽을 수 있는 간결하고 모호하지 않은 문자열을 지갑에 제공하며, Android intent 시스템이 링크를 지갑으로 라우팅할 수 있게 합니다. 필수 버전 세그먼트를 통해 하위 호환성을 유지하면서 프로토콜 버전에 따라 매개변수 집합을 변경할 수 있습니다.",
+  "commonUsage": "이 형식은 모바일 지갑과 애플리케이션을 페어링하기 위해 WalletConnect 프로토콜에서 사용됩니다. dApp이 URI를 QR 코드로 렌더링하고, 지갑이 이를 스캔하거나 열어 공유 세션 매개변수를 파생합니다. 버전 1 URI는 bridge URL과 암호화 키를 제공하고, 버전 2 URI는 페어링 토픽을 위한 릴레이 프로토콜과 대칭 키, 그리고 선택적 만료 타임스탬프를 제공합니다. 생태계 전반의 지갑 SDK, dApp 커넥터 라이브러리, QR 코드 컴포넌트가 이 URI를 구문 분석하여 암호화된 세션을 부트스트랩합니다.",
+
+  "node.dapp": "요청 애플리케이션",
+  "node.uriBuilder": "URI 인코더",
+  "node.connectionUri": "WalletConnect URI",
+  "node.wallet": "지갑",
+  "node.walletUser": "지갑 사용자",
+  "node.pairing": "페어링 세션",
+
+  "edge.buildRequest": "연결 요청 생성",
+  "edge.encodeUri": "wc: URI 인코딩",
+  "edge.scanUri": "링크 스캔 또는 열기",
+  "edge.approve": "페어링 승인",
+  "edge.establish": "공유 세션 파생",
+
+  "sim.connectionUriWalkthrough.name": "연결 URI 단계별 안내",
+  "sim.connectionUriWalkthrough.desc": "WalletConnect URI가 dApp에서 QR 스캔을 거쳐 페어링 세션 확립에 이르는 과정을 따라갑니다.",
+  "sim.connectionUriWalkthrough.param.version": "프로토콜 버전",
+  "sim.connectionUriWalkthrough.param.expiryTimestamp": "페어링 만료 (unix 시간)",
+  "sim.connectionUriWalkthrough.step.build": "애플리케이션은 연결 요청을 생성하고 사용할 WalletConnect 프로토콜 버전을 선택합니다.",
+  "sim.connectionUriWalkthrough.step.build.mobile": "요청 생성",
+  "sim.connectionUriWalkthrough.step.encode": "토픽, 버전, 매개변수는 wc: URI로 인코딩되며, QR 코드나 링크로 표시할 수 있습니다.",
+  "sim.connectionUriWalkthrough.step.encode.mobile": "wc: URI 인코딩",
+  "sim.connectionUriWalkthrough.step.scan": "지갑 사용자가 URI를 스캔하거나 열면, 지갑은 페어링을 승인하기 전에 토픽, 버전, 연결 매개변수를 구문 분석합니다.",
+  "sim.connectionUriWalkthrough.step.scan.mobile": "스캔 후 승인",
+  "sim.connectionUriWalkthrough.step.pair": "지갑은 URI에서 공유 암호화 키와 릴레이 설정을 파생하여 애플리케이션과의 페어링 세션을 확립합니다.",
+  "sim.connectionUriWalkthrough.step.pair.mobile": "페어링 확립"
+}

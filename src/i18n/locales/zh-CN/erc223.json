@@ -1,0 +1,59 @@
+{
+  "short": "带交易处理模型的代币标准",
+  "introduction": "ERC-223 定义了一种同质化代币接口，通过强制的 tokenReceived 回调向接收方合约通知到账的转账。它由 Dexaran 于 2017 年 5 月提出。与 ERC-20 不同，向合约发送 ERC-223 代币会调用该合约的 tokenReceived 处理程序，并在缺少该处理程序时回退，因此代币不会被悄无声息地锁死在并非为接收它们而构建的合约中。单个 transfer 函数同时服务于账户和合约，还可以随代币附带一个可选的 data 载荷。",
+  "designPurpose": "ERC-223 旨在消除 ERC-20 的一种常见失效模式：用普通的 transfer 函数发送到合约的代币无法被识别，从而被永久卡住。由于 ERC-20 的 transfer 不会通知接收方，向合约存入代币只能改用 approve 与 transferFrom 两步模式。ERC-223 的解决办法是让每一次转账都调用接收方的 tokenReceived 处理程序，并在其缺失时回退，从而使存款在单笔交易中完成，避免意外损失。",
+  "commonUsage": "ERC-223 面向那些接受代币存入合约的应用，例如交易所、支付处理方和金库，其单次调用即可完成存款，省去了 ERC-20 所需的额外授权交易。接收方回调让合约能够在代币到账时对其进行校验或拒收，而其 data 载荷可以为接收方携带指令。ERC-20 的部署范围仍然广泛得多，因此 ERC-223 主要被那些明确需要其存款通知行为的项目所采用。",
+
+  "fn.totalSupply.desc": "返回现存代币的总数量。规范指出其行为与 ERC-20 的 totalSupply 函数完全相同。",
+  "fn.totalSupply.returns.supply": "代币总供应量，以最小单位计。",
+
+  "fn.balanceOf.desc": "返回指定账户持有的代币余额。其行为与 ERC-20 的 balanceOf 函数完全相同。",
+  "fn.balanceOf.params.owner": "被查询余额的地址。",
+  "fn.balanceOf.returns.balance": "该账户持有的代币数量，以最小单位计。",
+
+  "fn.transfer.desc": "将 _value 数量的代币转账给 _to。若 _to 是合约，代币会调用其 tokenReceived 处理程序，并在缺少该处理程序时回退；转账给外部账户（EOA）则跳过该回调。此重载附带空载荷，为向后兼容 ERC-20 而存在。",
+  "fn.transfer.params.to": "接收方地址。",
+  "fn.transfer.params.value": "要转账的代币数量，以最小单位计。",
+  "fn.transfer.returns.success": "转账成功时返回 true。",
+
+  "fn.transferData.desc": "将 _value 数量的代币转账给 _to，同时附带任意的 _data 载荷。当 _to 是合约时，其 tokenReceived(address, uint256, bytes) 处理程序会在余额更新后被调用；若未实现该处理程序，则转账回退。_data 的作用类似于 ether 交易中的 msg.data，可以为空。",
+  "fn.transferData.params.to": "接收方地址。",
+  "fn.transferData.params.value": "要转账的代币数量，以最小单位计。",
+  "fn.transferData.params.data": "转发给接收方 tokenReceived 处理程序的任意元数据；可以为空。",
+  "fn.transferData.returns.success": "转账成功时返回 true。",
+
+  "fn.tokenReceived.desc": "接收方合约为接受 ERC-223 代币而必须实现的处理程序。代币合约会在更新余额后调用它，传入发送方、数量和数据，且它必须返回魔术值 0x8943ec02 以确认转账。省略该处理程序的合约会导致转账回退。",
+  "fn.tokenReceived.params.from": "发送代币的地址。",
+  "fn.tokenReceived.params.value": "到账代币的数量。",
+  "fn.tokenReceived.params.data": "附带的元数据，类似于 ether 交易的 msg.data。",
+  "fn.tokenReceived.returns.magic": "用于确认到账转账的魔术值 0x8943ec02。",
+
+  "fn.Transfer.desc": "在代币转账时发出，并携带所附的 data 载荷。它与 ERC-20 的 Transfer 事件兼容且相似，但增加了一个 bytes 类型的 data 字段。",
+  "fn.Transfer.params.from": "代币的转出地址。",
+  "fn.Transfer.params.to": "代币的转入地址。",
+  "fn.Transfer.params.value": "转账的代币数量。",
+  "fn.Transfer.params.data": "附加在此次转账上的 data 载荷。",
+
+  "node.user": "代币发送方",
+  "node.contract": "ERC-223 代币",
+  "node.storageBalances": "代币存储",
+  "node.recipient": "接收方合约",
+
+  "edge.callTransfer": "调用 transfer()",
+  "edge.updateBalances": "更新余额",
+  "edge.callTokenReceived": "调用 tokenReceived()",
+  "edge.emitTransfer": "发出 Transfer 事件",
+
+  "sim.tokenTransferWalkthrough.name": "带回调的代币转账",
+  "sim.tokenTransferWalkthrough.desc": "跟随一次 ERC-223 转账，从发送方经过余额更新和接收方的 tokenReceived 回调，直到 Transfer 事件。",
+  "sim.tokenTransferWalkthrough.param.to": "接收方地址",
+  "sim.tokenTransferWalkthrough.param.value": "数量（以 wei 计）",
+  "sim.tokenTransferWalkthrough.step.call": "发送方在 ERC-223 代币合约上调用 transfer(to, value, data)，向接收方发送代币。",
+  "sim.tokenTransferWalkthrough.step.call.mobile": "调用 transfer()",
+  "sim.tokenTransferWalkthrough.step.execute": "合约在 balances 映射中从发送方扣除该数量，并记入接收方。",
+  "sim.tokenTransferWalkthrough.step.execute.mobile": "更新余额",
+  "sim.tokenTransferWalkthrough.step.notify": "由于接收方是合约，代币会调用其 tokenReceived 处理程序，该处理程序必须返回 0x8943ec02，否则整笔转账回退。",
+  "sim.tokenTransferWalkthrough.step.notify.mobile": "通知接收方",
+  "sim.tokenTransferWalkthrough.step.event": "合约发出 Transfer(from, to, value, data)，以便链下服务能够追踪该转账及其载荷。",
+  "sim.tokenTransferWalkthrough.step.event.mobile": "发出 Transfer 事件"
+}

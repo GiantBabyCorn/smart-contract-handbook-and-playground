@@ -1,0 +1,60 @@
+{
+  "short": "メンバーシップ検証トークン（MVT）規格",
+  "introduction": "ERC-1261 は、メンバーシップ検証トークン（Membership Verification Token、MVT）の標準インターフェースを定義します。MVT とは、あるアドレスがエンティティと呼ばれるオンチェーン組織に所属しているかどうかを記録する、譲渡不可能かつ取り消し可能なトークンです。この規格は Chaitanya Potti と Partha Bhattacharya によって 2018年7月に提案されました。エンティティのオーナーがメンバーシップを付与・取り消しし、メンバーは自身のメンバーシップを申請または放棄できます。注意：ERC-1261 は Stagnant（停滞）です。6か月以上活動がなく、最終化されない可能性がありますが、歴史的または技術的に重要な意味を持ちます。",
+  "designPurpose": "ERC-1261 は、トークン残高に依存せずに、許可制のメンバーシップをオンチェーンで実現するために設計されました。初期のガバナンスシステムは残高を参加資格の代理指標として使っていましたが、残高は富と参加する権利を混同してしまいます。ERC-725/735 のようなクレームレジストリでは、主体が自分自身のクレームを保持しており削除を無視することもできますが、それとは異なり、MVT は発行するエンティティによって完全に制御され、エンティティはいつでもメンバーシップとその属性を付与・変更・取り消しできます。",
+  "commonUsage": "MVT は譲渡不可能かつ取り消し可能であるため、取引可能な資産ではなく、会員証のようなユースケースに適しています。仕様では、想定される用途として次のようなものが挙げられています。メンバー数が投票率の分母となる許可制の投票、セキュリティトークンを認定済みアドレスに限定するコンプライアンス、そしてパスポート・ライセンス・ソフトウェア利用権などの資格証明の発行です。メンバーごとの属性によって投票が有権者の範囲を絞り込めるようになり、オプションのメタデータ拡張は組織の名前とシンボルを公開します。",
+
+  "fn.requestMembership.desc": "任意のアドレスがエンティティへのメンバーシップを申請できるようにし、RequestedMembership を発行してオーナーが承認または破棄できるようにします。呼び出し元がすでにトークンを保持している場合はリバートします。この関数は payable であるため、実装によっては手数料を徴収できます。",
+  "fn.requestMembership.params.attributeIndexes": "見込みメンバーに関連付ける属性値のインデックス。",
+
+  "fn.forfeitMembership.desc": "現在のメンバーが自身のメンバーシップを自発的に放棄できるようにし、Revoked イベントを発行します。呼び出し元がトークンを保持していない場合はリバートします。",
+
+  "fn.approveRequest.desc": "オーナーが呼び出し、保留中のメンバーシップ申請を承認してトークンを付与し、ApprovedMembership および Assigned イベントを発行します。ユーザーに保留中の申請がない場合、または呼び出し元がオーナーでない場合はリバートします。",
+  "fn.approveRequest.params.user": "保留中のメンバーシップ申請が承認されるアドレス。",
+
+  "fn.discardRequest.desc": "オーナーが呼び出し、トークンを付与せずに保留中のメンバーシップ申請を却下します。ユーザーに保留中の申請がない場合、または呼び出し元がオーナーでない場合はリバートします。",
+  "fn.discardRequest.params.user": "保留中のメンバーシップ申請が破棄されるアドレス。",
+
+  "fn.assignTo.desc": "オーナーが呼び出し、メンバーシップをアドレスに直接付与して Assigned イベントを発行します。そのアドレスがすでにトークンを保持している場合、ゼロアドレスである場合、または呼び出し元がオーナーでない場合はリバートします。",
+  "fn.assignTo.params.to": "メンバーシップトークンが付与されるアドレス。",
+  "fn.assignTo.params.attributeIndexes": "新しいメンバーに記録される属性値のインデックス。",
+
+  "fn.revokeFrom.desc": "オーナーが呼び出し、あるアドレスのメンバーシップを削除して Revoked イベントを発行します。そのアドレスがメンバーでない場合、ゼロアドレスである場合、または呼び出し元がオーナーでない場合はリバートします。",
+  "fn.revokeFrom.params.from": "メンバーシップが取り消される現在のメンバーのアドレス。",
+
+  "fn.isCurrentMember.desc": "あるアドレスが現在エンティティのメンバーであるかどうかを返します。ゼロアドレスに関するクエリでは例外をスローします。ゼロアドレスのトークンは常に無効とみなされます。",
+  "fn.isCurrentMember.params.to": "メンバーシップの状態が照会されるアドレス。",
+  "fn.isCurrentMember.returns.isMember": "アドレスが現在有効なメンバーシップトークンを保持している場合は true。",
+
+  "fn.Assigned.desc": "オーナーによる直接の付与、または申請の承認により、メンバーシップトークンがアドレスに付与されたときに発行されます。",
+  "fn.Assigned.params.to": "メンバーシップトークンを受け取ったアドレス。",
+  "fn.Assigned.params.attributeIndexes": "メンバーに記録された属性値のインデックス。",
+
+  "fn.Revoked.desc": "オーナーによってメンバーシップが取り消された、またはメンバーによって放棄されたときに発行されます。",
+  "fn.Revoked.params.to": "メンバーシップが取り消されたアドレス。",
+
+  "fn.RequestedMembership.desc": "あるアドレスがエンティティへのメンバーシップを申請し、オーナーに申請を承認または破棄するよう知らせるときに発行されます。",
+  "fn.RequestedMembership.params.to": "メンバーシップを申請したアドレス。",
+
+  "node.user": "エンティティオーナー",
+  "node.contract": "ERC-1261 エンティティ",
+  "node.storageMembers": "メンバーシップストレージ",
+  "node.member": "メンバー",
+
+  "edge.callAssign": "assignTo() を呼び出す",
+  "edge.updateMembers": "メンバーシップを更新",
+  "edge.emitAssigned": "Assigned イベントを発行",
+  "edge.grantMembership": "メンバーシップを付与",
+  "edge.callRevoke": "revokeFrom() を呼び出す",
+
+  "sim.assignMembership.name": "メンバーシップの付与",
+  "sim.assignMembership.desc": "エンティティオーナーからの assignTo 呼び出しを、メンバーシップストレージを経て、新しいメンバーを認識する Assigned イベントまで追跡します。",
+  "sim.assignMembership.param.to": "新しいメンバーのアドレス",
+  "sim.assignMembership.param.attributeIndexes": "属性インデックス",
+  "sim.assignMembership.step.call": "エンティティオーナーが ERC-1261 コントラクト上で assignTo(_to, _attributeIndexes) を呼び出し、アドレスにメンバーシップを付与します。",
+  "sim.assignMembership.step.call.mobile": "assignTo() を呼び出す",
+  "sim.assignMembership.step.execute": "コントラクトはそのアドレスを現在のメンバーとして記録し、その属性インデックスをメンバーシップのマッピングに保存します。",
+  "sim.assignMembership.step.execute.mobile": "メンバーシップを記録",
+  "sim.assignMembership.step.event": "コントラクトが Assigned イベントを発行し、そのアドレスはエンティティの認識されたメンバーになります。",
+  "sim.assignMembership.step.event.mobile": "Assigned イベントを発行"
+}

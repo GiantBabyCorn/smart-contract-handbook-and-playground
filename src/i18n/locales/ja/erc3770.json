@@ -1,0 +1,33 @@
+{
+  "short": "人間が読めるチェーン固有アドレス形式",
+  "introduction": "ERC-3770 は、チェーンを識別する人間が読めるプレフィックスを付けて EVM アドレスを表記するテキスト形式を定義します。ショートネーム、コロン、続いてアドレスの順に記述します。2021 年 8 月に Lukas Schor、Richard Meissner、Pedro Gomes、ligi によって提案されました。ショートネームは ethereum-lists/chains レジストリに由来し、アドレスは ERC-55 のチェックサム付き 16 進数アドレスである必要があるため、eth:0x… のような文字列はアカウントとネットワークの両方を示します。注意：ERC-3770 は Draft（ドラフト）であり、仕様は現在も活発に開発が進められており、大きく変更される可能性があります。",
+  "designPurpose": "ERC-3770 は、1 つのアドレスが複数の EVM チェーンで再利用される際の曖昧さを取り除くために設計されました。同じアドレスが、あるネットワークでは外部所有アカウントであり、別のネットワークではまだデプロイされていないコントラクトであることがあります。素の 16 進数アドレスはどのチェーンかを示す手がかりを持たないため、ユーザーはコントラクトウォレットが一度もデプロイされていないネットワークへ資金を送ってしまい、それを失う可能性があります。EIP-155 のチェーン ID はネットワークを開発者向けに識別しますが、人間に見せることを意図したものではないため、ERC-3770 はアドレスに短く人間が読めるチェーン名のプレフィックスを付けます。",
+  "commonUsage": "チェーン固有アドレスは、マルチチェーンウォレット、アドレス帳、ユーザーが 1 つの文字列を貼り付けるとソフトウェアが正しいネットワークを選ぶ dApp フロントエンドなど、複数の EVM ネットワークにまたがるインターフェースを想定しています。プレフィックスは ethereum-lists/chains レジストリのエントリに対応するため、ツールは送信前に eth や gno のようなショートネームを特定のチェーンに解決します。この形式は表示および交換のための取り決めであり、オンチェーンの仕組みではないため、コントラクトやストレージを必要とせず、クライアントソフトウェア内で動作します。",
+
+  "node.user": "送信アプリケーション",
+  "node.formatter": "アドレスフォーマッター",
+  "node.storageRegistry": "チェーンショートネーム一覧",
+  "node.storageAddress": "チェーン固有アドレス",
+  "node.resolver": "アドレスリゾルバー",
+  "node.wallet": "受信ウォレット",
+
+  "edge.submitAddress": "アドレスとチェーンを送信",
+  "edge.lookupShortName": "ショートネームを検索",
+  "edge.buildPrefix": "プレフィックス付きアドレスを構築",
+  "edge.readShortName": "ショートネームを読み取り",
+  "edge.parsePrefix": "プレフィックスを解析",
+  "edge.routeToChain": "チェーンへルーティング",
+
+  "sim.formatAddressWalkthrough.name": "チェーン固有アドレスのウォークスルー",
+  "sim.formatAddressWalkthrough.desc": "フォーマッターがチェーン固有のプレフィックスを構築し、リゾルバーが正しいネットワークへルーティングする様子を、アドレスとチェーンを追いながら確認します。",
+  "sim.formatAddressWalkthrough.param.shortName": "チェーンのショートネーム",
+  "sim.formatAddressWalkthrough.param.address": "チェックサム付きアドレス",
+  "sim.formatAddressWalkthrough.step.submit": "送信アプリケーションが、ERC-55 のチェックサム付きアドレスを対象チェーンとともにフォーマッターへ送信します。",
+  "sim.formatAddressWalkthrough.step.submit.mobile": "アドレスを送信",
+  "sim.formatAddressWalkthrough.step.lookup": "フォーマッターは ethereum-lists/chains レジストリでそのチェーンのショートネームを検索します。例えば Ethereum Mainnet なら eth です。",
+  "sim.formatAddressWalkthrough.step.lookup.mobile": "ショートネームを検索",
+  "sim.formatAddressWalkthrough.step.build": "フォーマッターはショートネーム、コロン、アドレスを連結して、eth:0x… のような単一のチェーン固有文字列を作成します。",
+  "sim.formatAddressWalkthrough.step.build.mobile": "プレフィックスを構築",
+  "sim.formatAddressWalkthrough.step.resolve": "リゾルバーはショートネームを読み戻してプレフィックスを解析し、トランザクションを特定されたネットワーク上のウォレットへルーティングします。",
+  "sim.formatAddressWalkthrough.step.resolve.mobile": "チェーンへルーティング"
+}

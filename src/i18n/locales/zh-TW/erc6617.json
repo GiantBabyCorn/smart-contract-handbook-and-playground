@@ -1,0 +1,52 @@
+{
+  "short": "基於位元的權限與角色系統",
+  "introduction": "ERC-6617 定義了一套基於位元的權限與角色系統，其中每個權限對應 uint256 的一個位元，最多可編碼 256 個權限並組合成角色。此標準由 Chiro 與 Victor Dusart 於 2023 年 2 月提出。每個權限必須是 2 的冪，以便只佔用一個位元；該介面提供授予、撤銷與檢查權限的函式，皆以位元運算實作，並在每次變更時發出事件。注意：ERC-6617 處於 Review 狀態，介面在最終定案前仍可能變動。",
+  "designPurpose": "ERC-6617 的設計目標是讓鏈上存取控制比單一擁有者或基於字串的角色方案更細緻、更節省 gas。在 ERC-173 之下，合約只有一個擁有者，而以 bytes32 識別字為鍵的角色系統每次檢查都需要一次儲存讀取。透過將每個權限打包進 uint256 的一個位元，ERC-6617 只需一次位元 AND 運算即可測試存取權限，並以位元 OR 運算將多個權限合併為角色，從而避免額外的儲存載入。依位元的高低順序排列還能讓權限以整數形式進行排序。",
+  "commonUsage": "基於位元的權限適用於需要區分存取層級的合約，例如多角色協議管理、代幣的鑄造與暫停權限，或智能合約帳戶中的模組權限。由於角色只是單純的 uint256 值，它們可以在合約之間傳遞並進行比較，而無需儲存查詢。ERC-6617 還定義了一個可選的 IEIP6617Meta 擴充，為每個權限附加名稱與描述，供區塊瀏覽器與儀表板顯示。",
+
+  "fn.hasPermission.desc": "當使用者儲存的權限位元遮罩是所需權限的超集時回傳 true，亦即 _requiredPermission 中設定的每一個位元在該使用者處也都已設定。此檢查是使用位元 AND 的 view 操作。",
+  "fn.hasPermission.params._user": "被檢查權限的使用者地址。",
+  "fn.hasPermission.params._requiredPermission": "使用者必須持有的權限，或權限位元的組合。",
+  "fn.hasPermission.returns.result": "若使用者的權限是所需權限的超集則為 true，否則為 false。",
+
+  "fn.grantPermission.desc": "透過位元 OR 將給定的權限位元加入使用者的位元遮罩，並發出 PermissionGranted 事件。要加入的權限必須是 2 的冪，以便恰好設定一個位元。",
+  "fn.grantPermission.params._user": "被加入權限的使用者地址。",
+  "fn.grantPermission.params._permissionToAdd": "要加入的權限位元；必須是 2 的冪。",
+  "fn.grantPermission.returns.success": "當權限已被授予時為 true。",
+
+  "fn.revokePermission.desc": "從使用者的位元遮罩中移除給定的權限位元，並發出 PermissionRevoked 事件，同時保持使用者的其他權限不變。",
+  "fn.revokePermission.params._user": "被撤銷權限的使用者地址。",
+  "fn.revokePermission.params._permissionToRevoke": "要移除的權限位元。",
+  "fn.revokePermission.returns.success": "當權限已被撤銷時為 true。",
+
+  "fn.PermissionGranted.desc": "當權限被授予某個使用者時發出，記錄授予者、權限以及接收該權限的使用者。",
+  "fn.PermissionGranted.params._grantor": "授予該權限的地址。",
+  "fn.PermissionGranted.params._permission": "被授予的權限。",
+  "fn.PermissionGranted.params._user": "接收該權限的使用者地址。",
+
+  "fn.PermissionRevoked.desc": "當權限從某個使用者被撤銷時發出，記錄撤銷者、權限以及受影響的使用者。",
+  "fn.PermissionRevoked.params._revoker": "撤銷該權限的地址。",
+  "fn.PermissionRevoked.params._permission": "被撤銷的權限。",
+  "fn.PermissionRevoked.params._user": "失去該權限的使用者地址。",
+
+  "node.user": "權限授予者",
+  "node.contract": "ERC-6617 合約",
+  "node.storagePermissions": "權限儲存",
+  "node.targetUser": "目標使用者",
+
+  "edge.callGrant": "呼叫 grantPermission()",
+  "edge.updatePermissions": "設定權限位元",
+  "edge.emitGranted": "發出 PermissionGranted 事件",
+  "edge.grantToUser": "向使用者授予權限",
+
+  "sim.grantPermissionWalkthrough.name": "授予權限逐步解說",
+  "sim.grantPermissionWalkthrough.desc": "追蹤一次 grantPermission 呼叫，從授予者經過權限位元遮罩，直到 PermissionGranted 事件。",
+  "sim.grantPermissionWalkthrough.param.targetUser": "接收權限的使用者",
+  "sim.grantPermissionWalkthrough.param.permission": "權限位元（2 的冪）",
+  "sim.grantPermissionWalkthrough.step.call": "授予者以一個為 2 的冪的權限呼叫 grantPermission(_user, _permissionToAdd)，目標是應當接收該存取位元的使用者。",
+  "sim.grantPermissionWalkthrough.step.call.mobile": "呼叫 grantPermission()",
+  "sim.grantPermissionWalkthrough.step.execute": "合約透過 OR 運算將新的權限位元併入使用者儲存的 uint256 位元遮罩，因此已授予的位元都會被保留。",
+  "sim.grantPermissionWalkthrough.step.execute.mobile": "設定權限位元",
+  "sim.grantPermissionWalkthrough.step.event": "合約發出攜帶授予者、權限與使用者的 PermissionGranted 事件，此時目標使用者已持有新增的權限。",
+  "sim.grantPermissionWalkthrough.step.event.mobile": "發出 PermissionGranted"
+}

@@ -1,0 +1,54 @@
+{
+  "short": "Cross-Chain Messaging Gateway",
+  "introduction": "ERC-7786 defines a common interface and workflow for smart contracts to send and receive arbitrary cross-chain data through any adopting bridge. It was proposed by Francisco Giordano, Hadrien Croubois, Ernesto García, and others in October 2024. A source gateway's sendMessage dispatches a payload to a recipient named by an ERC-7930 Interoperable Address and emits MessageSent; the destination gateway delivers it via receiveMessage. Bridge features travel as bytes4-keyed attributes rather than proprietary calls.",
+  "designPurpose": "ERC-7786 was designed to overcome the fragmentation among cross-chain messaging protocols, each exposing its own proprietary interface and workflow. That lack of portability makes generic cross-chain contracts impractical and ties an application to one bridge that may be paused or deprecated. By standardizing sendMessage and receiveMessage around ERC-7930 addresses, the ERC lets a contract switch gateways by updating a single stored address, while attributes surface bridge-specific options behind a shared core.",
+  "commonUsage": "The interface targets cross-chain native contracts and the gateways that link them: protocols that implement it directly and adapter gateways wrapping existing bridges behind interchangeable APIs. An application calls sendMessage to pass an opaque payload to a recipient and implements receiveMessage to accept deliveries, first checking that the caller is a trusted gateway. Attributes standardized as their own ERCs, such as a minimum destination gas limit, request bridge features without a proprietary call.",
+
+  "fn.supportsAttribute.desc": "Returns whether the gateway supports the attribute identified by its 4-byte selector key. Support may be added through upgrades but should not be removed, preserving backwards compatibility for callers.",
+  "fn.supportsAttribute.params.selector": "The 4-byte attribute key, recommended to be a Solidity function selector.",
+  "fn.supportsAttribute.returns.supported": "True if the gateway supports the given attribute key.",
+
+  "fn.sendMessage.desc": "Initiates sending a message to a recipient on another chain, carrying the payload, any call value, and a list of attributes. Reverts with UnsupportedAttribute for an unknown attribute, emits MessageSent, and may return a non-zero send identifier.",
+  "fn.sendMessage.params.recipient": "The destination-chain recipient as a binary ERC-7930 Interoperable Address; it may be omitted or zeroed for an unspecified destination.",
+  "fn.sendMessage.params.payload": "The opaque bytes payload to deliver to the recipient.",
+  "fn.sendMessage.params.attributes": "A list of attributes, each concatenating a 4-byte key and its encoded value, requesting bridge-specific features; an empty list is valid.",
+  "fn.sendMessage.returns.sendId": "A unique non-zero send identifier for tracking the message, or zero when the gateway assigns none.",
+
+  "fn.receiveMessage.desc": "Delivers a message sent from another chain to the recipient contract; the destination gateway invokes it with the identifier, sender, and payload. The recipient must verify the caller is a trusted gateway and return the receiveMessage selector.",
+  "fn.receiveMessage.params.receiveId": "A unique identifier of the delivered message for the calling gateway, or empty.",
+  "fn.receiveMessage.params.sender": "The source-chain sender as a binary ERC-7930 Interoperable Address.",
+  "fn.receiveMessage.params.payload": "The opaque bytes payload delivered from the source chain.",
+  "fn.receiveMessage.returns.selector": "Must equal IERC7786Recipient.receiveMessage.selector (0x2432ef26) to confirm acceptance.",
+
+  "fn.MessageSent.desc": "Emitted by a source gateway when a sender requests a message to be sent, recording the send identifier, sender and recipient addresses, payload, value, and attributes.",
+  "fn.MessageSent.params.sendId": "The indexed send identifier returned by sendMessage, or zero if none.",
+  "fn.MessageSent.params.sender": "The source-chain sender as a binary ERC-7930 Interoperable Address.",
+  "fn.MessageSent.params.recipient": "The destination-chain recipient as a binary ERC-7930 Interoperable Address.",
+  "fn.MessageSent.params.payload": "The opaque bytes payload to be delivered.",
+  "fn.MessageSent.params.value": "The native token value to be sent with the message.",
+  "fn.MessageSent.params.attributes": "The list of encoded attributes attached to the message.",
+
+  "node.user": "Message Sender",
+  "node.contract": "Source Gateway",
+  "node.bridge": "Cross-Chain Protocol",
+  "node.recipient": "Recipient Contract",
+
+  "edge.callSendMessage": "Call sendMessage()",
+  "edge.emitMessageSent": "Emit MessageSent event",
+  "edge.relayMessage": "Relay message",
+  "edge.deliverMessage": "Deliver message",
+
+  "sim.sendMessageWalkthrough.name": "Cross-Chain Message Walkthrough",
+  "sim.sendMessageWalkthrough.desc": "Follow a message from the sender through the source gateway and bridge to the recipient's receiveMessage call.",
+  "sim.sendMessageWalkthrough.param.recipient": "Recipient address",
+  "sim.sendMessageWalkthrough.param.payload": "Message payload",
+  "sim.sendMessageWalkthrough.param.value": "Native token value",
+  "sim.sendMessageWalkthrough.step.call": "The sender calls sendMessage on the source gateway with the recipient's Interoperable Address, the payload, and any attributes.",
+  "sim.sendMessageWalkthrough.step.call.mobile": "Call sendMessage()",
+  "sim.sendMessageWalkthrough.step.emit": "The gateway validates the attributes, records a send identifier, and emits a MessageSent event describing the requested message.",
+  "sim.sendMessageWalkthrough.step.emit.mobile": "Emit MessageSent event",
+  "sim.sendMessageWalkthrough.step.relay": "The underlying cross-chain protocol picks up the message and relays it to the destination chain after the source transaction is finalized.",
+  "sim.sendMessageWalkthrough.step.relay.mobile": "Relay across chains",
+  "sim.sendMessageWalkthrough.step.receive": "The destination gateway calls receiveMessage on the recipient, which verifies the trusted caller and returns the 0x2432ef26 selector to confirm delivery.",
+  "sim.sendMessageWalkthrough.step.receive.mobile": "Deliver to recipient"
+}

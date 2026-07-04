@@ -1,0 +1,54 @@
+{
+  "short": "跨链消息网关",
+  "introduction": "ERC-7786 定义了一套通用接口与工作流程，使智能合约能够通过任意采用该标准的桥来发送和接收任意跨链数据。它由 Francisco Giordano、Hadrien Croubois、Ernesto García 等人于 2024 年 10 月提出。源网关的 sendMessage 会将载荷分发给由 ERC-7930 可互操作地址（Interoperable Address）指定的接收方，并发出 MessageSent 事件；目标网关则通过 receiveMessage 进行投递。桥的功能特性以 bytes4 为键的属性形式传递，而非专有调用。",
+  "designPurpose": "ERC-7786 旨在克服各跨链消息协议之间的碎片化问题——每个协议都暴露自己专有的接口与工作流程。这种缺乏可移植性的状况使得通用的跨链合约难以实现，并将应用绑定到某一个可能被暂停或弃用的桥上。通过围绕 ERC-7930 地址标准化 sendMessage 与 receiveMessage，该 ERC 让合约只需更新单个存储的地址即可切换网关，同时通过共享的核心接口以属性形式呈现桥特有的选项。",
+  "commonUsage": "该接口面向跨链原生合约以及连接它们的网关：既包括直接实现它的协议，也包括将现有桥包装在可互换 API 之后的适配器网关。应用调用 sendMessage 将不透明的载荷传递给接收方，并实现 receiveMessage 来接受投递，同时首先检查调用者是否为受信任的网关。作为独立 ERC 标准化的属性（例如最小目标 gas 上限）可以在不使用专有调用的情况下请求桥的功能特性。",
+
+  "fn.supportsAttribute.desc": "返回网关是否支持由其 4 字节选择器键标识的属性。支持可以通过升级来添加，但不应被移除，从而为调用者保持向后兼容。",
+  "fn.supportsAttribute.params.selector": "4 字节的属性键，建议采用 Solidity 函数选择器。",
+  "fn.supportsAttribute.returns.supported": "如果网关支持给定的属性键，则为 true。",
+
+  "fn.sendMessage.desc": "发起向另一条链上的接收方发送消息，携带载荷、任意调用价值以及一组属性。遇到未知属性时会以 UnsupportedAttribute 回退，发出 MessageSent，并可能返回一个非零的发送标识符。",
+  "fn.sendMessage.params.recipient": "作为二进制 ERC-7930 可互操作地址的目标链接收方；对于未指定的目标，可以省略或置零。",
+  "fn.sendMessage.params.payload": "要投递给接收方的不透明字节载荷。",
+  "fn.sendMessage.params.attributes": "一组属性，每个属性将 4 字节的键与其编码值拼接在一起，用于请求桥特有的功能特性；空列表也是有效的。",
+  "fn.sendMessage.returns.sendId": "用于追踪消息的唯一非零发送标识符，若网关不分配则为零。",
+
+  "fn.receiveMessage.desc": "将从另一条链发送的消息投递给接收方合约；目标网关会以标识符、发送方和载荷调用它。接收方必须验证调用者是受信任的网关，并返回 receiveMessage 选择器。",
+  "fn.receiveMessage.params.receiveId": "所投递消息对于调用网关的唯一标识符，或为空。",
+  "fn.receiveMessage.params.sender": "作为二进制 ERC-7930 可互操作地址的源链发送方。",
+  "fn.receiveMessage.params.payload": "从源链投递而来的不透明字节载荷。",
+  "fn.receiveMessage.returns.selector": "必须等于 IERC7786Recipient.receiveMessage.selector（0x2432ef26）以确认接受。",
+
+  "fn.MessageSent.desc": "当发送方请求发送消息时由源网关发出，记录发送标识符、发送方与接收方地址、载荷、价值以及属性。",
+  "fn.MessageSent.params.sendId": "由 sendMessage 返回的带索引发送标识符，若无则为零。",
+  "fn.MessageSent.params.sender": "作为二进制 ERC-7930 可互操作地址的源链发送方。",
+  "fn.MessageSent.params.recipient": "作为二进制 ERC-7930 可互操作地址的目标链接收方。",
+  "fn.MessageSent.params.payload": "要投递的不透明字节载荷。",
+  "fn.MessageSent.params.value": "随消息一同发送的原生代币价值。",
+  "fn.MessageSent.params.attributes": "附加到消息上的编码属性列表。",
+
+  "node.user": "消息发送方",
+  "node.contract": "源网关",
+  "node.bridge": "跨链协议",
+  "node.recipient": "接收方合约",
+
+  "edge.callSendMessage": "调用 sendMessage()",
+  "edge.emitMessageSent": "发出 MessageSent 事件",
+  "edge.relayMessage": "中继消息",
+  "edge.deliverMessage": "投递消息",
+
+  "sim.sendMessageWalkthrough.name": "跨链消息全流程演示",
+  "sim.sendMessageWalkthrough.desc": "跟随一条消息，从发送方经由源网关和桥抵达接收方的 receiveMessage 调用。",
+  "sim.sendMessageWalkthrough.param.recipient": "接收方地址",
+  "sim.sendMessageWalkthrough.param.payload": "消息载荷",
+  "sim.sendMessageWalkthrough.param.value": "原生代币价值",
+  "sim.sendMessageWalkthrough.step.call": "发送方以接收方的可互操作地址、载荷以及任意属性，在源网关上调用 sendMessage。",
+  "sim.sendMessageWalkthrough.step.call.mobile": "调用 sendMessage()",
+  "sim.sendMessageWalkthrough.step.emit": "网关验证属性、记录发送标识符，并发出描述所请求消息的 MessageSent 事件。",
+  "sim.sendMessageWalkthrough.step.emit.mobile": "发出 MessageSent 事件",
+  "sim.sendMessageWalkthrough.step.relay": "底层跨链协议在源交易最终确定后拾取该消息，并将其中继到目标链。",
+  "sim.sendMessageWalkthrough.step.relay.mobile": "跨链中继",
+  "sim.sendMessageWalkthrough.step.receive": "目标网关在接收方上调用 receiveMessage，接收方验证受信任的调用者并返回 0x2432ef26 选择器以确认投递。",
+  "sim.sendMessageWalkthrough.step.receive.mobile": "投递至接收方"
+}

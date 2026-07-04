@@ -1,0 +1,32 @@
+{
+  "short": "스마트 컨트랙트 패키지 매니페스트 형식(EthPM v3)",
+  "introduction": "ERC-2678은 스마트 컨트랙트 패키지, 즉 하나 이상의 컨트랙트와 그 소스 코드, 컴파일러 설정, 여러 네트워크에 걸친 배포된 인스턴스를 설명하는 패키지 매니페스트를 위한 JSON 데이터 형식을 정의합니다. 이는 g. nicholas d'andrea, Piper Merriam 및 여러 공동 저자가 2020년 5월에 EthPM 형식의 버전 3으로 제안했습니다. 매니페스트는 알파벳순으로 정렬되고 최소화된 JSON 객체로, IPFS와 같은 콘텐츠 주소 지정 스토리지를 통해 배포되며 온체인 EthPM 레지스트리에 게시됩니다.",
+  "designPurpose": "EthPM v3는 컴파일된 컨트랙트를 공유하고 재사용하기 위한 단일하고 도구에 구애받지 않는 형식을 Ethereum 생태계에 제공하기 위해 설계되었습니다. 그 이전에는 각 프로젝트가 소스와 배포를 서로 호환되지 않는 임시방편적 구조로 설명했기 때문에, 의존성을 여러 도구에서 안정적으로 설치하거나 검증할 수 없었습니다. 버전 3은 스키마를 Solidity 컴파일러의 메타데이터 출력과 일치시키고, 컴파일러 정의를 하나의 최상위 배열로 모으며, 일관성을 위해 키 이름을 snake_case에서 camelCase로 변경합니다.",
+  "commonUsage": "패키지 매니페스트는 손으로 작성하는 대신 프로젝트의 릴리스 과정에서 패키지 관리 도구에 의해 프로그래밍 방식으로 생성됩니다. 패키지 매니저는 이를 읽어 의존성을 설치하고, 릴리스를 빌드하며, 소스 컨트랙트와 대조하여 배포를 검증합니다. 패키지는 상속을 위한 기본 컨트랙트부터 표준 ERC-20 토큰과 같은 재사용 가능한 컨트랙트, 그리고 배포된 인스턴스의 묶음에 이르기까지 다양합니다. 매니페스트는 IPFS와 같은 콘텐츠 주소 지정 시스템에 저장되며 EthPM 레지스트리에서 참조됩니다.",
+
+  "node.author": "패키지 작성자",
+  "node.packageManager": "EthPM 패키지 매니저",
+  "node.manifest": "패키지 매니페스트",
+  "node.ipfs": "콘텐츠 주소 지정 스토리지",
+  "node.registry": "EthPM 레지스트리",
+  "node.consumer": "사용하는 개발자",
+
+  "edge.assemble": "패키지 조립",
+  "edge.serialize": "매니페스트 직렬화",
+  "edge.publish": "IPFS에 게시",
+  "edge.register": "릴리스 등록",
+  "edge.resolve": "해결 및 설치",
+
+  "sim.publishPackageWalkthrough.name": "패키지 게시 둘러보기",
+  "sim.publishPackageWalkthrough.desc": "EthPM v3 패키지가 작성자의 조립부터 IPFS 스토리지를 거쳐 사용자가 릴리스를 설치하기까지의 과정을 따라갑니다.",
+  "sim.publishPackageWalkthrough.param.packageName": "패키지 이름",
+  "sim.publishPackageWalkthrough.param.version": "패키지 버전",
+  "sim.publishPackageWalkthrough.step.assemble": "패키지 작성자가 패키지 매니저를 실행하여 프로젝트의 컨트랙트, 소스, 배포로부터 새 릴리스를 조립합니다.",
+  "sim.publishPackageWalkthrough.step.assemble.mobile": "패키지 조립",
+  "sim.publishPackageWalkthrough.step.serialize": "도구는 수집된 데이터를 패키지 매니페스트로 직렬화하여 manifest 필드를 ethpm/3으로 설정하고 name, version, sources, contractTypes, compilers, deployments 필드를 기록합니다.",
+  "sim.publishPackageWalkthrough.step.serialize.mobile": "매니페스트 필드 직렬화",
+  "sim.publishPackageWalkthrough.step.publish": "매니페스트는 알파벳순으로 정렬되고 최소화되어 IPFS에 저장되며, 그 콘텐츠 주소 지정 URI가 온체인 EthPM 레지스트리에 릴리스로 등록됩니다.",
+  "sim.publishPackageWalkthrough.step.publish.mobile": "IPFS 및 레지스트리에 게시",
+  "sim.publishPackageWalkthrough.step.consume": "사용하는 개발자가 레지스트리에서 릴리스를 해결하여 패키지를 설치하고, 매니페스트를 사용해 소스를 가져오고 배포된 인스턴스를 검증합니다.",
+  "sim.publishPackageWalkthrough.step.consume.mobile": "패키지 해결 및 설치"
+}

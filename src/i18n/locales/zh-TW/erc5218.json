@@ -1,0 +1,68 @@
+{
+  "short": "NFT 權利管理",
+  "introduction": "ERC-5218 定義了一個介面，用於在鏈上記錄版權許可並將其綁定至 ERC-721 NFT。該標準由 James Grimmelmann、Yan Ji 與 Tyler Kell 於 2022 年 7 月提出。每個 NFT 都有一份由其所有者持有的根許可，所有者可以授予形成樹狀結構的子許可；每份許可指向一個條款 URI，並且可以被建立、轉移、撤銷或查詢是否有效。注意：ERC-5218 處於停滯（Stagnant）狀態——它已有 6 個月以上無活動，可能永遠不會最終定案，但仍具有歷史或技術上的重要意義。",
+  "designPurpose": "ERC-5218 旨在彌合「擁有 NFT」與「持有其所代表作品之合法權利」之間的落差。在此之前，NFT 許可存在於鏈下，代幣無法表明適用哪些權利，子許可無從追溯，部分專案甚至鑄造獨立的 NFT 來充當許可。透過將每一份許可記錄在以許可識別碼與代幣識別碼為鍵的鏈上樹中，每份許可都帶有條款 URI 與撤銷者，該標準讓創作者、持有者與稽核者能夠透過事件日誌追溯完整的權利歷史。",
+  "commonUsage": "ERC-5218 面向那些將創意作品——圖像、音樂或其他媒體——附加到其代幣上，並希望許可明確且可轉移的 NFT 專案。符合規範的合約繼承自 ERC-721，並對 supportsInterface 回傳 0xac7b5ca9，因此市場與瀏覽器可以偵測許可支援情況，並從每個 URI 解析條款。由於該規範從未達到 Final 狀態，其鏈上採用有限，主要作為權利管理的參考設計而存在。",
+
+  "fn.isLicenseActive.desc": "回傳給定許可目前是否有效。不存在或已被撤銷的許可為無效；當某個許可的某一祖先許可已被撤銷時，該許可同樣視為無效。",
+  "fn.isLicenseActive.params.licenseId": "所查詢許可的識別碼。",
+  "fn.isLicenseActive.returns.active": "若許可有效則為 true，否則為 false。",
+
+  "fn.getLicenseIdByTokenId.desc": "回傳綁定到給定 NFT 的根許可識別碼。若該 NFT 沒有根許可，則回傳一個不指向任何許可的特殊識別碼，例如 0。",
+  "fn.getLicenseIdByTokenId.params.tokenId": "查詢其根許可的 NFT 的識別碼。",
+  "fn.getLicenseIdByTokenId.returns.licenseId": "該 NFT 的根許可識別碼；若不存在則為 0。",
+
+  "fn.createLicense.desc": "在 NFT 上建立一份新許可並回傳其識別碼。根許可可由 NFT 所有者建立，子許可則可由有效父許可的持有者建立。會發出 CreateLicense 事件。",
+  "fn.createLicense.params.tokenId": "頒發該許可的 NFT。",
+  "fn.createLicense.params.parentLicenseId": "父許可識別碼；對於根許可則為特殊值，例如 0。",
+  "fn.createLicense.params.licenseHolder": "將持有新許可的地址。",
+  "fn.createLicense.params.uri": "指向許可條款的 URI。",
+  "fn.createLicense.params.revoker": "被允許撤銷該許可的地址。",
+  "fn.createLicense.returns.licenseId": "分配給所建立許可的識別碼。",
+
+  "fn.revokeLicense.desc": "撤銷一份有效的許可；只有該許可指定的撤銷者可以呼叫它。撤銷根許可會將 NFT 歸還給其創作者，被撤銷許可之下的子許可也會隨之變為無效。",
+  "fn.revokeLicense.params.licenseId": "要撤銷的許可的識別碼。",
+
+  "fn.transferSublicense.desc": "將一份有效的子許可轉移給新的持有者；只有目前的持有者可以呼叫它。根許可不透過此方式轉移，因為它們會隨 NFT 透過 ERC-721 轉移而一同移動。",
+  "fn.transferSublicense.params.licenseId": "要轉移的子許可的識別碼。",
+  "fn.transferSublicense.params.licenseHolder": "新子許可持有者的地址。",
+
+  "fn.CreateLicense.desc": "當透過任何機制建立新許可時發出，記錄其識別碼、NFT、父許可、持有者、條款 URI 與撤銷者。",
+  "fn.CreateLicense.params.licenseId": "新建立許可的識別碼。",
+  "fn.CreateLicense.params.tokenId": "頒發該許可的 NFT。",
+  "fn.CreateLicense.params.parentLicenseId": "父許可識別碼；對於根許可則為 0。",
+  "fn.CreateLicense.params.licenseHolder": "持有新許可的地址。",
+  "fn.CreateLicense.params.uri": "指向許可條款的 URI。",
+  "fn.CreateLicense.params.revoker": "被允許撤銷該許可的地址。",
+
+  "fn.RevokeLicense.desc": "當許可被撤銷時發出。在某些條款下，祖先許可上的單一事件即意味著其所有子許可均被撤銷。",
+  "fn.RevokeLicense.params.licenseId": "被撤銷許可的識別碼。",
+
+  "fn.TransferLicense.desc": "當許可轉移給新持有者時發出，包括根許可隨其 NFT 轉移給新所有者的情形。",
+  "fn.TransferLicense.params.licenseId": "被轉移許可的識別碼。",
+  "fn.TransferLicense.params.licenseHolder": "新許可持有者的地址。",
+
+  "node.user": "NFT 所有者",
+  "node.contract": "ERC-5218 合約",
+  "node.storageLicenses": "許可儲存",
+  "node.licenseHolder": "許可持有者",
+
+  "edge.callCreateLicense": "呼叫 createLicense()",
+  "edge.recordLicense": "記錄許可",
+  "edge.emitCreateLicense": "發出 CreateLicense 事件",
+  "edge.grantLicense": "授予許可",
+
+  "sim.createLicenseWalkthrough.name": "建立許可演練",
+  "sim.createLicenseWalkthrough.desc": "跟隨一次 createLicense 呼叫，從 NFT 所有者經由儲存到達許可持有者，以及 CreateLicense 事件。",
+  "sim.createLicenseWalkthrough.param.tokenId": "代幣 ID",
+  "sim.createLicenseWalkthrough.param.parentLicenseId": "父許可 ID",
+  "sim.createLicenseWalkthrough.param.licenseHolder": "許可持有者",
+  "sim.createLicenseWalkthrough.step.call": "NFT 所有者在合約上呼叫 createLicense()，傳入代幣 ID、父許可、持有者、條款 URI 與撤銷者。",
+  "sim.createLicenseWalkthrough.step.call.mobile": "呼叫 createLicense()",
+  "sim.createLicenseWalkthrough.step.execute": "合約記錄一個新的 License 條目，對於根許可，還會在 _licenseIds 映射中將其關聯到該 NFT。",
+  "sim.createLicenseWalkthrough.step.execute.mobile": "記錄許可",
+  "sim.createLicenseWalkthrough.step.grant": "新許可被分配給指定的持有者，該持有者獲得由許可 URI 所描述的鏈上權利。",
+  "sim.createLicenseWalkthrough.step.grant.mobile": "分配給持有者",
+  "sim.createLicenseWalkthrough.step.event": "合約發出 CreateLicense，以便索引器與稽核者能夠追溯該 NFT 的完整許可樹。",
+  "sim.createLicenseWalkthrough.step.event.mobile": "發出 CreateLicense 事件"
+}

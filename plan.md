@@ -283,8 +283,9 @@ SimulationStep + isRevert?: boolean; revertReason?: string
 - [x] Phase 6 工程底盤主體（預渲染/reduced-motion/死碼/FOUC/對比/robots/cron/**首屏 JS −73%**）；categories.ts 遷移完成一半（HomePage/Sidebar 字串清理 + es 重音**中斷於 session 限額**）
 - [x] Ingestion pipeline + catalog.json（312 條入選）+ 每週 cron
 - [ ] 共用資產——gen_translation_state.py 完成；模板/詞彙表/zh-TW lint **中斷於 session 限額**（agent 可續作）
-- [ ] **批 01 校準門**（條目已選定：55/681/1046/2098/5219/5564/5679/5750/7201/7540；待資產完成後執行）
-- [ ] Tier B 批 02–30（各 10 條）
+- [x] **批 01 校準門通過** ✅ 10/10 首過 fact-check、內容 spec 準確、5 語系高品質、全關卡綠、視覺驗證通過。管線經 `scripts/wf/erc-batch.mjs`（Workflow）+ `publish_batch.py` + gen 腳本，已證實可規模化
+- [x] Tier B 批 02(30)、03a(8)、03b(22) ✅ 已發佈並 gated
+- [ ] **目前 92 已發佈標準**（+13 協議 = 105 catalog 條目）。批 04(30) 於 weekly-limit 收尾時停止並清除 partial（未 commit，樹乾淨）。剩 ~165 條 Tier B → 目標 300。**續作程序見 `docs/HANDOFF.md`**（完整的批次迴圈指令、next-30 選取查詢、gotchas）
 - [ ] Tier A 加值批 01–16（各 5 條）
 - [ ] 案例批 01–05——批 01（10 個既有協議 composes）**進行中被限額中斷**（agent 已完成 Safe/stETH 等查證，可續作）
 - [ ] 執行後審核全綠
